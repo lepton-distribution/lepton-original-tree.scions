@@ -23,8 +23,8 @@ mono_crash.*
 [Rr]eleases/
 x64/
 x86/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
+# [Aa][Rr][Mm]/
+# [Aa][Rr][Mm]64/
 bld/
 [B]in/
 [Oo]bj/
@@ -361,6 +361,7 @@ MigrationBackup/
 *.log
 *.pdb*
 *.pbi*
+[Ss]ettings/
 
 # visual ide
 *.db
