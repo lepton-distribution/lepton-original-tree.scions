@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="bin">
+      <UniqueIdentifier>{e937d46c-88de-4a57-b1b2-aeec61ce9e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\net">
+      <UniqueIdentifier>{9a2d7b68-272c-4788-9709-0bc172f7016f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\net\cgi-bin">
+      <UniqueIdentifier>{a9375c39-bf1b-408f-a134-03982af7fb96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\tst">
+      <UniqueIdentifier>{976e11c4-a38d-4cbb-9ee8-174ee478da3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\net\mongoose">
+      <UniqueIdentifier>{2a2b0500-901e-4430-af07-240a11509e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\net\httpc">
+      <UniqueIdentifier>{2db97ffc-fe8b-4ff3-936c-b91dd71069db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bin\net\httpc\buffer">
+      <UniqueIdentifier>{61732581-b0e5-4b40-8f42-9ba5a8274e3f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\..\lepton\rootstock-mainline\depots\lepton\root\master\bin\scion\sys\root\src\bin\net\telnetd.c">
+      <Filter>bin\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\user\tauon-basic\src\bin\net\cgi-bin\tstcgi2.c">
+      <Filter>bin\net\cgi-bin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\user\tauon-basic\src\bin\net\cgi-bin\tstpost.c">
+      <Filter>bin\net\cgi-bin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\tst\tsteth.c">
+      <Filter>bin\tst</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\test2.c">
+      <Filter>bin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\udpsrvd.c">
+      <Filter>bin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\net\mongoose\mongoose.c">
+      <Filter>bin\net\mongoose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\net\mongoose\mongoosed.c">
+      <Filter>bin\net\mongoose</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\net\httpc\buffer\buffer.c">
+      <Filter>bin\net\httpc\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bin\net\httpc\httpc.c">
+      <Filter>bin\net\httpc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\user\tauon-basic\src\bin\net\cgi-bin\tstcgi.sh">
+      <Filter>bin\net\cgi-bin</Filter>
+    </None>
+    <None Include="..\..\..\..\user\tauon-basic\src\bin\net\cgi-bin\tstcgi2.sh">
+      <Filter>bin\net\cgi-bin</Filter>
+    </None>
+    <None Include="..\..\..\..\user\tauon-basic\src\bin\net\cgi-bin\tstpost.sh">
+      <Filter>bin\net\cgi-bin</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\bin\net\mongoose\mongoose.h">
+      <Filter>bin\net\mongoose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\bin\net\httpc\buffer\buffer.h">
+      <Filter>bin\net\httpc\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\bin\net\httpc\buffer\dbg.h">
+      <Filter>bin\net\httpc\buffer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
