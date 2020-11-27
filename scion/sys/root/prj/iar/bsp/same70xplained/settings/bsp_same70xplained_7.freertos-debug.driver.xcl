@@ -1,0 +1,19 @@
+"--endian=little" 
+
+"--cpu=Cortex-M7" 
+
+"--fpu=VFPv5_SP" 
+
+"-p" 
+
+"C:\Program Files\IAR Systems\Embedded Workbench 7.5\arm\CONFIG\debugger\Atmel\ATSAMV71Q21.ddf" 
+
+"--semihosting" 
+
+"--device=ATSAMV71Q21" 
+
+"--multicore_nr_of_cores=1" 
+
+
+
+
