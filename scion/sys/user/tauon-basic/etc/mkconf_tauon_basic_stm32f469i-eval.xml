@@ -16,7 +16,7 @@
       </target>
       
       <target name="cortexm_lepton">
-         <arch include_absolute_path="c:/tauon/sys/user/tauon-basic/src/arch/st-stm32f407-discovery/kernel_mkconf/include/user_kernel_mkconf.h" />
+         <arch include_absolute_path="c:/tauon/sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h" />
       </target>
       
       <!-- cpu type and frequency in MHz or Hz-->
@@ -102,9 +102,9 @@
       <!-- /dev/cpu0 -->
       <dev name="dev_stm32f4xx_cpu_x_map"        use="on"/>
 	    <!-- /dev/board -->
-	    <dev name="dev_discovery_f4_board_map"     use="on"/>
-      <!-- /dev/ttys6 -->
-      <dev name="dev_discovery_f4_uart_6_map"   use="on"/>
+	    <dev name="dev_stm32f469i_eval_board_map"  use="on"/>
+      <!-- /dev/ttys1 -->
+      <dev name="dev_stm32f469i_eval_uart_1_map" use="on"/>
 	    <!-- /dev/itm0 -->
       <dev name="dev_cmsis_itm0_map"             use="on"/>
 	    <!-- /dev/debug -->
@@ -172,9 +172,9 @@
 </binaries>
 
 <!-- /usr/bin -->
-<binaries src_path="bin/tst" dest_path="bin/tst">
+<!--binaries src_path="bin/tst" dest_path="bin/tst">
         <bin name="tsteth"        stack="2048"    priority="100"  timeslice="5" />
-</binaries>
+</binaries/-->
 
 <files>
    <!-- /usr/etc  (hda internal flash mount on /bin) -->
@@ -182,7 +182,7 @@
       <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_win32_with_net"      dest_path="etc" />
    </target>
     <target name="cortexm_lepton">
-      <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_olimex_with_net"  dest_path="etc" />
+      <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init"  dest_path="etc" />
    </target>
    <file name=".boot"      src_file="c:/tauon/sys/user/tauon-basic/etc/.boot"               dest_path="etc" />
    <file name=".mount"     src_file="c:/tauon/sys/user/tauon-basic/etc/.mount"              dest_path="etc" />

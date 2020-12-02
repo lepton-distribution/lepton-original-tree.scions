@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -127,7 +127,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>22</version>
+          <version>24</version>
           <state>39</state>
         </option>
         <option>
@@ -144,7 +144,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>22</version>
+          <version>24</version>
           <state>39</state>
         </option>
         <option>
@@ -167,7 +167,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>22</version>
+          <version>24</version>
           <state>39</state>
         </option>
       </data>
@@ -663,7 +663,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>16</version>
+        <version>18</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -935,7 +935,7 @@
         </option>
         <option>
           <name>CrcAlgorithm</name>
-          <version>0</version>
+          <version>1</version>
           <state>1</state>
         </option>
         <option>
@@ -946,6 +946,14 @@
         <option>
           <name>IlinkThreadsSlave</name>
           <state>1</state>
+        </option>
+        <option>
+          <name>IlinkLogCallGraph</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkIcfFile_AltDefault</name>
+          <state></state>
         </option>
       </data>
     </settings>
@@ -966,12 +974,17 @@
         </option>
         <option>
           <name>IarchiveOutput</name>
-          <state>C:\tauon\building\output\$PROJ_FNAME$\$CONFIG_NAME$\Exe\bsp_discovery_f4_7.30.a</state>
+          <state>C:\tauon\building\output\$PROJ_FNAME$\$CONFIG_NAME$\Exe\bsp-stm32f469i-eval.a</state>
         </option>
       </data>
     </settings>
     <settings>
       <name>BILINK</name>
+      <archiveVersion>0</archiveVersion>
+      <data/>
+    </settings>
+    <settings>
+      <name>Coder</name>
       <archiveVersion>0</archiveVersion>
       <data/>
     </settings>
@@ -1101,7 +1114,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>22</version>
+          <version>24</version>
           <state>1</state>
         </option>
         <option>
@@ -1118,7 +1131,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>22</version>
+          <version>24</version>
           <state>0</state>
         </option>
         <option>
@@ -1141,7 +1154,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>22</version>
+          <version>24</version>
           <state>0</state>
         </option>
       </data>
@@ -1618,7 +1631,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>16</version>
+        <version>18</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1890,7 +1903,7 @@
         </option>
         <option>
           <name>CrcAlgorithm</name>
-          <version>0</version>
+          <version>1</version>
           <state>1</state>
         </option>
         <option>
@@ -1901,6 +1914,14 @@
         <option>
           <name>IlinkThreadsSlave</name>
           <state>1</state>
+        </option>
+        <option>
+          <name>IlinkLogCallGraph</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkIcfFile_AltDefault</name>
+          <state></state>
         </option>
       </data>
     </settings>
@@ -1930,6 +1951,11 @@
       <archiveVersion>0</archiveVersion>
       <data/>
     </settings>
+    <settings>
+      <name>Coder</name>
+      <archiveVersion>0</archiveVersion>
+      <data/>
+    </settings>
   </configuration>
   <group>
     <name>kernel</name>
@@ -1938,20 +1964,38 @@
       <group>
         <name>bsp</name>
         <group>
-          <name>discovery_f4</name>
+          <name>stm32f469i_eval</name>
           <group>
-            <name>dev_discovery_f4_board</name>
+            <name>dev_stm32f469i_eval_board</name>
             <file>
-              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\discovery_f4\dev_discovery_f4_board\dev_discovery_f4_board.c</name>
+              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\stm32f469i-eval\dev_stm32f469i_eval_board\dev_stm32f469i_eval_board.c</name>
             </file>
             <file>
-              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\discovery_f4\dev_discovery_f4_board\dev_discovery_f4_board.h</name>
+              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\stm32f469i-eval\dev_stm32f469i_eval_board\dev_stm32f469i_eval_board.h</name>
             </file>
           </group>
           <group>
-            <name>dev_discovery_f4_peripherals</name>
+            <name>dev_stm32f469i_eval_peripherals</name>
             <file>
-              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\discovery_f4\dev_discovery_f4_peripherals\dev_discovery_f4_uart_6.c</name>
+              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\stm32f469i-eval\dev_stm32f469i_eval_peripherals\dev_stm32f469i_eval_i2c_1.c</name>
+              <excluded>
+                <configuration>Debug</configuration>
+              </excluded>
+            </file>
+            <file>
+              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\stm32f469i-eval\dev_stm32f469i_eval_peripherals\dev_stm32f469i_eval_spi_1.c</name>
+              <excluded>
+                <configuration>Debug</configuration>
+              </excluded>
+            </file>
+            <file>
+              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\stm32f469i-eval\dev_stm32f469i_eval_peripherals\dev_stm32f469i_eval_spi_2.c</name>
+              <excluded>
+                <configuration>Debug</configuration>
+              </excluded>
+            </file>
+            <file>
+              <name>$PROJ_DIR$\..\..\..\..\src\kernel\dev\bsp\stm32f469i-eval\dev_stm32f469i_eval_peripherals\dev_stm32f469i_eval_usart_1.c</name>
             </file>
           </group>
         </group>
