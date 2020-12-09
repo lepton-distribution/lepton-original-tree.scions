@@ -133,10 +133,10 @@ either the MPL or the [eCos GPL] License."
 #define KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX	(1 << 6)
 #define KSZ8873MLL_GLOBAL_CONTROL_4_SPEED	   (1 << 4)
 /* Mask Value for olimex micrel PHY */
-#define PHY_100BTX_FULL                    ((uint16_t)0)
-#define PHY_100BTX_HALF							 ((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX))
-#define PHY_10M_FULL								 ((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_SPEED))
-#define PHY_10M_HALF								 ((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_SPEED|KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX))
+#define PHY_100BTX_FULL        ((uint16_t)0)
+#define PHY_100BTX_HALF		((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX))
+#define PHY_10M_FULL            ((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_SPEED))
+#define PHY_10M_HALF		((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_SPEED|KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX))
    
 
 //#define PHY_100BTX_FULL                      (18)
