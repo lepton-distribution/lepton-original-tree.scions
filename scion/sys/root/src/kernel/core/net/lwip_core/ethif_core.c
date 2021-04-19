@@ -536,7 +536,7 @@ int ethif_core_periodic_input(struct lwip_if_st *lwip_if_head){
       //go to next interface
       p_lwip_if=p_lwip_if->lwip_if_next;
    }
-   if(r<0) {
+   if(r<=0) {
       struct timespec abs_timeout;
 
       abs_timeout.tv_sec   = (ETHIF_CORE_INPUT_DELAY/1000);
