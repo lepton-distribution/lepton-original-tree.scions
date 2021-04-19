@@ -84,14 +84,17 @@ int echo_main(int argc, char* argv[]);
 //see "sbin/stty.c"
 int stty_main(int argc, char* argv[]);
 
-//see "sbin/net/ifconfig.c"
-int ifconfig_main(int argc, char* argv[]);
+//see "bin/test2.c"
+int test2_main(int argc, char* argv[]);
 
-//see "bin/ckpd.c"
-int ckpd_main(int argc, char* argv[]);
+//see "bin/tstbrd.c"
+int tstbrd_main(int argc, char* argv[]);
 
-//see "bin/net/telnetd.c"
-int telnetd_main(int argc, char* argv[]);
+//see "bin/bretd.c"
+int bretd_main(int argc, char* argv[]);
+
+//see "bin/tun2opt.c"
+int tun2opt_main(int argc, char* argv[]);
 
 
 
@@ -120,9 +123,10 @@ static const bin_t _bin_lst[]={
 {          "date",			                  date_main,			100,			2048,			1},
 {          "echo",			                  echo_main,			100,			2048,			1},
 {          "stty",			                  stty_main,			100,			2048,			1},
-{      "ifconfig",			              ifconfig_main,			100,			4096,			1},
-{          "ckpd",			                  ckpd_main,			100,			4096,			1},
-{       "telnetd",			               telnetd_main,			100,			2048,			1}
+{         "test2",			                 test2_main,			100,			1024,			5},
+{        "tstbrd",			                tstbrd_main,			100,			4096,			5},
+{         "bretd",			                 bretd_main,			100,			4096,			5},
+{       "tun2opt",			               tun2opt_main,			100,			4096,			5}
 };
 
 const int bin_lst_size   = sizeof(_bin_lst)/sizeof(bin_t);

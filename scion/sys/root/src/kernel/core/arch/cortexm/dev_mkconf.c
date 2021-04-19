@@ -35,16 +35,16 @@ extern dev_map_t  dev_proc_map;
 extern dev_map_t  dev_cpufs_map;
 extern dev_map_t  dev_head_map;
 extern dev_map_t  dev_pipe_map;
-extern dev_map_t  dev_mem_map;
-extern dev_map_t  dev_lwip_core_socket_map;
-extern dev_map_t  dev_lwip_stack_map;
-extern dev_map_t  dev_samv7x_cpu_x_map;
-extern dev_map_t  dev_same70xplained_board_map;
-extern dev_map_t  dev_samv71xplained_ultra_usart_1_map;
-extern dev_map_t  dev_samv71xplained_ultra_uart_4_map;
-extern dev_map_t  dev_same70xplained_i2c_0_map;
-extern dev_map_t  dev_samv7x_adc0_map;
-extern dev_map_t  dev_samv7x_eth_map;
+extern dev_map_t  dev_stm32f4xx_cpu_x_map;
+extern dev_map_t  dev_bret_interface_board_map;
+extern dev_map_t  dev_bret_interface_gpio_map;
+extern dev_map_t  dev_bret_interface_usart_1_map;
+extern dev_map_t  dev_bret_interface_uart_4_map;
+extern dev_map_t  dev_bret_interface_uart_5_map;
+extern dev_map_t  dev_bret_interface_i2c_1_map;
+extern dev_map_t  dev_bret_interface_adc3_map;
+extern dev_map_t  dev_cmsis_itm0_map;
+extern dev_map_t  dev_os_debug_map;
 
 
 pdev_map_t const dev_lst[]={
@@ -53,16 +53,16 @@ pdev_map_t const dev_lst[]={
 &dev_cpufs_map,
 &dev_head_map,
 &dev_pipe_map,
-&dev_mem_map,
-&dev_lwip_core_socket_map,
-&dev_lwip_stack_map,
-&dev_samv7x_cpu_x_map,
-&dev_same70xplained_board_map,
-&dev_samv71xplained_ultra_usart_1_map,
-&dev_samv71xplained_ultra_uart_4_map,
-&dev_same70xplained_i2c_0_map,
-&dev_samv7x_adc0_map,
-&dev_samv7x_eth_map
+&dev_stm32f4xx_cpu_x_map,
+&dev_bret_interface_board_map,
+&dev_bret_interface_gpio_map,
+&dev_bret_interface_usart_1_map,
+&dev_bret_interface_uart_4_map,
+&dev_bret_interface_uart_5_map,
+&dev_bret_interface_i2c_1_map,
+&dev_bret_interface_adc3_map,
+&dev_cmsis_itm0_map,
+&dev_os_debug_map
 };
 
 pdev_map_t const * pdev_lst=&dev_lst[0];
