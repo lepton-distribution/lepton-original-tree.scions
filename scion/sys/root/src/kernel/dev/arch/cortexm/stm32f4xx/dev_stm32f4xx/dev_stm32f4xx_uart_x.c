@@ -42,19 +42,50 @@ Includes
 #include "kernel/core/core_rttimer.h"
 #include "kernel/fs/vfs/vfstypes.h"
 
-
 #include "kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/types.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/gpio.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/uart.h"
 
-#include "dev_stm32f4xx_uart_x.h"
-
 #include "lib/libc/termios/termios.h"
+
+#include "dev_stm32f4xx_uart_x.h"
 
 /*===========================================
 Global Declaration
 =============================================*/
+
+//
+typedef struct s2s {
+   speed_t ts;
+   long ns;
+}s2s_t;
+
+static s2s_t const s2s[] = {
+   { B0,                0 },
+   { B50,              50 },
+   { B75,              75 },
+   { B110,            110 },
+   { B134,            134 },
+   { B150,            150 },
+   { B200,            200 },
+   { B300,            300 },
+   { B600,            600 },
+   { B1200,          1200 },
+   { B1800,          1800 },
+   { B2400,          2400 },
+   { B4800,          4800 },
+   { B9600,          9600 },
+   { B19200,        19200 },
+   { B38400,        38400 },
+   { B57600,        57600 },
+   { B115200,      115200 },
+   { B230400,      230400 },
+   { B460800,      460800 }
+};
+
+
+
 int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
 int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
 
@@ -72,6 +103,34 @@ int dev_stm32f4xx_uart_x_seek(desc_t desc,int offset,int origin);
 /*===========================================
 Implementation
 =============================================*/
+
+/*-------------------------------------------
+| Name:termios2ttys
+| Description:
+| Parameters:
+| Return Type:
+| Comments:
+| See:
+---------------------------------------------*/
+static int dev_stm32f4xx_uart_x_termios2ttys(struct termios* termios_p, board_stm32f4xx_uart_info_t * uart_info){
+   const struct s2s *sp;
+   long n_speed;
+   speed_t speed;
+
+   //speed
+   speed = cfgetospeed(termios_p);
+   for (sp = s2s; sp < s2s + (sizeof(s2s) / sizeof(s2s[0])); sp++){
+      if (sp->ts == speed){
+         n_speed = sp->ns;
+         // Set baud rate
+         uart_set_baudrate(&uart_info->uart_descriptor,n_speed);         
+         break;
+      }
+   }
+
+   return 0;
+}
+
 /*-------------------------------------------
 | Name:dev_stm32f4xx_uart_x_load
 | Description:
@@ -106,7 +165,7 @@ int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag,
          uart_info->baudrate=115200;
       }
       //
-      uart_open(&uart_info->uart_descriptor, uart_info->baudrate, 32, 256, 256, UART_HW_FLOW_CTRL_NONE, 0);
+      uart_open(&uart_info->uart_descriptor, uart_info->baudrate, 128, 256, 256, UART_HW_FLOW_CTRL_NONE, 0);
    }
    //
    if(o_flag & O_RDONLY) {
@@ -319,6 +378,34 @@ int dev_stm32f4xx_uart_x_ioctl(desc_t desc,int request,va_list ap) {
       }
       break;
       
+      
+      case TCSETS:
+      case TCSAFLUSH:
+      case TCSADRAIN:
+      case TCSANOW:{
+         termios_p = va_arg( ap, struct termios*);
+         //
+         board_stm32f4xx_uart_info_t * p_uart_info = (board_stm32f4xx_uart_info_t*)ofile_lst[desc].p;
+         if(!termios_p)
+            return -1;
+         //          
+         dev_stm32f4xx_uart_x_termios2ttys(termios_p,p_uart_info);
+      }
+      break;
+      
+      
+      //
+      case TIOCSSERIAL: {
+         unsigned long speed  = va_arg( ap, unsigned long);
+         board_stm32f4xx_uart_info_t * p_uart_info = (board_stm32f4xx_uart_info_t*)ofile_lst[desc].p;
+         if(speed==0){
+            return -1;
+         }
+         
+            uart_set_baudrate(&p_uart_info->uart_descriptor,speed);         
+      } break;
+
+        
       //
       case I_LINK:
       case I_UNLINK:

@@ -42,6 +42,7 @@ either the MPL or the [eCos GPL] License."
 | Declaration
 ==============================================*/
 
+//
 typedef struct board_stm32f4xx_uart_info_st {
    unsigned int com_no; 
    //
