@@ -147,6 +147,8 @@
   #include "kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f429xx.h"
 #elif defined(STM32F439xx)
   #include "stm32f439xx.h"
+#elif defined(STM32F469xx)
+  #include "kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f469xx.h"
 #elif defined(STM32F401xC)
   #include "stm32f401xc.h"
 #elif defined(STM32F401xE)
