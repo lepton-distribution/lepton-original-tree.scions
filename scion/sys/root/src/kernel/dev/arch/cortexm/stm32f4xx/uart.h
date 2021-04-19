@@ -98,4 +98,6 @@ int uart_write(const void *RdPtr, u16 Size, const _Uart_Descriptor *Uart);
 
 int uart_flush_rx(const _Uart_Descriptor *Uart);
 
+int uart_set_baudrate (const _Uart_Descriptor *Uart, u32 BaudRate);
+
 #endif /* __UART_H */

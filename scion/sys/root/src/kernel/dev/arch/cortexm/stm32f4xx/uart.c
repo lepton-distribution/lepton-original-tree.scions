@@ -202,6 +202,21 @@ int uart_close(const _Uart_Descriptor *Uart)
 
   return(0);
 }
+ 
+/*******************************************************************************
+* Function Name  : uart_set_baudrate
+* Description    : set baudrate of the UART port communication
+* Input          : - Uart: Select the USART or the UART peripheral
+*                : - BaudRate: Baud rate configuration
+* Output         : None
+* Return         : 0 if OK, -1 in case of error
+*******************************************************************************/
+int uart_set_baudrate (const _Uart_Descriptor *Uart, u32 BaudRate){
+   //
+   USART_ChangeBaudrate(Uart->UARTx,BaudRate);
+   //
+   return(0);
+}
 
 /*******************************************************************************
 * Function Name  : uart_irq_handler
@@ -278,10 +293,11 @@ void uart_irq_handler(const _Uart_Descriptor *Uart)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void uart_dma_irq_handler(const _Uart_Descriptor *Uart)
-{
+void uart_dma_irq_handler(const _Uart_Descriptor *Uart){
   //
   __hw_enter_interrupt();
+  //
+  uint32_t dma_it_all_mask;
   //
   if (*Uart->Ctrl)
   {
@@ -307,14 +323,56 @@ void uart_dma_irq_handler(const _Uart_Descriptor *Uart)
   #ifdef _UART_OS_SUPPORT
     isr_evt_set((*Uart->Ctrl)->Event, (*Uart->Ctrl)->Task);
   #endif
-  //phlb:20190701: to debug : fix
+  //phlb:20190701: to debug : fix stream_(I) -> DMA_IT_ALL_(I)
   // for nuodio: 
-  //DMA_ClearITPendingBit(Uart->DMAy_Streamx, /*DMA_IT_ALL_1*/DMA_IT_ALL_5);
+  //DMA_ClearITPendingBit(Uart->DMAy_Streamx, DMA_IT_ALL_5);
   //for techne/hrc2demo:
-  DMA_ClearITPendingBit(Uart->DMAy_Streamx,DMA_IT_ALL_1/*DMA_IT_ALL_5*/);
-  //
-  __hw_leave_interrupt();
-  //
+  //DMA_ClearITPendingBit(Uart->DMAy_Streamx,DMA_IT_ALL_1);
+  //for  bret interface usart1
+  //DMA_ClearITPendingBit(Uart->DMAy_Streamx,DMA_IT_ALL_2);
+  
+   //fix here
+#if 1
+   switch( ((uint32_t)(Uart->DMAy_Streamx)) & ((uint32_t)(0x000000FF)) ){
+      //
+      case (DMA1_Stream0_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_0;
+      break;
+      //
+      case (DMA1_Stream1_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_1;
+      break;
+      //
+      case (DMA1_Stream2_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_2;
+      break;
+      //
+      case (DMA1_Stream3_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_3;
+      break;         
+      //
+      case (DMA1_Stream4_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_4;
+      break;
+      //
+      case (DMA1_Stream5_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_5;
+      break;
+      //
+      case (DMA1_Stream6_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_6;
+      break;
+      //
+      case (DMA1_Stream7_BASE&0x000000FF):
+         dma_it_all_mask = DMA_IT_ALL_7;
+      break;      
+   }
+   //
+   DMA_ClearITPendingBit(Uart->DMAy_Streamx,dma_it_all_mask);
+#endif
+   //
+   __hw_leave_interrupt();
+   //
 }
 
 /*******************************************************************************
