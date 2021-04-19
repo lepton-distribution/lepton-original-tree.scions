@@ -54,7 +54,7 @@
       <env path="/usr;/usr/sbin;/usr/bin;usr/bin/net" />
 
       <!-- use ip stack (__KERNEL_NET_UIP)-->
-      <network use="off" />
+      <network use="on" />
    
 </kernel>
 
@@ -77,9 +77,9 @@
     <!-- /dev/socket uip-->
    <dev name="dev_uip_core_socket_map"    use="off"/>
    <!-- /dev/socket lwip-->
-   <dev name="dev_lwip_core_socket_map"   use="off"/>
+   <dev name="dev_lwip_core_socket_map"   use="on"/>
    <!-- /dev/ip lwip ip stack-->
-   <dev name="dev_lwip_stack_map"   use="off"/>
+   <dev name="dev_lwip_stack_map"   use="on"/>
 </devices>
 
 <target name="win32_lepton">
@@ -110,7 +110,7 @@
 	    <!-- /dev/debug -->
       <dev name="dev_os_debug_map"               use="on"/>
       <!-- /dev/eth0 -->
-      <dev name="dev_stm32f4xx_cubemx_eth_map"   use="off"/>
+      <dev name="dev_stm32f4xx_cubemx_eth_map"   use="on"/>
    </devices>
 </target>
 
@@ -163,12 +163,21 @@
    <bin name="stty"     stack="2048"    priority="100" timeslice="1" />
 </binaries>
 
+<binaries src_path="sbin/net" dest_path="sbin/net">
+      <bin name="ifconfig" stack="4096"  priority="100" timeslice="1" />
+</binaries>
+
 
 <!-- user binaries. -->
 <!-- /usr/bin -->
 <binaries src_path="bin" dest_path="bin">
         <bin name="test2"        stack="1024"    priority="100" timeslice="5" />
         <!--bin name="udpsrvd"      stack="2048"    priority="10" timeslice="5" /-->
+</binaries>
+
+<!-- /usr/bin/net -->
+<binaries src_path="bin/net" dest_path="bin/net">
+        <bin name="telnetd" stack="4096"    priority="100" timeslice="1" />        
 </binaries>
 
 <!-- /usr/bin -->
@@ -182,7 +191,7 @@
       <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_win32_with_net"      dest_path="etc" />
    </target>
     <target name="cortexm_lepton">
-      <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init"  dest_path="etc" />
+      <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_stm32_with_net"  dest_path="etc" />
    </target>
    <file name=".boot"      src_file="c:/tauon/sys/user/tauon-basic/etc/.boot"               dest_path="etc" />
    <file name=".mount"     src_file="c:/tauon/sys/user/tauon-basic/etc/.mount"              dest_path="etc" />
