@@ -221,6 +221,7 @@ void USART_DeInit(USART_TypeDef* USARTx)
   }
 }
 
+
 /**
   * @brief  Initializes the USARTx peripheral according to the specified
   *         parameters in the USART_InitStruct .
@@ -1465,5 +1466,55 @@ void USART_ClearITPendingBit(USART_TypeDef* USARTx, uint16_t USART_IT)
 /**
   * @}
   */
+
+//lepton 
+void USART_ChangeBaudrate(USART_TypeDef* USARTx,uint32_t BaudRate){
+  uint32_t tmpreg = 0x00, apbclock = 0x00;
+  uint32_t integerdivider = 0x00;
+  uint32_t fractionaldivider = 0x00;
+  RCC_ClocksTypeDef RCC_ClocksStatus;
+  
+  /*---------------------------- USART BRR Configuration -----------------------*/
+  /* Configure the USART Baud Rate */
+  RCC_GetClocksFreq(&RCC_ClocksStatus);
+
+  if ((USARTx == USART1) || (USARTx == USART6))
+  {
+    apbclock = RCC_ClocksStatus.PCLK2_Frequency;
+  }
+  else
+  {
+    apbclock = RCC_ClocksStatus.PCLK1_Frequency;
+  }
+  
+  /* Determine the integer part */
+  if ((USARTx->CR1 & USART_CR1_OVER8) != 0)
+  {
+    /* Integer part computing in case Oversampling mode is 8 Samples */
+    integerdivider = ((25 * apbclock) / (2 * (BaudRate)));    
+  }
+  else /* if ((USARTx->CR1 & USART_CR1_OVER8) == 0) */
+  {
+    /* Integer part computing in case Oversampling mode is 16 Samples */
+    integerdivider = ((25 * apbclock) / (4 * (BaudRate)));    
+  }
+  tmpreg = (integerdivider / 100) << 4;
+
+  /* Determine the fractional part */
+  fractionaldivider = integerdivider - (100 * (tmpreg >> 4));
+
+  /* Implement the fractional part in the register */
+  if ((USARTx->CR1 & USART_CR1_OVER8) != 0)
+  {
+    tmpreg |= ((((fractionaldivider * 8) + 50) / 100)) & ((uint8_t)0x07);
+  }
+  else /* if ((USARTx->CR1 & USART_CR1_OVER8) == 0) */
+  {
+    tmpreg |= ((((fractionaldivider * 16) + 50) / 100)) & ((uint8_t)0x0F);
+  }
+  
+  /* Write to USART BRR register */
+  USARTx->BRR = (uint16_t)tmpreg;
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

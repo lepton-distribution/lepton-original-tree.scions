@@ -412,6 +412,9 @@ void USART_ClearFlag(USART_TypeDef* USARTx, uint16_t USART_FLAG);
 ITStatus USART_GetITStatus(USART_TypeDef* USARTx, uint16_t USART_IT);
 void USART_ClearITPendingBit(USART_TypeDef* USARTx, uint16_t USART_IT);
 
+//lepton 
+void USART_ChangeBaudrate(USART_TypeDef* USARTx,uint32_t BaudRate);
+
 #ifdef __cplusplus
 }
 #endif
