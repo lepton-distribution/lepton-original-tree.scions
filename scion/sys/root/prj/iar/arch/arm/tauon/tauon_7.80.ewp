@@ -1231,7 +1231,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>00000000</state>
+          <state>11111110</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
@@ -1301,6 +1301,7 @@
           <name>CCIncludePath2</name>
           <state>C:/tauon/sys/root/src/kernel/core/ucore/freeRTOS_8-0-0/source/include</state>
           <state>C:/tauon/sys/root/src/kernel/core/ucore/freeRTOS_8-0-0/source/portable/IAR/ARM_CM4F</state>
+          <state>c:/tauon/sys/root/src/kernel/core/ucore/embOSCXM4_440/inc</state>
           <state>c:/tauon/sys/root/src/kernel/core/ucore/embOSCXM4_386/inc</state>
           <state>c:/tauon/sys/root/src/kernel/core/ucore/embOSCXM3_382/inc</state>
           <state>c:/tauon/sys/root/src/kernel/core/ucore/embOSARM7_360</state>
@@ -1334,16 +1335,16 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1414,7 +1415,7 @@
         <option>
           <name>CCOptStrategySlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCGuardCalls</name>
