@@ -83,18 +83,44 @@ dev_map_t dev_stm32f4xx_cpu_x_map={
 // Watchdog features (with value = see application layer)
 #define        WATCHDOG_KEY            0xA5   
 
+// independant watchdog hanlder
+static IWDG_HandleTypeDef hiwdg;
+
+//
+static uint32_t g_multiplier;
+
 /*===========================================
 Implementation
 =============================================*/
 
-static uint32_t g_multiplier;
- 
+//
+void UsageFault_Handler(void){
+   NVIC_SystemReset();
+}
+
+//
+void BusFault_Handler(void){
+   NVIC_SystemReset();
+}
+
+//
+void MemMang_Handler(void){
+   NVIC_SystemReset();
+}
+
+//
+void HardFault_Handler(void){
+   NVIC_SystemReset();
+}
+
+
+// 
 void TM_Delay_Init(void) {
     /* While loop takes 4 cycles */
     /* For 1 us delay, we need to divide with 4M */
     g_multiplier = HAL_RCC_GetHCLKFreq() / 4000000;
 }
- 
+//
 void TM_DelayMicros(uint32_t micros) {
     /* Multiply micros with multipler */
     /* Substract 10 */
@@ -102,7 +128,7 @@ void TM_DelayMicros(uint32_t micros) {
     /* 4 cycles for one loop */
     while (micros--);
 }
- 
+//
 void TM_DelayMillis(uint32_t millis) {
     /* Multiply millis with multipler */
     /* Substract 10 */
@@ -216,6 +242,31 @@ void SystemClock_Config(void)
 
 }
 #endif
+
+ 
+/* Initializes the IWDG 
+   Watchdog freq. is 32 kHz
+   Prescaler: Min_Value = 4 and Max_Value = 256
+   Reload: Min_Data = 0 and Max_Data = 0x0FFF
+   TimeOut in seconds = (Reload * Prescaler) / Freq.
+   MinTimeOut = (4 * 1) / 32000 = 0.000125 seconds (125 microseconds)
+   MaxTimeOut = (256 * 4096) / 32000 = 32.768 seconds
+  
+lepton: prescaler 64 reload = 250 Timeout=0.5s
+*/
+void WatchdogInit(void) {
+     
+    hiwdg.Instance = IWDG;
+    hiwdg.Init.Prescaler = IWDG_PRESCALER_64; 
+    hiwdg.Init.Reload = 250;                
+    HAL_IWDG_Init(&hiwdg);
+ 
+}
+ 
+/* Refreshes the IWDG. */
+void WatchdogRefresh(void) {
+    HAL_IWDG_Refresh(&hiwdg);
+}
 
 /*-------------------------------------------
 | Name:dev_stm32f4xx_cpu_reset
@@ -367,12 +418,9 @@ int dev_stm32f4xx_cpu_x_seek(desc_t desc,int offset,int origin){
 | Comments:
 | See:
 ---------------------------------------------*/
-int dev_stm32f4xx_cpu_x_ioctl(desc_t desc,int request,va_list ap)
-{
-   int wdgvalue=0;
+int dev_stm32f4xx_cpu_x_ioctl(desc_t desc,int request,va_list ap){
    
-    switch(request)
-    {
+    switch(request){
       //
       case CPUSRST:{
          NVIC_SystemReset();
@@ -380,20 +428,19 @@ int dev_stm32f4xx_cpu_x_ioctl(desc_t desc,int request,va_list ap)
       break;
       
       //
-      case CPUWDGDISABLE :
-      {
+      case CPUWDGDISABLE :{
       }      
       break;
       
       //
-      case CPUWDGREFRESH:
-      {
+      case CPUWDGREFRESH:{
+        WatchdogRefresh();
       }
       break;
 
       //
-      case CPUWDGINIT:
-      {
+      case CPUWDGINIT:{
+        WatchdogInit();
       }
       break;
       
