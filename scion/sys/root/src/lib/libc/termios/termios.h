@@ -143,7 +143,7 @@ typedef unsigned long speed_t;
 #define NCCS            20      /* size of cc_c array, some extra space
                                * for extensions. */
 
-#define __USE_MISC
+#define __USE_TERMIOS_MISC
 
 /* Primary terminal control structure. POSIX Table 7-1. */
 struct termios {
@@ -199,38 +199,40 @@ struct termios {
 #define ONLRET  0000040
 #define OFILL   0000100
 #define OFDEL   0000200
-#if defined __USE_MISC || defined __USE_XOPEN
-   # define NLDLY  0000400
-   # define   NL0  0000000
-   # define   NL1  0000400
-   # define CRDLY  0003000
-   # define   CR0  0000000
-   # define   CR1  0001000
-   # define   CR2  0002000
-   # define   CR3  0003000
-   # define TABDLY 0014000
-   # define   TAB0 0000000
-   # define   TAB1 0004000
-   # define   TAB2 0010000
-   # define   TAB3 0014000
-   # define BSDLY  0020000
-   # define   BS0  0000000
-   # define   BS1  0020000
-   # define FFDLY  0100000
-   # define   FF0  0000000
-   # define   FF1  0100000
+#if defined __USE_TERMIOS_MISC || defined __USE_TERMIOS_XOPEN
+   #if defined __USE_TERMIOS_DELAY
+      # define NLDLY  0000400
+      # define   NL0  0000000
+      # define   NL1  0000400
+      # define CRDLY  0003000
+      # define   CR0  0000000
+      # define   CR1  0001000
+      # define   CR2  0002000
+      # define   CR3  0003000
+      # define TABDLY 0014000
+      # define   TAB0 0000000
+      # define   TAB1 0004000
+      # define   TAB2 0010000
+      # define   TAB3 0014000
+      # define BSDLY  0020000
+      # define   BS0  0000000
+      # define   BS1  0020000
+      # define FFDLY  0100000
+      # define   FF0  0000000
+      # define   FF1  0100000
+   #endif
 #endif
 
 #define VTDLY   0040000
 #define   VT0   0000000
 #define   VT1   0040000
 
-#ifdef __USE_MISC
+#ifdef __USE_TERMIOS_MISC
    # define XTABS  0014000
 #endif
 
 /* c_cflag bit meaning */
-#ifdef __USE_MISC
+#ifdef __USE_TERMIOS_MISC
    # define CBAUD  0010017
 #endif
 #define  B0     0000000         /* hang up */
@@ -249,7 +251,7 @@ struct termios {
 #define  B9600  0000015
 #define  B19200 0000016
 #define  B38400 0000017
-#ifdef __USE_MISC
+#ifdef __USE_TERMIOS_MISC
    # define EXTA B19200
    # define EXTB B38400
 #endif
@@ -264,7 +266,7 @@ struct termios {
 #define PARODD  0001000
 #define HUPCL   0002000
 #define CLOCAL  0004000
-#ifdef __USE_MISC
+#ifdef __USE_TERMIOS_MISC
    # define CBAUDEX 0010000
 #endif
 #define  B57600   0010001
@@ -283,7 +285,7 @@ struct termios {
 #define  B3500000 0010016
 #define  B4000000 0010017
 #define __MAX_BAUD B4000000
-#ifdef __USE_MISC
+#ifdef __USE_TERMIOS_MISC
    # define CIBAUD   002003600000       /* input baud rate (not used) */
    # define CRTSCTS  020000000000       /* flow control */
 #endif
@@ -291,7 +293,7 @@ struct termios {
 /* c_lflag bits */
 #define ISIG    0000001
 #define ICANON  0000002
-#if defined __USE_MISC || defined __USE_XOPEN
+#if defined __USE_TERMIOS_MISC || defined __USE_TERMIOS_XOPEN
    # define XCASE  0000004
 #endif
 #define ECHO    0000010
@@ -300,7 +302,7 @@ struct termios {
 #define ECHONL  0000100
 #define NOFLSH  0000200
 #define TOSTOP  0000400
-#ifdef __USE_MISC
+#ifdef __USE_TERMIOS_MISC
    # define ECHOCTL 0001000
    # define ECHOPRT 0002000
    # define ECHOKE  0004000

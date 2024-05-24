@@ -73,9 +73,10 @@ typedef uint32_t fsfilcnt_t;
 
 //ugly patch for compatiblity IAR ARM7 Compiler :-(
 #if __IAR_SYSTEMS_ICC__> 1
-   #if !defined(__SIZE_T_TYPE__) || !defined(_SIZE_T) || !defined(_SIZET)
-   typedef unsigned int size_t;
-//#define __SIZE_T_TYPE__
+   //#if !defined(__SIZE_T_TYPE__) || !defined(_SIZE_T) || !defined(_SIZET)
+   #if !defined(_SIZE_T)
+      typedef unsigned int size_t;
+      //#define __SIZE_T_TYPE__
       #define _SIZE_T
       #define _SIZET
       #define _STD_USING_SIZE_T

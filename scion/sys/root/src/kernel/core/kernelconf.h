@@ -62,8 +62,9 @@ Includes
 #define __tauon_cpu_device_cortexM3_trifecta__     (0x1301)
 #define __tauon_cpu_device_cortexM3_LM3S__         (0x1302)
 #define __tauon_cpu_device_cortexM3_stm32f1__      (0x1303)
-#define __tauon_cpu_device_cortexm_k60n512__       (0x1402)
-#define __tauon_cpu_device_cortexM4_stm32f4__      (0x1401)
+#define __tauon_cpu_device_cortexm_k60n512__       (0x1401)
+#define __tauon_cpu_device_cortexM4_stm32f4__      (0x1402)
+#define __tauon_cpu_device_cortexM4_stm32wlxx__    (0x1403)
 
 
 #if defined(WIN32)
@@ -170,6 +171,10 @@ Includes
    #define __KERNEL_CPU_DEVICE_NAME "cortexM4-stm32f4"
    #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
 
+#elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32wlxx__
+   #define __KERNEL_CPU_DEVICE_NAME "cortexM4-stm32wlxx"
+   #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
+
 #elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM7_at91samv71__
    #define __KERNEL_CPU_DEVICE_NAME "cortexM7-atmel-samv71"
    #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM7__
@@ -209,7 +214,7 @@ Declaration
 #if (__tauon_compiler__==__compiler_win32__)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
 #elif (__tauon_compiler__==__compiler_iar_arm__) 
-   #if (__STDC_VERSION__== 199901L) 
+   #if (__STDC_VERSION__>= 199901L) 
       #define __KERNEL_COMPILER_STDINT_INCLUDED__
    #endif
 #endif

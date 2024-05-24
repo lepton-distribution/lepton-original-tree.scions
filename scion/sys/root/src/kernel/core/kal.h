@@ -1200,21 +1200,41 @@ typedef struct {
 #if   (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
        || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\
        || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)
-   #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
-      /*modif for 3.06h version*/ \
-      /*((OS_REGS OS_STACKPTR *)process_lst[pid]->pthread_ptr->tcb->pStack)->RetAdr4    = OS_MakeIntAdr(sig_handler);*/ \
-      /* First return adr (see OS_Private.h)*/ \
-      /*modif for 3.32 replace RetAdr4 by PC0 */ \
-      /*((OS_REGS OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC0= (OS_U32)(__sig_handler__);*/ \
-      /*modif for 3.52e and 3.60 replace PC0 by PC */ \
-      /*((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC= (OS_U32)(__sig_handler__);\*/\
-      /* GD - modif for 3.84, "PC" from OS_REGS_BASE struct changed to "OS_REG_PC" since embOS 3.84. for cotrex M3/M4 core */\
-      ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_REG_PC= (OS_U32)(__sig_handler__);\
-      ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->Counters= 0;\
-      __pthread_ptr__->tcb->Timeout=0; \
-      __pthread_ptr__->tcb->Stat=0; \
-      OS_MakeTaskReady(__pthread_ptr__->tcb); \
-}
+         
+   #if (OS_VERSION_GENERIC>=51800u)
+      #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
+         /*modif for 3.06h version*/ \
+         /*((OS_REGS OS_STACKPTR *)process_lst[pid]->pthread_ptr->tcb->pStack)->RetAdr4    = OS_MakeIntAdr(sig_handler);*/ \
+         /* First return adr (see OS_Private.h)*/ \
+         /*modif for 3.32 replace RetAdr4 by PC0 */ \
+         /*((OS_REGS OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC0= (OS_U32)(__sig_handler__);*/ \
+         /*modif for 3.52e and 3.60 replace PC0 by PC */ \
+         /*((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC= (OS_U32)(__sig_handler__);\*/\
+         /* GD - modif for 3.84, "PC" from OS_REGS_BASE struct changed to "OS_REG_PC" since embOS 3.84. for cotrex M3/M4 core */\
+         ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_REG_PC= (OS_U32)(__sig_handler__);\
+         ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_Global_Counters= 0;\
+         __pthread_ptr__->tcb->Timeout=0; \
+         __pthread_ptr__->tcb->Stat=0; \
+         OS_MakeTaskReady(__pthread_ptr__->tcb); \
+      }
+   #else
+      #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
+         /*modif for 3.06h version*/ \
+         /*((OS_REGS OS_STACKPTR *)process_lst[pid]->pthread_ptr->tcb->pStack)->RetAdr4    = OS_MakeIntAdr(sig_handler);*/ \
+         /* First return adr (see OS_Private.h)*/ \
+         /*modif for 3.32 replace RetAdr4 by PC0 */ \
+         /*((OS_REGS OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC0= (OS_U32)(__sig_handler__);*/ \
+         /*modif for 3.52e and 3.60 replace PC0 by PC */ \
+         /*((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC= (OS_U32)(__sig_handler__);\*/\
+         /* GD - modif for 3.84, "PC" from OS_REGS_BASE struct changed to "OS_REG_PC" since embOS 3.84. for cotrex M3/M4 core */\
+         ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_REG_PC= (OS_U32)(__sig_handler__);\
+         ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->Counters= 0;\
+         __pthread_ptr__->tcb->Timeout=0; \
+         __pthread_ptr__->tcb->Stat=0; \
+         OS_MakeTaskReady(__pthread_ptr__->tcb); \
+      }
+   #endif
+
 #elif  (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)
    #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
       /* phlb - modif for 3.88, "PC" from OS_REGS_BASE for arm7/arm9  core*/\
@@ -1223,7 +1243,7 @@ typedef struct {
       __pthread_ptr__->tcb->Timeout=0; \
       __pthread_ptr__->tcb->Stat=0; \
       OS_MakeTaskReady(__pthread_ptr__->tcb); \
-}
+   }
 #endif
 
 /*TS_WAIT_TIME*/

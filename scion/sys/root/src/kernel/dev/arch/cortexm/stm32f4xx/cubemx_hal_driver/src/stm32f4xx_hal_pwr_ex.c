@@ -367,26 +367,6 @@ HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling(uint32_t VoltageScaling)
 }
 #endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx */
 
-#if defined(STM32F469xx) || defined(STM32F479xx)
-/**
-  * @brief Enables Wakeup Pin Detection on high level (rising edge).
-  * @retval None
-  */
-void HAL_PWREx_EnableWakeUpPinPolarityRisingEdge(void)
-{
-  *(__IO uint32_t *) CSR_WUPP_BB = (uint32_t)DISABLE;
-}
-
-/**
-  * @brief Enables Wakeup Pin Detection on low level (falling edge).
-  * @retval None
-  */
-void HAL_PWREx_EnableWakeUpPinPolarityFallingEdge(void)
-{
-  *(__IO uint32_t *) CSR_WUPP_BB = (uint32_t)ENABLE;
-}
-#endif /* STM32F469xx || STM32F479xx */
-
 #if defined(STM32F401xC) || defined(STM32F401xE) || defined(STM32F410Tx) || defined(STM32F410Cx) || defined(STM32F410Rx) ||\
     defined(STM32F411xE) || defined(STM32F412Zx) || defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F412Cx) ||\
     defined(STM32F413xx) || defined(STM32F423xx)

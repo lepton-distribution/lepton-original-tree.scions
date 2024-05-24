@@ -1594,6 +1594,41 @@ void test_rotary(void) {
    return;
 }
 
+/*--------------------------------------------
+| Name:        test_radio
+| Description:
+| Parameters:  none
+| Return Type: none
+| Comments:
+| See:
+----------------------------------------------*/
+void test_radio(void) {
+   //
+   int fd_r;
+   int fd_w;
+   //
+   char buf[64];
+   int cb=0;
+   //
+   fd_r = open("/dev/radio",O_RDONLY,0);
+   fd_w = open("/dev/radio",O_WRONLY,0);
+   //
+   for(;;){
+      cb=read(fd_r,buf,sizeof(buf)); 
+      if(cb<=0){
+         continue;
+      }
+      //
+      buf[cb]='\0';
+      //
+      printf("rcv: %s\r\n",buf);
+      usleep(1500000);
+      printf("send PONG\r\n");
+      //
+      write(fd_w,"PONG",4);
+   }
+}
+
 /*-------------------------------------------
 | Name:sh_main
 | Description:
@@ -1633,7 +1668,10 @@ int test2_main(int argc,char* argv[]){
    #endif*/
 
    //write(1,"echo ctrl-x to exit\r\n",strlen("echo ctrl-x to exit\r\n"));
-
+   
+   //
+   test_radio();
+   
    //test_rotary();
    //test_lcd();
    //test_waitpid();
@@ -1649,7 +1687,7 @@ int test2_main(int argc,char* argv[]){
    //test_pthread1();
    //test_pthread_mutex1();
    //test_pthread_cond1();
-   test_pthread_tsd();
+   //test_pthread_tsd();
    //lock_test();
    //test_mqueue();
    //test_stdio();
