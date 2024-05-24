@@ -39,6 +39,8 @@ new features.
 
 Supported platforms:
    -. ARM Cortex-M7: Atmel SMART SAM V71 Xplained Ultra (Atmel)
+   -. ARM Cortex-M4: STM32WL55JCI Nucleo (ST stm32WL55JCI) with radio support.
+   -. ARM Cortex-M4: STM32F469I-EVAL (ST stm32F469) with Ethernet support.
    -. ARM Cortex-M4: STM32F4 Discovery (ST stm32F407)
    -. ARM Cortex-M4: STM32F4 nuodio project (ST stm32F429)
    -. ARM Cortex-M4: Olimex P407 (ST stm32F407)
