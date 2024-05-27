@@ -2105,7 +2105,7 @@
                                 </configuration>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\develec\rtstk-lepton\depots\lepton\original\master\scion\sys\root\src\kernel\dev\arch\cortexm\stm32f4xx\dev_stm32f4xx\dev_stm32f4xx_cubemx_eth.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\src\kernel\dev\arch\cortexm\stm32f4xx\dev_stm32f4xx\dev_stm32f4xx_cubemx_eth.c</name>
                                 <configuration>
                                     <name>Debug</name>
                                     <settings>
