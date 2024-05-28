@@ -150,6 +150,7 @@ uint32_t HAL_GetTick(void)
 }
 
 //stm32f469
+#ifdef STM32F469xx
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -199,9 +200,9 @@ void SystemClock_Config(void)
     return;
   }
 }
-
+#else
 //stm32f4xx
-#if 0
+
 void SystemClock_Config(void)
 {
 
