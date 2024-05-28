@@ -49,6 +49,7 @@ Includes
 /*===========================================
 Global Declaration
 =============================================*/
+#ifdef STM32F469xx
 
 #if defined ( __ICCARM__ ) /*!< IAR Compiler */
   #pragma data_alignment=4   
@@ -690,6 +691,8 @@ int dev_stm32f4xx_cubemx_eth_ioctl(desc_t desc,int request,va_list ap) {
    return 0;
 }
 
+//
+#endif //#ifdef STM32F469xx
 
 /*============================================
 | End of Source  : dev_stm32f4xx_cubemx_eth.c
