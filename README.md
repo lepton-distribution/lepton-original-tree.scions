@@ -1,5 +1,5 @@
 # lepton-original-tree.scions
-prerequisite scions for lepton operating system construction (python 3, windows 7 or more recent).
+prerequisite scions for lepton operating system construction (python 3, windows 10 or more recent).
 STILL UNDER CONSTRUCTION
 
 1) Install scion tool:
