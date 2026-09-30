@@ -30,6 +30,7 @@ Includes
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "kernel/core/errno.h"
 #include "kernel/core/types.h"

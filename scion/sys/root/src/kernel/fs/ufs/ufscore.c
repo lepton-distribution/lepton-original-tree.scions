@@ -500,6 +500,7 @@ int _ufs_makefs(desc_t dev_desc,struct vfs_formatopt_t* vfs_formatopt){
    pufs_nodealloc = superblk_info.psuperblk+superblk_info.alloc_blk_size;
    pufs_nodealloc[0]=0x01; //alloc root node;
 
+   memset(&blocknode,0,sizeof(blocknode)); //ino_mod et octets de remplissage : contenu de pile sinon
    _sys_gettimeofday(&tv,0L);
    blocknode.cmtime = tv.tv_sec;
 

@@ -855,9 +855,10 @@ extern int cyg_hal_sys_getpid(void);
  */
 
    #define __wait_io_int(__pthread_ptr__)
-   #define __wait_io_int2(__pthread_ptr__,timeout)
-   #define __wait_io_int3(__pthread_ptr__,timeout)
-   #define __wait_io_int_abstime(__pthread_ptr__,__abs_timeout__)
+   //sans ordonnanceur, aucune attente n'aboutit : échec immédiat (expressions, cf. kernel_io.c)
+   #define __wait_io_int2(__pthread_ptr__,timeout) (-1)
+   #define __wait_io_int3(__pthread_ptr__,timeout) (-1)
+   #define __wait_io_int_abstime(__pthread_ptr__,__abs_timeout__) (-1)
 /**
 * interdiction des interruptions matÃ©rielles
 *

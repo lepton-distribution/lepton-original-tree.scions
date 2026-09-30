@@ -43,6 +43,9 @@ Includes
 #include "kernel/fs/yaffs/yaffsinfo.h"
 #include "kernel/fs/fat/fatinfo.h"
 
+//déclaration anticipée : sinon « struct dirent » des prototypes ci-dessous est un type local
+struct dirent;
+
 /*===========================================
 Declaration
 =============================================*/

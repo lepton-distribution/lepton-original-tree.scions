@@ -63,8 +63,8 @@ typedef struct {
 
 
 //statvfs
-typedef unsigned short _vfs_fsblkcnt_t;
-typedef unsigned short _vfs_fsfilcnt_t;
+typedef unsigned int _vfs_fsblkcnt_t; //fsblkcnt_t (types.h)
+typedef unsigned int _vfs_fsfilcnt_t; //fsfilcnt_t (types.h)
 struct _vfs_statvfs_st {
    unsigned int f_bsize;    //file system block size
    unsigned int f_frsize;   //fundamental filesystem block size

@@ -96,7 +96,8 @@ Includes
 #elif (__tauon_compiler__==__compiler_gnuc__)
    #if defined(USE_KERNEL_STATIC)
       //for lepton as bootloader (no scheduler, static)
-       #include "kernel/core/arch/synthetic/x86_static/kernel_mkconf.h"
+      //configuration fixe du noyau statique, trouvée par chemin d'inclusion (cmake/kal/static.cmake)
+      #include "kernel_mkconf.h"
    #else
       #if defined(CPU_CORTEXM)
          #include "kernel/core/arch/cortexm/kernel_mkconf.h"
@@ -217,6 +218,9 @@ Declaration
    #if (__STDC_VERSION__>= 199901L) 
       #define __KERNEL_COMPILER_STDINT_INCLUDED__
    #endif
+#elif (__tauon_compiler__==__compiler_gnuc__)
+   //GCC : toujours C99 ou plus ; les types de <stdint.h> priment (etypes.h définissait int64_t en long)
+   #define __KERNEL_COMPILER_STDINT_INCLUDED__
 #endif
 
 #define __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 32

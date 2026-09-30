@@ -89,6 +89,7 @@ either the MPL or the [eCos GPL] License."
 #define XML_TAG_ATTR_BLOCK       "block"
 #define XML_TAG_ATTR_BLOCKSZ     "blocksz"
 #define XML_TAG_ATTR_OPTION      "option"
+#define XML_TAG_ATTR_INCABSPATH  "include_absolute_path"
 
 
 typedef enum {
