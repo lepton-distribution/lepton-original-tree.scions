@@ -1041,17 +1041,13 @@ done:                                           /* end of scan */
    #define MAX_IGNORED_DIGITS 2000
    #define MAX_ALLOWED_EXP (MAX_SIG_DIGITS + MAX_IGNORED_DIGITS + LDBL_MAX_10_EXP)
 
-   #if (__tauon_compiler__!=__compiler_iar_arm__)
       #if LDBL_DIG > MAX_SIG_DIGITS
          #error need to adjust MAX_SIG_DIGITS
       #endif
-   #endif
 
-   #if (__tauon_compiler__!=__compiler_iar_arm__)
       #if MAX_ALLOWED_EXP > INT_MAX
          #error size assumption violated for MAX_ALLOWED_EXP
       #endif
-   #endif
 
 int __strtold(long double *ld, struct scan_cookie *sc)
 {
