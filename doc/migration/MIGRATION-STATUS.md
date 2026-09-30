@@ -7,7 +7,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Étape | Statut | Date | Notes |
 |---|---|---|---|
-| 0 — Arbre des sources (scion) | TERMINÉ (validation utilisateur en attente) | 2026-09-30 | rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
+| 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
 | 1 — Inventaire | À FAIRE | | |
 | 2 — Build CMake, noyau statique, mklepton | À FAIRE | | |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
