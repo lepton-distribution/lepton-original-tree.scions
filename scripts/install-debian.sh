@@ -54,12 +54,13 @@ log "Outillage migration (cloc, coccinelle)"
 $SUDO apt-get install -y --no-install-recommends \
   cloc coccinelle
 
-# --- Bibliothèques i386 : binaire de référence mklepton_gnu (étape 1) ------
-log "Bibliothèques i386 (mklepton_gnu, oracle de l'étape 1)"
+# --- Bibliothèques i386 : noyau statique -m32 et mklepton (étape 2) ---------
+log "Bibliothèques i386 (noyau statique -m32, mklepton)"
 $SUDO dpkg --add-architecture i386
 $SUDO apt-get update
 $SUDO apt-get install -y --no-install-recommends libc6:i386 libexpat1:i386 \
-  || echo "AVERTISSEMENT: libc6:i386 / libexpat1:i386 non installées — mklepton_gnu ne pourra pas servir d'oracle."
+  gcc-multilib libexpat1-dev:i386 \
+  || echo "AVERTISSEMENT: bibliothèques i386 non installées — noyau statique et mklepton (-m32) non constructibles."
 # mklepton_gnu exige aussi libkernel.so (i386), absente de l'arbre : oracle binaire non exécutable
 # (étape 1, repli décidé le 2026-09-30).
 

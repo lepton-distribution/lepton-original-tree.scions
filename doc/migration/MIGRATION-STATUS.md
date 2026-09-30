@@ -60,7 +60,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Étape 2 — stockage de l'image UFS du noyau statique : nouveau pilote bloc sur fichier hôte portable (`kernel/dev/arch/host/`, POSIX `pread`/`pwrite`), successeur de `dev_linux_fileflash` gelé. |
 | 2026-09-30 | Étape 2 — sorties de mklepton : option `--output-dir` (`$LEPTON_BUILD/<preset>/generated/`) prioritaire sur les `dest_path` ; chemins d'entrée des mkconf rendus relatifs par script. |
 | 2026-09-30 | Étape 2 — second pilote logiciel du noyau statique : `dev_part` (doublon `dev_null` du guide, liste alphabétique). |
-| 2026-09-30 | Étape 2 — format UFS : structures écrites identiques x86_64 / i386 / arm-none-eabi (probe réel) ; noyau statique hôte en 64 bits natif, assertions statiques des deux côtés. |
+| 2026-09-30 | Étape 2 — format UFS : structures écrites identiques x86_64 / i386 / arm-none-eabi (probe réel) ; assertions statiques des deux côtés. |
+| 2026-09-30 | Étape 2 — noyau statique hôte compilé en 32 bits (`-m32`, ILP32 comme ARM) : le noyau transmet des `va_list` par argument variadique (`vfs.c`, `I_LINK`), impossible avec l'ABI x86_64. Paquets `gcc-multilib`, `libexpat1-dev:i386`. |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
