@@ -65,8 +65,15 @@ $SUDO apt-get install -y --no-install-recommends libc6:i386 \
 log "Toolchain ARM (gcc-arm-none-eabi + newlib)"
 $SUDO apt-get install -y --no-install-recommends \
   gcc-arm-none-eabi binutils-arm-none-eabi \
-  libnewlib-arm-none-eabi libnewlib-nano-arm-none-eabi \
+  libnewlib-arm-none-eabi \
   gdb-multiarch
+# newlib-nano est fourni par libnewlib-arm-none-eabi (libc_nano.a, nano.specs) : pas de paquet séparé.
+if arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 --specs=nano.specs \
+     -print-file-name=libc_nano.a | grep -q '^/'; then
+  echo "newlib-nano : OK"
+else
+  echo "AVERTISSEMENT: libc_nano.a introuvable pour cortex-m4 hard-float (newlib-nano)."
+fi
 
 # --- QEMU (socle mps2-an386, banc KAL) ----------------------------------------
 log "QEMU (system-arm)"
