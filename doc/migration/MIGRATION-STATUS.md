@@ -8,7 +8,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Étape | Statut | Date | Notes |
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
-| 1 — Inventaire | À FAIRE | | |
+| 1 — Inventaire | EN COURS | 2026-09-30 | branche `migration/etape-1` |
 | 2 — Build CMake, noyau statique, mklepton | À FAIRE | | |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
@@ -53,12 +53,14 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Trunk : chemins des mkconf rendus relatifs au trunk (à l'étape 2) ; pas de `tauon` dans `$HOME`. Rootstock `~/lepton` (`/home/lepton-user/lepton`), trunk au nom par défaut `trunk/`. Claude Code lancé à la racine du clone par `scripts/claude-lepton.sh`. Fichiers de migration à la racine du clone (hors `scion/`). |
 | 2026-09-30 | scion 0.5.0.1 conservé tel qu'installé par pipx depuis un clone local de `seed.scions` (`master` `e0adb2c`, 4 commits après le tag, écarts limités à `README.md`, `.gitignore`, `doc/` : code identique au tag) ; pas de réinstallation depuis le tag. |
 | 2026-09-30 | `archives/embOS` du paquet (paquet Segger sous licence) non copié dans le clone ; emplacement à décider avec la licence (étape 1). |
+| 2026-09-30 | Licence embOS : SEGGER Friendly License, usage évaluation / non commercial (redistribution interdite, SFL §1b) ; réévaluation avant tout usage produit. |
+| 2026-09-30 | Paquet embOS-Classic V5.20.0.0 Cortex-M GCC hors git, dans le rootstock : `~/lepton/third_party/embos/cortexm-gcc/5.20.0.0/` (copie de `archives/embOS`), exporté par `scripts/lepton-env.sh` en `LEPTON_EMBOS_ROOT`. |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
 | Étape | Décision |
 |---|---|
-| 1 | BSP embOS le plus proche du STM32F439 ; licence embOS (évaluation / production) et emplacement du paquet embOS (fourni hors dépôt dans `archives/embOS` du paquet de passation) ; sort du code gelé. |
+| 1 | BSP embOS le plus proche du STM32F439 (candidat : `ST/STM32F429_STM32F429ZI_Nucleo`) ; sort du code gelé ; repli mklepton (seulement si sources inutilisables). |
 | 2 | Second pilote logiciel du noyau statique (`dev_null` cité deux fois dans le guide) ; stockage de l'image UFS ; sorties de mklepton hors du trunk ; format UFS si différent entre hôte et ARM. |
 | 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11). |
 | 5 | Niveau d'optimisation final. |
@@ -73,7 +75,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Seed | `original-tree` | `083c30b`, `lepton-distribution/lepton-seed.scions` |
 | Arbre Lepton | `master` | `055fc602f32f` (clone du rootstock, 2026-09-30 ; identique au relevé du 2026-09-29), `lepton-distribution/lepton-original-tree.scions` (tag `version-4.9.0.2` présent ; la branche `main` ne contient qu'un commit initial vide) |
 | QEMU | ≥ 8.2 | cartes mémoire relevées sur 8.2.2 |
-| `gcc-arm-none-eabi`, embOS, CMake (≥ 3.24) | à consigner à l'étape 1 | |
+| embOS | embOS-Classic V5.20.0.0 Cortex-M GCC | `$LEPTON_EMBOS_ROOT` (hors git) ; pas de paquet RISC-V dans `archives/` |
+| `gcc-arm-none-eabi`, CMake (≥ 3.24) | à consigner à l'étape 1 | |
 
 ## Constats vérifiés sur l'arbre (2026-09-29/30)
 
