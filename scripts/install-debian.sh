@@ -58,8 +58,10 @@ $SUDO apt-get install -y --no-install-recommends \
 log "Bibliothèques i386 (mklepton_gnu, oracle de l'étape 1)"
 $SUDO dpkg --add-architecture i386
 $SUDO apt-get update
-$SUDO apt-get install -y --no-install-recommends libc6:i386 \
-  || echo "AVERTISSEMENT: libc6:i386 non installée — mklepton_gnu ne pourra pas servir d'oracle."
+$SUDO apt-get install -y --no-install-recommends libc6:i386 libexpat1:i386 \
+  || echo "AVERTISSEMENT: libc6:i386 / libexpat1:i386 non installées — mklepton_gnu ne pourra pas servir d'oracle."
+# mklepton_gnu exige aussi libkernel.so (i386), absente de l'arbre : oracle binaire non exécutable
+# (étape 1, repli décidé le 2026-09-30).
 
 # --- Toolchain croisée ARM (étapes 2 à 7) -------------------------------------
 log "Toolchain ARM (gcc-arm-none-eabi + newlib)"
