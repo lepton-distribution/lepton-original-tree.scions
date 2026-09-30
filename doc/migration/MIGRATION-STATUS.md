@@ -8,7 +8,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Étape | Statut | Date | Notes |
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
-| 1 — Inventaire | À FAIRE | | |
+| 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | À FAIRE | | |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
@@ -53,15 +53,18 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Trunk : chemins des mkconf rendus relatifs au trunk (à l'étape 2) ; pas de `tauon` dans `$HOME`. Rootstock `~/lepton` (`/home/lepton-user/lepton`), trunk au nom par défaut `trunk/`. Claude Code lancé à la racine du clone par `scripts/claude-lepton.sh`. Fichiers de migration à la racine du clone (hors `scion/`). |
 | 2026-09-30 | scion 0.5.0.1 conservé tel qu'installé par pipx depuis un clone local de `seed.scions` (`master` `e0adb2c`, 4 commits après le tag, écarts limités à `README.md`, `.gitignore`, `doc/` : code identique au tag) ; pas de réinstallation depuis le tag. |
 | 2026-09-30 | `archives/embOS` du paquet (paquet Segger sous licence) non copié dans le clone ; emplacement à décider avec la licence (étape 1). |
+| 2026-09-30 | Licence embOS : SEGGER Friendly License, usage évaluation / non commercial (redistribution interdite, SFL §1b) ; réévaluation avant tout usage produit. |
+| 2026-09-30 | Paquet embOS-Classic V5.20.0.0 Cortex-M GCC hors git, dans le rootstock : `~/lepton/third_party/embos/cortexm-gcc/5.20.0.0/` (copie de `archives/embOS`), exporté par `scripts/lepton-env.sh` en `LEPTON_EMBOS_ROOT`. |
+| 2026-09-30 | Code gelé : proposition `code-gele.md` acceptée, sauf Cortex-M7 Atmel SAMV71/SAME70 maintenu en différé (référence M7). Gelé : 765 fichiers / 158 061 lignes. |
+| 2026-09-30 | Oracle mklepton sans binaire : `libkernel.so` i386 absente, copie historique hors arbre non utilisée ; référence = sorties versionnées (`mklepton-ref.md`) ; image UFS validée par exécution sous QEMU (étape 3). Portage natif de mklepton maintenu (pas de repli). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
 | Étape | Décision |
 |---|---|
-| 1 | BSP embOS le plus proche du STM32F439 ; licence embOS (évaluation / production) et emplacement du paquet embOS (fourni hors dépôt dans `archives/embOS` du paquet de passation) ; sort du code gelé. |
 | 2 | Second pilote logiciel du noyau statique (`dev_null` cité deux fois dans le guide) ; stockage de l'image UFS ; sorties de mklepton hors du trunk ; format UFS si différent entre hôte et ARM. |
-| 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11). |
-| 5 | Niveau d'optimisation final. |
+| 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11) ; premier palier embOS soft-float (`libosT7LSP.a`) ou hard-float (`libosT7VHL*`). |
+| 5 | Niveau d'optimisation final ; BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` (proposition étape 1 : vecteur CRYP et RAM à adapter). |
 | 6 | Modèle exact de la Discovery F7 ; cartes M3 et M0+ ; suppression des fichiers IAR (tag `legacy-iar`). |
 | 7 | Devenir du backend embOS. |
 
@@ -73,7 +76,12 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Seed | `original-tree` | `083c30b`, `lepton-distribution/lepton-seed.scions` |
 | Arbre Lepton | `master` | `055fc602f32f` (clone du rootstock, 2026-09-30 ; identique au relevé du 2026-09-29), `lepton-distribution/lepton-original-tree.scions` (tag `version-4.9.0.2` présent ; la branche `main` ne contient qu'un commit initial vide) |
 | QEMU | ≥ 8.2 | cartes mémoire relevées sur 8.2.2 |
-| `gcc-arm-none-eabi`, embOS, CMake (≥ 3.24) | à consigner à l'étape 1 | |
+| embOS | embOS-Classic V5.20.0.0 Cortex-M GCC | `$LEPTON_EMBOS_ROOT` (hors git) ; pas de paquet RISC-V dans `archives/` |
+| `gcc-arm-none-eabi` | 14.2.1 (`15:14.2.rel1-1`), newlib 4.5.0.20241231 (nano inclus) | Debian 13, relevé 2026-09-30 |
+| CMake / Ninja | 3.31.6 / 1.12.1 | Debian 13 |
+| QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents |
+| OpenOCD / gdb-multiarch | 0.12.0 / 16.3 | règles udev `60-openocd.rules` |
+| cloc / coccinelle | 2.04 / 1.3 | |
 
 ## Constats vérifiés sur l'arbre (2026-09-29/30)
 
@@ -95,6 +103,17 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - QEMU `mps2-an386` : SSRAM `0x00000000` et `0x20000000` (4 Mo chacune), UART CMSDK à
   `0x40004000`–`0x40007000` et `0x40009000`, LAN9118 à `0x40200000` (`0xA0000000` sur `mps2-an500`).
 
+## Métriques de l'étape 1 (2026-09-30)
+
+| Mesure | Valeur | Source |
+|---|---|---|
+| Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 1511 / 409 081 ; gelé 765 / 158 061 ; hors-projet 762 / 192 635 | `perimetre.md` |
+| IAR-ismes (sévérité `iar`) | **actif 148** (Lepton 90, tiers 58) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
+| Sources dérivées | `mps2-an386` : 217 f / 74 323 l ; NUCLEO-F439ZI : 353 f (base Olimex P407) | `perimetre.md` |
+| Écart embOS 5.18.3.1 IAR → 5.20.0.0 GCC | actif : 189 occurrences, 25 fichiers ; 7 écarts (E1 bloquant : branche embOS de `kal.h` réservée IAR/Keil) | `embos-iar-vs-gcc.md` |
+| Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
+
 ## Blocages et dette
 
-(vide)
+- Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
+- Pièges à reprendre : `__compiler_directive__packed` vide sous GCC (3 usages actifs) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).

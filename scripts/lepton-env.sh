@@ -4,7 +4,8 @@
 # Exporte : LEPTON_ROOTSTOCK (répertoire portant .scion.rootstock.signature),
 #           LEPTON_TRUNK (arbre composé, répertoire portant .scion.grafted.list),
 #           LEPTON_CLONE (clone git de lepton-original-tree.scions),
-#           LEPTON_BUILD (répertoire de build, hors du trunk).
+#           LEPTON_BUILD (répertoire de build, hors du trunk),
+#           LEPTON_EMBOS_ROOT (paquet embOS Segger, hors git : licence SFL, décision 2026-09-30).
 # Ces variables sont propres au plan de migration ; scion lui-même n'en lit aucune.
 
 _lepton_find_rootstock() {
@@ -33,8 +34,10 @@ fi
 
 LEPTON_CLONE="$LEPTON_ROOTSTOCK/depots/lepton/original/master"
 LEPTON_BUILD="$LEPTON_ROOTSTOCK/build"
-export LEPTON_ROOTSTOCK LEPTON_TRUNK LEPTON_CLONE LEPTON_BUILD
+LEPTON_EMBOS_ROOT="${LEPTON_EMBOS_ROOT:-$LEPTON_ROOTSTOCK/third_party/embos/cortexm-gcc/5.20.0.0}"
+export LEPTON_ROOTSTOCK LEPTON_TRUNK LEPTON_CLONE LEPTON_BUILD LEPTON_EMBOS_ROOT
 echo "rootstock: $LEPTON_ROOTSTOCK"
 echo "trunk    : $LEPTON_TRUNK"
 echo "clone    : $LEPTON_CLONE ($(git -C "$LEPTON_CLONE" branch --show-current 2>/dev/null))"
 echo "build    : $LEPTON_BUILD"
+echo "embOS    : $LEPTON_EMBOS_ROOT"
