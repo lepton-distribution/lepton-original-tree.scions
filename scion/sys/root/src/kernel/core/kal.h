@@ -1154,19 +1154,39 @@ typedef int thr_id_t;
     #else
         #define OS_REG_PC   PC
     #endif
+
+   //Ecart E3 (embos-iar-vs-gcc.md) : avec FPU (OS_CPU_HAS_VFP, defini par RTOS.h), embOS sauvegarde
+   //un cadre etendu OS_REGS_BASE_FPU (S16-S31 avant R0, S0-S15 et FPSCR apres xPSR) pour une tache
+   //ayant un contexte FPU actif, signale par le bit 4 d'EXC_RETURN a 0 (meme position dans les deux
+   //cadres). Le contexte copie le cadre effectif ; sans FPU, cadre OS_REGS_GENERIC inchange.
+   #if defined(OS_CPU_HAS_VFP) && (OS_CPU_HAS_VFP == 1)
+      #define OS_REGS_CONTEXT    OS_REGS
+      #define __os_regs_is_fpu(__regs__) \
+         ((((OS_REGS_BASE OS_STACKPTR *)(__regs__))->OS_REG_EXC_RETURN & 0x10u) == 0u)
+      #define __os_regs_size(__regs__) \
+         (__os_regs_is_fpu(__regs__) ? sizeof(OS_REGS_BASE_FPU) : sizeof(OS_REGS_BASE))
+      #define __os_regs_pc(__regs__) \
+         (*(__os_regs_is_fpu(__regs__) \
+            ? &((OS_REGS OS_STACKPTR *)(__regs__))->Base_FPU.OS_REG_PC \
+            : &((OS_REGS OS_STACKPTR *)(__regs__))->Base.OS_REG_PC))
+   #else
+      #define OS_REGS_CONTEXT    OS_REGS_GENERIC
+      #define __os_regs_size(__regs__) sizeof(OS_REGS_GENERIC)
+      #define __os_regs_pc(__regs__) (((OS_REGS_GENERIC OS_STACKPTR *)(__regs__))->OS_REG_PC)
+   #endif
 typedef struct {
    OS_TASK os_task;
-      OS_REGS_GENERIC  os_regs;
+      OS_REGS_CONTEXT  os_regs;
 }context_t;
 
    #define __inline_bckup_thread_start_context(__context__,__pthread_ptr__){ \
       memcpy(&__context__.os_task,__pthread_ptr__->tcb,sizeof(OS_TASK)); \
-      memcpy(&__context__.os_regs,((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack),sizeof(OS_REGS_GENERIC));\
+      memcpy(&__context__.os_regs,((OS_REGS_CONTEXT OS_STACKPTR *)__pthread_ptr__->tcb->pStack),__os_regs_size(__pthread_ptr__->tcb->pStack));\
 }
 
    #define __inline_bckup_context(__context__,__pthread_ptr__){ \
       memcpy(&__context__.os_task,__pthread_ptr__->tcb,sizeof(OS_TASK)); \
-      memcpy(&__context__.os_regs,((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack),sizeof(OS_REGS_GENERIC));\
+      memcpy(&__context__.os_regs,((OS_REGS_CONTEXT OS_STACKPTR *)__pthread_ptr__->tcb->pStack),__os_regs_size(__pthread_ptr__->tcb->pStack));\
 }
 
    #define __inline_rstr_context(__context__,__pthread_ptr__){ \
@@ -1175,7 +1195,7 @@ typedef struct {
       pPrev= __pthread_ptr__->tcb->pPrev; \
       pNext= __pthread_ptr__->tcb->pNext; \
       memcpy(__pthread_ptr__->tcb,&__context__.os_task,sizeof(OS_TASK)); \
-      memcpy(((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack),&__context__.os_regs,sizeof(OS_REGS_GENERIC));\
+      memcpy(((OS_REGS_CONTEXT OS_STACKPTR *)__pthread_ptr__->tcb->pStack),&__context__.os_regs,__os_regs_size(&__context__.os_regs));\
       __pthread_ptr__->tcb->pNext = pNext; \
       __pthread_ptr__->tcb->pPrev = pPrev; \
 }
@@ -1215,7 +1235,8 @@ typedef struct {
          /*modif for 3.52e and 3.60 replace PC0 by PC */ \
          /*((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC= (OS_U32)(__sig_handler__);\*/\
          /* GD - modif for 3.84, "PC" from OS_REGS_BASE struct changed to "OS_REG_PC" since embOS 3.84. for cotrex M3/M4 core */\
-         ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_REG_PC= (OS_U32)(__sig_handler__);\
+         /* E3 : PC du cadre effectif (etendu si FPU) ; OS_Global_Counters en tete des deux cadres */\
+         __os_regs_pc(__pthread_ptr__->tcb->pStack)= (OS_U32)(__sig_handler__);\
          ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_Global_Counters= 0;\
          __pthread_ptr__->tcb->Timeout=0; \
          __pthread_ptr__->tcb->Stat=0; \

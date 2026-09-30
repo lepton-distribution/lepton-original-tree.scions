@@ -11,6 +11,8 @@
  * Les séquences sont celles du noyau : core-segger/process.c (_sys_kill, _sys_kill_exit),
  * core-segger/fork.c (_sys_vfork, _sys_vfork_exit), core-segger/process.c (exec : contexte
  * de départ). Test choisi par l'argument semihosting ; code de sortie = nombre d'échecs.
+ * Variantes FPU (T1F, T4F, T6F, T7F ; ABI hard, OS_CPU_HAS_VFP) : la cible se bloque avec un
+ * contexte FPU actif, embOS sauvegarde alors un cadre étendu OS_REGS_BASE_FPU (écart E3).
  */
 #include <stdint.h>
 #include <stdarg.h>
@@ -58,6 +60,46 @@ static volatile int handler_on_target;
 static volatile int child_ran;
 static volatile uint32_t exec_sp;
 static uint32_t exec_regs[8];
+
+/* Cadre sauvegardé par embOS (RTOS.h) : étendu (FPU) si le bit 4 d'EXC_RETURN est à 0. Calcul
+   indépendant de kal.h (oracle du banc). */
+static int frame_is_fpu(const void* frame){
+   return (((const OS_REGS_BASE*)frame)->OS_REG_EXC_RETURN & 0x10u) == 0;
+}
+static uint32_t frame_size(const void* frame){
+   return frame_is_fpu(frame) ? sizeof(OS_REGS_BASE_FPU) : sizeof(OS_REGS_BASE);
+}
+
+/* variantes FPU : la cible doit être bloquée avec un cadre étendu */
+static int expect_fpu_frame;
+static void check_frame(void){
+   if(expect_fpu_frame)
+      TEST_ASSERT(frame_is_fpu(target_task.pStack), "cadre étendu (FPU) de la cible bloquée");
+}
+
+#if (OS_CPU_HAS_VFP == 1)
+void kal_fpu_hold(const uint32_t pattern[16], uint32_t out[16], void (*wait)(void));
+void kal_fpu_fill(uint32_t value);
+void kal_fpu_read(uint32_t out[16]);
+void kal_fpu_set_fpscr(uint32_t v);
+uint32_t kal_fpu_fpscr(void);
+uint32_t kal_cpu_control(void);
+uint32_t kal_fpu_fpccr(void);
+
+#define CONTROL_FPCA     0x4u
+#define FPCCR_ASPEN_LSPEN 0xC0000000u
+#define FPSCR_RMODE_RZ   0x00C00000u   /* arrondi vers zéro : FPSCR non défaut de l'ancienne image */
+
+static const uint32_t fpu_pattern[16] = {
+   0xF1600016u, 0xF1700017u, 0xF1800018u, 0xF1900019u, 0xF2000020u, 0xF2100021u, 0xF2200022u,
+   0xF2300023u, 0xF2400024u, 0xF2500025u, 0xF2600026u, 0xF2700027u, 0xF2800028u, 0xF2900029u,
+   0xF3000030u, 0xF3100031u
+};
+static uint32_t fpu_out[16];
+static volatile int fpu_ok;
+static volatile uint32_t exec_control, exec_fpscr;
+static uint32_t exec_fpu[16];
+#endif
 
 /* --- outils ------------------------------------------------------------------------------ */
 /* motif attendu au retour de kal_regs_hold (le contrôle négatif de T1 en attend un faux) */
@@ -116,6 +158,26 @@ static void target_hold(void){
    target_end();
 }
 
+#if (OS_CPU_HAS_VFP == 1)
+/* R4-R11 (kal_regs_hold) puis S16-S31 (kal_fpu_hold) maintenus pendant l'attente */
+static void wait_fpu(void){
+   kal_fpu_hold(fpu_pattern, fpu_out, wait_go);
+}
+
+static void target_fpu_hold(void){
+   kal_regs_hold(pattern, regs_out, wait_fpu);
+   regs_ok = regs_match();
+   fpu_ok = memcmp(fpu_out, fpu_pattern, sizeof(fpu_pattern)) == 0;
+   target_end();
+}
+
+/* ancienne image de T8 : contexte FPU actif, FPSCR non défaut */
+static void target_fpu_hold_rz(void){
+   kal_fpu_set_fpscr(FPSCR_RMODE_RZ);
+   target_fpu_hold();
+}
+#endif
+
 static void target_hold_timed(void){
    kal_regs_hold(pattern, regs_out, wait_timed);
    regs_ok = regs_match();
@@ -134,22 +196,40 @@ static void target_identity(void){
 }
 
 #define CANARY_WORDS 64
-static void target_vfork_parent(void){
+static void vfork_parent(void (*wait)(void)){
    volatile uint32_t canary[CANARY_WORDS];
    int i, ok = 1;
    for(i = 0; i < CANARY_WORDS; i++)
       canary[i] = 0xC0DE0000u + (uint32_t)i;
-   kal_regs_hold(pattern, regs_out, wait_go);
+   kal_regs_hold(pattern, regs_out, wait);
    for(i = 0; i < CANARY_WORDS; i++)
       if(canary[i] != 0xC0DE0000u + (uint32_t)i)
          ok = 0;
    canary_ok = ok;
    regs_ok = regs_match();
+}
+
+static void target_vfork_parent(void){
+   vfork_parent(wait_go);
    target_end();
 }
 
+#if (OS_CPU_HAS_VFP == 1)
+static void target_vfork_parent_fpu(void){
+   vfork_parent(wait_fpu);
+   fpu_ok = memcmp(fpu_out, fpu_pattern, sizeof(fpu_pattern)) == 0;
+   target_end();
+}
+#endif
+
 static void exec_new_image(void){
    uint32_t sp;
+#if (OS_CPU_HAS_VFP == 1)
+   /* avant toute instruction flottante : CONTROL.FPCA dit si un contexte FPU est hérité */
+   exec_control = kal_cpu_control();
+   exec_fpscr = kal_fpu_fpscr();
+   kal_fpu_read(exec_fpu);
+#endif
    kal_regs_read(exec_regs);
    __asm volatile ("mov %0, sp" : "=r"(sp));
    exec_sp = sp;
@@ -167,10 +247,16 @@ static void sig_handler_common(int id){
 }
 static void sig_handler1(void){ sig_handler_common(1); }
 static void sig_handler2(void){ sig_handler_common(2); }
+#if (OS_CPU_HAS_VFP == 1)
+/* gestionnaires utilisant la FPU : écrasent S0-S31 de la cible */
+static void sig_handler_fpu1(void){ kal_fpu_fill(0x77777777u); sig_handler_common(1); }
+static void sig_handler_fpu2(void){ kal_fpu_fill(0x66666666u); sig_handler_common(2); }
+#endif
 
 /* fils de vfork : même tâche, même pile ; écrase la pile vive du parent au-dessus de son SP */
 static void vfork_child(void){
-   uint32_t* p = (uint32_t*)((uint8_t*)tp.bckup_context.os_task.pStack + sizeof(OS_REGS_BASE));
+   uint32_t* p = (uint32_t*)((uint8_t*)tp.bckup_context.os_task.pStack
+                             + frame_size(&tp.bckup_context.os_regs));
    uint32_t* end = (uint32_t*)tp.start_context.os_task.pStack;
    child_ran = 1;
    while(p < end)
@@ -179,6 +265,12 @@ static void vfork_child(void){
    for(;;)
       OS_TASKEVENT_GetBlocked(EV_HX);
 }
+#if (OS_CPU_HAS_VFP == 1)
+static void vfork_child_fpu(void){
+   kal_fpu_fill(0x55555555u);
+   vfork_child();
+}
+#endif
 
 /* --- tests (contrôleur) -------------------------------------------------------------------- */
 static void finish_target(const char* t){
@@ -225,7 +317,7 @@ static int test_t2(void){
 
    entry_count = 0;
    target_create(target_count_entry, 1);
-   f = &tp.start_context.os_regs;
+   f = (OS_REGS_BASE*)&tp.start_context.os_regs;
    sp = (uint32_t)tp.start_context.os_task.pStack;
    kal_test_put_u32("T2 : PC de départ = ", f->OS_REG_PC);
    TEST_ASSERT(f->OS_REG_XPSR & 0x01000000u, "T2 : bit T d'xPSR du contexte de départ");
@@ -265,12 +357,13 @@ static void deroute_exit(void){
 }
 
 /* T4 : déroutement simple */
-static int test_t4(void){
+static int t4_run(void (*routine)(void), void (*handler)(void)){
    regs_ok = 0;
    handler_count = 0;
    handler_on_target = 0;
-   target_create(target_hold, 0);
-   TEST_ASSERT(deroute(sig_handler1) == 0, "T4 : gestionnaire exécuté");
+   target_create(routine, 0);
+   check_frame();
+   TEST_ASSERT(deroute(handler) == 0, "T4 : gestionnaire exécuté");
    TEST_ASSERT(handler_on_target, "T4 : gestionnaire exécuté dans la tâche cible");
    deroute_exit();
    OS_TASKEVENT_Set(&target_task, EV_GO);
@@ -278,6 +371,10 @@ static int test_t4(void){
    TEST_ASSERT(handler_count == 1, "T4 : un seul passage dans le gestionnaire");
    TEST_ASSERT(regs_ok, "T4 : R4-R11 intacts après retour du gestionnaire");
    return 0;
+}
+
+static int test_t4(void){
+   return t4_run(target_hold, sig_handler1);
 }
 
 /* T5 : déroutement pendant une attente temporisée (appel système préemptible) */
@@ -295,12 +392,13 @@ static int test_t5(void){
 
 /* T6 : second signal pendant le gestionnaire : mis en attente (PTHREAD_STATUS_SIGHANDLER,
    _sys_kill), puis délivré à la sortie du premier (_sys_kill_exit) */
-static int test_t6(void){
+static int t6_run(void (*routine)(void), void (*h1)(void), void (*h2)(void)){
    int pending = 0;
    regs_ok = 0;
    handler_count = 0;
-   target_create(target_hold, 0);
-   TEST_ASSERT(deroute(sig_handler1) == 0, "T6 : premier gestionnaire");
+   target_create(routine, 0);
+   check_frame();
+   TEST_ASSERT(deroute(h1) == 0, "T6 : premier gestionnaire");
    if(tp.stat & PTHREAD_STATUS_SIGHANDLER)
       pending = 1;                           /* second signal : en attente */
    else
@@ -308,7 +406,7 @@ static int test_t6(void){
    __rstr_context(tp.bckup_context, (&tp));  /* sortie du premier */
    tp.stat &= ~PTHREAD_STATUS_SIGHANDLER;
    if(pending)
-      TEST_ASSERT(deroute(sig_handler2) == 0, "T6 : second gestionnaire délivré à la sortie du premier");
+      TEST_ASSERT(deroute(h2) == 0, "T6 : second gestionnaire délivré à la sortie du premier");
    deroute_exit();
    OS_TASKEVENT_Set(&target_task, EV_GO);
    finish_target("T6 : reprise après les deux gestionnaires");
@@ -318,11 +416,16 @@ static int test_t6(void){
    return 0;
 }
 
+static int test_t6(void){
+   return t6_run(target_hold, sig_handler1, sig_handler2);
+}
+
 /* T7 : vfork (_sys_vfork / _sys_vfork_exit) */
-static int test_t7(void){
+static int t7_run(void (*parent)(void), void (*child)(void)){
    kernel_pthread_t* backup;
    regs_ok = canary_ok = child_ran = 0;
-   target_create(target_vfork_parent, 1);
+   target_create(parent, 1);
+   check_frame();
    backup = (kernel_pthread_t*)_sys_malloc(sizeof(kernel_pthread_t));
    if(!backup) {
       TEST_ASSERT(0, "T7 : allocation");
@@ -333,7 +436,7 @@ static int test_t7(void){
    __bckup_stack(backup);
    tp.bckup_context = backup->bckup_context;        /* adresses vues par le fils */
    /* le fils poursuit sur la même tâche et la même pile */
-   __swap_signal_handler((&tp), vfork_child);
+   __swap_signal_handler((&tp), child);
    TEST_ASSERT(ctrl_wait(EV_H, 200), "T7 : fils exécuté");
    /* sortie du fils : restitution du parent */
    memcpy(&tp, backup, sizeof(kernel_pthread_t));
@@ -349,6 +452,10 @@ static int test_t7(void){
    return 0;
 }
 
+static int test_t7(void){
+   return t7_run(target_vfork_parent, vfork_child);
+}
+
 /* T8 : exec (recouvrement), comme _sys_exec (décision 2026-09-30) : la tâche de l'ancienne image
    est terminée, une nouvelle tâche est créée sur le même pthread et la même pile avec le nouveau
    point d'entrée, et son contexte de départ est sauvegardé (référence du vfork). */
@@ -356,18 +463,91 @@ static int test_t8(void){
    uint32_t top = (uint32_t)target_stack + sizeof(target_stack);
    exec_sp = 0;
    regs_ok = 0;
+#if (OS_CPU_HAS_VFP == 1)
+   target_create(target_fpu_hold_rz, 0);     /* ancienne image, bloquée avec ses motifs et sa FPU */
+   TEST_ASSERT(frame_is_fpu(target_task.pStack), "T8 : ancienne image bloquée avec un contexte FPU");
+#else
    target_create(target_hold, 0);            /* ancienne image, bloquée avec ses motifs */
+#endif
    target_create(exec_new_image, 1);         /* exec : terminaison, recréation, contexte de départ */
    finish_target("T8 : nouvelle image démarrée");
    kal_test_put_u32("T8 : SP de la nouvelle image = ", exec_sp);
    TEST_ASSERT(exec_sp > top - 256u && exec_sp <= top, "T8 : pile réinitialisée (haut de pile)");
    TEST_ASSERT(memcmp(exec_regs, pattern, sizeof(pattern)) != 0,
                "T8 : aucun registre de l'ancien flux ne survit");
+#if (OS_CPU_HAS_VFP == 1)
+   /* décision 2026-09-30 : contexte FPU non hérité (le banc de registres FPU est physique ; son
+      contenu résiduel est journalisé, pas exigé : dette de sécurité, isolation MPU) */
+   TEST_ASSERT(!frame_is_fpu(&tp.start_context.os_regs), "T8 : cadre de départ non étendu (sans FPU)");
+   TEST_ASSERT(!(exec_control & CONTROL_FPCA), "T8 : aucun contexte FPU hérité (CONTROL.FPCA = 0)");
+   TEST_ASSERT((exec_fpscr & FPSCR_RMODE_RZ) == 0, "T8 : FPSCR par défaut (mode d'arrondi non hérité)");
+   kal_test_put_u32("T8 : FPSCR de la nouvelle image = ", exec_fpscr);
+   kal_test_puts(memcmp(exec_fpu, fpu_pattern, sizeof(fpu_pattern)) == 0
+                 ? "T8 : S16-S31 résiduels = motifs de l'ancienne image (journalisé, non exigé)\n"
+                 : "T8 : S16-S31 résiduels différents des motifs de l'ancienne image\n");
+#endif
    OS_TASKEVENT_Set(&target_task, EV_GO);    /* l'ancienne image ne doit pas reprendre */
    OS_TASK_Delay(20);
    TEST_ASSERT(!regs_ok, "T8 : l'ancienne image ne reprend pas");
    return 0;
 }
+
+#if (OS_CPU_HAS_VFP == 1)
+/* T1F : T1 avec contexte FPU actif ; lazy stacking (FPCCR) actif */
+static int test_t1f(void){
+   static uint32_t snapshot[sizeof(OS_REGS_BASE_FPU) / 4];
+   OS_REGS_BASE_FPU* f;
+
+   TEST_ASSERT((kal_fpu_fpccr() & FPCCR_ASPEN_LSPEN) == FPCCR_ASPEN_LSPEN,
+               "T1F : lazy stacking actif (FPCCR ASPEN, LSPEN)");
+   regs_ok = fpu_ok = 0;
+   target_create(target_fpu_hold, 0);
+   f = (OS_REGS_BASE_FPU*)target_task.pStack;
+   if(!frame_is_fpu(f)) {
+      TEST_ASSERT(0, "T1F : cadre étendu (FPU) de la cible bloquée");
+      return -1;
+   }
+   memcpy(snapshot, f, sizeof(snapshot));
+   __bckup_context(tp.bckup_context, (&tp));
+   f->OS_REG_R4 = f->OS_REG_R5 = f->OS_REG_R6 = f->OS_REG_R7 = 0xDEAD0000u;
+   f->OS_REG_R8 = f->OS_REG_R9 = f->OS_REG_R10 = f->OS_REG_R11 = 0xDEAD0001u;
+   memset(&f->S16_S31, 0xEE, sizeof(f->S16_S31));
+   memset(&f->S0_S15, 0xEE, sizeof(f->S0_S15));
+   __rstr_context(tp.bckup_context, (&tp));
+   TEST_ASSERT(memcmp(snapshot, f, sizeof(snapshot)) == 0,
+               "T1F : cadre étendu restitué à l'identique (R4-R11, S0-S31, FPSCR)");
+   OS_TASKEVENT_Set(&target_task, EV_GO);
+   finish_target("T1F : fin de la cible");
+   TEST_ASSERT(regs_ok, "T1F : R4-R11 restaurés");
+   TEST_ASSERT(fpu_ok, "T1F : S16-S31 restaurés");
+   return 0;
+}
+
+/* T4F, T6F, T7F : cible bloquée avec un contexte FPU ; gestionnaires et fils écrasent S0-S31 */
+static int test_t4f(void){
+   fpu_ok = 0;
+   expect_fpu_frame = 1;
+   t4_run(target_fpu_hold, sig_handler_fpu1);
+   TEST_ASSERT(fpu_ok, "T4F : S16-S31 intacts après un gestionnaire qui les écrase");
+   return 0;
+}
+
+static int test_t6f(void){
+   fpu_ok = 0;
+   expect_fpu_frame = 1;
+   t6_run(target_fpu_hold, sig_handler_fpu1, sig_handler_fpu2);
+   TEST_ASSERT(fpu_ok, "T6F : S16-S31 intacts après deux gestionnaires qui les écrasent");
+   return 0;
+}
+
+static int test_t7f(void){
+   fpu_ok = 0;
+   expect_fpu_frame = 1;
+   t7_run(target_vfork_parent_fpu, vfork_child_fpu);
+   TEST_ASSERT(fpu_ok, "T7F : S16-S31 du parent restitués après un fils qui les écrase");
+   return 0;
+}
+#endif
 
 static int test_harness_fail(void){
    TEST_ASSERT(0, "échec volontaire (le harnais doit rendre un code non nul)");
@@ -378,6 +558,9 @@ static int test_harness_fail(void){
 static const struct { const char* name; int (*fn)(void); } tests[] = {
    { "T1", test_t1 }, { "T2", test_t2 }, { "T3", test_t3 }, { "T4", test_t4 },
    { "T5", test_t5 }, { "T6", test_t6 }, { "T7", test_t7 }, { "T8", test_t8 },
+#if (OS_CPU_HAS_VFP == 1)
+   { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
+#endif
    { "HARNESS_FAIL", test_harness_fail },
 };
 
