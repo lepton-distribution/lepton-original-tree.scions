@@ -357,13 +357,13 @@ extern int __g_kernel_static_errno;
 
 //RTC specific function
 #define __kernel_dev_settime(__desc,__buf,__size){ \
-   if(ofile_lst[desc].pfsop->fdev.pfdev_ext) \
-      ((fdev_rtc_t*)(ofile_lst[desc].pfsop->fdev.pfdev_ext))->fdev_rtc_settime(__desc,__buf,__size); \
+   if(ofile_lst[__desc].pfsop->fdev.pfdev_ext) \
+      ((fdev_rtc_t*)(ofile_lst[__desc].pfsop->fdev.pfdev_ext))->fdev_rtc_settime(__desc,__buf,__size); \
 }
 
 #define __kernel_dev_gettime(__desc,__buf,__size){ \
-   if(ofile_lst[desc].pfsop->fdev.pfdev_ext) \
-      ((fdev_rtc_t*)(ofile_lst[desc].pfsop->fdev.pfdev_ext))->fdev_rtc_gettime(__desc,__buf,__size); \
+   if(ofile_lst[__desc].pfsop->fdev.pfdev_ext) \
+      ((fdev_rtc_t*)(ofile_lst[__desc].pfsop->fdev.pfdev_ext))->fdev_rtc_gettime(__desc,__buf,__size); \
 }
 
 

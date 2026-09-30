@@ -307,6 +307,7 @@ inodenb_t _ufs_create(desc_t desc,char* filename, int attr){
       return -1;
 
    //set creation date
+   memset(&blocknode,0,sizeof(blocknode)); //ino_mod et octets de remplissage : contenu de pile sinon
    _sys_gettimeofday(&tv,0L);
    blocknode.cmtime = tv.tv_sec;
    //
@@ -319,6 +320,7 @@ inodenb_t _ufs_create(desc_t desc,char* filename, int attr){
 
    //Add entry;
    _ufs_open(desc);
+   memset(&dir,0,sizeof(dir)); //fin du nom : contenu de pile sinon
    dir.inode=(ufs_inodenb_t)__cvt2physnode(desc,_inode);
    strcpy(dir.name,filename);
    _ufs_seek(desc,0,SEEK_END);
