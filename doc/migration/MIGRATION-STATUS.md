@@ -10,7 +10,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
-| 3a — Noyau dynamique QEMU, UART | EN COURS | 2026-09-30 | paliers 1-3 et 6 verts (`lsh`, `uname -a`, `ls`, `ps`, UART1), 4 partiel, 5 en cours ; `ci/run.sh --no-kal` vert ; reste banc KAL T1-T8 et palier hard-float ; reprise : `handoff/etape-3a.md` (intermédiaire), journal `validation-qemu-mps2-an386.md` |
+| 3a — Noyau dynamique QEMU, UART | EN COURS | 2026-09-30 | paliers 1-3, 5 (KAL) et 6 verts, 4 partiel ; banc KAL T0-T8 vert (M4 soft-float) ; `ci/run.sh` complet vert ; reste palier hard-float (E3) ; reprise : `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
@@ -27,7 +27,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Cœur | embOS | FreeRTOS |
 |---|---|---|
-| m4 (`mps2-an386`) | T0 vert (soft-float, 2026-09-30) ; T1-T8 à faire | |
+| m4 (`mps2-an386`) | T0-T8 verts en soft-float (2026-09-30) ; hard-float à faire | |
 | m7 (`mps2-an500`) | | |
 | m3 (`mps2-an385`) | | |
 | m0 (`microbit`) | | |
@@ -68,6 +68,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Étape 3 — contenu de `bin` : tests POSIX T9-T11 du banc KAL (pseudo-binaires lancés depuis `lsh`). |
 | 2026-09-30 | Étape 3 — constat : avec embOS/Cortex-M, l'appel système est un événement embOS vers la tâche noyau (pas de SVC) ; aucun assembleur Lepton à traduire hormis démarrage et vecteurs (écart à ETAPE-3 tâche 2). |
 | 2026-09-30 | Étape 3 — embOS lié en mode SP en Debug (comme IAR) plutôt que DP ; puis verrou des appels système refondu en sémaphore (`core-segger/kernel_syscall_lock.c`) : embOS 5.20 n'accepte pas qu'un mutex soit rendu par une autre tâche que son propriétaire (DP : erreur ; SP : état incohérent et blocage). |
+| 2026-09-30 | Étape 3 — banc KAL : T2 et T8 alignés sur Lepton (amendement de `BANC-TEST-KAL-QEMU.md`) : pas de redémarrage depuis le contexte de départ (embOS 5.20 : routine et trampoline `OS_StartTask` au-dessus du cadre ; Lepton ne s'en sert que comme référence de pile du vfork, `exec` crée une nouvelle tâche). |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
@@ -126,6 +127,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 ## Blocages et dette
 
+- Étape 3 : `kernel/core/malloc.c` : `_sys_malloc`/`_sys_free` ne protègent l'allocation (section atomique) que `#if !defined(__GNUC__)` → sans protection sous GCC + embOS (malloc newlib non réentrant) ; à corriger (condition de plateforme au lieu du compilateur) — risque en multitâche. `RTOS.h` : avertissement `struct _reent` (type newlib absent en freestanding), sans effet constaté.
 - Étape 3 : E4 `OS_MakeTaskReady(OS_TASK*)` déclarée par Lepton (HYPOTHÈSE À VALIDER, non documentée par Segger) ; mode embOS SP au lieu de DP (retour à DP possible depuis le verrou en sémaphore, à vérifier) ; `__KERNEL_UCORE_EMBOS` posé par CMake et par les `user_kernel_mkconf.h` des cartes existantes (double définition compatible).
 - Étape 2 : `vfs.c` (I_LINK) transmet un `va_list` par argument variadique (non portable, cause du `-m32`) → passer `va_list*` à l'étape 4 ; `__kernel_set_errno` en mode statique n'enregistre rien ; backend `core-static` = 3ᵉ copie de l'amorçage (`_kernel_warmup_*`) ; `kernelconf.h` : `kernel_mkconf.h` des branches GCC croisées encore en chemin fixe (étape 3).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.

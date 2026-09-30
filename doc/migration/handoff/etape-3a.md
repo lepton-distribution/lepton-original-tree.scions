@@ -1,17 +1,17 @@
 # Handoff intermédiaire 3a (UART) — reprise de session
 
-État au 2026-09-30 : **3a EN COURS**. Paliers 1-3 et 6 verts, 4 partiel, 5 en cours
-(`validation-qemu-mps2-an386.md`). `ci/run.sh --no-kal` vert. Reste pour clore 3a : banc KAL
-T0-T8 (`tests/kal/`, label `kal`), palier hard-float, puis handoff final 3a.
+État au 2026-09-30 : **3a EN COURS**. Paliers 1-3, 5 (KAL) et 6 verts, 4 partiel
+(`validation-qemu-mps2-an386.md`). Banc KAL T0-T8 vert (M4 soft-float), `ci/run.sh` complet
+vert. Reste pour clore 3a : palier hard-float (E3), puis handoff final 3a.
 
 ## Reprendre ici
-1. `source scripts/lepton-env.sh && cd "$LEPTON_TRUNK"` ; `ci/run.sh --no-kal` doit être vert.
-2. Banc KAL (`BANC-TEST-KAL-QEMU.md`) : T0 = `smoke.lsh` (fait). T1-T8 : harnais
+1. `source scripts/lepton-env.sh && cd "$LEPTON_TRUNK"` ; `ci/run.sh` (banc KAL compris) doit être vert.
+2. FAIT — banc KAL (`tests/kal/`, `ctest -L kal`). Pour mémoire, conception : harnais
    `tests/kal/kal_test.h` (semihosting `SYS_EXIT`, `qemu -semihosting`), firmware de test par
    preset (même `lepton_kernel`, `main` de test à la place de `embos_main.c`), macros de
    `kal.h` branche embOS (l. ~1100-1270 : `__inline_bckup_context`, `__inline_rstr_context`,
    `__inline_bckup_stack`/`__inline_rstr_stack`, `__inline_swap_signal_handler`,
-   `__inline_exit_signal_handler`, `__set_active_pthread`). Retirer `--no-kal` de la CI ensuite.
+   `__inline_exit_signal_handler`, `__set_active_pthread`).
 3. Palier hard-float : `LEPTON_FLOAT_ABI=hard` (preset), `libosT7VHLSP.a`, puis E3 (trame
    `OS_REGS_BASE_FPU` : `OS_REG_PC` décalé de 64 octets si la tâche a utilisé la FPU).
 
