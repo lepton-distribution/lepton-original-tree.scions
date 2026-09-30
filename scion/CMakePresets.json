@@ -82,6 +82,13 @@
       "output": {
         "outputOnFailure": true
       }
+    },
+    {
+      "name": "qemu-mps2-an386-embos",
+      "configurePreset": "qemu-mps2-an386-embos",
+      "output": {
+        "outputOnFailure": true
+      }
     }
   ]
 }

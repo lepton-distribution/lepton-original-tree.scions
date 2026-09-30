@@ -68,3 +68,16 @@ add_custom_command(TARGET lepton POST_BUILD
   COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:lepton> ${CMAKE_BINARY_DIR}/lepton.bin
   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:lepton>
   VERBATIM)
+
+# --- test de fumée canonique (label smoke) : démarrage → lsh → uname -a, ls, ps, second port ------
+if(LEPTON_QEMU_MACHINE)
+  find_program(LEPTON_QEMU_ARM qemu-system-arm REQUIRED)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_test(NAME smoke.lsh
+           COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/smoke_lsh.py
+                   --qemu ${LEPTON_QEMU_ARM} --machine ${LEPTON_QEMU_MACHINE}
+                   --kernel $<TARGET_FILE:lepton> --expect-machine ${LEPTON_BOARD_UNAME_MACHINE}
+                   --command ls --command ps --uart1
+                   --log ${CMAKE_BINARY_DIR}/smoke_lsh_uart0.log)
+  set_tests_properties(smoke.lsh PROPERTIES LABELS "smoke" TIMEOUT 120)
+endif()
