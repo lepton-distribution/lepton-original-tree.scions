@@ -37,6 +37,7 @@ endif()
 include(kal/${LEPTON_KAL_BACKEND})
 
 include(components/kernel)
+include(mklepton)
 
 if(LEPTON_ISA STREQUAL "host")
   enable_testing()

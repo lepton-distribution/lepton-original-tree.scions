@@ -17,6 +17,9 @@ execute_process(COMMAND ${CMAKE_C_COMPILER} -m32 -print-file-name=include
 
 set(LEPTON_HOST_ARCH_DIR ${LEPTON_SRC}/kernel/core/arch/host)
 
+# Contrôle croisé du format UFS (tests/host, host.ufs_format_arm) : ABI AAPCS de la cible de base.
+set(LEPTON_HOST_ARM_CHECK_FLAGS -mcpu=cortex-m4 -mthumb)
+
 target_compile_options(lepton_options INTERFACE
   -std=gnu99 -ffreestanding -nostdinc -fno-common
   "SHELL:-isystem ${LEPTON_HOST_ARCH_DIR}/include/libc"
@@ -30,6 +33,8 @@ target_compile_definitions(lepton_options INTERFACE
 # libc Lepton : le noyau statique n'en exige que __sprintf et __lepton_libc_isascii, fournis par
 # la glibc (lib/libc/stdio entraînerait FILE et appels système).
 set(LEPTON_LIBC_SOURCES kernel/core/arch/host/libc_host.c)
+# Bibliothèques système liées après le groupe du noyau (dev_part : pow).
+set(LEPTON_SYSTEM_LIBS m)
 
 # « Carte » hôte : disque sur fichier (.fsflash.o, décision 2026-09-30) et horloge. La partie
 # POSIX des pilotes est compilée avec les en-têtes de la glibc, hors lepton_options.

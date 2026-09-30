@@ -71,10 +71,23 @@ lepton_add_library(lepton_fs_ufs SOURCES
 
 # --- libc Lepton (lib/, hors kernel/) -------------------------------------------------------------
 # L'ISA peut fournir sa propre liste (hôte : adaptateur vers la glibc, cmake/isa/host.cmake).
-lepton_add_library(lepton_libc SOURCES ${LEPTON_LIBC_SOURCES})
+# Cibles : liste fixée à l'étape 3 (frontière newlib / API POSIX Lepton, décision ouverte).
+set(LEPTON_KERNEL_GROUP lepton_core lepton_kal_${LEPTON_KAL_BACKEND} lepton_vfs lepton_fs_rootfs
+                        lepton_fs_ufs lepton_dev)
+if(LEPTON_LIBC_SOURCES)
+  lepton_add_library(lepton_libc SOURCES ${LEPTON_LIBC_SOURCES})
+  list(APPEND LEPTON_KERNEL_GROUP lepton_libc)
+else()
+  message(STATUS "lepton_libc : aucune source pour LEPTON_ISA=${LEPTON_ISA} (étape 3)")
+endif()
 
 # --- pilotes matériels de la « carte » (axe carte ; hôte : disque sur fichier) -------------------
-lepton_add_library(lepton_bsp_${LEPTON_BSP_NAME} SOURCES ${LEPTON_BSP_SOURCES})
+if(LEPTON_BSP_SOURCES)
+  lepton_add_library(lepton_bsp_${LEPTON_BSP_NAME} SOURCES ${LEPTON_BSP_SOURCES})
+  list(APPEND LEPTON_KERNEL_GROUP lepton_bsp_${LEPTON_BSP_NAME})
+else()
+  message(STATUS "lepton_bsp_${LEPTON_BSP_NAME} : aucune source (carte décrite, BSP à venir)")
+endif()
 if(LEPTON_BSP_HOST_SOURCES)
   # Partie hors noyau (en-têtes de la glibc) d'un pilote hôte : sans lepton_options.
   add_library(lepton_bsp_${LEPTON_BSP_NAME}_posix STATIC ${LEPTON_BSP_HOST_SOURCES})
@@ -83,5 +96,6 @@ endif()
 
 # --- noyau assemblé : cycle core ↔ kal ↔ vfs ↔ fs ↔ dev ↔ libc (dependances.md, CFC 1) ------------
 add_library(lepton_kernel INTERFACE)
-target_link_libraries(lepton_kernel INTERFACE
-  "$<LINK_GROUP:RESCAN,lepton_core,lepton_kal_${LEPTON_KAL_BACKEND},lepton_vfs,lepton_fs_rootfs,lepton_fs_ufs,lepton_dev,lepton_bsp_${LEPTON_BSP_NAME},lepton_libc>")
+list(JOIN LEPTON_KERNEL_GROUP "," group)
+target_link_libraries(lepton_kernel INTERFACE "$<LINK_GROUP:RESCAN,${group}>"
+                      ${LEPTON_SYSTEM_LIBS})

@@ -18,10 +18,46 @@
         "LEPTON_ISA": "host",
         "LEPTON_KAL_BACKEND": "static"
       }
+    },
+    {
+      "name": "cross",
+      "hidden": true,
+      "inherits": "base",
+      "description": "Cibles Cortex-M (décrites à l'étape 2, validées à l'étape 3) ; mklepton vient du preset host.",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-none-eabi.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "LEPTON_EMBOS_ROOT": "$env{LEPTON_EMBOS_ROOT}",
+        "LEPTON_MKLEPTON": "${sourceDir}/../build/host/mklepton"
+      }
+    },
+    {
+      "name": "qemu-mps2-an386-embos",
+      "displayName": "QEMU mps2-an386 (Cortex-M4F), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m4f",
+        "LEPTON_BOARD": "qemu-mps2-an386",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "nucleo-f439zi-embos",
+      "displayName": "NUCLEO-F439ZI (Cortex-M4F), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m4f",
+        "LEPTON_BOARD": "nucleo-f439zi",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
     }
   ],
   "buildPresets": [
-    { "name": "host", "configurePreset": "host" }
+    { "name": "host", "configurePreset": "host" },
+    { "name": "qemu-mps2-an386-embos", "configurePreset": "qemu-mps2-an386-embos" },
+    { "name": "nucleo-f439zi-embos", "configurePreset": "nucleo-f439zi-embos" }
   ],
   "testPresets": [
     { "name": "host", "configurePreset": "host", "output": { "outputOnFailure": true } }

@@ -13,5 +13,7 @@ function(lepton_add_library name)
   cmake_parse_arguments(ARG "" "" "SOURCES;DEPENDS" ${ARGN})
   list(TRANSFORM ARG_SOURCES PREPEND ${LEPTON_SRC}/)
   add_library(${name} STATIC ${ARG_SOURCES})
-  target_link_libraries(${name} PUBLIC lepton_options ${ARG_DEPENDS})
+  # PRIVATE : les options du noyau (freestanding) ne se propagent pas aux consommateurs, tels que
+  # mklepton, compilé avec les en-têtes de la glibc.
+  target_link_libraries(${name} PRIVATE lepton_options PUBLIC ${ARG_DEPENDS})
 endfunction()
