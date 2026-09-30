@@ -1,13 +1,19 @@
 {
   "version": 6,
-  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
   "configurePresets": [
     {
       "name": "base",
       "hidden": true,
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/../build/${presetName}",
-      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
     },
     {
       "name": "host",
@@ -39,7 +45,8 @@
         "LEPTON_ISA": "armv7m",
         "LEPTON_CPU": "cortex-m4f",
         "LEPTON_BOARD": "qemu-mps2-an386",
-        "LEPTON_KAL_BACKEND": "embos"
+        "LEPTON_KAL_BACKEND": "embos",
+        "LEPTON_FLOAT_ABI": "soft"
       }
     },
     {
@@ -55,11 +62,26 @@
     }
   ],
   "buildPresets": [
-    { "name": "host", "configurePreset": "host" },
-    { "name": "qemu-mps2-an386-embos", "configurePreset": "qemu-mps2-an386-embos" },
-    { "name": "nucleo-f439zi-embos", "configurePreset": "nucleo-f439zi-embos" }
+    {
+      "name": "host",
+      "configurePreset": "host"
+    },
+    {
+      "name": "qemu-mps2-an386-embos",
+      "configurePreset": "qemu-mps2-an386-embos"
+    },
+    {
+      "name": "nucleo-f439zi-embos",
+      "configurePreset": "nucleo-f439zi-embos"
+    }
   ],
   "testPresets": [
-    { "name": "host", "configurePreset": "host", "output": { "outputOnFailure": true } }
+    {
+      "name": "host",
+      "configurePreset": "host",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
   ]
 }
