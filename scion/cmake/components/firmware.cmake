@@ -100,4 +100,19 @@ if(LEPTON_QEMU_MACHINE)
                        LABELS "smoke;kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"
                        TIMEOUT 120 FIXTURES_SETUP kal_t0)
   add_subdirectory(${CMAKE_SOURCE_DIR}/tests/kal ${CMAKE_BINARY_DIR}/tests/kal)
+
+  # --- palier réseau (label net) : ping et session ftpd depuis l'hôte, tap en espace de noms ----
+  if(LEPTON_NET_STACK AND LEPTON_NET_TEST_FTP_FILE)
+    add_test(NAME net.ping_ftpd
+             COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/net_qemu.py
+                     --qemu ${LEPTON_QEMU_ARM} --machine ${LEPTON_QEMU_MACHINE}
+                     --kernel $<TARGET_FILE:lepton>
+                     --host-ip ${LEPTON_NET_TEST_HOST_IP} --guest-ip ${LEPTON_NET_TEST_GUEST_IP}
+                     --ftp-file ${LEPTON_NET_TEST_FTP_FILE}
+                     --ftp-reference ${CMAKE_SOURCE_DIR}/${LEPTON_NET_TEST_FTP_REFERENCE}
+                     --log ${CMAKE_BINARY_DIR}/net_qemu_uart0.log)
+    set_tests_properties(net.ping_ftpd PROPERTIES
+                         LABELS "net;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"
+                         TIMEOUT 180 FIXTURES_REQUIRED kal_t0)
+  endif()
 endif()

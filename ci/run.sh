@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ci/run.sh — non-régression Lepton (étape 3 ; ORCHESTRATION §5 : vert avant chaque commit).
 # Configure et construit les presets hôte et QEMU (hard-float, soft-float), puis ctest -L host,
-# -L smoke, -L kal.
+# -L smoke, -L net, -L kal.
 # Code de retour non nul au premier échec. Lancer depuis n'importe où dans le rootstock.
 #   ci/run.sh            tous les presets
 #   ci/run.sh --no-kal   sans le banc KAL (le temps de sa construction à l'étape 3)
@@ -35,6 +35,9 @@ for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft; do
   cmake --preset "$preset" >/dev/null
   cmake --build --preset "$preset"
   ctest --preset "$preset" -L smoke --no-tests=error
+
+  step "réseau ($preset) : ctest -L net (ping, ftpd ; tap en espace de noms)"
+  ctest --preset "$preset" -L net --no-tests=error
 
   if [ "$run_kal" = 1 ]; then
     step "banc KAL ($preset) : ctest -L kal"
