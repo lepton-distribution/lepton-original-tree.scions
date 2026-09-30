@@ -1,0 +1,29 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 24, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/../build/${presetName}",
+      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+    },
+    {
+      "name": "host",
+      "displayName": "Hôte : noyau statique, mklepton, tests hôte",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "LEPTON_ISA": "host",
+        "LEPTON_KAL_BACKEND": "static"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "host", "configurePreset": "host" }
+  ],
+  "testPresets": [
+    { "name": "host", "configurePreset": "host", "output": { "outputOnFailure": true } }
+  ]
+}
