@@ -60,7 +60,7 @@ Implementation
 void* _sys_malloc(size_t size){
    void* p;
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32) //section atomique sur toute cible multitache (le test portait sur GCC : plateforme synthetique gnu32)
    if (!__kernel_is_in_static_mode()) {
       __atomic_in();
       __disable_interrupt_section_in();
@@ -76,7 +76,7 @@ void* _sys_malloc(size_t size){
    if(!p)
       p=(void*)0;
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __disable_interrupt_section_out();
       __atomic_out();
@@ -96,7 +96,7 @@ void* _sys_malloc(size_t size){
 void *_sys_calloc(size_t nelem, size_t elsize){
    void* p;
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __atomic_in();
       __disable_interrupt_section_in();
@@ -112,7 +112,7 @@ void *_sys_calloc(size_t nelem, size_t elsize){
    if(!p)
       p=(void*)0;
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __disable_interrupt_section_out();
       __atomic_out();
@@ -132,7 +132,7 @@ void *_sys_calloc(size_t nelem, size_t elsize){
 ---------------------------------------------*/
 void *_sys_realloc(void *p, size_t size){
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __atomic_in();
       __disable_interrupt_section_in();
@@ -147,7 +147,7 @@ void *_sys_realloc(void *p, size_t size){
    if(!p)
       p=(void*)0;
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __disable_interrupt_section_out();
       __atomic_out();
@@ -167,7 +167,7 @@ void *_sys_realloc(void *p, size_t size){
 ---------------------------------------------*/
 void _sys_free (void* p){
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __atomic_in();
       __disable_interrupt_section_in();
@@ -181,7 +181,7 @@ void _sys_free (void* p){
    //_aligned_free(p);
 #endif
 
-#if !defined(__GNUC__)
+#if !defined(CPU_GNU32)
    if (!__kernel_is_in_static_mode()) {
       __disable_interrupt_section_out();
       __atomic_out();
