@@ -28,7 +28,7 @@ set(kal_qemu ${LEPTON_QEMU_ARM} -M ${LEPTON_QEMU_MACHINE} -kernel $<TARGET_FILE:
     -nographic -monitor none -serial null)
 set(kal_labels "kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}")
 
-foreach(t T1 T2 T3 T4 T5 T6 T7 T8 ${kal_fpu_tests})
+foreach(t T1 T2 T3 T4 T5 T6 T7 T8 ${kal_fpu_tests} IRQ)
   add_test(NAME kal.${t}
            COMMAND ${kal_qemu} -semihosting-config enable=on,target=native,arg=kal_bench,arg=${t})
   set_tests_properties(kal.${t} PROPERTIES LABELS "${kal_labels}" TIMEOUT 20

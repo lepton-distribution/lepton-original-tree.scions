@@ -8,3 +8,5 @@ target_compile_options(lepton_options INTERFACE
 target_link_options(lepton_options INTERFACE -mthumb -Wl,--gc-sections)
 target_compile_definitions(lepton_options INTERFACE CPU_CORTEXM)
 set(LEPTON_ISA_ARCH_DIR kernel/core/arch/cortexm)
+# sections critiques à nom neutre (#include "lepton_irq.h") : kernel/core/arch/cortexm
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_ARCH_DIR})

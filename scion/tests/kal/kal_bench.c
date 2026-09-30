@@ -25,10 +25,13 @@
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/malloc.h"
 
+#include "lepton_irq.h"
+
 #include "kal_test.h"
 
 void kal_regs_hold(const uint32_t pattern[8], uint32_t out[8], void (*wait)(void));
 void kal_regs_read(uint32_t out[8]);
+uint32_t kal_cpu_primask(void);
 
 #define EV_GO    0x01u   /* contrôleur → cible : reprise */
 #define EV_H     0x02u   /* cible → contrôleur : gestionnaire (signal, fils vfork) exécuté */
@@ -549,6 +552,52 @@ static int test_t7f(void){
 }
 #endif
 
+/* IRQ : sections critiques à nom neutre (lepton_irq.h, ETAPE-3 tâche 1) : PRIMASK, imbrication,
+   et effet réel : le temps d'embOS (SysTick) n'avance pas pendant une section critique. */
+static void irq_spin(volatile uint32_t n){
+   while(n--) {
+   }
+}
+
+static int test_irq(void){
+   lepton_irq_state_t s1, s2;
+   OS_TIME t0, t1;
+   uint32_t n = 0;
+
+   TEST_ASSERT(kal_cpu_primask() == 0, "IRQ : interruptions autorisées au départ");
+   s1 = __lepton_irq_save();
+   TEST_ASSERT(s1 == 0 && kal_cpu_primask() == 1, "IRQ : save masque et rend l'état précédent (0)");
+   s2 = __lepton_irq_save();
+   TEST_ASSERT(s2 == 1 && kal_cpu_primask() == 1, "IRQ : save imbriqué rend 1");
+   __lepton_irq_restore(s2);
+   TEST_ASSERT(kal_cpu_primask() == 1, "IRQ : restore imbriqué laisse masqué");
+   __lepton_irq_restore(s1);
+   TEST_ASSERT(kal_cpu_primask() == 0, "IRQ : restore externe démasque");
+   __lepton_disable_irq();
+   TEST_ASSERT(kal_cpu_primask() == 1, "IRQ : disable masque");
+   __lepton_enable_irq();
+   TEST_ASSERT(kal_cpu_primask() == 0, "IRQ : enable démasque");
+
+   /* étalonnage : boucle d'au moins 5 ticks, interruptions autorisées */
+   OS_TASK_Delay(1);
+   t0 = OS_TIME_GetTicks32();
+   while(OS_TIME_GetTicks32() - t0 < 5) {
+      irq_spin(1000);
+      n += 1000;
+   }
+   /* même boucle en section critique : aucun tick compté */
+   s1 = __lepton_irq_save();
+   t0 = OS_TIME_GetTicks32();
+   irq_spin(n);
+   t1 = OS_TIME_GetTicks32();
+   __lepton_irq_restore(s1);
+   kal_test_put_u32("IRQ : itérations pour 5 ticks = ", n);
+   TEST_ASSERT(t1 == t0, "IRQ : temps figé pendant la section critique");
+   OS_TASK_Delay(2);
+   TEST_ASSERT(OS_TIME_GetTicks32() != t1, "IRQ : le temps reprend après restore");
+   return 0;
+}
+
 static int test_harness_fail(void){
    TEST_ASSERT(0, "échec volontaire (le harnais doit rendre un code non nul)");
    return 0;
@@ -561,6 +610,7 @@ static const struct { const char* name; int (*fn)(void); } tests[] = {
 #if (OS_CPU_HAS_VFP == 1)
    { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
 #endif
+   { "IRQ", test_irq },
    { "HARNESS_FAIL", test_harness_fail },
 };
 

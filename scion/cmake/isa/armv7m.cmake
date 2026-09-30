@@ -16,5 +16,7 @@ target_compile_definitions(lepton_options INTERFACE CPU_CORTEXM)
 # CMSIS-Core présent dans l'arbre (V3.30) ; en-tête de périphérique fourni par la carte.
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/ucore/cmsis/CMSIS/Include)
 set(LEPTON_ISA_ARCH_DIR kernel/core/arch/cortexm)
+# sections critiques à nom neutre (#include "lepton_irq.h") : kernel/core/arch/cortexm
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_ARCH_DIR})
 set(LEPTON_ISA_STARTUP_SOURCES kernel/core/arch/cortexm/startup_armv7m.c)
 set(LEPTON_FIRMWARE_SOURCES ${LEPTON_ISA_STARTUP_SOURCES})
