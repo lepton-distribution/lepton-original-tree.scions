@@ -9,7 +9,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
-| 2 — Build CMake, noyau statique, mklepton | EN COURS | 2026-09-30 | branche `migration/etape-2` ; plan présenté et décisions actées le 2026-09-30 |
+| 2 — Build CMake, noyau statique, mklepton | EN COURS | 2026-09-30 | critères vérifiés, **en attente de validation utilisateur** ; preset `host` : `libkernel` + mklepton, `ctest -L host` 5/5 ; presets croisés configurés ; handoff `handoff/etape-2.md` |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
@@ -82,6 +82,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Arbre Lepton | `master` | `055fc602f32f` (clone du rootstock, 2026-09-30 ; identique au relevé du 2026-09-29), `lepton-distribution/lepton-original-tree.scions` (tag `version-4.9.0.2` présent ; la branche `main` ne contient qu'un commit initial vide) |
 | QEMU | ≥ 8.2 | cartes mémoire relevées sur 8.2.2 |
 | embOS | embOS-Classic V5.20.0.0 Cortex-M GCC | `$LEPTON_EMBOS_ROOT` (hors git) ; pas de paquet RISC-V dans `archives/` |
+| `gcc-multilib`, `libexpat1-dev:i386` | Debian 13 | noyau statique `-m32`, mklepton (étape 2) |
 | `gcc-arm-none-eabi` | 14.2.1 (`15:14.2.rel1-1`), newlib 4.5.0.20241231 (nano inclus) | Debian 13, relevé 2026-09-30 |
 | CMake / Ninja | 3.31.6 / 1.12.1 | Debian 13 |
 | QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents |
@@ -120,5 +121,6 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 ## Blocages et dette
 
+- Étape 2 : `vfs.c` (I_LINK) transmet un `va_list` par argument variadique (non portable, cause du `-m32`) → passer `va_list*` à l'étape 4 ; `__kernel_set_errno` en mode statique n'enregistre rien ; backend `core-static` = 3ᵉ copie de l'amorçage (`_kernel_warmup_*`) ; `kernelconf.h` : `kernel_mkconf.h` des branches GCC croisées encore en chemin fixe (étape 3).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
 - Pièges à reprendre : `__compiler_directive__packed` vide sous GCC (3 usages actifs) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).
