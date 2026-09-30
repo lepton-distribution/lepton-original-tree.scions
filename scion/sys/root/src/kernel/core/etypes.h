@@ -63,6 +63,9 @@ Declaration
    typedef unsigned long uint64_t;
    #endif
    
+#else
+   //types fournis par le compilateur (C99)
+   #include <stdint.h>
 #endif  //__KERNEL_COMPILER_STDINT_INCLUDED__
    
 //  

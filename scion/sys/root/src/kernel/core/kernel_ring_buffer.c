@@ -31,6 +31,7 @@ Includes
 
 #include <stdarg.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "kernel/core/types.h"
 #include "kernel/core/interrupt.h"
