@@ -439,38 +439,17 @@ int kernel_pthread_cancel(kernel_pthread_t* thread){
 
 #ifdef __KERNEL_UCORE_EMBOS
    {
-      OS_TASK* whois_lock_kernel_mutex = OS_GetResourceOwner(&kernel_mutex.mutex);
-      OS_TASK* this_task = thread->tcb;
-
-      //warning!!!: preprocessor OS_SUPPORT_CLEANUP_ON_TERMINATE only supported for embos ver<=3.32 for all target arm7 and m16c.
-   #ifndef OS_SUPPORT_CLEANUP_ON_TERMINATE
-      {
-         //patch for m16c version or when OS_SUPPORT_CLEANUP_ON_TERMINATE not supported.
-         //free kernel mutex. it was taken by this pthread.
-         if(this_task == whois_lock_kernel_mutex) {
-      #ifndef CPU_WIN32          //ugly patch :(
-            __syscall_unlock();
-      #endif
-         }
-      }
-   #endif
-
+      //verrou des appels systeme : semaphore rendu par la tache noyau en fin d'appel, meme si
+      //ce thread est termine entre-temps (kernel_syscall_lock.c) ; plus de transfert de propriete.
+      if(kernel_syscall_lock_owner == thread)
+         kernel_syscall_lock_owner = &kernel_thread;
       //terminate thread in scheduler
-      OS_Terminate(thread->tcb); //if define OS_SUPPORT_CLEANUP_ON_TERMINATE implicit cleanup ressource
-
+      OS_Terminate(thread->tcb);
       //free tcb
       if(thread->tcb) {
          _sys_free(thread->tcb);
          thread->tcb = (tcb_t*)0;
       }
-
-
-   #ifndef CPU_WIN32    //ugly patch :(
-      if(this_task == whois_lock_kernel_mutex) {
-         //patch free ressource semaphore without proprietary. this pthread owner was terminated.
-         __syscall_lock(); //kernel is proprietary now. the next _syscall_unlock() it's safe now.
-      }
-   #endif
       //
    }
 #endif

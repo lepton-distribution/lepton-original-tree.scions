@@ -1190,6 +1190,7 @@ void _start_kernel(char* arg){
 
    //
    kernel_pthread_mutex_init(&kernel_mutex,&mutex_attr);
+   kernel_syscall_lock_init();
 
    rttmr_attr.tm_msec=__KERNEL_ALARM_TIMER;
    rttmr_attr.func = _kernel_timer;
