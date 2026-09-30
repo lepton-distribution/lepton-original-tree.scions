@@ -1,7 +1,6 @@
 # Handoff étape 3a (UART) → 3b (Ethernet)
 
-État au 2026-09-30 : critères de 3a remplis, **en attente de validation utilisateur** (arrêt de fin
-de session, ORCHESTRATION §4). Paliers 1-6 verts (`validation-qemu-mps2-an386.md`), hard-float
+État au 2026-09-30 : 3a **TERMINÉE**, validée par l'utilisateur le 2026-09-30. Paliers 1-6 verts (`validation-qemu-mps2-an386.md`), hard-float
 (preset principal) et soft-float ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert.
 
 ## Réponses aux prérequis de 3b (ETAPE-3 : « relecture du handoff 3a », tâche 5, palier 7)
