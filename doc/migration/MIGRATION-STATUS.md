@@ -10,7 +10,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
-| 3a — Noyau dynamique QEMU, UART | EN COURS | 2026-09-30 | paliers 1-3, 5 (KAL) et 6 verts, 4 partiel ; banc KAL T0-T8 vert (M4 soft-float) ; `ci/run.sh` complet vert ; reste palier hard-float (E3) ; reprise : `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
+| 3a — Noyau dynamique QEMU, UART | À VALIDER | 2026-09-30 | critères 3a remplis, en attente de validation utilisateur : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
@@ -27,7 +27,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Cœur | embOS | FreeRTOS |
 |---|---|---|
-| m4 (`mps2-an386`) | T0-T8 verts en soft-float (2026-09-30) ; hard-float à faire | |
+| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) | |
 | m7 (`mps2-an500`) | | |
 | m3 (`mps2-an385`) | | |
 | m0 (`microbit`) | | |
@@ -69,6 +69,9 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Étape 3 — constat : avec embOS/Cortex-M, l'appel système est un événement embOS vers la tâche noyau (pas de SVC) ; aucun assembleur Lepton à traduire hormis démarrage et vecteurs (écart à ETAPE-3 tâche 2). |
 | 2026-09-30 | Étape 3 — embOS lié en mode SP en Debug (comme IAR) plutôt que DP ; puis verrou des appels système refondu en sémaphore (`core-segger/kernel_syscall_lock.c`) : embOS 5.20 n'accepte pas qu'un mutex soit rendu par une autre tâche que son propriétaire (DP : erreur ; SP : état incohérent et blocage). |
 | 2026-09-30 | Étape 3 — banc KAL : T2 et T8 alignés sur Lepton (amendement de `BANC-TEST-KAL-QEMU.md`) : pas de redémarrage depuis le contexte de départ (embOS 5.20 : routine et trampoline `OS_StartTask` au-dessus du cadre ; Lepton ne s'en sert que comme référence de pile du vfork, `exec` crée une nouvelle tâche). |
+| 2026-09-30 | Étape 3 — palier hard-float : preset principal `qemu-mps2-an386-embos` en hard-float (`libosT7VHLSP.a`) ; preset `qemu-mps2-an386-embos-soft` conservé dans `ci/run.sh` (chemin sans FPU jusqu'aux cœurs M3/M0 de l'étape 6). |
+| 2026-09-30 | Étape 3 — banc KAL T8 en hard-float : « aucun état FPU ne survit » = aucun contexte FPU hérité (FPCA = 0, cadre de départ de base, FPSCR par défaut) ; contenu résiduel de S16-S31 journalisé, non exigé (amendement de `BANC-TEST-KAL-QEMU.md`). |
+| 2026-09-30 | Sécurité — registres FPU résiduels lisibles entre tâches et entre images (constaté par T8) : pas d'effacement tant que Lepton n'isole pas la mémoire ; à traiter avec toute évolution utilisant la MPU (dette, ci-dessous). |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
@@ -126,6 +129,18 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
 
 ## Blocages et dette
+
+- **Sécurité, à reprendre avec toute évolution utilisant la MPU** (décision 2026-09-30) : le banc de
+  registres FPU (S0-S31, FPSCR) est physique et partagé ; embOS ne l'efface ni à la création de tâche
+  ni à la commutation (lazy stacking), et Lepton ne l'efface pas à l'`exec`. Une tâche ou une nouvelle
+  image peut donc lire les valeurs flottantes, ou des entiers que GCC range dans les registres S en
+  hard-float, laissées par une autre tâche (constaté par T8 : S16-S31 de l'ancienne image lisibles
+  après `exec`). Sans conséquence supplémentaire aujourd'hui (aucune isolation mémoire : tout
+  processus lit déjà toute la RAM, y compris les contextes sauvegardés sur les piles). Le jour où la
+  MPU isole les processus : effacer S0-S31 et FPSCR à l'`exec` (dans `kal.h`, après la création de la
+  tâche), évaluer l'effacement à la commutation entre processus (hors code embOS : crochet de
+  commutation, ou désactivation du lazy stacking et effacement dans le KAL), étendre T8 pour exiger
+  l'effacement, et traiter de même les piles libérées (contextes sauvegardés en RAM).
 
 - Étape 3 : `RTOS.h` : avertissement `struct _reent` (type newlib absent en freestanding), sans effet constaté. (`malloc.c` : section atomique rétablie sous GCC, corrigé le 2026-09-30.)
 - Étape 3 : E4 `OS_MakeTaskReady(OS_TASK*)` déclarée par Lepton (HYPOTHÈSE À VALIDER, non documentée par Segger) ; mode embOS SP au lieu de DP (retour à DP possible depuis le verrou en sémaphore, à vérifier) ; `__KERNEL_UCORE_EMBOS` posé par CMake et par les `user_kernel_mkconf.h` des cartes existantes (double définition compatible).
