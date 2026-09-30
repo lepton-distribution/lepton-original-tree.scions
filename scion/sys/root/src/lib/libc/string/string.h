@@ -45,10 +45,14 @@ int __l_strncasecmp(const char *s1, const char *s2, size_t n);
 
 char * __l_strtok_r(char *s, const char *delim, char **last);
 char * __l_strtok(char *s, const char *delim);
+char * __l_strdup(const char *s);
+char * __l_strerror(int errnum);
 
 #define strcasecmp(__s1__,__s2__) __l_strcasecmp(__s1__,__s2__)
 #define strncasecmp(__s1__,__s2__,__n__)  __l_strncasecmp(__s1__,__s2__,__n__)
 #define strtok_r(__s__,__delim__,__last__) __l_strtok_r(__s__,__delim__,__last__)
+#define strdup(__s__) __l_strdup(__s__)
+#define strerror(__errnum__) __l_strerror(__errnum__)
 
 
 #endif

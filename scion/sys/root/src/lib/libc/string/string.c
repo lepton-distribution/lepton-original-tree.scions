@@ -38,6 +38,7 @@
 #include <ctype.h>
 
 #include "lib/libc/ctype/ctype.h"
+#include "kernel/core/libstd.h"
 
 /*============================================
 | Global Declaration
@@ -144,6 +145,24 @@ cont:
 		} while (sc != 0);
 	}
 	/* NOTREACHED */
+}
+
+/*--------------------------------------------
+| Name:        strdup
+| Description: copie allouée sur le tas du processus (malloc Lepton : _system_malloc), libérée
+|              par free (_system_free) ; étape 3b, décision 2026-09-30 (pas celui de newlib)
+| Parameters:  s : chaîne à copier
+| Return Type: copie, ou NULL si l'allocation échoue
+| Comments:
+| See:
+----------------------------------------------*/
+char * __l_strdup(const char *s)
+{
+	size_t n = strlen(s) + 1;
+	char *d = (char *)malloc(n);
+	if (d)
+		memcpy(d, s, n);
+	return (d);
 }
 /*============================================
 | End of Source  : string.c

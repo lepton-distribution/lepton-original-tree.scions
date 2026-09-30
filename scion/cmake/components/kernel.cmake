@@ -87,7 +87,7 @@ if(NOT DEFINED LEPTON_LIBC_SOURCES)
     lib/libc/misc/crc.c lib/libc/misc/dtostr.c lib/libc/misc/ftoa.c lib/libc/misc/itoa.c
     lib/libc/misc/ltostr.c lib/libc/misc/prsopt.c lib/libc/misc/strto_l.c lib/libc/misc/strto_ll.c
     lib/libc/stdio/printf.c lib/libc/stdio/scanf.c lib/libc/stdio/stdio.c
-    lib/libc/string/string.c
+    lib/libc/string/string.c lib/libc/string/strerror.c
     lib/libc/termios/tcgetattr.c lib/libc/termios/tcsetattr.c lib/libc/termios/termios.c
     lib/libc/unistd/getopt.c lib/libc/unistd/io.c lib/libc/unistd/unistd.c
     lib/pthread/pthread.c lib/pthread/pthread_cond.c lib/pthread/pthread_mutex.c
