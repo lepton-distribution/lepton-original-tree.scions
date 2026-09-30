@@ -8,7 +8,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Étape | Statut | Date | Notes |
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
-| 1 — Inventaire | EN COURS | 2026-09-30 | branche `migration/etape-1` ; tâches 0-6 produites (graphe Graphify optionnel non fait) ; en attente : décision code gelé, oracle mklepton bloqué (`libkernel.so`, `libexpat1:i386`) |
+| 1 — Inventaire | EN COURS | 2026-09-30 | tâches 0-6 faites, critères vérifiés ; **en attente de validation utilisateur** ; branche `migration/etape-1` ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | À FAIRE | | |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
@@ -55,14 +55,16 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | `archives/embOS` du paquet (paquet Segger sous licence) non copié dans le clone ; emplacement à décider avec la licence (étape 1). |
 | 2026-09-30 | Licence embOS : SEGGER Friendly License, usage évaluation / non commercial (redistribution interdite, SFL §1b) ; réévaluation avant tout usage produit. |
 | 2026-09-30 | Paquet embOS-Classic V5.20.0.0 Cortex-M GCC hors git, dans le rootstock : `~/lepton/third_party/embos/cortexm-gcc/5.20.0.0/` (copie de `archives/embOS`), exporté par `scripts/lepton-env.sh` en `LEPTON_EMBOS_ROOT`. |
+| 2026-09-30 | Code gelé : proposition `code-gele.md` acceptée, sauf Cortex-M7 Atmel SAMV71/SAME70 maintenu en différé (référence M7). Gelé : 765 fichiers / 158 061 lignes. |
+| 2026-09-30 | Oracle mklepton sans binaire : `libkernel.so` i386 absente, copie historique hors arbre non utilisée ; référence = sorties versionnées (`mklepton-ref.md`) ; image UFS validée par exécution sous QEMU (étape 3). Portage natif de mklepton maintenu (pas de repli). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
 | Étape | Décision |
 |---|---|
-| 1 | BSP embOS le plus proche du STM32F439 (candidat : `ST/STM32F429_STM32F429ZI_Nucleo`) ; sort du code gelé ; repli mklepton (seulement si sources inutilisables). |
+| 1 | Validation de fin d'étape. BSP embOS retenu (proposition) : `ST/STM32F429_STM32F429ZI_Nucleo` (vecteur CRYP et RAM à adapter). |
 | 2 | Second pilote logiciel du noyau statique (`dev_null` cité deux fois dans le guide) ; stockage de l'image UFS ; sorties de mklepton hors du trunk ; format UFS si différent entre hôte et ARM. |
-| 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11). |
+| 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11) ; premier palier embOS soft-float (`libosT7LSP.a`) ou hard-float (`libosT7VHL*`). |
 | 5 | Niveau d'optimisation final. |
 | 6 | Modèle exact de la Discovery F7 ; cartes M3 et M0+ ; suppression des fichiers IAR (tag `legacy-iar`). |
 | 7 | Devenir du backend embOS. |
@@ -106,15 +108,13 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Mesure | Valeur | Source |
 |---|---|---|
-| Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 952 / 304 755 ; gelé proposé 1324 / 262 387 ; hors-projet 762 / 192 635 | `perimetre.md` |
-| IAR-ismes (sévérité `iar`) | **actif 148** (Lepton 90, tiers 58) ; différé 580 ; gelé 933 ; hors-projet 224 | `audit_iar.py --summary` |
+| Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 1511 / 409 081 ; gelé 765 / 158 061 ; hors-projet 762 / 192 635 | `perimetre.md` |
+| IAR-ismes (sévérité `iar`) | **actif 148** (Lepton 90, tiers 58) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
 | Sources dérivées | `mps2-an386` : 217 f / 74 323 l ; NUCLEO-F439ZI : 353 f (base Olimex P407) | `perimetre.md` |
 | Écart embOS 5.18.3.1 IAR → 5.20.0.0 GCC | actif : 189 occurrences, 25 fichiers ; 7 écarts (E1 bloquant : branche embOS de `kal.h` réservée IAR/Keil) | `embos-iar-vs-gcc.md` |
 | Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
 
 ## Blocages et dette
 
-- **Oracle mklepton (étape 1, tâche 5)** : `mklepton_gnu` exige `libkernel.so` i386 partagée, absente de l'arbre et non reconstructible (sources `core-ecos`, `x86_static` absentes) ; copies signalées hors arbre sur `/mnt/hgfs/entreprises/lepton/…/x86_static/bin/` (non inspectées, accord utilisateur requis). `libexpat1:i386` non installé (absent de `install-debian.sh`). Script prêt : `tools/migration/mklepton_oracle.sh`.
-- `scripts/install-debian.sh` : correctif newlib-nano non commité dans l'arbre de travail (origine utilisateur présumée, 15:09).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
 - Pièges à reprendre : `__compiler_directive__packed` vide sous GCC (3 usages actifs) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).
