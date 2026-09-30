@@ -9,8 +9,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
-| 2 — Build CMake, noyau statique, mklepton | EN COURS | 2026-09-30 | critères vérifiés, **en attente de validation utilisateur** ; preset `host` : `libkernel` + mklepton, `ctest -L host` 5/5 ; presets croisés configurés ; handoff `handoff/etape-2.md` |
-| 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
+| 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
+| 3a — Noyau dynamique QEMU, UART | EN COURS | 2026-09-30 | branche `migration/etape-3` ; mode plan |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
