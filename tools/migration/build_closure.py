@@ -51,7 +51,7 @@ CONFIG_RULES = [
     (r"at91sam9261|at91sam7x|at91m55800a", r".", "gelé", "projet ARM7/ARM9 (cible abandonnée)"),
     (r"tauon/tauon\.ewp$", r".", "gelé", "noyau EWARM 4.x, AT91SAM9261 (ARM9)"),
     (r"tauon/tauon_", r"arm926ejs", "gelé", "noyau, configuration ARM926EJ-S"),
-    (r"samv7|same70", r".", "gelé", "Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition)"),
+    (r"samv7|same70", r".", "différé", "Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30)"),
     (r"tauon/tauon_(7\.80|8\.40|9\.50)\.ewp$", r"^tauon-kernel-cortex-m4-debug$", "actif",
      "noyau, configuration Cortex-M4 embOS (socle)"),
     (r"dev_stm32f4xx_(7\.20|8\.40)\.ewp$", r"^Debug$", "actif", "pilotes STM32F4 (config. liée par les applications F4)"),
@@ -90,7 +90,7 @@ HARD_RULES = [
     (r"^(sys/root/src/kernel/dev/arch/cortexm/k60n512|sys/user/tauon_sampleapp/hal/board_freescale_twrk60n512)/",
      "gelé", "Freescale K60 (TWR-K60N512), carte abandonnée, sans projet IAR (proposition)"),
     (r"^sys/root/src/kernel/(dev/arch/cortexm/at91samv7x|dev/bsp/(same70xplained|samv71xplained_ultra)|dev/arch/at91/softpack-lib)/",
-     "gelé", "Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition)"),
+     "différé", "Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30)"),
     (r"^sys/root/src/kernel/core/(core-freertos|ucore/freeRTOS_)", "différé", "backend FreeRTOS (étape 7)"),
 ]
 
@@ -588,14 +588,13 @@ def write_perimetre_md(doc, files, per, loc, method, cfg_info, projects, decl, s
 def write_gele_md(doc, files, per, loc, method):
     L = []
     w = L.append
-    w("# Code gelé — PROPOSITION, non décidée")
+    w("# Code gelé — décidé le 2026-09-30")
     w("")
-    w("Généré par `tools/migration/build_closure.py` le %s ; à soumettre à l'utilisateur (point d'arrêt "
-      "étape 1). Tant que la décision n'est pas prise, rien n'est supprimé ni déplacé. Le code gelé n'est "
+    w("Généré par `tools/migration/build_closure.py` le %s. Rien n'est supprimé ni déplacé (suppression : décision de l'étape 6). Le code gelé n'est "
       "ni modifié, ni compilé, ni audité au-delà de l'inventaire. Volumétrie : %s." % (datetime.date.today(), method))
     w("")
     gel = [f for f in files if per[f][0] == "gelé"]
-    w("Total proposé : **%d fichiers, %d lignes de code**." % (len(gel), sum(loc.get(f, 0) for f in gel)))
+    w("Total gelé : **%d fichiers, %d lignes de code**." % (len(gel), sum(loc.get(f, 0) for f in gel)))
     w("")
     w("## Par motif")
     w("")
@@ -624,7 +623,10 @@ def write_gele_md(doc, files, per, loc, method):
     for d in sorted(agg):
         w("| `%s` | %d | %d |" % (disp(d), agg[d][0], agg[d][1]))
     w("")
-    w("## Points à trancher par l'utilisateur")
+    w("Décision utilisateur du 2026-09-30 : proposition acceptée, sauf Cortex-M7 Atmel SAMV71/SAME70 "
+      "(point 3), maintenu en différé comme référence M7. Les points ci-dessous sont ceux de la proposition.")
+    w("")
+    w("## Points de la proposition")
     w("")
     w("1. **Cibles abandonnées actées** (décision 2026-09-29 : ARM7, ARM9, M16C) et **simulations** "
       "(`dev/arch/gnu32`, `dev/arch/win32`, `core/arch/win32`, `tools/virtual_cpu`, `prj/vc-2010`) : "
