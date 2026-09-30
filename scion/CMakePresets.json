@@ -39,13 +39,22 @@
     },
     {
       "name": "qemu-mps2-an386-embos",
-      "displayName": "QEMU mps2-an386 (Cortex-M4F), embOS",
+      "displayName": "QEMU mps2-an386 (Cortex-M4F, hard-float), embOS",
       "inherits": "cross",
       "cacheVariables": {
         "LEPTON_ISA": "armv7m",
         "LEPTON_CPU": "cortex-m4f",
         "LEPTON_BOARD": "qemu-mps2-an386",
         "LEPTON_KAL_BACKEND": "embos",
+        "LEPTON_FLOAT_ABI": "hard"
+      }
+    },
+    {
+      "name": "qemu-mps2-an386-embos-soft",
+      "displayName": "QEMU mps2-an386 (Cortex-M4F, soft-float), embOS",
+      "description": "Non-régression du chemin sans FPU (libosT7L*) jusqu'aux cœurs M3/M0 (étape 6).",
+      "inherits": "qemu-mps2-an386-embos",
+      "cacheVariables": {
         "LEPTON_FLOAT_ABI": "soft"
       }
     },
@@ -71,6 +80,10 @@
       "configurePreset": "qemu-mps2-an386-embos"
     },
     {
+      "name": "qemu-mps2-an386-embos-soft",
+      "configurePreset": "qemu-mps2-an386-embos-soft"
+    },
+    {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos"
     }
@@ -86,6 +99,13 @@
     {
       "name": "qemu-mps2-an386-embos",
       "configurePreset": "qemu-mps2-an386-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "qemu-mps2-an386-embos-soft",
+      "configurePreset": "qemu-mps2-an386-embos-soft",
       "output": {
         "outputOnFailure": true
       }

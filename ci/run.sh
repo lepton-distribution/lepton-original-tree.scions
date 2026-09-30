@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ci/run.sh — non-régression Lepton (étape 3 ; ORCHESTRATION §5 : vert avant chaque commit).
-# Configure et construit les presets hôte et QEMU, puis ctest -L host, -L smoke, -L kal.
+# Configure et construit les presets hôte et QEMU (hard-float, soft-float), puis ctest -L host,
+# -L smoke, -L kal.
 # Code de retour non nul au premier échec. Lancer depuis n'importe où dans le rootstock.
 #   ci/run.sh            tous les presets
 #   ci/run.sh --no-kal   sans le banc KAL (le temps de sa construction à l'étape 3)
@@ -28,15 +29,18 @@ cmake --preset host >/dev/null
 cmake --build --preset host
 ctest --preset host -L host --no-tests=error
 
-step "preset qemu-mps2-an386-embos : configuration, build, ctest -L smoke"
-cmake --preset qemu-mps2-an386-embos >/dev/null
-cmake --build --preset qemu-mps2-an386-embos
-ctest --preset qemu-mps2-an386-embos -L smoke --no-tests=error
+# hard-float (cible) puis soft-float (chemin sans FPU, jusqu'aux cœurs M3/M0 de l'étape 6)
+for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft; do
+  step "preset $preset : configuration, build, ctest -L smoke"
+  cmake --preset "$preset" >/dev/null
+  cmake --build --preset "$preset"
+  ctest --preset "$preset" -L smoke --no-tests=error
 
-if [ "$run_kal" = 1 ]; then
-  step "banc KAL : ctest -L kal"
-  ctest --preset qemu-mps2-an386-embos -L kal --no-tests=error
-fi
+  if [ "$run_kal" = 1 ]; then
+    step "banc KAL ($preset) : ctest -L kal"
+    ctest --preset "$preset" -L kal --no-tests=error
+  fi
+done
 
 step "trunk : aucun fichier régulier"
 regular="$(find "$LEPTON_TRUNK" -type f ! -name .scion.grafted.list | head -5)"
