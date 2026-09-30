@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 <!-- Socle QEMU mps2-an386 (Cortex-M4, étape 3 de la migration GCC/Linux) : chaîne minimale,
-     console lsh sur UART CMSDK 0 (ttys0), second port UART1 (ttys1), sans réseau (étape 3b).
+     console lsh sur UART CMSDK 0 (ttys0), second port UART1 (ttys1), Ethernet LAN9118 (eth0)
+     avec la pile lwIP (étape 3b).
      Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
 
 <mklepton>
@@ -29,7 +30,8 @@
 
       <env path="/usr;/usr/sbin;/usr/bin" />
 
-      <network use="off" />
+      <!-- pile IP (__KERNEL_NET_IPSTACK) : lwIP (USE_LWIP, user_kernel_mkconf.h) -->
+      <network use="on" />
 </kernel>
 
 <devices>
@@ -43,6 +45,10 @@
    <dev name="dev_head_map"     use="on"/>
    <!-- /dev/pipe -->
    <dev name="dev_pipe_map"     use="on"/>
+   <!-- /dev/net/socket lwip -->
+   <dev name="dev_lwip_core_socket_map"    use="on"/>
+   <!-- /dev/net/ip lwip ip stack -->
+   <dev name="dev_lwip_stack_map"   use="on"/>
 </devices>
 
 <target name="cortexm_lepton">
@@ -51,6 +57,8 @@
       <dev name="dev_cmsdk_uart_0_map"    use="on"/>
       <!-- /dev/ttys1 : UART CMSDK 1 -->
       <dev name="dev_cmsdk_uart_1_map"    use="on"/>
+      <!-- /dev/eth0 : Ethernet LAN9118 -->
+      <dev name="dev_eth_lan9118_0_map"   use="on"/>
    </devices>
 </target>
 
@@ -67,6 +75,16 @@
    <bin name="uname"    stack="2048"    priority="100" timeslice="1" />
    <bin name="pwd"      stack="2048"    priority="100" timeslice="1" />
    <bin name="echo"     stack="2048"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/sbin/net -->
+<binaries src_path="sbin/net" dest_path="sbin/net">
+   <bin name="ifconfig" stack="4096"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/bin/net -->
+<binaries src_path="bin/net" dest_path="bin/net">
+   <bin name="ftpd"     stack="8192"    priority="100" timeslice="1" />
 </binaries>
 
 <files>

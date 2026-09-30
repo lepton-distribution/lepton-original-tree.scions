@@ -1,6 +1,6 @@
 # Carte QEMU mps2-an386 (Cortex-M4, socle de l'étape 3).
 # Mémoire : ld/mem_qemu-mps2-an386.ld. Périphériques : UART CMSDK (console ttys0, ttys1),
-# LAN9118 (étape 3b). Adresses et numéros d'interruption : BSP kernel/dev/bsp/qemu_mps2_an386.
+# LAN9118 (eth0, pile lwIP). Adresses et numéros d'interruption : BSP kernel/dev/bsp/qemu_mps2_an386.
 if(NOT LEPTON_CPU STREQUAL "cortex-m4f")
   message(FATAL_ERROR "qemu-mps2-an386 : LEPTON_CPU=cortex-m4f attendu")
 endif()
@@ -10,6 +10,7 @@ set(LEPTON_BSP_SOURCES
   kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.c
   kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.c
   kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386_board.c)
+set(LEPTON_NET_STACK lwip)   # étape 3b (décision 2026-09-30) ; USE_LWIP dans user_kernel_mkconf.h
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2_an386.xml)
 set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
 set(LEPTON_QEMU_MACHINE mps2-an386)

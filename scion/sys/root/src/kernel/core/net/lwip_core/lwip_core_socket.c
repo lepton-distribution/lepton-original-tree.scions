@@ -88,19 +88,19 @@ static const char dev_lwip_core_socket_name[] = "net/socket";
 
 
 //
-int lwip_core_socket_socket(desc_t desc, int domain, int type, int protocol);
-int lwip_core_socket_bind(desc_t desc, struct sockaddr *name, socklen_t namelen);
-int lwip_core_socket_accept(desc_t desc, struct sockaddr *addr, socklen_t *addrlen);
-int lwip_core_socket_accepted(desc_t desc, int native_socket_fd);
-int lwip_core_socket_connect(desc_t desc, struct sockaddr *name, socklen_t namelen);
-int lwip_core_socket_listen(desc_t desc, int backlog);
-int lwip_core_socket_shutdown(desc_t desc, int how);
-int lwip_core_socket_close(desc_t desc);
+static int lwip_core_socket_socket(desc_t desc, int domain, int type, int protocol);
+static int lwip_core_socket_bind(desc_t desc, struct sockaddr *name, socklen_t namelen);
+static int lwip_core_socket_accept(desc_t desc, struct sockaddr *addr, socklen_t *addrlen);
+static int lwip_core_socket_accepted(desc_t desc, int native_socket_fd);
+static int lwip_core_socket_connect(desc_t desc, struct sockaddr *name, socklen_t namelen);
+static int lwip_core_socket_listen(desc_t desc, int backlog);
+static int lwip_core_socket_shutdown(desc_t desc, int how);
+static int lwip_core_socket_close(desc_t desc);
 //
-int lwip_core_socket_getpeername(desc_t desc, struct sockaddr *name, socklen_t *namelen);
-int lwip_core_socket_getsockname(desc_t desc, struct sockaddr *name, socklen_t *namelen);
-int lwip_core_socket_getsockopt(desc_t desc, int level, int optname, void *optval, socklen_t *optlen);
-int lwip_core_socket_setsockopt(desc_t desc, int level, int optname, const void *optval, socklen_t optlen);
+static int lwip_core_socket_getpeername(desc_t desc, struct sockaddr *name, socklen_t *namelen);
+static int lwip_core_socket_getsockname(desc_t desc, struct sockaddr *name, socklen_t *namelen);
+static int lwip_core_socket_getsockopt(desc_t desc, int level, int optname, void *optval, socklen_t *optlen);
+static int lwip_core_socket_setsockopt(desc_t desc, int level, int optname, const void *optval, socklen_t optlen);
 struct hostent* lwip_core_socket_gethostbyname(desc_t desc, struct hostent* host, const char *name);
 
 static  const kernel_net_core_socket_op_t kernel_net_core_socket_op = {

@@ -1,1 +1,2 @@
-#nothing to do.
+net/ifconfig addif 192.168.100.2 192.168.100.1
+bin/net/ftpd&

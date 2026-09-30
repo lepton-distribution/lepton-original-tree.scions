@@ -66,15 +66,11 @@ either the MPL or the [eCos GPL] License."
 //#define LWIP_CORE_STACK_SIZE 1000
 
 //
-#if !defined(__GNUC__)
-   #define LWIP_CORE_PRIORITY   120
-
-#else
-
-   #include <string.h>
-   #define LWIP_CORE_PRIORITY   10
-
-#endif
+#include <string.h>
+//priorité des cibles réelles, au-dessus des processus (100) : la pile doit être initialisée avant
+//le premier socket() des applications lancées par .init (étape 3b). La valeur 10 sous __GNUC__
+//visait la simulation Linux (gelée) : branche par compilateur retirée.
+#define LWIP_CORE_PRIORITY   120
 
 __KERNEL_SRAM_LOCATION
 _macro_stack_addr char lwip_core_stack[LWIP_CORE_STACK_SIZE];

@@ -19,4 +19,8 @@
 //kernel console for initd and printk dev output on /dev/console stream
 #define __KERNEL_DEV_TTY "/dev/ttys0"
 
+//ip stack (étape 3b) : lwIP sur Ethernet (eth0 : LAN9118)
+#define USE_LWIP
+#define USE_IF_ETHERNET
+
 #endif
