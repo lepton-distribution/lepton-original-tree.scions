@@ -100,6 +100,12 @@ int kernel_sem_wait(kernel_sem_t* sem){
    return 0;
 }
 
+/* Enveloppe fonctionnelle de la macro __kernel_dev_gettime (kernel.h) : appelée par mklepton, qui
+ * ne voit pas les en-têtes du noyau (kernel_stub.h). */
+void __wrpr_kernel_dev_gettime(desc_t __desc, char * __buf, int __size){
+   __kernel_dev_gettime(__desc,__buf,__size);
+}
+
 /* --- amorçage (adapté de core-segger/kernel.c) --------------------------------------------- */
 void _kernel_warmup_rootfs(void){
    _vfs_rootmnt();

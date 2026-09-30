@@ -52,12 +52,41 @@ char * xml_current_target=(char*)0;
 char * mk_current_target=(char*)0;
 char* xml_mk_file=(char*)0;
 
+//migration GCC/Linux (etape 2) : repertoire de sortie (-o) prioritaire sur les dest_path,
+//racine des chemins d'entree relatifs des mkconf (-s)
+static const char* mk_output_dir=(const char*)0;
+static const char* mk_source_root=(const char*)0;
+
+//"dir/name" alloue (dir vide ou nul : name seul)
+static char* mk_join(const char* dir, const char* name){
+   size_t l = (dir ? strlen(dir) : 0) + strlen(name) + 2;
+   char* path = malloc(l);
+   if(!path) {
+      perror("malloc");
+      exit(-1);
+   }
+   if(dir && *dir)
+      snprintf(path,l,"%s/%s",dir,name);
+   else
+      snprintf(path,l,"%s",name);
+   return path;
+}
+
+//chemin d'entree : relatif a la racine des sources si elle est donnee
+static char* mk_src(const char* path){
+   if(!mk_source_root || path[0]=='/')
+      return strdup(path);
+   return mk_join(mk_source_root,path);
+}
+
 FILE* f_kernelconf   = NULL;
 struct kernel_conf_t g_kernel_conf={0};
 
 const char dflt_kernel_conf_filepath[] = "kernel_mkconf.h";
 #define MK_KERNELCONF_FILEPATH   kernel_conf_filepath
 char * kernel_conf_filepath = (char*)dflt_kernel_conf_filepath; //see xml_elmt_mklepton()
+//en-tete de configuration propre au projet (<arch include_absolute_path>, repris de mklepton-w32.c)
+char * kernel_conf_incabspath = (char*)0;
 const char kernelconf_top_header[]=
    "/*===========================================\n\
 Compiler Directive\n\
@@ -359,8 +388,10 @@ int xml_elmt_end_kernel(void){
    //char buf[255]={0};
 
    //include
+   //#include my_kerneconf.h
+   if(kernel_conf_incabspath)
+      fprintf(f_kernelconf,"#include \"%s\" \n",kernel_conf_incabspath);
    //#include dev_diskimg.h
-   //fprintf(f_kernelconf,"#include \"%s\" \n",MK_DSKIMG_HEADER_FILEPATH);
    fprintf(f_kernelconf,"#include \"dev_dskimg.h\" \n");
 
    //declaration header
@@ -755,11 +786,8 @@ int xml_elmt_start_boot(const char **attr){
 
       if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH)) {
          //boot
-         char* path=malloc(strlen(attr_val)+strlen(boot_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,boot_filepath);
-
-         path[strlen(path)+1] = '\0';
-         boot_filepath = path;
+         if(!mk_output_dir)
+            boot_filepath = mk_join(attr_val,boot_filepath);
       }else if(!strcasecmp(attr_name,XML_TAG_ATTR_DEV)) {
          //multi boot devices
          boot_dev = strdup(attr_val);
@@ -864,12 +892,9 @@ int xml_elmt_start_mount(const char **attr){
       if(!attr_name || !attr_val) continue;
 
       if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH)) {
-         //boot
-         char* path =malloc(strlen(attr_val)+strlen(mount_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,mount_filepath);
-
-         path[strlen(path)+1] = '\0';
-         mount_filepath = path;
+         //mount
+         if(!mk_output_dir)
+            mount_filepath = mk_join(attr_val,mount_filepath);
       }
    }
    return 0;
@@ -1203,7 +1228,7 @@ int xml_elmt_file(const char **attr){
    pfile = malloc(sizeof(struct mkfile_t));
 
    pfile->file_name  = strdup(file_name);
-   pfile->src_file   = strdup(src_file);
+   pfile->src_file   = mk_src(src_file);
    pfile->dest_path  = strdup(dest_path);
 
    if(pfile_lst_end)
@@ -1236,30 +1261,12 @@ int xml_elmt_mklepton(const char **attr){
       attr_name = (char*)attr[i];
       attr_val  = (char*)attr[i + 1];
       if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH)) {
-         char* path;
-         //kernel
-         path =malloc(strlen(attr_val)+strlen(kernel_conf_filepath)+1);
-         sprintf(path,"%s/%s",attr_val,kernel_conf_filepath);
-         kernel_conf_filepath = path;
-         //dev
-         path =malloc(strlen(attr_val)+strlen(dev_conf_filepath)+1);
-         sprintf(path,"%s/%s",attr_val,dev_conf_filepath);
-         dev_conf_filepath = path;
-         //bin
-         path =malloc(strlen(attr_val)+strlen(bin_conf_filepath)+1);
-         sprintf(path,"%s/%s",attr_val,bin_conf_filepath);
-         bin_conf_filepath = path;
-         //disk image
-         //source file .c
-         path =malloc(strlen(attr_val)+strlen(dskimg_conf_filepath)+1);
-         sprintf(path,"%s/%s",attr_val,dskimg_conf_filepath);
-         dskimg_conf_filepath = strdup(path);
-         //header file .h
-         free(path);
-         path =malloc(strlen(attr_val)+strlen(dskimg_conf_header_filepath)+1);
-         sprintf(path,"%s/%s",attr_val,dskimg_conf_header_filepath);
-         dskimg_conf_header_filepath = strdup(path);
+      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH) && !mk_output_dir) {
+         kernel_conf_filepath        = mk_join(attr_val,kernel_conf_filepath);
+         dev_conf_filepath           = mk_join(attr_val,dev_conf_filepath);
+         bin_conf_filepath           = mk_join(attr_val,bin_conf_filepath);
+         dskimg_conf_filepath        = mk_join(attr_val,dskimg_conf_filepath);
+         dskimg_conf_header_filepath = mk_join(attr_val,dskimg_conf_header_filepath);
       }
    }
 
@@ -1283,34 +1290,20 @@ int xml_elmt_arch(const char **attr){
       attr_name = (char*)attr[i];
       attr_val  = (char*)attr[i + 1];
       if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH)) {
-         char* path;
-         //kernel
-         path =malloc(strlen(attr_val)+strlen(kernel_conf_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,kernel_conf_filepath);
-         path[strlen(path)+1] = '\0';
-         kernel_conf_filepath = path;
-         //dev
-         path =malloc(strlen(attr_val)+strlen(dev_conf_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,dev_conf_filepath);
-         path[strlen(path)+1] = '\0';
-         dev_conf_filepath = path;
-         //bin
-         path =malloc(strlen(attr_val)+strlen(bin_conf_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,bin_conf_filepath);
-         path[strlen(path)+1] = '\0';
-         bin_conf_filepath = path;
-         //disk image
-         //source file .c
-         path =malloc(strlen(attr_val)+strlen(dskimg_conf_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,dskimg_conf_filepath);
-         path[strlen(path)+1] = '\0';
-         dskimg_conf_filepath = strdup(path);
-         //header file .h
-         path =malloc(strlen(attr_val)+strlen(dskimg_conf_header_filepath)+3);
-         sprintf(path,"%s/%s",attr_val,dskimg_conf_header_filepath);
-         path[strlen(path)+1] = '\0';
-         dskimg_conf_header_filepath = strdup(path);
+      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH) && !mk_output_dir) {
+         kernel_conf_filepath        = mk_join(attr_val,kernel_conf_filepath);
+         dev_conf_filepath           = mk_join(attr_val,dev_conf_filepath);
+         bin_conf_filepath           = mk_join(attr_val,bin_conf_filepath);
+         dskimg_conf_filepath        = mk_join(attr_val,dskimg_conf_filepath);
+         dskimg_conf_header_filepath = mk_join(attr_val,dskimg_conf_header_filepath);
+      }
+      if(!strcasecmp(attr_name,XML_TAG_ATTR_INCABSPATH)) {
+         //user kernel conf header files with specific project definition
+         if(kernel_conf_incabspath) {
+            printf("error! include_absolute_path already defined:%s\n",kernel_conf_incabspath);
+            return -1;
+         }
+         kernel_conf_incabspath = strdup(attr_val);
       }
    }
 
@@ -1405,7 +1398,7 @@ int xml_elmt_dir(const char **attr) {
 
    pdir = malloc(sizeof(struct mkdir_t));
 
-   pdir->src_path   = strdup(src_path);
+   pdir->src_path   = mk_src(src_path);
    pdir->dest_path  = strdup(dest_path);
 
    if(pdir_lst_end)
@@ -1856,7 +1849,7 @@ int _mk_file(void){
       }
 
       //create file
-      if( (fd = open(pfile->src_file,O_RDONLY,S_IREAD)) <0 ) {
+      if( (fd = open(pfile->src_file,O_RDONLY)) <0 ) {
          printf("error! cannot open file:%s\n",pfile->src_file);
          pfile = pfile->pprev;
          err=-1;
@@ -1941,7 +1934,9 @@ int _mk_file(void){
 int _mk_dir(void) {
    struct mkdir_t* pdir = pdir_lst_start;
    struct mkdir_t * pdir_tmp = NULL;
-   DIR * dir = NULL;
+   struct dirent ** namelist = NULL;
+   int nentries = 0;
+   int ientry;
    struct dirent * dirent = NULL;
    struct stat d_stat ={0};
    int host_fd=-1;
@@ -1967,7 +1962,7 @@ int _mk_dir(void) {
    //create dir
    while(pdir) {
       //open host dir
-      if(!(dir = opendir(pdir->src_path))) {
+      if((nentries = scandir(pdir->src_path,&namelist,NULL,alphasort)) < 0) {
          printf("can't open %s\n", pdir->src_path);
          pdir = pdir->pprev;
          continue;
@@ -1975,23 +1970,22 @@ int _mk_dir(void) {
 
       //create target dir
       strcpy(target_ppath,"/usr/");
-      strncat(target_ppath, pdir->dest_path, 32);
+      strncat(target_ppath, pdir->dest_path, MAX_PATH-strlen(target_ppath)-1);
       printf("mkdir %s\n",target_ppath);
       if(_vfs_mkdir(target_ppath,0)<0) {
          printf("warning! mkdir %s\n",target_ppath);
       }
 
       //read local dir
-      while((dirent = readdir(dir))) {
+      for(ientry=0; ientry<nentries; ientry++) {
+         dirent = namelist[ientry];
          //skip . and ..
          if(!(strcasecmp(dirent->d_name,".")) || !(strcasecmp(dirent->d_name,".."))) {
             continue;
          }
 
          //copy complete host path
-         strncpy(host_path, pdir->src_path,MAX_PATH);
-         strcat(host_path, "/");
-         strncat(host_path, dirent->d_name, 32);
+         snprintf(host_path, MAX_PATH, "%s/%s", pdir->src_path, dirent->d_name);
 
          //
          if(stat(host_path, &d_stat)<0) {
@@ -2003,7 +1997,7 @@ int _mk_dir(void) {
             host_fd = open(host_path, O_RDONLY, S_IREAD);
             //
             strcat(target_ppath, "/");
-            strncat(target_ppath, dirent->d_name, 32);
+            strncat(target_ppath, dirent->d_name, MAX_PATH-strlen(target_ppath)-1);
             if((target_fd=_vfs_open(target_ppath,_O_CREAT|_O_WRONLY,0))<0) {
                printf("can't open %s\n", target_ppath);
                err=-1;
@@ -2033,7 +2027,7 @@ int _mk_dir(void) {
             pdir_tmp->src_path   = strdup(host_path);
 
             strcat(target_ppath, "/");
-            strncat(target_ppath, dirent->d_name, 32);
+            strncat(target_ppath, dirent->d_name, MAX_PATH-strlen(target_ppath)-1);
             pdir_tmp->dest_path  = strdup(target_ppath+strlen("/usr/"));
 
             if(pdir_lst_end)
@@ -2051,7 +2045,9 @@ int _mk_dir(void) {
          }
       }
 
-      closedir(dir);
+      for(ientry=0; ientry<nentries; ientry++)
+         free(namelist[ientry]);
+      free(namelist);
       pdir = pdir->pprev;
    }
 
@@ -2438,10 +2434,23 @@ int main( int argc, char *argv[])
 {
    int i;
    char* ref = (char*)0;
+   char* xml_conf_path;
 
-   printf("\nmkelpton xml version: %s-%s\n\n",__DATE__,__TIME__);
+   printf("\nmklepton\n\n");
 
    for(i=1; i<argc; i++) {
+      if(!strcmp(argv[i],"-o") || !strcmp(argv[i],"--output-dir")) {
+         if(++i==argc)
+            return -1;
+         mk_output_dir=argv[i];
+         continue;
+      }
+      if(!strcmp(argv[i],"-s") || !strcmp(argv[i],"--source-root")) {
+         if(++i==argc)
+            return -1;
+         mk_source_root=argv[i];
+         continue;
+      }
       if(argv[i][0]=='-') {
          unsigned char c;
          unsigned char l=strlen(argv[i]);
@@ -2465,6 +2474,9 @@ int main( int argc, char *argv[])
 
             case 'k':   //kernel
                opt |= OPT_MSK_K;
+               break;
+            case 'r':   //directories
+               opt |= OPT_MSK_R;
                break;
 
             case 't':   //target
@@ -2493,6 +2505,30 @@ int main( int argc, char *argv[])
    if(!opt || (opt == OPT_MSK_T))
       opt = OPT_MSK_ALL;
 
+   if(mk_source_root) {
+      char* root = realpath(mk_source_root,NULL);
+      if(!root) {
+         perror(mk_source_root);
+         return -1;
+      }
+      mk_source_root = root;
+   }
+   if(!ref)
+      ref = "mkconf.xml";
+   xml_conf_path = mk_src(ref);
+   if(xml_conf_path[0]!='/') {
+      char* abs = realpath(xml_conf_path,NULL);
+      if(!abs) {
+         perror(xml_conf_path);
+         return -1;
+      }
+      xml_conf_path = abs;
+   }
+   if(mk_output_dir && chdir(mk_output_dir)<0) {
+      perror(mk_output_dir);
+      return -1;
+   }
+
    //
    _vfs();
 
@@ -2514,12 +2550,9 @@ int main( int argc, char *argv[])
 
 
    //read xml config file:mkconf.xml
-   if(ref && _mk_conf(ref)<0) {
+   if(_mk_conf(xml_conf_path)<0) {
       perror("\nerror: _mk_conf from");
-      printf(" %s!",ref);
-      return -1;
-   }else if(!ref && _mk_conf("mkconf.xml")<0) {
-      perror("\nerror: _mk_conf from default ref mkconf.xml!\n");
+      printf(" %s!",xml_conf_path);
       return -1;
    }
    printf("\n_mk_conf ok!\n\n");
