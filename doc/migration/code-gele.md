@@ -1,14 +1,13 @@
-# Code gelé — PROPOSITION, non décidée
+# Code gelé — décidé le 2026-09-30
 
-Généré par `tools/migration/build_closure.py` le 2026-09-30 ; à soumettre à l'utilisateur (point d'arrêt étape 1). Tant que la décision n'est pas prise, rien n'est supprimé ni déplacé. Le code gelé n'est ni modifié, ni compilé, ni audité au-delà de l'inventaire. Volumétrie : cloc 2.04 (--by-file --skip-uniqueness, colonne « code ») ; 3 fichier(s) non reconnu(s) par cloc comptés par le repli interne.
+Généré par `tools/migration/build_closure.py` le 2026-09-30. Rien n'est supprimé ni déplacé (suppression : décision de l'étape 6). Le code gelé n'est ni modifié, ni compilé, ni audité au-delà de l'inventaire. Volumétrie : cloc 2.04 (--by-file --skip-uniqueness, colonne « code ») ; 3 fichier(s) non reconnu(s) par cloc comptés par le repli interne.
 
-Total proposé : **1324 fichiers, 262387 lignes de code**.
+Total gelé : **765 fichiers, 158061 lignes de code**.
 
 ## Par motif
 
 | Motif | Fichiers | Lignes | Répertoires principaux |
 |---|---|---|---|
-| règle : Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) | 557 | 103876 | `src/kernel/dev/arch/at91/softpack-lib` (536), `src/kernel/dev/arch/cortexm/at91samv7x` (13), `src/kernel/dev/bsp/samv71xplained_ultra` (5), `src/kernel/dev/bsp/same70xplained` (3) |
 | règle : embOS IAR ARM7/ARM9/Win32 | 57 | 40241 | `src/kernel/core/ucore/embOSARM7_360` (23), `src/kernel/core/ucore/embOSW32_100` (21), `src/kernel/core/ucore/embOSARM7-9_388` (13) |
 | règle : embOS IAR Cortex-M (Segger) remplacé par le port GCC (third_party/embos) ; lecture seule (tâche 4) | 130 | 27852 | `src/kernel/core/ucore/embOSCXM4_518` (38), `src/kernel/core/ucore/embOSCXM4_440` (28), `src/kernel/core/ucore/embOSCXM7_430` (27), `src/kernel/core/ucore/embOSCXM3_384` (19), `src/kernel/core/ucore/embOSCXM4_386` (18) |
 | règle de répertoire : Atmel AT91 ARM7/ARM9 | 66 | 18189 | `src/kernel/dev/arch/at91/at91lib` (60), `src/kernel/dev/arch/at91/dev_at91_usbdp` (4), `src/kernel/dev/arch/at91/dev_at91_mci` (2) |
@@ -23,7 +22,6 @@ Total proposé : **1324 fichiers, 262387 lignes de code**.
 | règle : variante Windows de mklepton | 1 | 1539 | `tools/mklepton/src` (1) |
 | règle : simulation Windows | 5 | 751 | `src/kernel/core/arch/win32` (5) |
 | projets : projet ARM7/ARM9 (cible abandonnée) | 10 | 653 | `src/kernel/dev/arch/at91/at91lib` (4), `src/kernel/dev/arch/all/eth` (2), `sys/user/tauon-basic` (2), `src/bin` (1), `src/kernel/core` (1) |
-| projets : Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) | 2 | 450 | `src/kernel/core/ucore/cmsis-5` (2) |
 | règle : M16C (cible abandonnée) | 7 | 289 | `src/kernel/net/lwip` (7) |
 | règle : port eCos (backend core-ecos absent de l'arbre) | 1 | 233 | `tools/host/debian` (1) |
 | projets : noyau, configuration ARM926EJ-S | 1 | 8 | `src/kernel/dev/arch/at91/at91lib` (1) |
@@ -37,7 +35,6 @@ Total proposé : **1324 fichiers, 262387 lignes de code**.
 | `src/bin` | 1 | 396 |
 | `src/kernel/core` | 4 | 4769 |
 | `src/kernel/core/arch/win32` | 5 | 751 |
-| `src/kernel/core/ucore/cmsis-5` | 2 | 450 |
 | `src/kernel/core/ucore/embOSARM7-9_388` | 13 | 3110 |
 | `src/kernel/core/ucore/embOSARM7_360` | 23 | 7065 |
 | `src/kernel/core/ucore/embOSCXM3_384` | 19 | 2930 |
@@ -56,8 +53,6 @@ Total proposé : **1324 fichiers, 262387 lignes de code**.
 | `src/kernel/dev/arch/at91/at91lib` | 65 | 16362 |
 | `src/kernel/dev/arch/at91/dev_at91_mci` | 2 | 762 |
 | `src/kernel/dev/arch/at91/dev_at91_usbdp` | 4 | 1164 |
-| `src/kernel/dev/arch/at91/softpack-lib` | 536 | 101466 |
-| `src/kernel/dev/arch/cortexm/at91samv7x` | 13 | 1627 |
 | `src/kernel/dev/arch/cortexm/k60n512` | 24 | 3691 |
 | `src/kernel/dev/arch/gnu32/common` | 3 | 146 |
 | `src/kernel/dev/arch/gnu32/dev_linux_com0` | 4 | 446 |
@@ -90,8 +85,6 @@ Total proposé : **1324 fichiers, 262387 lignes de code**.
 | `src/kernel/dev/arch/win32/dev_win32_rotary_switch` | 2 | 296 |
 | `src/kernel/dev/arch/win32/dev_win32_rtc` | 3 | 153 |
 | `src/kernel/dev/arch/win32/dev_win32_sdcard` | 4 | 208 |
-| `src/kernel/dev/bsp/same70xplained` | 3 | 475 |
-| `src/kernel/dev/bsp/samv71xplained_ultra` | 5 | 308 |
 | `src/kernel/net/lwip` | 7 | 289 |
 | `sys/user/tauon-basic` | 2 | 107 |
 | `sys/user/tauon_sampleapp/hal/board_atmel_at91sam9261-ek` | 113 | 16846 |
@@ -103,7 +96,9 @@ Total proposé : **1324 fichiers, 262387 lignes de code**.
 | `tools/virtual_cpu/hardware` | 24 | 1591 |
 | `tools/virtual_cpu/ui` | 1 | 15 |
 
-## Points à trancher par l'utilisateur
+Décision utilisateur du 2026-09-30 : proposition acceptée, sauf Cortex-M7 Atmel SAMV71/SAME70 (point 3), maintenu en différé comme référence M7. Les points ci-dessous sont ceux de la proposition.
+
+## Points de la proposition
 
 1. **Cibles abandonnées actées** (décision 2026-09-29 : ARM7, ARM9, M16C) et **simulations** (`dev/arch/gnu32`, `dev/arch/win32`, `core/arch/win32`, `tools/virtual_cpu`, `prj/vc-2010`) : gel proposé sans réserve. Réserve : `dev/arch/gnu32` sert au noyau statique hôte de mklepton (`prj/scons/arch/synthetic/x86_static`) — gel à confirmer après la tâche 5.
 2. **embOS IAR Cortex-M** (`core/ucore/embOSCXM*`) : proposé gelé car remplacé par le port GCC Segger (`third_party/embos`) ; conservé en lecture pour la comparaison d'API (tâche 4).

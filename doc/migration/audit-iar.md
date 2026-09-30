@@ -16,20 +16,20 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 
 | sévérité | actif | differe | gele | hors_projet | total |
 |---|---:|---:|---:|---:|---:|
-| iar | 148 | 580 | 933 | 224 | 1885 |
-| autre | 165 | 52 | 633 | 414 | 1264 |
-| a_verifier | 1518 | 581 | 707 | 195 | 3001 |
+| iar | 148 | 935 | 578 | 224 | 1885 |
+| autre | 165 | 65 | 620 | 414 | 1264 |
+| a_verifier | 1518 | 733 | 555 | 195 | 3001 |
 | info | 43 | 74 | 51 | 14 | 182 |
 
 ## Catégorie × ensemble (sévérité `iar`)
 
 | catégorie | actif | differe | gele | hors_projet | total |
 |---|---:|---:|---:|---:|---:|
-| garde_iar | 74 | 374 | 435 | 163 | 1046 |
-| symbole_iar | 20 | 9 | 208 | 5 | 242 |
-| pragma | 25 | 65 | 57 | 27 | 174 |
-| mot_cle | 12 | 80 | 57 | 0 | 149 |
-| intrinsic | 0 | 20 | 93 | 2 | 115 |
+| garde_iar | 74 | 706 | 103 | 163 | 1046 |
+| symbole_iar | 20 | 14 | 203 | 5 | 242 |
+| pragma | 25 | 71 | 51 | 27 | 174 |
+| mot_cle | 12 | 86 | 51 | 0 | 149 |
+| intrinsic | 0 | 26 | 87 | 2 | 115 |
 | header | 12 | 14 | 66 | 1 | 93 |
 | asm_iar | 1 | 15 | 12 | 25 | 53 |
 | modele_mklepton | 4 | 0 | 4 | 0 | 8 |
@@ -43,14 +43,14 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | asm_inconnu | a_verifier | 0 | 0 | 3 | 0 |
 | asm_multi | a_verifier | 0 | 0 | 4 | 0 |
 | garde_compilateur | a_verifier | 22 | 1 | 6 | 0 |
-| garde_gcc | a_verifier | 104 | 35 | 80 | 51 |
-| intrinsic_cmsis | a_verifier | 895 | 182 | 433 | 32 |
+| garde_gcc | a_verifier | 104 | 52 | 63 | 51 |
+| intrinsic_cmsis | a_verifier | 895 | 241 | 374 | 32 |
 | mot_cle | a_verifier | 284 | 265 | 0 | 32 |
-| pragma | a_verifier | 66 | 45 | 141 | 80 |
+| pragma | a_verifier | 66 | 121 | 65 | 80 |
 | symbole_dlib_io | a_verifier | 0 | 2 | 6 | 0 |
 | xml_mklepton | a_verifier | 144 | 51 | 34 | 0 |
 | asm_armcc | autre | 0 | 2 | 1 | 16 |
-| garde_autre | autre | 150 | 46 | 186 | 186 |
+| garde_autre | autre | 150 | 59 | 173 | 186 |
 | pragma_autre | autre | 15 | 4 | 446 | 212 |
 | asm_gnu | info | 0 | 2 | 3 | 14 |
 | fichier_iar | info | 43 | 72 | 48 | 0 |
@@ -125,11 +125,13 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | répertoire | occurrences |
 |---|---:|
 | `sys/root/src/kernel/core/ucore/cmsis/Device` | 345 |
+| `sys/root/src/kernel/dev/arch/at91/softpack-lib` | 344 |
 | `sys/root/src/kernel/core/ucore/freeRTOS_9-0-0/source` | 61 |
 | `sys/root/src/kernel/core/ucore/freeRTOS_8-0-0/source` | 60 |
 | `sys/root/src/kernel/usb/stm32f4-usb-core/stm32_usb_device_library/Class` | 28 |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f1xx` | 25 |
 | `sys/root/src/kernel/dev/arch/at91/asf` | 24 |
+| `sys/root/src/kernel/core/ucore/cmsis-5/Device` | 11 |
 | `sys/root/src/kernel/dev/arch/cortexm/stellaris` | 11 |
 | `sys/root/src/kernel/core/core-freertos` | 8 |
 | `sys/root/src/kernel/usb/stm32f4-usb-core/core` | 8 |
@@ -142,7 +144,6 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 
 | répertoire | occurrences |
 |---|---:|
-| `sys/root/src/kernel/dev/arch/at91/softpack-lib` | 344 |
 | `sys/root/src/kernel/core/ucore/embOSCXM4_518/arch` | 67 |
 | `sys/root/src/kernel/core/ucore/embOSCXM3_384/arch` | 62 |
 | `sys/root/src/kernel/core/ucore/embOSARM7-9_388/arch` | 48 |
@@ -157,6 +158,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | `sys/root/src/kernel/dev/arch/arm9/at91sam9261` | 25 |
 | `sys/root/src/kernel/core/ucore/embOSCXM4_518/inc` | 19 |
 | `sys/root/src/kernel/core/ucore/embOSARM7-9_388/inc` | 16 |
+| `sys/root/src/kernel/core/ucore/embOSCXM3_384/inc` | 9 |
 
 ## Fichiers assembleur (98)
 
@@ -304,7 +306,7 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1073 | 934 | 1409 | 707 |
+| c | 1073 | 1493 | 850 | 707 |
 | asm | 1 | 19 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 15 | 9 | 2 | 0 |

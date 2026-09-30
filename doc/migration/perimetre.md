@@ -9,8 +9,8 @@ Généré par `tools/migration/build_closure.py` le 2026-09-30. Rejouer depuis l
 | Ensemble | Fichiers | Lignes de code |
 |---|---|---|
 | actif | 1074 | 314773 |
-| différé | 952 | 304755 |
-| gelé | 1324 | 262387 |
+| différé | 1511 | 409081 |
+| gelé | 765 | 158061 |
 | hors-projet | 762 | 192635 |
 | **total** | 4112 | 1074550 |
 
@@ -34,9 +34,9 @@ Provenance du classement : aucun = 762, projet = 1496, règle = 1518, répertoir
 | `dev_at91sam9261_7.20` | lib-debug | gelé | projet ARM7/ARM9 (cible abandonnée) |
 | `dev_at91samd20_7.20` | Debug | différé | candidat M0+ (étape 6) |
 | `dev_at91samd20_7.20` | Release | différé | candidat M0+ (étape 6) |
-| `dev_at91samv7x_7.80` | Debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `dev_at91samv7x_7.80` | Release | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `dev_at91samv7x_7.80` | samv71-freertos-debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
+| `dev_at91samv7x_7.80` | Debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `dev_at91samv7x_7.80` | Release | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `dev_at91samv7x_7.80` | samv71-freertos-debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
 | `dev_lm3s_6.21` | Debug | différé | candidat M3 (étape 6) |
 | `dev_stm32f1xx_6.21` | Debug | différé | candidat M3 (étape 6) |
 | `dev_stm32f4xx_6.21` | Debug | différé | génération ancienne ou configuration Release (squelette) |
@@ -102,12 +102,12 @@ Provenance du classement : aucun = 762, projet = 1496, règle = 1518, répertoir
 | `bsp_olimex_p407_7.30` | Release | différé | génération ancienne ou configuration Release (squelette) |
 | `bsp_samd20xplained_pro_7.30` | Debug | différé | candidat M0+ (étape 6) |
 | `bsp_samd20xplained_pro_7.30` | Release | différé | candidat M0+ (étape 6) |
-| `bsp_same70xplained_7.80` | Debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `bsp_same70xplained_7.80` | Release | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `bsp_same70xplained_7.80` | freertos-debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `bsp_samv71xplained_ultra_7.80` | Debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `bsp_samv71xplained_ultra_7.80` | Release | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `bsp_samv71xplained_ultra_7.80` | freertos-debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
+| `bsp_same70xplained_7.80` | Debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `bsp_same70xplained_7.80` | Release | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `bsp_same70xplained_7.80` | freertos-debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `bsp_samv71xplained_ultra_7.80` | Debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `bsp_samv71xplained_ultra_7.80` | Release | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `bsp_samv71xplained_ultra_7.80` | freertos-debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
 | `bsp-stm32f469i-eval` | Debug | actif | BSP STM32F4 |
 | `bsp-stm32f469i-eval` | Release | différé | génération ancienne ou configuration Release (squelette) |
 | `bsp_stm32wl55jci_nucleo_8.40` | Debug | différé | STM32WL55 Nucleo, carte non listée (à décider) |
@@ -134,9 +134,9 @@ Provenance du classement : aucun = 762, projet = 1496, règle = 1518, répertoir
 | `tauon-basic_at91samd20_7.20` | Debug | différé | candidat M0+ (étape 6) |
 | `tauon-basic_at91samd20_7.20` | Release | différé | candidat M0+ (étape 6) |
 | `tauon-basic_at91samd20_7.20` | freertos-debug | différé | candidat M0+ (étape 6) |
-| `tauon-basic_at91samv71_7.80` | Debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `tauon-basic_at91samv71_7.80` | Release | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
-| `tauon-basic_at91samv71_7.80` | freertos-debug | gelé | Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition) |
+| `tauon-basic_at91samv71_7.80` | Debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `tauon-basic_at91samv71_7.80` | Release | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
+| `tauon-basic_at91samv71_7.80` | freertos-debug | différé | Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30) |
 | `tauon-basic_cmsis_6.21` | Debug | différé | candidat M3 (étape 6) |
 | `tauon-basic_cmsis_6.21` | Release | différé | candidat M3 (étape 6) |
 | `tauon-basic_lm3s_6.21` | Debug | différé | candidat M3 (étape 6) |
@@ -167,7 +167,7 @@ Provenance du classement : aucun = 762, projet = 1496, règle = 1518, répertoir
 - `^sys/root/src/kernel/core/ucore/embOSCX` → **gelé** : embOS IAR Cortex-M (Segger) remplacé par le port GCC (third_party/embos) ; lecture seule (tâche 4)
 - `^sys/user/tauon_sampleapp/hal/board_atmel_at91sam9261-ek/` → **gelé** : carte AT91SAM9261-EK (ARM9)
 - `^(sys/root/src/kernel/dev/arch/cortexm/k60n512|sys/user/tauon_sampleapp/hal/board_freescale_twrk60n512)/` → **gelé** : Freescale K60 (TWR-K60N512), carte abandonnée, sans projet IAR (proposition)
-- `^sys/root/src/kernel/(dev/arch/cortexm/at91samv7x|dev/bsp/(same70xplained|samv71xplained_ultra)|dev/arch/at91/softpack-lib)/` → **gelé** : Cortex-M7 Atmel SAMV71/SAME70, carte non retenue (proposition)
+- `^sys/root/src/kernel/(dev/arch/cortexm/at91samv7x|dev/bsp/(same70xplained|samv71xplained_ultra)|dev/arch/at91/softpack-lib)/` → **différé** : Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30)
 - `^sys/root/src/kernel/core/(core-freertos|ucore/freeRTOS_)` → **différé** : backend FreeRTOS (étape 7)
 
 Règles de répertoire (fichiers non atteints par un projet) :
@@ -190,7 +190,7 @@ Fichiers qu'une configuration active ou différée atteint mais qu'une règle de
 - `src/kernel/core/ucore/embOSCXM4_386` : 10
 - `src/kernel/core/ucore/embOSCXM4_440` : 21
 - `src/kernel/core/ucore/embOSCXM4_518` : 23
-- `src/kernel/core/ucore/embOSCXM7_430` : 2
+- `src/kernel/core/ucore/embOSCXM7_430` : 26
 - `src/kernel/core/ucore/embOSW32_100` : 3
 - `src/kernel/core/ucore/freeRTOS_8-0-0` : 14
 - `src/kernel/dev/arch/arm7/dev_at91` : 2
@@ -203,8 +203,8 @@ Fichiers qu'une configuration active ou différée atteint mais qu'une règle de
 |---|---|---|---|---|---|
 | `prj/vc-2010` | – | – | 1 / 7 | – | 7 |
 | `src/bin` | 13 / 6756 | 1 / 156 | 1 / 396 | 25 / 4036 | 11344 |
-| `src/kernel/core` | 163 / 33362 | 245 / 72743 | 198 / 74063 | 298 / 50995 | 231163 |
-| `src/kernel/dev` | 349 / 200458 | 509 / 211872 | 808 / 152701 | 59 / 17266 | 582297 |
+| `src/kernel/core` | 163 / 33362 | 247 / 73193 | 196 / 73613 | 298 / 50995 | 231163 |
+| `src/kernel/dev` | 349 / 200458 | 1066 / 315748 | 251 / 48825 | 59 / 17266 | 582297 |
 | `src/kernel/fs` | 78 / 14910 | – | – | 36 / 39398 | 54308 |
 | `src/kernel/net` | 376 / 39924 | 135 / 11202 | 7 / 289 | 315 / 78583 | 129998 |
 | `src/kernel/usb` | – | 38 / 6408 | – | – | 6408 |
@@ -228,7 +228,7 @@ Fichiers qu'une configuration active ou différée atteint mais qu'une règle de
 | `src/kernel/core/core-segger` | 14 / 4316 | – | – | 1 / 12 | 4328 |
 | `src/kernel/core/net` | 27 / 5501 | – | – | – | 5501 |
 | `src/kernel/core/ucore/cmsis` | 19 / 14753 | 94 / 40732 | – | 31 / 7508 | 62993 |
-| `src/kernel/core/ucore/cmsis-5` | – | – | 2 / 450 | 263 / 43136 | 43586 |
+| `src/kernel/core/ucore/cmsis-5` | – | 2 / 450 | – | 263 / 43136 | 43586 |
 | `src/kernel/core/ucore/embOSARM7-9_388` | – | – | 13 / 3110 | – | 3110 |
 | `src/kernel/core/ucore/embOSARM7_360` | – | – | 23 / 7065 | – | 7065 |
 | `src/kernel/core/ucore/embOSCXM3_384` | – | – | 19 / 2930 | – | 2930 |
@@ -262,11 +262,11 @@ Fichiers qu'une configuration active ou différée atteint mais qu'une règle de
 | `src/kernel/dev/arch/at91/dev_at91_mci` | – | – | 2 / 762 | – | 762 |
 | `src/kernel/dev/arch/at91/dev_at91_rtt` | – | 2 / 87 | – | – | 87 |
 | `src/kernel/dev/arch/at91/dev_at91_usbdp` | – | – | 4 / 1164 | – | 1164 |
-| `src/kernel/dev/arch/at91/softpack-lib` | – | – | 536 / 101466 | – | 101466 |
+| `src/kernel/dev/arch/at91/softpack-lib` | – | 536 / 101466 | – | – | 101466 |
 | `src/kernel/dev/arch/cmsis/dev_cmsis_cpu` | 2 / 123 | – | – | – | 123 |
 | `src/kernel/dev/arch/cmsis/dev_cmsis_itm` | 3 / 267 | – | – | – | 267 |
 | `src/kernel/dev/arch/cortexm/at91samd20` | – | 2 / 291 | – | – | 291 |
-| `src/kernel/dev/arch/cortexm/at91samv7x` | – | – | 13 / 1627 | – | 1627 |
+| `src/kernel/dev/arch/cortexm/at91samv7x` | – | 13 / 1627 | – | – | 1627 |
 | `src/kernel/dev/arch/cortexm/k60n512` | – | – | 24 / 3691 | – | 3691 |
 | `src/kernel/dev/arch/cortexm/stellaris` | 2 / 132 | 98 / 91483 | – | – | 91615 |
 | `src/kernel/dev/arch/cortexm/stm32f1xx` | – | 79 / 13695 | – | – | 13695 |
@@ -307,8 +307,8 @@ Fichiers qu'une configuration active ou différée atteint mais qu'une règle de
 | `src/kernel/dev/bsp/discovery_f4-baseboard-modem` | – | 22 / 2224 | – | – | 2224 |
 | `src/kernel/dev/bsp/olimex_p407` | 4 / 296 | – | – | – | 296 |
 | `src/kernel/dev/bsp/samd20xplained_pro` | – | 6 / 1069 | – | – | 1069 |
-| `src/kernel/dev/bsp/same70xplained` | – | – | 3 / 475 | – | 475 |
-| `src/kernel/dev/bsp/samv71xplained_ultra` | – | – | 5 / 308 | – | 308 |
+| `src/kernel/dev/bsp/same70xplained` | – | 3 / 475 | – | – | 475 |
+| `src/kernel/dev/bsp/samv71xplained_ultra` | – | 5 / 308 | – | – | 308 |
 | `src/kernel/dev/bsp/stm32f469i-eval` | 3 / 224 | 3 / 213 | – | – | 437 |
 | `src/kernel/dev/bsp/stm32wl55jci_nucleo` | – | 9 / 495 | – | – | 495 |
 | `src/kernel/fs/fat` | 11 / 3404 | – | – | – | 3404 |
