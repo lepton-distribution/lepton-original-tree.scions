@@ -24,6 +24,9 @@ step() { printf '\n== %s\n' "$*"; }
 
 cd "$LEPTON_TRUNK"
 
+step "outils de migration : tests unitaires (transform_iar.py)"
+python3 -m unittest discover -s "$here/tools/migration/tests"
+
 step "preset host : configuration, build, ctest -L host"
 cmake --preset host >/dev/null
 cmake --build --preset host
