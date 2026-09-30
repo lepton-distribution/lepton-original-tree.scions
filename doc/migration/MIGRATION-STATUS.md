@@ -11,7 +11,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
 | 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
-| 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; **étape 3 non close** : session de complément (tâche 1 d'ETAPE-3 : `compiler.h` `__lepton_*`, amorce `transform_iar.py`) EN COURS, décision utilisateur 2026-09-30 ; handoff `handoff/etape-3.md` |
+| 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; complément tâche 1 (`compiler.h`, `lepton_irq.h`, amorce `transform_iar.py` appliquée à la chaîne minimale) fait le 2026-09-30 : **étape 3 À VALIDER** ; handoff `handoff/etape-3.md` |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
@@ -27,7 +27,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Cœur | embOS | FreeRTOS |
 |---|---|---|
-| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) ; T0 inclut désormais réseau et `ftpd` lancés par le `.init` | |
+| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) ; T0 inclut désormais réseau et `ftpd` lancés par le `.init` ; test `IRQ` (sections critiques `lepton_irq.h`) vert hard et soft | |
 | m7 (`mps2-an500`) | | |
 | m3 (`mps2-an385`) | | |
 | m0 (`microbit`) | | |
@@ -127,17 +127,17 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Mesure | Valeur | Source |
 |---|---|---|
 | Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 1511 / 409 081 ; gelé 765 / 158 061 ; hors-projet 762 / 192 635 | `perimetre.md` |
-| IAR-ismes (sévérité `iar`) | **actif 147** au 2026-09-30 (étape 3 ; 148 à l'étape 1) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
+| IAR-ismes (sévérité `iar`) | **actif 128** au 2026-09-30 (fin de l'étape 3 ; 147 avant le complément, 148 à l'étape 1) ; chaîne minimale : 31 dont 12 CMSIS (tiers) et 19 résiduels (`residuel-etape3.md`) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
 | Sources dérivées | `mps2-an386` : 217 f / 74 323 l ; NUCLEO-F439ZI : 353 f (base Olimex P407) | `perimetre.md` |
 | Écart embOS 5.18.3.1 IAR → 5.20.0.0 GCC | actif : 189 occurrences, 25 fichiers ; 7 écarts (E1 bloquant : branche embOS de `kal.h` réservée IAR/Keil) | `embos-iar-vs-gcc.md` |
 | Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
 
 ## Blocages et dette
 
-- **Étape 3, tâche 1 non livrée** (constat 3b, 2026-09-30) : `compiler.h` (macros `__lepton_*`, branche
-  GCC seule) et l'amorce `tools/migration/transform_iar.py` limitée à la chaîne minimale n'existent
-  pas (seul `kernel/core/kernel_compiler.h`, à branches IAR/GCC) ; non signalé par le handoff 3a.
-  Prérequis de l'étape 4 : à trancher avant de clore l'étape 3 (voir `handoff/etape-3.md`).
+- Étape 3, tâche 1 : non livrée en 3a (constat 3b), faite en session de complément le 2026-09-30.
+  Reste pour l'étape 4 : `transform_iar.py` réécrit une condition simplifiée sur une seule ligne
+  (perte de la mise en forme sur plusieurs lignes) ; résiduels de la chaîne (M16C et en-têtes AT91 :
+  étape 6 ; pragma CCM F4 : étape 5 ; branches Keil/win32 : catégorie « autre »).
 - 3b : `ARG_LEN_MAX` = 64 octets (`kernel/core/process.h`) tronque **sans message** la ligne de
   commande d'un processus (cause de l'échec d'`ifconfig` au démarrage) : signaler l'erreur ou
   dimensionner par la carte (`__KERNEL_ARG_LEN_MAX`) — étape 4.
@@ -165,4 +165,4 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - Étape 3 : E4 `OS_MakeTaskReady(OS_TASK*)` déclarée par Lepton (HYPOTHÈSE À VALIDER, non documentée par Segger) ; mode embOS SP au lieu de DP (retour à DP possible depuis le verrou en sémaphore, à vérifier) ; `__KERNEL_UCORE_EMBOS` posé par CMake et par les `user_kernel_mkconf.h` des cartes existantes (double définition compatible).
 - Étape 2 : `vfs.c` (I_LINK) transmet un `va_list` par argument variadique (non portable, cause du `-m32`) → passer `va_list*` à l'étape 4 ; `__kernel_set_errno` en mode statique n'enregistre rien ; backend `core-static` = 3ᵉ copie de l'amorçage (`_kernel_warmup_*`) ; `kernelconf.h` : `kernel_mkconf.h` des branches GCC croisées encore en chemin fixe (étape 3).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
-- Pièges à reprendre : `__compiler_directive__packed` vide sous GCC (3 usages actifs) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).
+- Pièges à reprendre : `__compiler_directive__packed` = `__lepton_packed` depuis le complément de l'étape 3 (3 usages, `flash.h` : compactage à vérifier à l'étape 5) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).

@@ -1,17 +1,21 @@
 # Handoff étape 3 → 4
 
-État au 2026-09-30 : 3a TERMINÉE (validée) ; 3b À VALIDER (palier 7 vert). **Étape 3 non close** :
-tâche 1 d'ETAPE-3 non livrée (ci-dessous), prérequis de l'étape 4. Détail de 3a :
-`handoff/etape-3a.md` ; journal des paliers : `validation-qemu-mps2-an386.md`.
+État au 2026-09-30 : 3a et 3b TERMINÉES (validées) ; complément de la tâche 1 fait : **étape 3 à
+valider**. Détail de 3a : `handoff/etape-3a.md` ; journal des paliers : `validation-qemu-mps2-an386.md`.
 
 ## Réponses aux prérequis de 4
 - Socle QEMU vert : OUI. `ci/run.sh` vert : host 5/5 ; presets `qemu-mps2-an386-embos` (hard,
-  principal) et `-soft` : fumée, `net.ping_ftpd`, banc KAL (hard 14, soft 10). Paliers 1-7 verts.
+  principal) et `-soft` : fumée, `net.ping_ftpd`, banc KAL (hard 15, soft 11 tests CTest, dont `IRQ`). Paliers 1-7 verts.
 - Banc KAL T0-T8 : OUI (M4 × embOS), plus variantes FPU T1F/T4F/T6F/T7F en hard-float.
-- `compiler.h` (`__lepton_*`, GCC seul) : **NON** — absent ; seul `kernel/core/kernel_compiler.h`
-  (branches `__ICCARM__`/`__GNUC__`). Tâche 1 d'ETAPE-3, non livrée en 3a et non signalée.
-- `transform_iar.py` amorcé : **NON** — `tools/migration/transform_iar.py` n'existe pas.
-- `audit-iar.md`, périmètre actif (étape 1) : OUI ; `audit_iar.py --summary` : actif 147 (inchangé).
+- `compiler.h` : OUI — `kernel/core/compiler.h` (GCC seul, `#error` sinon), table d'ETAPE-4 ;
+  `kernel_compiler.h` et `__compiler_directive__packed` s'appuient dessus. Sections critiques à nom
+  neutre : `kernel/core/arch/cortexm/lepton_irq.h` (axe ISA), test KAL `IRQ`.
+- `transform_iar.py` amorcé : OUI — règles `garde-iar-arm` et `intrinsics-cmsis`, `--rule`,
+  `--apply`, `--report`, vérification `--cpp-snapshot`/`--cpp-compare` (gcc -E -P), tests
+  `tools/migration/tests` (ci/run.sh). Appliqué à la chaîne minimale (`chaine-minimale.txt`) :
+  3 commits mécaniques (répertoire × règle), gcc -E identique (presets hard, soft, host).
+  Résiduels : `residuel-etape3.md` (10). `intrinsics-cmsis` : 0 occurrence dans la chaîne.
+- `audit-iar.md`, périmètre actif (étape 1) : OUI ; `audit_iar.py --summary` : actif 128 (147 avant).
 
 ## Décisions actées pendant 3 (MIGRATION-STATUS, 2026-09-30)
 - 3a : soft-float puis hard-float principal (soft conservé en CI) ; frontière libc ; démarrage et
@@ -33,10 +37,16 @@ tâche 1 d'ETAPE-3 non livrée (ci-dessous), prérequis de l'étape 4. Détail d
 | `scion/sys/root/src/lib/libc/string/strerror.c` | table errno Lepton → message |
 | `scion/tests/net_qemu.py`, `smoke_lsh.py`, `tests/kal/` | tests `net`, `smoke`, `kal` |
 | `ci/run.sh`, `scripts/install-debian.sh` | non-régression ; paquets `iproute2`, `iputils-ping` |
+| `tools/migration/transform_iar.py`, `tests/` | transformation des IAR-ismes (à compléter à l'étape 4) |
+| `chaine-minimale.txt`, `residuel-etape3.md` | fichiers compilés du socle ; résiduels et leur étape |
+| `scion/sys/root/src/kernel/core/compiler.h`, `arch/cortexm/lepton_irq.h` | macros `__lepton_*` |
 
 ## Écarts au plan et pièges découverts
-- Tâche 1 (`compiler.h`, `transform_iar.py`) : voir ci-dessus ; la chaîne minimale a été rendue
-  compilable par corrections ponctuelles (3a) et non par le script prévu.
+- Tâche 1 livrée en complément (après 3b) : la chaîne minimale avait été rendue compilable par
+  corrections ponctuelles en 3a ; le script n'a retiré que des branches déjà inactives sous GCC.
+- Pour l'étape 4 : vérifier chaque lot par `transform_iar.py --cpp-snapshot/--cpp-compare`
+  (`__DATE__`/`__TIME__` figés) ; la liste des fichiers réellement compilés s'obtient par
+  `compile_commands.json` + `ninja -t deps` (méthode de `chaine-minimale.txt`).
 - Pas de SVC avec embOS (appel système = événement de tâche) ; E3 corrigé (cadre FPU étendu).
 - Branches `#if !defined(__GNUC__)` = anciennes branches de la **simulation Linux**, pas du GCC
   croisé : valeurs fausses sur cible (priorité lwIP 10 → `socket()` avant l'init de lwIP). En
