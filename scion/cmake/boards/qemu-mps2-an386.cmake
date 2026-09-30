@@ -8,6 +8,7 @@ set(LEPTON_BOARD_MEMORY_LD ${CMAKE_SOURCE_DIR}/ld/mem_qemu-mps2-an386.ld)
 set(LEPTON_BSP_NAME qemu_mps2_an386)
 set(LEPTON_BSP_SOURCES
   kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.c
+  kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.c
   kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386_board.c)
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2_an386.xml)
 set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)

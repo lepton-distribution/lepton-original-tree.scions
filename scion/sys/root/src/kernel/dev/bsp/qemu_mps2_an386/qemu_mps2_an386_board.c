@@ -1,7 +1,7 @@
 /*
  * Lepton — BSP de la carte QEMU mps2-an386 (Cortex-M4). Licence : voir LICENSE (MPL 1.1).
  * Horloge système (pas de PLL : QEMU), instances UART CMSDK ttys0 (console lsh) et ttys1,
- * routage de leurs interruptions.
+ * Ethernet LAN9118 eth0, routage de leurs interruptions.
  */
 #include <stdint.h>
 #include <stdarg.h>
@@ -16,6 +16,7 @@
 #include "kernel/fs/vfs/vfstypes.h"
 
 #include "kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.h"
+#include "kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.h"
 #include "qemu_mps2_an386.h"
 
 /* --- horloge (CMSIS system_ARMCM4.h) ------------------------------------------------------ */
@@ -96,3 +97,41 @@ void IRQ12_Handler(void) { qemu_mps2_uart_irq(); }
 
 QEMU_MPS2_UART_INSTANCE(0)
 QEMU_MPS2_UART_INSTANCE(1)
+
+/* --- Ethernet LAN9118 : eth0 ------------------------------------------------------------ */
+static void qemu_mps2_eth_irq_enable(dev_eth_lan9118_info_t* info, int enable){
+   IRQn_Type n = (IRQn_Type)QEMU_MPS2_AN386_ETH_IRQ;
+   (void)info;
+   if(enable) {
+      NVIC_SetPriority(n, QEMU_MPS2_AN386_ETH_IRQ_PRIO);
+      NVIC_ClearPendingIRQ(n);
+      NVIC_EnableIRQ(n);
+   } else {
+      NVIC_DisableIRQ(n);
+   }
+}
+
+static dev_eth_lan9118_info_t qemu_mps2_eth = {
+   QEMU_MPS2_AN386_ETH_BASE, qemu_mps2_eth_irq_enable
+};
+
+void IRQ13_Handler(void) { dev_eth_lan9118_x_interrupt(&qemu_mps2_eth); }
+
+static int dev_eth_lan9118_0_load(void){ return dev_eth_lan9118_x_load(&qemu_mps2_eth); }
+static int dev_eth_lan9118_0_open(desc_t desc, int o_flag){
+   return dev_eth_lan9118_x_open(desc, o_flag, &qemu_mps2_eth);
+}
+
+dev_map_t dev_eth_lan9118_0_map = {
+   "eth0\0",
+   S_IFCHR,
+   dev_eth_lan9118_0_load,
+   dev_eth_lan9118_0_open,
+   dev_eth_lan9118_x_close,
+   dev_eth_lan9118_x_isset_read,
+   dev_eth_lan9118_x_isset_write,
+   dev_eth_lan9118_x_read,
+   dev_eth_lan9118_x_write,
+   dev_eth_lan9118_x_seek,
+   dev_eth_lan9118_x_ioctl
+};

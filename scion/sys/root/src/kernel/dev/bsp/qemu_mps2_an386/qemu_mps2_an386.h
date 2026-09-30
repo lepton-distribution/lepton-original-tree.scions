@@ -24,4 +24,10 @@
 /* priorité NVIC dans la plage gérée par embOS (>= 0x80) */
 #define QEMU_MPS2_AN386_UART_IRQ_PRIO    ((1u << __NVIC_PRIO_BITS) - 3u)
 
+/* Ethernet LAN9118 (LAN9220 sur la carte réelle) : QEMU v10.0.0 hw/arm/mps2.c, lan9118_init
+ * (ethernet_base 0x40200000, ligne d'interruption 13 hors AN511). */
+#define QEMU_MPS2_AN386_ETH_BASE         0x40200000u
+#define QEMU_MPS2_AN386_ETH_IRQ          13
+#define QEMU_MPS2_AN386_ETH_IRQ_PRIO     ((1u << __NVIC_PRIO_BITS) - 3u)
+
 #endif
