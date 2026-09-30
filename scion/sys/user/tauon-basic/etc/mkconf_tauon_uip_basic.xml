@@ -3,15 +3,15 @@
 
 <mklepton>
 <target name="win32_lepton">
-      <arch dest_path="c:/tauon/sys/root/src/kernel/core/arch/win32" />
+      <arch dest_path="sys/root/src/kernel/core/arch/win32" />
 </target>
 
 <target name="arm7_lepton">
-      <arch dest_path="c:/tauon/sys/root/src/kernel/core/arch/arm" />
+      <arch dest_path="sys/root/src/kernel/core/arch/arm" />
 </target>
 
 <target name="arm9_lepton">
-      <arch dest_path="c:/tauon/sys/root/src/kernel/core/arch/arm" />
+      <arch dest_path="sys/root/src/kernel/core/arch/arm" />
 </target>
 
 <kernel>
@@ -147,7 +147,7 @@
 </target>
 
 <!-- mount device on boot .mount -->
-<mount dest_path="c:/tauon/sys/user/tauon-basic/etc">
+<mount dest_path="sys/user/tauon-basic/etc">
     <!-- mount EEPROM on /etc -->
     <disk type="ufs" dev="/dev/hd/hdb" point="/etc" />
     <!-- mount EEPROM on /usr -->
@@ -156,19 +156,19 @@
 
 <!-- launch process on boot target path: /usr/etc/.boot-->
 <target name="win32_lepton">
-        <boot dest_path="c:/tauon/sys/user/tauon-basic/etc">
+        <boot dest_path="sys/user/tauon-basic/etc">
                 <command arg="initd -i /dev/ttyp0 -o /dev/ttyp0" />
         </boot>
 </target>
 
 <target name="arm7_lepton">
-        <boot dest_path="c:/tauon/sys/user/tauon-basic/etc">
+        <boot dest_path="sys/user/tauon-basic/etc">
                 <command arg="initd -i /dev/ttys0 -o /dev/ttys0" />
         </boot>
 </target>
 
 <target name="arm9_lepton">
-        <boot dest_path="c:/tauon/sys/user/tauon-basic/etc">
+        <boot dest_path="sys/user/tauon-basic/etc">
                 <command arg="initd -i /dev/null -o /dev/tty0" />
         </boot>
 </target>
@@ -233,27 +233,27 @@
 
 <files>
    <!-- /usr/etc  (hda internal flash mount on /bin) -->
-   <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_with_net"      dest_path="etc" />
-   <file name=".boot"      src_file="c:/tauon/sys/user/tauon-basic/etc/.boot"               dest_path="etc" />
+   <file name=".init"      src_file="sys/user/tauon-basic/etc/.init_with_net"      dest_path="etc" />
+   <file name=".boot"      src_file="sys/user/tauon-basic/etc/.boot"               dest_path="etc" />
    <!-- <file name=".mount"  src_file="~/tauon/tools/etc/.mount"        dest_path="etc" /> -->
 </files>
 
 <!--target name="win32_lepton"-->
    <files>
       <!-- /usr/bin/net/html  (hda internal flash mount on /bin) -->
-      <file name="index.html"       src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/html/index.html"       dest_path="bin/net/html" />
-      <file name="tstcgi2.html"     src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/html/tstcgi2.html"     dest_path="bin/net/html" />
-      <file name="tabcgi2.css"      src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/html/tabcgi2.css"      dest_path="bin/net/html" />
-      <file name="about.html"       src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/html/about.html"       dest_path="bin/net/html" />
-      <file name="lepton.gif"       src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/html/lepton.gif"       dest_path="bin/net/html" />
-      <file name="lepton.png"       src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/html/lepton.png"       dest_path="bin/net/html" />
+      <file name="index.html"       src_file="sys/user/tauon-basic/src/bin/net/html/index.html"       dest_path="bin/net/html" />
+      <file name="tstcgi2.html"     src_file="sys/user/tauon-basic/src/bin/net/html/tstcgi2.html"     dest_path="bin/net/html" />
+      <file name="tabcgi2.css"      src_file="sys/user/tauon-basic/src/bin/net/html/tabcgi2.css"      dest_path="bin/net/html" />
+      <file name="about.html"       src_file="sys/user/tauon-basic/src/bin/net/html/about.html"       dest_path="bin/net/html" />
+      <file name="lepton.gif"       src_file="sys/user/tauon-basic/src/bin/net/html/lepton.gif"       dest_path="bin/net/html" />
+      <file name="lepton.png"       src_file="sys/user/tauon-basic/src/bin/net/html/lepton.png"       dest_path="bin/net/html" />
    </files>
    
    <files>
       <!-- /usr/bin/net/cgi-bin  (hda internal flash mount on /bin) -->
-      <file name="tstcgi.sh"       src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/cgi-bin/tstcgi.sh"       dest_path="bin/net/cgi-bin" />
-      <file name="tstcgi2.sh"      src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/cgi-bin/tstcgi2.sh"      dest_path="bin/net/cgi-bin" />
-      <file name="tstpost.sh"      src_file="c:/tauon/sys/user/tauon-basic/src/bin/net/cgi-bin/tstpost.sh"      dest_path="bin/net/cgi-bin" />
+      <file name="tstcgi.sh"       src_file="sys/user/tauon-basic/src/bin/net/cgi-bin/tstcgi.sh"       dest_path="bin/net/cgi-bin" />
+      <file name="tstcgi2.sh"      src_file="sys/user/tauon-basic/src/bin/net/cgi-bin/tstcgi2.sh"      dest_path="bin/net/cgi-bin" />
+      <file name="tstpost.sh"      src_file="sys/user/tauon-basic/src/bin/net/cgi-bin/tstpost.sh"      dest_path="bin/net/cgi-bin" />
    </files>
 <!--/target-->
 

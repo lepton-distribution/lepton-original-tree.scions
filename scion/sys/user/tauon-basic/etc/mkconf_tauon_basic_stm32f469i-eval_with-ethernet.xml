@@ -3,20 +3,20 @@
 
 <mklepton>
 <target name="win32_lepton">
-      <arch dest_path="c:/tauon/sys/root/src/kernel/core/arch/win32" />
+      <arch dest_path="sys/root/src/kernel/core/arch/win32" />
 </target>
 
 <target name="cortexm_lepton">
-      <arch dest_path="c:/tauon/sys/root/src/kernel/core/arch/cortexm" /><!--/cortexm or /arm-->
+      <arch dest_path="sys/root/src/kernel/core/arch/cortexm" /><!--/cortexm or /arm-->
 </target>
 
 <kernel>
       <target name="win32_lepton">
-         <arch include_absolute_path="c:/tauon/sys/user/tauon-basic/src/arch/win32/kernel_mkconf/include/user_kernel_mkconf.h" />
+         <arch include_absolute_path="sys/user/tauon-basic/src/arch/win32/kernel_mkconf/include/user_kernel_mkconf.h" />
       </target>
       
       <target name="cortexm_lepton">
-         <arch include_absolute_path="c:/tauon/sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h" />
+         <arch include_absolute_path="sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h" />
       </target>
       
       <!-- cpu type and frequency in MHz or Hz-->
@@ -116,20 +116,20 @@
 
 
 <!-- mount device on boot .mount -->
-<mount dest_path="c:/tauon/sys/user/tauon-basic/etc">
+<mount dest_path="sys/user/tauon-basic/etc">
     <!-- mount EEPROM on /etc -->
     <disk type="ufs" dev="/dev/hd/hdb" point="/etc" />
 </mount>
 
 <!-- launch process on boot target path: /usr/etc/.boot-->
 <target name="win32_lepton">
-        <boot dest_path="c:/tauon/sys/user/tauon-basic/etc">
+        <boot dest_path="sys/user/tauon-basic/etc">
                 <command arg="initd -i /dev/ttyp0 -o /dev/ttyp0" />
         </boot>
 </target>
 
 <target name="cortexm_lepton">
-        <boot dest_path="c:/tauon/sys/user/tauon-basic/etc">
+        <boot dest_path="sys/user/tauon-basic/etc">
             <command arg="initd -i /dev/console -o /dev/console" />
             <!--command arg="initd -i /dev/ttys6 -o /dev/ttys6" /-->
 				<!--command arg="initd -i /dev/debug -o /dev/debug" /-->
@@ -188,13 +188,13 @@
 <files>
    <!-- /usr/etc  (hda internal flash mount on /bin) -->
    <target name="win32_lepton">
-      <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_win32_with_net"      dest_path="etc" />
+      <file name=".init"      src_file="sys/user/tauon-basic/etc/.init_win32_with_net"      dest_path="etc" />
    </target>
     <target name="cortexm_lepton">
-      <file name=".init"      src_file="c:/tauon/sys/user/tauon-basic/etc/.init_stm32_with_net"  dest_path="etc" />
+      <file name=".init"      src_file="sys/user/tauon-basic/etc/.init_stm32_with_net"  dest_path="etc" />
    </target>
-   <file name=".boot"      src_file="c:/tauon/sys/user/tauon-basic/etc/.boot"               dest_path="etc" />
-   <file name=".mount"     src_file="c:/tauon/sys/user/tauon-basic/etc/.mount"              dest_path="etc" />
+   <file name=".boot"      src_file="sys/user/tauon-basic/etc/.boot"               dest_path="etc" />
+   <file name=".mount"     src_file="sys/user/tauon-basic/etc/.mount"              dest_path="etc" />
 </files>
 
 </mklepton>
