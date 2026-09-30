@@ -59,6 +59,8 @@ SECTIONS
   {
     . = ALIGN(4);
     __data_start__ = .;
+    /* fonctions en RAM (__lepton_ramfunc) : copiées avec .data par le démarrage */
+    *(.ramfunc .ramfunc.*)
     *(.data .data.*)
     . = ALIGN(4);
     __data_end__ = .;
