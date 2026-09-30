@@ -50,20 +50,29 @@ if(bin_sources)
   list(APPEND firmware_libs lepton_bin)
 endif()
 
-# --- exécutable ----------------------------------------------------------------------------------
+# --- exécutables -----------------------------------------------------------------------------------
+list(JOIN firmware_libs "," LEPTON_FIRMWARE_GROUP_CSV)
+
+# lepton_link_firmware(<cible>) : édition de liens d'un exécutable de la carte (noyau complet,
+# configuration générée, pseudo-binaires, micro-noyau, scripts de liens) ; utilisé par lepton et
+# par le banc KAL (tests/kal).
+function(lepton_link_firmware target)
+  set_target_properties(${target} PROPERTIES SUFFIX .elf)
+  add_dependencies(${target} board_mkconf)
+  target_link_libraries(${target} PRIVATE lepton_options
+    "$<LINK_GROUP:RESCAN,${LEPTON_FIRMWARE_GROUP_CSV},${LEPTON_KERNEL_GROUP_CSV}>"
+    ${LEPTON_KAL_LINK_LIBS} ${LEPTON_SYSTEM_LIBS})
+  target_link_options(${target} PRIVATE
+    -T${LEPTON_BOARD_MEMORY_LD} -T${CMAKE_SOURCE_DIR}/ld/common-cortexm.ld
+    -Wl,-Map=${CMAKE_BINARY_DIR}/${target}.map -Wl,--print-memory-usage)
+  set_property(TARGET ${target} APPEND PROPERTY LINK_DEPENDS
+    ${LEPTON_BOARD_MEMORY_LD} ${CMAKE_SOURCE_DIR}/ld/common-cortexm.ld)
+endfunction()
+
+set(LEPTON_FIRMWARE_ISA_SOURCES ${LEPTON_FIRMWARE_SOURCES})
 list(TRANSFORM LEPTON_FIRMWARE_SOURCES PREPEND ${LEPTON_SRC}/)
 add_executable(lepton ${LEPTON_FIRMWARE_SOURCES})
-set_target_properties(lepton PROPERTIES SUFFIX .elf)
-add_dependencies(lepton board_mkconf)
-list(JOIN firmware_libs "," fw_group)
-target_link_libraries(lepton PRIVATE lepton_options
-  "$<LINK_GROUP:RESCAN,${fw_group},${LEPTON_KERNEL_GROUP_CSV}>"
-  ${LEPTON_KAL_LINK_LIBS} ${LEPTON_SYSTEM_LIBS})
-target_link_options(lepton PRIVATE
-  -T${LEPTON_BOARD_MEMORY_LD} -T${CMAKE_SOURCE_DIR}/ld/common-cortexm.ld
-  -Wl,-Map=${CMAKE_BINARY_DIR}/lepton.map -Wl,--print-memory-usage)
-set_property(TARGET lepton APPEND PROPERTY LINK_DEPENDS
-  ${LEPTON_BOARD_MEMORY_LD} ${CMAKE_SOURCE_DIR}/ld/common-cortexm.ld)
+lepton_link_firmware(lepton)
 add_custom_command(TARGET lepton POST_BUILD
   COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:lepton> ${CMAKE_BINARY_DIR}/lepton.bin
   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:lepton>
@@ -79,5 +88,9 @@ if(LEPTON_QEMU_MACHINE)
                    --kernel $<TARGET_FILE:lepton> --expect-machine ${LEPTON_BOARD_UNAME_MACHINE}
                    --command ls --command ps --uart1
                    --log ${CMAKE_BINARY_DIR}/smoke_lsh_uart0.log)
-  set_tests_properties(smoke.lsh PROPERTIES LABELS "smoke" TIMEOUT 120)
+  # T0 du banc KAL = fumée canonique ; T1-T8 n'ont de sens que si T0 est vert (fixture)
+  set_tests_properties(smoke.lsh PROPERTIES
+                       LABELS "smoke;kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"
+                       TIMEOUT 120 FIXTURES_SETUP kal_t0)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/tests/kal ${CMAKE_BINARY_DIR}/tests/kal)
 endif()

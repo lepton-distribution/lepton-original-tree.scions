@@ -21,9 +21,9 @@ set(LEPTON_KAL_LINK_LIBS ${LEPTON_EMBOS_LIB})
 
 # Intégration embOS écrite pour Lepton (décision 2026-09-30 : aucun fichier d'exemple Segger) :
 # main (OS_Init, OS_InitHW, _start_kernel, OS_Start), OS_InitHW/SysTick/OS_Idle, OS_Error.
-list(APPEND LEPTON_FIRMWARE_SOURCES
-  kernel/core/core-segger/arch/armv7m/embos_main.c
-  kernel/core/core-segger/arch/armv7m/embos_init_hw.c)
+set(LEPTON_KAL_MAIN_SOURCES kernel/core/core-segger/arch/armv7m/embos_main.c)
+set(LEPTON_KAL_HW_SOURCES kernel/core/core-segger/arch/armv7m/embos_init_hw.c)
+list(APPEND LEPTON_FIRMWARE_SOURCES ${LEPTON_KAL_MAIN_SOURCES} ${LEPTON_KAL_HW_SOURCES})
 
 target_include_directories(lepton_options INTERFACE ${LEPTON_EMBOS_ROOT}/Start/Inc)
 target_compile_definitions(lepton_options INTERFACE
