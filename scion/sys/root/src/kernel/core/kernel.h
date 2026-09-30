@@ -221,18 +221,37 @@ void _stop_kernel(void);
  * pose un verrou exclusif sur les appels systme vers le noyau
  * \hideinitializer
  */
+#if defined(__KERNEL_UCORE_EMBOS)
+//verrou pris par le thread appelant et rendu par la tache noyau : semaphore (un mutex embOS
+//ne peut etre rendu que par son proprietaire, embOS >= 5.20), voir core-segger/kernel_syscall_lock.c
+int kernel_syscall_lock_init(void);
+int kernel_syscall_lock(void);
+int kernel_syscall_trylock(void);
+int kernel_syscall_unlock(void);
+extern kernel_pthread_t* volatile kernel_syscall_lock_owner;
+#define __syscall_lock()      kernel_syscall_lock()
+#else
 #define __syscall_lock()      kernel_pthread_mutex_lock(&kernel_mutex)
+#endif
 /**
  * tente de poser un verrou exclusif sur les appels systme vers le noyau
  * \hideinitializer
  */
+#if defined(__KERNEL_UCORE_EMBOS)
+#define __syscall_trylock()   kernel_syscall_trylock()
+#else
 #define __syscall_trylock()   kernel_pthread_mutex_trylock(&kernel_mutex)
+#endif
 
 /**
  * libre le verrou exclusif sur les appels systme vers le noyau
  * \hideinitializer
  */
+#if defined(__KERNEL_UCORE_EMBOS)
+#define __syscall_unlock()    kernel_syscall_unlock()
+#else
 #define __syscall_unlock()    kernel_pthread_mutex_unlock(&kernel_mutex)
+#endif
 
 typedef int (*SYSCALL)(kernel_pthread_t* pthread_ptr, pid_t pid, void* data);
 typedef SYSCALL PSYSCALL;

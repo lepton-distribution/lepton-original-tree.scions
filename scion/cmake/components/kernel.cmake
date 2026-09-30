@@ -23,7 +23,6 @@ set(LEPTON_CORE_SYSCALL_SOURCES
   kernel/core/fcntl.c
   kernel/core/kernel_mqueue.c
   kernel/core/lib.c
-  kernel/core/net.c
   kernel/core/posix_mqueue.c
   kernel/core/select.c
   kernel/core/stat.c
@@ -33,7 +32,9 @@ set(LEPTON_CORE_SYSCALL_SOURCES
   kernel/core/truncate.c
   kernel/core/wait.c)
 if(NOT LEPTON_KAL_BACKEND STREQUAL "static")
-  list(APPEND LEPTON_CORE_SOURCES ${LEPTON_CORE_SYSCALL_SOURCES})
+  # + données propres aux threads (TSD), communes aux micro-noyaux (core-generic)
+  list(APPEND LEPTON_CORE_SOURCES ${LEPTON_CORE_SYSCALL_SOURCES}
+       kernel/core/core-generic/kernel_pthread_tsd.c)
 endif()
 lepton_add_library(lepton_core SOURCES ${LEPTON_CORE_SOURCES})
 
@@ -69,11 +70,68 @@ lepton_add_library(lepton_fs_ufs SOURCES
   kernel/fs/ufs/ufsdriver_1_5.c
   kernel/fs/ufs/ufsx.c)
 
+# kofs (objets du noyau) : profils de fichiers des cibles ; absent du noyau statique.
+if(NOT LEPTON_KAL_BACKEND STREQUAL "static")
+  lepton_add_library(lepton_fs_kofs SOURCES kernel/fs/kofs/kofs.c)
+  set(LEPTON_FS_EXTRA lepton_fs_kofs)
+endif()
+
 # --- libc Lepton (lib/, hors kernel/) -------------------------------------------------------------
 # L'ISA peut fournir sa propre liste (hôte : adaptateur vers la glibc, cmake/isa/host.cmake).
-# Cibles : liste fixée à l'étape 3 (frontière newlib / API POSIX Lepton, décision ouverte).
+# Cibles (décision 2026-09-30) : newlib-nano pour le noyau et le démarrage, API POSIX applicative
+# = lib/libc Lepton (noms préfixés) ; stdlib.c exclu (abort, div, ldiv : newlib).
+if(NOT DEFINED LEPTON_LIBC_SOURCES)
+  set(LEPTON_LIBC_SOURCES
+    lib/libc/libc.c
+    lib/libc/ctype/ctype.c
+    lib/libc/misc/crc.c lib/libc/misc/dtostr.c lib/libc/misc/ftoa.c lib/libc/misc/itoa.c
+    lib/libc/misc/ltostr.c lib/libc/misc/prsopt.c lib/libc/misc/strto_l.c lib/libc/misc/strto_ll.c
+    lib/libc/stdio/printf.c lib/libc/stdio/scanf.c lib/libc/stdio/stdio.c
+    lib/libc/string/string.c lib/libc/string/strerror.c
+    lib/libc/termios/tcgetattr.c lib/libc/termios/tcsetattr.c lib/libc/termios/termios.c
+    lib/libc/unistd/getopt.c lib/libc/unistd/io.c lib/libc/unistd/unistd.c
+    lib/pthread/pthread.c lib/pthread/pthread_cond.c lib/pthread/pthread_mutex.c
+    lib/librt/mq.c lib/librt/sem.c)
+endif()
 set(LEPTON_KERNEL_GROUP lepton_core lepton_kal_${LEPTON_KAL_BACKEND} lepton_vfs lepton_fs_rootfs
-                        lepton_fs_ufs lepton_dev)
+                        lepton_fs_ufs ${LEPTON_FS_EXTRA} lepton_dev)
+
+# --- pile réseau (choisie par la carte : LEPTON_NET_STACK) ----------------------------------------
+# lwIP 2.0.1 de l'arbre et couches Lepton lwip_core (décision 2026-09-30) ; liste de sources et
+# chemins d'inclusion de la configuration noyau de référence (tauon-kernel-cortex-m4-debug,
+# perimetre.md). La carte active la pile côté C par USE_LWIP (user_kernel_mkconf.h) et
+# <network use="on"/> (mkconf : __KERNEL_NET_IPSTACK).
+if(LEPTON_NET_STACK STREQUAL "lwip")
+  set(lwip kernel/net/lwip)
+  lepton_add_library(lepton_net_lwip SOURCES
+    ${lwip}/api/api_lib.c ${lwip}/api/api_msg.c ${lwip}/api/err.c ${lwip}/api/netbuf.c
+    ${lwip}/api/netdb.c ${lwip}/api/netifapi.c ${lwip}/api/sockets.c ${lwip}/api/tcpip.c
+    ${lwip}/core/def.c ${lwip}/core/dns.c ${lwip}/core/inet_chksum.c ${lwip}/core/init.c
+    ${lwip}/core/ip.c ${lwip}/core/mem.c ${lwip}/core/memp.c ${lwip}/core/netif.c
+    ${lwip}/core/pbuf.c ${lwip}/core/raw.c ${lwip}/core/stats.c ${lwip}/core/sys.c
+    ${lwip}/core/tcp.c ${lwip}/core/tcp_in.c ${lwip}/core/tcp_out.c ${lwip}/core/timeouts.c
+    ${lwip}/core/udp.c
+    ${lwip}/core/ipv4/autoip.c ${lwip}/core/ipv4/dhcp.c ${lwip}/core/ipv4/etharp.c
+    ${lwip}/core/ipv4/icmp.c ${lwip}/core/ipv4/igmp.c ${lwip}/core/ipv4/ip4.c
+    ${lwip}/core/ipv4/ip4_addr.c ${lwip}/core/ipv4/ip4_frag.c
+    ${lwip}/netif/ethernet.c ${lwip}/netif/ethernetif.c ${lwip}/netif/lowpan6.c
+    ${lwip}/netif/slipif.c
+    ${lwip}/ports/arm/sys_arch.c
+    kernel/core/net/kernel_net_core_socket.c
+    kernel/core/net/lwip_core/ethif_core.c
+    kernel/core/net/lwip_core/lwip_core.c
+    kernel/core/net/lwip_core/lwip_core_socket.c)
+  # (include/ipv4 du projet IAR : absent de lwIP 2.0.1)
+  target_include_directories(lepton_options INTERFACE
+    ${LEPTON_SRC}/${lwip} ${LEPTON_SRC}/${lwip}/include ${LEPTON_SRC}/${lwip}/ports/arm
+    ${LEPTON_SRC}/${lwip}/ports/arm/include)
+  list(APPEND LEPTON_KERNEL_GROUP lepton_net_lwip)
+  # API sockets de la libc Lepton
+  list(APPEND LEPTON_LIBC_SOURCES
+    lib/libc/net/htonl.c lib/libc/net/socket.c lib/libc/net/inet/inet_addr.c)
+elseif(LEPTON_NET_STACK)
+  message(FATAL_ERROR "LEPTON_NET_STACK=${LEPTON_NET_STACK} : seule lwip est intégrée")
+endif()
 if(LEPTON_LIBC_SOURCES)
   lepton_add_library(lepton_libc SOURCES ${LEPTON_LIBC_SOURCES})
   list(APPEND LEPTON_KERNEL_GROUP lepton_libc)
@@ -97,5 +155,6 @@ endif()
 # --- noyau assemblé : cycle core ↔ kal ↔ vfs ↔ fs ↔ dev ↔ libc (dependances.md, CFC 1) ------------
 add_library(lepton_kernel INTERFACE)
 list(JOIN LEPTON_KERNEL_GROUP "," group)
+set(LEPTON_KERNEL_GROUP_CSV ${group})
 target_link_libraries(lepton_kernel INTERFACE "$<LINK_GROUP:RESCAN,${group}>"
                       ${LEPTON_SYSTEM_LIBS})

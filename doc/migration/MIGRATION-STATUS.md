@@ -10,8 +10,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
-| 3a — Noyau dynamique QEMU, UART | EN COURS | 2026-09-30 | branche `migration/etape-3` ; mode plan |
-| 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
+| 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
+| 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; complément tâche 1 (`compiler.h`, `lepton_irq.h`, amorce `transform_iar.py`) fait le 2026-09-30 ; **étape 3 validée par l'utilisateur le 2026-09-30**, branche `migration/etape-3` fusionnée ; handoff `handoff/etape-3.md` |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
@@ -27,7 +27,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Cœur | embOS | FreeRTOS |
 |---|---|---|
-| m4 (`mps2-an386`) | | |
+| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) ; T0 inclut désormais réseau et `ftpd` lancés par le `.init` ; test `IRQ` (sections critiques `lepton_irq.h`) vert hard et soft | |
 | m7 (`mps2-an500`) | | |
 | m3 (`mps2-an385`) | | |
 | m0 (`microbit`) | | |
@@ -62,13 +62,25 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Étape 2 — second pilote logiciel du noyau statique : `dev_part` (doublon `dev_null` du guide, liste alphabétique). |
 | 2026-09-30 | Étape 2 — format UFS : structures écrites identiques x86_64 / i386 / arm-none-eabi (probe réel) ; assertions statiques des deux côtés. |
 | 2026-09-30 | Étape 2 — noyau statique hôte compilé en 32 bits (`-m32`, ILP32 comme ARM) : le noyau transmet des `va_list` par argument variadique (`vfs.c`, `I_LINK`), impossible avec l'ABI x86_64. Paquets `gcc-multilib`, `libexpat1-dev:i386`. |
+| 2026-09-30 | Étape 3 — premier palier embOS en soft-float (`libosT7L<mode>.a`, `-mfloat-abi=soft`, équivalent de l'IAR actuel) ; hard-float (`libosT7VHL`, trame FPU E3) en palier suivant, avant la fin de l'étape 3. |
+| 2026-09-30 | Étape 3 — frontière libc : newlib-nano pour le noyau et le démarrage ; API POSIX applicative = `lib/libc` Lepton (préfixée) ; exports de `lib/libc` en conflit avec newlib exclus. |
+| 2026-09-30 | Étape 3 — démarrage et RTOSInit écrits pour Lepton d'après l'API documentée (UM01001/UM01039), versionnés ; du paquet Segger, seuls `RTOS.h` et `libos*.a` (hors git). |
+| 2026-09-30 | Étape 3 — contenu de `bin` : tests POSIX T9-T11 du banc KAL (pseudo-binaires lancés depuis `lsh`). |
+| 2026-09-30 | Étape 3 — constat : avec embOS/Cortex-M, l'appel système est un événement embOS vers la tâche noyau (pas de SVC) ; aucun assembleur Lepton à traduire hormis démarrage et vecteurs (écart à ETAPE-3 tâche 2). |
+| 2026-09-30 | Étape 3 — embOS lié en mode SP en Debug (comme IAR) plutôt que DP ; puis verrou des appels système refondu en sémaphore (`core-segger/kernel_syscall_lock.c`) : embOS 5.20 n'accepte pas qu'un mutex soit rendu par une autre tâche que son propriétaire (DP : erreur ; SP : état incohérent et blocage). |
+| 2026-09-30 | Étape 3 — banc KAL : T2 et T8 alignés sur Lepton (amendement de `BANC-TEST-KAL-QEMU.md`) : pas de redémarrage depuis le contexte de départ (embOS 5.20 : routine et trampoline `OS_StartTask` au-dessus du cadre ; Lepton ne s'en sert que comme référence de pile du vfork, `exec` crée une nouvelle tâche). |
+| 2026-09-30 | Étape 3 — palier hard-float : preset principal `qemu-mps2-an386-embos` en hard-float (`libosT7VHLSP.a`) ; preset `qemu-mps2-an386-embos-soft` conservé dans `ci/run.sh` (chemin sans FPU jusqu'aux cœurs M3/M0 de l'étape 6). |
+| 2026-09-30 | Étape 3 — banc KAL T8 en hard-float : « aucun état FPU ne survit » = aucun contexte FPU hérité (FPCA = 0, cadre de départ de base, FPSCR par défaut) ; contenu résiduel de S16-S31 journalisé, non exigé (amendement de `BANC-TEST-KAL-QEMU.md`). |
+| 2026-09-30 | Sécurité — registres FPU résiduels lisibles entre tâches et entre images (constaté par T8) : pas d'effacement tant que Lepton n'isole pas la mémoire ; à traiter avec toute évolution utilisant la MPU (dette, ci-dessous). |
+| 2026-09-30 | Étape 3b — pile réseau du socle (et de la F439) : lwIP 2.0.1 de l'arbre et couches `lwip_core` ; choisie par la carte (`LEPTON_NET_STACK`, `USE_LWIP`). |
+| 2026-09-30 | Étape 3b — palier 7 sans privilège : tap créé dans un espace de noms utilisateur et réseau (`unshare --user --map-root-user --net`) par le test ; échec explicite si indisponible. |
+| 2026-09-30 | Étape 3b — frontière libc : `strdup` (tas Lepton) et `strerror` (numérotation errno Lepton) ajoutés à `lib/libc` ; les versions newlib sont exclues pour l'applicatif (tas et numérotation errno différents). |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
 | Étape | Décision |
 |---|---|
-| 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11) ; premier palier embOS soft-float (`libosT7LSP.a`) ou hard-float (`libosT7VHL*`). |
 | 5 | Niveau d'optimisation final ; BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` (proposition étape 1 : vecteur CRYP et RAM à adapter). |
 | 6 | Modèle exact de la Discovery F7 ; cartes M3 et M0+ ; suppression des fichiers IAR (tag `legacy-iar`). |
 | 7 | Devenir du backend embOS. |
@@ -85,7 +97,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | `gcc-multilib`, `libexpat1-dev:i386` | Debian 13 | noyau statique `-m32`, mklepton (étape 2) |
 | `gcc-arm-none-eabi` | 14.2.1 (`15:14.2.rel1-1`), newlib 4.5.0.20241231 (nano inclus) | Debian 13, relevé 2026-09-30 |
 | CMake / Ninja | 3.31.6 / 1.12.1 | Debian 13 |
-| QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents |
+| QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents ; référence du pilote LAN9118 et de son câblage : sources QEMU v10.0.0 (`hw/net/lan9118.c`, `hw/arm/mps2.c`) |
+| lwIP | 2.0.1 | dans l'arbre (`kernel/net/lwip`), portage `ports/arm` (embOS) |
 | OpenOCD / gdb-multiarch | 0.12.0 / 16.3 | règles udev `60-openocd.rules` |
 | cloc / coccinelle | 2.04 / 1.3 | |
 
@@ -114,13 +127,42 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Mesure | Valeur | Source |
 |---|---|---|
 | Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 1511 / 409 081 ; gelé 765 / 158 061 ; hors-projet 762 / 192 635 | `perimetre.md` |
-| IAR-ismes (sévérité `iar`) | **actif 148** (Lepton 90, tiers 58) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
+| IAR-ismes (sévérité `iar`) | **actif 128** au 2026-09-30 (fin de l'étape 3 ; 147 avant le complément, 148 à l'étape 1) ; chaîne minimale : 31 dont 12 CMSIS (tiers) et 19 résiduels (`residuel-etape3.md`) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
 | Sources dérivées | `mps2-an386` : 217 f / 74 323 l ; NUCLEO-F439ZI : 353 f (base Olimex P407) | `perimetre.md` |
 | Écart embOS 5.18.3.1 IAR → 5.20.0.0 GCC | actif : 189 occurrences, 25 fichiers ; 7 écarts (E1 bloquant : branche embOS de `kal.h` réservée IAR/Keil) | `embos-iar-vs-gcc.md` |
 | Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
 
 ## Blocages et dette
 
+- Étape 3, tâche 1 : non livrée en 3a (constat 3b), faite en session de complément le 2026-09-30.
+  Reste pour l'étape 4 : `transform_iar.py` réécrit une condition simplifiée sur une seule ligne
+  (perte de la mise en forme sur plusieurs lignes) ; résiduels de la chaîne (M16C et en-têtes AT91 :
+  étape 6 ; pragma CCM F4 : étape 5 ; branches Keil/win32 : catégorie « autre »).
+- 3b : `ARG_LEN_MAX` = 64 octets (`kernel/core/process.h`) tronque **sans message** la ligne de
+  commande d'un processus (cause de l'échec d'`ifconfig` au démarrage) : signaler l'erreur ou
+  dimensionner par la carte (`__KERNEL_ARG_LEN_MAX`) — étape 4.
+- 3b : `LWIP_PROVIDE_ERRNO 1 //lepton` (`ports/arm/lwipopts.h`) : `lwip/errno.h` redéfinit les `E*` en
+  numérotation Linux dans `kernel_net_core_socket.c`, `lib/libc/net/socket.c`, `inet_addr.c`
+  (228 avertissements) ; errno des erreurs de socket vu par les applications possiblement faux.
+  Code identique sous IAR (latent) — étape 4.
+- 3b : `ifconfig` lit `if_config.if_flags` non initialisé sans `addif` ; `ftpd` : `LIST` sans argument
+  seulement, sortie silencieuse (statut 0) si `socket`/`bind`/`listen` échoue.
+- 3b : pilote LAN9118 écrit d'après le modèle QEMU (aucune fiche SMSC dans l'arbre) : QEMU seulement.
+
+- **Sécurité, à reprendre avec toute évolution utilisant la MPU** (décision 2026-09-30) : le banc de
+  registres FPU (S0-S31, FPSCR) est physique et partagé ; embOS ne l'efface ni à la création de tâche
+  ni à la commutation (lazy stacking), et Lepton ne l'efface pas à l'`exec`. Une tâche ou une nouvelle
+  image peut donc lire les valeurs flottantes, ou des entiers que GCC range dans les registres S en
+  hard-float, laissées par une autre tâche (constaté par T8 : S16-S31 de l'ancienne image lisibles
+  après `exec`). Sans conséquence supplémentaire aujourd'hui (aucune isolation mémoire : tout
+  processus lit déjà toute la RAM, y compris les contextes sauvegardés sur les piles). Le jour où la
+  MPU isole les processus : effacer S0-S31 et FPSCR à l'`exec` (dans `kal.h`, après la création de la
+  tâche), évaluer l'effacement à la commutation entre processus (hors code embOS : crochet de
+  commutation, ou désactivation du lazy stacking et effacement dans le KAL), étendre T8 pour exiger
+  l'effacement, et traiter de même les piles libérées (contextes sauvegardés en RAM).
+
+- Étape 3 : `RTOS.h` : avertissement `struct _reent` (type newlib absent en freestanding), sans effet constaté. (`malloc.c` : section atomique rétablie sous GCC, corrigé le 2026-09-30.)
+- Étape 3 : E4 `OS_MakeTaskReady(OS_TASK*)` déclarée par Lepton (HYPOTHÈSE À VALIDER, non documentée par Segger) ; mode embOS SP au lieu de DP (retour à DP possible depuis le verrou en sémaphore, à vérifier) ; `__KERNEL_UCORE_EMBOS` posé par CMake et par les `user_kernel_mkconf.h` des cartes existantes (double définition compatible).
 - Étape 2 : `vfs.c` (I_LINK) transmet un `va_list` par argument variadique (non portable, cause du `-m32`) → passer `va_list*` à l'étape 4 ; `__kernel_set_errno` en mode statique n'enregistre rien ; backend `core-static` = 3ᵉ copie de l'amorçage (`_kernel_warmup_*`) ; `kernelconf.h` : `kernel_mkconf.h` des branches GCC croisées encore en chemin fixe (étape 3).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
-- Pièges à reprendre : `__compiler_directive__packed` vide sous GCC (3 usages actifs) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).
+- Pièges à reprendre : `__compiler_directive__packed` = `__lepton_packed` depuis le complément de l'étape 3 (3 usages, `flash.h` : compactage à vérifier à l'étape 5) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).

@@ -1,9 +1,10 @@
 # Micro-noyau embOS (port GCC Segger, V5.20.0.0, hors git : $LEPTON_EMBOS_ROOT, décision 2026-09-30).
-# Décrit à l'étape 2, validé à l'étape 3 : la branche embOS de kal.h n'est pas encore active sous
-# GCC (écart E1, doc/migration/embos-iar-vs-gcc.md).
+# Écarts IAR/GCC : doc/migration/embos-iar-vs-gcc.md.
 #
 # Bibliothèque : libos<famille><mode>.a, famille donnée par le cœur (LEPTON_EMBOS_LIB_FAMILY,
-# cmake/cpu), mode DP en Debug (contrôles OS_Error), R sinon (embos-inventaire.md §3).
+# cmake/cpu), mode SP en Debug (contrôle de pile + profilage, comme l'existant IAR), R sinon.
+# Pas DP (décision 2026-09-30) : le verrou des appels système (kernel_mutex) est rendu par la tâche
+# noyau et non par son propriétaire, ce que DP refuse (OS_ERR_MUTEX_OWNER) ; refonte à l'étape 4.
 
 if(NOT LEPTON_EMBOS_LIB_FAMILY)
   message(FATAL_ERROR "LEPTON_KAL_BACKEND=embos : le cœur (LEPTON_CPU) ne fixe pas de famille embOS")
@@ -15,12 +16,19 @@ if(NOT EXISTS ${LEPTON_EMBOS_ROOT}/Start/Inc/RTOS.h)
 endif()
 
 set(LEPTON_EMBOS_LIB
-    ${LEPTON_EMBOS_ROOT}/Start/Lib/libos${LEPTON_EMBOS_LIB_FAMILY}$<IF:$<CONFIG:Debug>,DP,R>.a)
+    ${LEPTON_EMBOS_ROOT}/Start/Lib/libos${LEPTON_EMBOS_LIB_FAMILY}$<IF:$<CONFIG:Debug>,SP,R>.a)
+set(LEPTON_KAL_LINK_LIBS ${LEPTON_EMBOS_LIB})
+
+# Intégration embOS écrite pour Lepton (décision 2026-09-30 : aucun fichier d'exemple Segger) :
+# main (OS_Init, OS_InitHW, _start_kernel, OS_Start), OS_InitHW/SysTick/OS_Idle, OS_Error.
+set(LEPTON_KAL_MAIN_SOURCES kernel/core/core-segger/arch/armv7m/embos_main.c)
+set(LEPTON_KAL_HW_SOURCES kernel/core/core-segger/arch/armv7m/embos_init_hw.c)
+list(APPEND LEPTON_FIRMWARE_SOURCES ${LEPTON_KAL_MAIN_SOURCES} ${LEPTON_KAL_HW_SOURCES})
 
 target_include_directories(lepton_options INTERFACE ${LEPTON_EMBOS_ROOT}/Start/Inc)
 target_compile_definitions(lepton_options INTERFACE
   __KERNEL_UCORE_EMBOS
-  $<IF:$<CONFIG:Debug>,OS_LIBMODE_DP,OS_LIBMODE_R>)
+  $<IF:$<CONFIG:Debug>,OS_LIBMODE_SP,OS_LIBMODE_R>)
 
 # Backend (existant) : kernel/core/core-segger.
 set(LEPTON_KAL_SOURCES
@@ -35,5 +43,6 @@ set(LEPTON_KAL_SOURCES
   kernel/core/core-segger/kernel_sigqueue.c
   kernel/core/core-segger/kernel_timer.c
   kernel/core/core-segger/process.c
+  kernel/core/core-segger/kernel_syscall_lock.c
   kernel/core/core-segger/signal.c
   kernel/core/core-segger/syscall.c)

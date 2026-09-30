@@ -31,6 +31,7 @@ either the MPL or the [eCos GPL] License."
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "kernel/core/kernel.h"
 #include "kernel/core/signal.h"
@@ -41,6 +42,7 @@ either the MPL or the [eCos GPL] License."
 
 #include "lib/libc/unistd.h"
 #include "lib/libc/stdio/stdio.h"
+#include "lib/libc/string/string.h"
 #include "lib/libc/net/socket.h"
 
 
@@ -559,7 +561,7 @@ void docwd( ftp_session_t *session, const char *dir )
 
 void dopasv( ftp_session_t *session, int useepsv )
 {
-   unsigned int fodder;
+   socklen_t fodder;
    unsigned int a;
    unsigned int p;
    unsigned int on;
@@ -1559,7 +1561,7 @@ static int ftpd_server( ftp_server_t *server ) {
    int sock_fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
    struct sockaddr_in addr_client;      /* his data connection endpoint */
-   int addr_len= sizeof( addr_client );
+   socklen_t addr_len= sizeof( addr_client );
 
    if(-1 == sock_fd)
    {
@@ -1683,11 +1685,8 @@ static int ftpd_server( ftp_server_t *server ) {
 
          attr.stacksize = (CYGNUM_NET_FTPSERVER_STACK_SIZE);
          attr.stackaddr = NULL;
-#if !defined(__GNUC__)
+         //priorité des cibles réelles (branche __GNUC__ de la simulation Linux, gelée, retirée)
          attr.priority  = 100;
-#else
-         attr.priority  = 10;
-#endif
          attr.timeslice = 1;
          //
          pthread_create(&thread_id, &attr, ftpd_session_thrfunc, session);

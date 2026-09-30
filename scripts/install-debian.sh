@@ -81,6 +81,9 @@ fi
 # --- QEMU (socle mps2-an386, banc KAL) ----------------------------------------
 log "QEMU (system-arm)"
 $SUDO apt-get install -y --no-install-recommends qemu-system-arm
+# test réseau (tests/net_qemu.py, label net) : tap dans un espace de noms utilisateur (unshare :
+# util-linux, essentiel), ip, ping ; espaces de noms utilisateur non privilégiés requis
+$SUDO apt-get install -y --no-install-recommends iproute2 iputils-ping
 
 # --- RISC-V (reporté, optionnel) ---------------------------------------------
 if [ "$RISCV" = "1" ]; then

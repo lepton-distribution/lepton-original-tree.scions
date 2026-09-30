@@ -30,6 +30,7 @@ either the MPL or the [eCos GPL] License."
    #include <stdint.h>
    #include <stdlib.h>
    #include <string.h>
+   #include <ctype.h>
    #include "lib/libc/ctype/ctype.h"
    #include "kernel/core/system.h"
    #include "kernel/core/signal.h"

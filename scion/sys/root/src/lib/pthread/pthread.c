@@ -195,7 +195,7 @@ pthread_t pthread_self(void){
 | See:
 ----------------------------------------------*/
 int pthread_key_create(kernel_pthread_key_t *key, void(*destr_function) (void *)) {
-   return kernel_pthread_key_create(kernel_pthread_self, key, destr_function);
+   return kernel_pthread_key_create(kernel_pthread_self(), key, destr_function);
 }
 
 /*--------------------------------------------

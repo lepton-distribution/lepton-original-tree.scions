@@ -43,20 +43,13 @@ Declaration
 
 #if defined   (__CC_ARM)
 	#define __kernel_compiler_aligned(__a__)    __attribute__((__aligned__(__a__)))
-#elif defined (__ICCARM__)
-	#define __kernel_compiler_aligned(__a__)    __kernel_compiler_pragma(data_alignment = __a__)
 #elif defined (__GNUC__)
-	#define __kernel_compiler_aligned(__a__)    __attribute__((__aligned__(__a__)))
+	//extensions du compilateur : kernel/core/compiler.h (macros __lepton_*)
+	#include "kernel/core/compiler.h"
+	#define __kernel_compiler_aligned(__a__)    __lepton_align(__a__)
 #endif
 
 // byte order 
-#if defined (__ICCARM__)
-   #define __ORDER_BIG_ENDIAN__     1
-   #define __ORDER_PDP_ENDIAN__     2
-   #define __ORDER_LITTLE_ENDIAN__  3
-
-   #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
-#endif
 
 #if defined (WIN32)
    #define __ORDER_BIG_ENDIAN__     1

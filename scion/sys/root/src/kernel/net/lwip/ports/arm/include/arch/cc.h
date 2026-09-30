@@ -19,6 +19,11 @@ typedef signed short s16_t;
 typedef unsigned long u32_t;
 typedef signed long s32_t;
 
+/* lwIP 2.x : formats définis ici, sans inttypes.h (absent des en-têtes autorisés au noyau sous
+   GCC : kernel/core/include/libc ; fourni par la DLIB sous IAR) */
+#define LWIP_NO_INTTYPES_H 1
+#define X8_F  "02x"
+#define SZT_F "u"
 #define U16_F "hu"
 #define S16_F "hd"
 #define X16_F "hx"

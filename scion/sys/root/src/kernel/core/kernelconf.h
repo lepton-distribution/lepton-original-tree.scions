@@ -65,6 +65,7 @@ Includes
 #define __tauon_cpu_device_cortexm_k60n512__       (0x1401)
 #define __tauon_cpu_device_cortexM4_stm32f4__      (0x1402)
 #define __tauon_cpu_device_cortexM4_stm32wlxx__    (0x1403)
+#define __tauon_cpu_device_cortexM4_qemu_mps2_an386__ (0x1404)
 
 
 #if defined(WIN32)
@@ -73,8 +74,6 @@ Includes
    #define __tauon_compiler__ __compiler_gnuc__
 #elif defined(__IAR_SYSTEMS_ICC)
    #define __tauon_compiler__  __compiler_iar_m16c__
-#elif defined(__IAR_SYSTEMS_ICC__)
-   #define __tauon_compiler__ __compiler_iar_arm__
 #elif defined (__ARMCC_VERSION)
    #define __tauon_compiler__ __compiler_keil_arm__
 #endif
@@ -82,15 +81,6 @@ Includes
 #if (__tauon_compiler__==__compiler_win32__)
    //for win32 simulation
    #include "kernel/core/arch/win32/kernel_mkconf.h"
-#elif (__tauon_compiler__ == __compiler_iar_arm__)
-   #if ( (__CORE__==__ARM7M__) || (__CORE__==__ARM6M__) || (__CORE__==__ARM7EM__) )
-      //ARMv7E-M Cortex-M4
-      //ARMv7-M Cortex-M3
-      //ARMv6-M Cortex-M0, Cortex-M0+ and Cortex-M1
-      #include "kernel/core/arch/cortexm/kernel_mkconf.h"
-   #else
-      #include "kernel/core/arch/arm/kernel_mkconf.h"
-   #endif
 #elif (__tauon_compiler__ == __compiler_keil_arm__)
    #include "kernel/core/arch/arm/kernel_mkconf.h"
 #elif (__tauon_compiler__==__compiler_gnuc__)
@@ -100,7 +90,8 @@ Includes
       #include "kernel_mkconf.h"
    #else
       #if defined(CPU_CORTEXM)
-         #include "kernel/core/arch/cortexm/kernel_mkconf.h"
+         //genere par mklepton dans le repertoire de build (cmake/mklepton.cmake), chemin d'inclusion
+         #include "kernel_mkconf.h"
       #elif defined(CPU_ARM7) || defined(CPU_ARM9)
          #include "kernel/core/arch/arm/kernel_mkconf.h"
       #else
@@ -172,6 +163,10 @@ Includes
    #define __KERNEL_CPU_DEVICE_NAME "cortexM4-stm32f4"
    #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
 
+#elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM4_qemu_mps2_an386__
+   #define __KERNEL_CPU_DEVICE_NAME "cortexM4-qemu-mps2-an386"
+   #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
+
 #elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32wlxx__
    #define __KERNEL_CPU_DEVICE_NAME "cortexM4-stm32wlxx"
    #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
@@ -202,10 +197,6 @@ Declaration
    #define __KERNEL_UCORE_EMBOS
 #elif (__tauon_compiler__==__compiler_iar_m16c__)
    #define __KERNEL_UCORE_EMBOS
-#elif (__tauon_compiler__==__compiler_iar_arm__)
-   #if !defined(__KERNEL_UCORE_EMBOS) && !defined(__KERNEL_UCORE_FREERTOS)
-      #define __KERNEL_UCORE_EMBOS
-   #endif
 #elif (__tauon_compiler__==__compiler_keil_arm__)
    #define __KERNEL_UCORE_EMBOS
 #endif
@@ -214,10 +205,6 @@ Declaration
 //in C99 stdint included embedded type xxx_t
 #if (__tauon_compiler__==__compiler_win32__)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
-#elif (__tauon_compiler__==__compiler_iar_arm__) 
-   #if (__STDC_VERSION__>= 199901L) 
-      #define __KERNEL_COMPILER_STDINT_INCLUDED__
-   #endif
 #elif (__tauon_compiler__==__compiler_gnuc__)
    //GCC : toujours C99 ou plus ; les types de <stdint.h> priment (etypes.h dÃ©finissait int64_t en long)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
@@ -236,8 +223,6 @@ Declaration
     #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
 #elif (__tauon_compiler__==__compiler_iar_m16c__)
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
-#elif (__tauon_compiler__==__compiler_iar_arm__)
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
 #elif (__tauon_compiler__==__compiler_keil_arm__)
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE   
 #endif
@@ -283,13 +268,13 @@ Declaration
 
 //specific compiler directive definition
 #if (__tauon_compiler__==__compiler_gnuc__)
-   #define __compiler_directive__packed
+   //compacté comme sous IAR (__packed) ; était vide sous GCC (piège noté à l'étape 1)
+   #include "kernel/core/compiler.h"
+   #define __compiler_directive__packed __lepton_packed
 #elif (__tauon_compiler__==__compiler_win32__)
    #define __compiler_directive__packed
 #elif (__tauon_compiler__==__compiler_iar_m16c__)
   #define __compiler_directive__packed
-#elif (__tauon_compiler__==__compiler_iar_arm__)
-   #define __compiler_directive__packed __packed
 #elif (__tauon_compiler__==__compiler_keil_arm__)
    #define __compiler_directive__packed __packed
 #endif
