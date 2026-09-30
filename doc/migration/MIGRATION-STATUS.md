@@ -11,7 +11,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
 | 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
-| 3b — Noyau dynamique QEMU, Ethernet | À VALIDER | 2026-09-30 | palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; **étape 3 non close** : tâche 1 d'ETAPE-3 (`compiler.h` `__lepton_*`, amorce `transform_iar.py`) non livrée en 3a, prérequis de l'étape 4 (blocages) ; handoff `handoff/etape-3.md` |
+| 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; **étape 3 non close** : session de complément (tâche 1 d'ETAPE-3 : `compiler.h` `__lepton_*`, amorce `transform_iar.py`) EN COURS, décision utilisateur 2026-09-30 ; handoff `handoff/etape-3.md` |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
