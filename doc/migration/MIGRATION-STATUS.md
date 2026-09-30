@@ -11,7 +11,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
 | 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
-| 3b — Noyau dynamique QEMU, Ethernet | EN COURS | 2026-09-30 | plan de session (mode plan) ; reprise : `handoff/etape-3a.md` |
+| 3b — Noyau dynamique QEMU, Ethernet | À VALIDER | 2026-09-30 | palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; **étape 3 non close** : tâche 1 d'ETAPE-3 (`compiler.h` `__lepton_*`, amorce `transform_iar.py`) non livrée en 3a, prérequis de l'étape 4 (blocages) ; handoff `handoff/etape-3.md` |
 | 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
@@ -27,7 +27,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Cœur | embOS | FreeRTOS |
 |---|---|---|
-| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) | |
+| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) ; T0 inclut désormais réseau et `ftpd` lancés par le `.init` | |
 | m7 (`mps2-an500`) | | |
 | m3 (`mps2-an385`) | | |
 | m0 (`microbit`) | | |
@@ -72,6 +72,9 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Étape 3 — palier hard-float : preset principal `qemu-mps2-an386-embos` en hard-float (`libosT7VHLSP.a`) ; preset `qemu-mps2-an386-embos-soft` conservé dans `ci/run.sh` (chemin sans FPU jusqu'aux cœurs M3/M0 de l'étape 6). |
 | 2026-09-30 | Étape 3 — banc KAL T8 en hard-float : « aucun état FPU ne survit » = aucun contexte FPU hérité (FPCA = 0, cadre de départ de base, FPSCR par défaut) ; contenu résiduel de S16-S31 journalisé, non exigé (amendement de `BANC-TEST-KAL-QEMU.md`). |
 | 2026-09-30 | Sécurité — registres FPU résiduels lisibles entre tâches et entre images (constaté par T8) : pas d'effacement tant que Lepton n'isole pas la mémoire ; à traiter avec toute évolution utilisant la MPU (dette, ci-dessous). |
+| 2026-09-30 | Étape 3b — pile réseau du socle (et de la F439) : lwIP 2.0.1 de l'arbre et couches `lwip_core` ; choisie par la carte (`LEPTON_NET_STACK`, `USE_LWIP`). |
+| 2026-09-30 | Étape 3b — palier 7 sans privilège : tap créé dans un espace de noms utilisateur et réseau (`unshare --user --map-root-user --net`) par le test ; échec explicite si indisponible. |
+| 2026-09-30 | Étape 3b — frontière libc : `strdup` (tas Lepton) et `strerror` (numérotation errno Lepton) ajoutés à `lib/libc` ; les versions newlib sont exclues pour l'applicatif (tas et numérotation errno différents). |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
@@ -94,7 +97,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | `gcc-multilib`, `libexpat1-dev:i386` | Debian 13 | noyau statique `-m32`, mklepton (étape 2) |
 | `gcc-arm-none-eabi` | 14.2.1 (`15:14.2.rel1-1`), newlib 4.5.0.20241231 (nano inclus) | Debian 13, relevé 2026-09-30 |
 | CMake / Ninja | 3.31.6 / 1.12.1 | Debian 13 |
-| QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents |
+| QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents ; référence du pilote LAN9118 et de son câblage : sources QEMU v10.0.0 (`hw/net/lan9118.c`, `hw/arm/mps2.c`) |
+| lwIP | 2.0.1 | dans l'arbre (`kernel/net/lwip`), portage `ports/arm` (embOS) |
 | OpenOCD / gdb-multiarch | 0.12.0 / 16.3 | règles udev `60-openocd.rules` |
 | cloc / coccinelle | 2.04 / 1.3 | |
 
@@ -129,6 +133,21 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
 
 ## Blocages et dette
+
+- **Étape 3, tâche 1 non livrée** (constat 3b, 2026-09-30) : `compiler.h` (macros `__lepton_*`, branche
+  GCC seule) et l'amorce `tools/migration/transform_iar.py` limitée à la chaîne minimale n'existent
+  pas (seul `kernel/core/kernel_compiler.h`, à branches IAR/GCC) ; non signalé par le handoff 3a.
+  Prérequis de l'étape 4 : à trancher avant de clore l'étape 3 (voir `handoff/etape-3.md`).
+- 3b : `ARG_LEN_MAX` = 64 octets (`kernel/core/process.h`) tronque **sans message** la ligne de
+  commande d'un processus (cause de l'échec d'`ifconfig` au démarrage) : signaler l'erreur ou
+  dimensionner par la carte (`__KERNEL_ARG_LEN_MAX`) — étape 4.
+- 3b : `LWIP_PROVIDE_ERRNO 1 //lepton` (`ports/arm/lwipopts.h`) : `lwip/errno.h` redéfinit les `E*` en
+  numérotation Linux dans `kernel_net_core_socket.c`, `lib/libc/net/socket.c`, `inet_addr.c`
+  (228 avertissements) ; errno des erreurs de socket vu par les applications possiblement faux.
+  Code identique sous IAR (latent) — étape 4.
+- 3b : `ifconfig` lit `if_config.if_flags` non initialisé sans `addif` ; `ftpd` : `LIST` sans argument
+  seulement, sortie silencieuse (statut 0) si `socket`/`bind`/`listen` échoue.
+- 3b : pilote LAN9118 écrit d'après le modèle QEMU (aucune fiche SMSC dans l'arbre) : QEMU seulement.
 
 - **Sécurité, à reprendre avec toute évolution utilisant la MPU** (décision 2026-09-30) : le banc de
   registres FPU (S0-S31, FPSCR) est physique et partagé ; embOS ne l'efface ni à la création de tâche
