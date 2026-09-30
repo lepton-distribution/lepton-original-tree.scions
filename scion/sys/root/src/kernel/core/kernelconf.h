@@ -65,6 +65,7 @@ Includes
 #define __tauon_cpu_device_cortexm_k60n512__       (0x1401)
 #define __tauon_cpu_device_cortexM4_stm32f4__      (0x1402)
 #define __tauon_cpu_device_cortexM4_stm32wlxx__    (0x1403)
+#define __tauon_cpu_device_cortexM4_qemu_mps2_an386__ (0x1404)
 
 
 #if defined(WIN32)
@@ -100,7 +101,8 @@ Includes
       #include "kernel_mkconf.h"
    #else
       #if defined(CPU_CORTEXM)
-         #include "kernel/core/arch/cortexm/kernel_mkconf.h"
+         //genere par mklepton dans le repertoire de build (cmake/mklepton.cmake), chemin d'inclusion
+         #include "kernel_mkconf.h"
       #elif defined(CPU_ARM7) || defined(CPU_ARM9)
          #include "kernel/core/arch/arm/kernel_mkconf.h"
       #else
@@ -170,6 +172,10 @@ Includes
 
 #elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32f4__
    #define __KERNEL_CPU_DEVICE_NAME "cortexM4-stm32f4"
+   #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
+
+#elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM4_qemu_mps2_an386__
+   #define __KERNEL_CPU_DEVICE_NAME "cortexM4-qemu-mps2-an386"
    #define __tauon_cpu_core__ __tauon_cpu_core_arm_cortexM4__
 
 #elif __tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32wlxx__

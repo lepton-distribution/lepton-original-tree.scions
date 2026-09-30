@@ -1080,15 +1080,19 @@ typedef struct {
 
 
 //#elif ( (defined(__IAR_SYSTEMS_ICC__) || defined(__ARMCC_VERSION)) && defined (__KERNEL_UCORE_EMBOS) && ( defined(CPU_ARM7) ||  defined(CPU_ARM9) || defined(CPU_CORTEXM) ) )
-#elif ( (__tauon_compiler__ == __compiler_iar_arm__) || (__tauon_compiler__ == __compiler_keil_arm__) )\
- && defined (__KERNEL_UCORE_EMBOS)\
+//embOS sur ARM, quel que soit le compilateur (GCC, IAR, Keil) ; M7 dans le groupe des coeurs
+#elif defined (__KERNEL_UCORE_EMBOS)\
  &&((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__)\
  || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)\
  || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__))\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)
+ || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\
+ || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
 
-   #include "RTOS.H"
+   #include "RTOS.h"
+   //OS_MakeTaskReady : exportee par la bibliotheque embOS, non declaree par RTOS.h (ecart E4).
+   //HYPOTHESE A VALIDER : signature void OS_MakeTaskReady(OS_TASK*) deduite des usages Lepton
+   //(desassemblage interdit par la licence SFL ; a confirmer aupres de Segger).
+   void OS_MakeTaskReady(OS_TASK* pTask);
 /*modif for segger version 3.28h */
 //#include "OSKern.H"
    //GD-TODO lm3S: improve? 

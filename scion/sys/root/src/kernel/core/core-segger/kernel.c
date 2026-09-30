@@ -108,6 +108,10 @@ tmr_t kernel_tmr;
    #define KERNEL_STACK_SIZE  2048 //CORTEXM4
 #elif ( (__tauon_compiler__==__compiler_win32__)      && (__tauon_cpu_core__ == __tauon_cpu_core_win32_simulation__))
    #define KERNEL_STACK_SIZE  1024
+#elif ( (__tauon_compiler__==__compiler_gnuc__)       && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)))
+   #define KERNEL_STACK_SIZE  4096 //CORTEXM4, CORTEXM7 (valeurs IAR)
+#elif ( (__tauon_compiler__==__compiler_gnuc__)       && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)))
+   #define KERNEL_STACK_SIZE  2048 //CORTEXM3, CORTEXM0
 #endif
 
 #define KERNEL_PRIORITY    150
@@ -893,7 +897,7 @@ int _kernel_warmup_mount(void){
             argv[argc] = strtok( buf," ");
             while( argv[argc++] != NULL )
                argv[argc] = strtok( NULL," ");  //Get next token:
-            _kernel_mount(argv);
+            _kernel_mount((const char**)argv);
          }
          pbuf=buf;
       }
@@ -905,7 +909,7 @@ int _kernel_warmup_mount(void){
          argv[argc] = strtok( buf," ");
          while( argv[argc++] != NULL )
             argv[argc] = strtok( NULL," ");  //Get next token:
-         _kernel_mount(argv);
+         _kernel_mount((const char**)argv);
       }
       _vfs_close(desc);
    }
@@ -1027,7 +1031,7 @@ int _kernel_warmup_boot(void){
                argv[argc] = strtok( buf," ");
                while( argv[argc++] != NULL )
                   argv[argc] = strtok( NULL," ");   //Get next token:
-               _sys_krnl_exec(argv[0],argv,0,0,0);
+               _sys_krnl_exec(argv[0],(const char**)argv,0,0,0);
                st=2;
             }
             break;
@@ -1044,7 +1048,7 @@ int _kernel_warmup_boot(void){
    }else{
       //warning!!!:/dev/ttyp0 only for win32 version
       char* argv[ARG_MAX]={"-t","5000","-i","/dev/ttyp0","-o","/dev/ttyp0"};
-      _sys_krnl_exec("/bin/init",(char**)argv,0,0,0);
+      _sys_krnl_exec("/bin/init",(const char**)argv,0,0,0);
    }
 
    return 0;
