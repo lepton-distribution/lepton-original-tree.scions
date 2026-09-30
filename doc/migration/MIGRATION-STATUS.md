@@ -8,7 +8,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Étape | Statut | Date | Notes |
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
-| 1 — Inventaire | EN COURS | 2026-09-30 | tâches 0-6 faites, critères vérifiés ; **en attente de validation utilisateur** ; branche `migration/etape-1` ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
+| 1 — Inventaire | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-1` fusionnée ; handoff `handoff/etape-1.md` ; Graphify (optionnel) non fait |
 | 2 — Build CMake, noyau statique, mklepton | À FAIRE | | |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
@@ -62,10 +62,9 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Étape | Décision |
 |---|---|
-| 1 | Validation de fin d'étape. BSP embOS retenu (proposition) : `ST/STM32F429_STM32F429ZI_Nucleo` (vecteur CRYP et RAM à adapter). |
 | 2 | Second pilote logiciel du noyau statique (`dev_null` cité deux fois dans le guide) ; stockage de l'image UFS ; sorties de mklepton hors du trunk ; format UFS si différent entre hôte et ARM. |
 | 3 | Frontière newlib / API POSIX Lepton ; contenu de `bin` (proposition : tests T9-T11) ; premier palier embOS soft-float (`libosT7LSP.a`) ou hard-float (`libosT7VHL*`). |
-| 5 | Niveau d'optimisation final. |
+| 5 | Niveau d'optimisation final ; BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` (proposition étape 1 : vecteur CRYP et RAM à adapter). |
 | 6 | Modèle exact de la Discovery F7 ; cartes M3 et M0+ ; suppression des fichiers IAR (tag `legacy-iar`). |
 | 7 | Devenir du backend embOS. |
 
