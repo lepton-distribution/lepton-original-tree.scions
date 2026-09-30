@@ -496,7 +496,7 @@ static const unsigned char vals[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30,
 
 double __difftime(time_t time1, time_t time0)
 {
-#if defined(__IAR_SYSTEMS_ICC__) || defined(__ARMCC_VERSION) 
+#if defined(__ARMCC_VERSION)
    return ((double) time1) - time0;
 #else
    #if ((LONG_MAX >> DBL_MANT_DIG) == 0)

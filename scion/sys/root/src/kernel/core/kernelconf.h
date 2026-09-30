@@ -74,8 +74,6 @@ Includes
    #define __tauon_compiler__ __compiler_gnuc__
 #elif defined(__IAR_SYSTEMS_ICC)
    #define __tauon_compiler__  __compiler_iar_m16c__
-#elif defined(__IAR_SYSTEMS_ICC__)
-   #define __tauon_compiler__ __compiler_iar_arm__
 #elif defined (__ARMCC_VERSION)
    #define __tauon_compiler__ __compiler_keil_arm__
 #endif
@@ -83,15 +81,6 @@ Includes
 #if (__tauon_compiler__==__compiler_win32__)
    //for win32 simulation
    #include "kernel/core/arch/win32/kernel_mkconf.h"
-#elif (__tauon_compiler__ == __compiler_iar_arm__)
-   #if ( (__CORE__==__ARM7M__) || (__CORE__==__ARM6M__) || (__CORE__==__ARM7EM__) )
-      //ARMv7E-M Cortex-M4
-      //ARMv7-M Cortex-M3
-      //ARMv6-M Cortex-M0, Cortex-M0+ and Cortex-M1
-      #include "kernel/core/arch/cortexm/kernel_mkconf.h"
-   #else
-      #include "kernel/core/arch/arm/kernel_mkconf.h"
-   #endif
 #elif (__tauon_compiler__ == __compiler_keil_arm__)
    #include "kernel/core/arch/arm/kernel_mkconf.h"
 #elif (__tauon_compiler__==__compiler_gnuc__)
@@ -208,10 +197,6 @@ Declaration
    #define __KERNEL_UCORE_EMBOS
 #elif (__tauon_compiler__==__compiler_iar_m16c__)
    #define __KERNEL_UCORE_EMBOS
-#elif (__tauon_compiler__==__compiler_iar_arm__)
-   #if !defined(__KERNEL_UCORE_EMBOS) && !defined(__KERNEL_UCORE_FREERTOS)
-      #define __KERNEL_UCORE_EMBOS
-   #endif
 #elif (__tauon_compiler__==__compiler_keil_arm__)
    #define __KERNEL_UCORE_EMBOS
 #endif
@@ -220,10 +205,6 @@ Declaration
 //in C99 stdint included embedded type xxx_t
 #if (__tauon_compiler__==__compiler_win32__)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
-#elif (__tauon_compiler__==__compiler_iar_arm__) 
-   #if (__STDC_VERSION__>= 199901L) 
-      #define __KERNEL_COMPILER_STDINT_INCLUDED__
-   #endif
 #elif (__tauon_compiler__==__compiler_gnuc__)
    //GCC : toujours C99 ou plus ; les types de <stdint.h> priment (etypes.h définissait int64_t en long)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
@@ -242,8 +223,6 @@ Declaration
     #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
 #elif (__tauon_compiler__==__compiler_iar_m16c__)
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
-#elif (__tauon_compiler__==__compiler_iar_arm__)
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
 #elif (__tauon_compiler__==__compiler_keil_arm__)
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE   
 #endif
@@ -294,8 +273,6 @@ Declaration
    #define __compiler_directive__packed
 #elif (__tauon_compiler__==__compiler_iar_m16c__)
   #define __compiler_directive__packed
-#elif (__tauon_compiler__==__compiler_iar_arm__)
-   #define __compiler_directive__packed __packed
 #elif (__tauon_compiler__==__compiler_keil_arm__)
    #define __compiler_directive__packed __packed
 #endif

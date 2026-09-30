@@ -1620,14 +1620,7 @@ typedef _pthreadstart_routine_t pthreadstart_routine_t;
       #define __io_profiler_get_counter(__desc__)     0
    #endif
 
-#elif ( (__tauon_compiler__ == __compiler_iar_arm__) || (__tauon_compiler__ == __compiler_keil_arm__) || (__tauon_compiler__ == __compiler_gnuc__) )\
- && defined (__KERNEL_UCORE_FREERTOS)\
- &&((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
+#elif ((__tauon_compiler__ == __compiler_keil_arm__) || (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
 
    //#include <stdlib.h>
    //#include <string.h>   
