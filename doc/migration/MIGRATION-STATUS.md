@@ -127,7 +127,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 ## Blocages et dette
 
-- Étape 3 : `kernel/core/malloc.c` : `_sys_malloc`/`_sys_free` ne protègent l'allocation (section atomique) que `#if !defined(__GNUC__)` → sans protection sous GCC + embOS (malloc newlib non réentrant) ; à corriger (condition de plateforme au lieu du compilateur) — risque en multitâche. `RTOS.h` : avertissement `struct _reent` (type newlib absent en freestanding), sans effet constaté.
+- Étape 3 : `RTOS.h` : avertissement `struct _reent` (type newlib absent en freestanding), sans effet constaté. (`malloc.c` : section atomique rétablie sous GCC, corrigé le 2026-09-30.)
 - Étape 3 : E4 `OS_MakeTaskReady(OS_TASK*)` déclarée par Lepton (HYPOTHÈSE À VALIDER, non documentée par Segger) ; mode embOS SP au lieu de DP (retour à DP possible depuis le verrou en sémaphore, à vérifier) ; `__KERNEL_UCORE_EMBOS` posé par CMake et par les `user_kernel_mkconf.h` des cartes existantes (double définition compatible).
 - Étape 2 : `vfs.c` (I_LINK) transmet un `va_list` par argument variadique (non portable, cause du `-m32`) → passer `va_list*` à l'étape 4 ; `__kernel_set_errno` en mode statique n'enregistre rien ; backend `core-static` = 3ᵉ copie de l'amorçage (`_kernel_warmup_*`) ; `kernelconf.h` : `kernel_mkconf.h` des branches GCC croisées encore en chemin fixe (étape 3).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
