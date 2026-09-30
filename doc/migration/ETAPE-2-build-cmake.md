@@ -76,7 +76,7 @@ compilées. Contenu, dans cet ordre :
 
 1. `kernel/core` : base du noyau ;
 2. `kernel/dev` : pilotes logiciels seulement — `dev_cpufs`, `dev_head`, `dev_null`, `dev_proc`,
-   `dev_tty` (+ un pilote <À CONFIRMER : `dev_null` est cité deux fois dans le guide>) ;
+   `dev_tty` + `dev_part` (décision 2026-09-30 : doublon `dev_null` du guide) ;
 3. `kernel/fs` : `vfs`, puis `rootfs` (en RAM, sans pilote), puis `ufs` ;
 4. `lib` (`libc`, `pthread`) : seulement ce que les trois premiers exigent (établi à l'étape 1 ;
    l'ancien noyau statique les incluait).
@@ -111,8 +111,8 @@ compilées. Contenu, dans cet ordre :
 - **Point d'arrêt — sorties** : les mkconf écrivent dans le trunk (à travers un lien, ils modifient
   un fichier versionné ; en fichier régulier, ils bloquent `scion graft`). Faire trancher : option de
   sortie vers le répertoire de build, ou `dest_path` hors du trunk.
-- Oracle : sorties (C généré, image UFS) identiques octet à octet au jeu de référence de l'étape 1,
-  pour les mêmes XML.
+- Oracle (décision 2026-09-30, voie de repli) : C généré structurellement conforme à
+  `mklepton-ref.md` ; sorties déterministes (deux exécutions identiques, `SOURCE_DATE_EPOCH`).
 - `cmake/mklepton.cmake` : `lepton_generate(<cible> XML <fichier>)`, `add_custom_command` avec
   `DEPENDS` sur le XML, le contenu du rootfs et l'exécutable ; sorties dans le répertoire de build.
 
@@ -123,7 +123,10 @@ compilées. Contenu, dans cet ordre :
 - [ ] Dépendances entre bibliothèques conformes au graphe de l'étape 1 ; cycles résolus par
       groupe d'édition de liens ou fusion documentée.
 - [ ] Assertions de format UFS identiques hôte / `arm-none-eabi` (compilation des deux côtés).
-- [ ] mklepton : sorties identiques octet à octet au jeu de référence ; aucune écriture dans le trunk.
+- [ ] mklepton : C généré structurellement conforme au jeu de référence (`mklepton-ref.md`),
+      deux exécutions identiques octet à octet, image UFS relue par le test hôte (montage sous QEMU à
+      l'étape 3) ; aucune écriture dans le trunk. (Critère reformulé par décision utilisateur du
+      2026-09-30 : oracle binaire indisponible, étape 1.)
 - [ ] Presets croisés `qemu-mps2-an386-embos` et `nucleo-f439zi-embos` décrits (validés à l'étape 3).
 - [ ] `ajout-coeur.md` rédigé ; `grep` : aucun `-mcpu`/`-mfpu` hors `cmake/`.
 - [ ] Après un build complet, `find "$LEPTON_TRUNK" -type f ! -name .scion.grafted.list` vide.
