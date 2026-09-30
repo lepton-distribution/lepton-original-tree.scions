@@ -1,7 +1,7 @@
 # Handoff étape 3 → 4
 
-État au 2026-09-30 : 3a et 3b TERMINÉES (validées) ; complément de la tâche 1 fait : **étape 3 à
-valider**. Détail de 3a : `handoff/etape-3a.md` ; journal des paliers : `validation-qemu-mps2-an386.md`.
+État au 2026-09-30 : 3a et 3b TERMINÉES (validées) ; complément de la tâche 1 fait : **étape 3 validée
+le 2026-09-30**, branche fusionnée dans `master`. Détail de 3a : `handoff/etape-3a.md` ; journal des paliers : `validation-qemu-mps2-an386.md`.
 
 ## Réponses aux prérequis de 4
 - Socle QEMU vert : OUI. `ci/run.sh` vert : host 5/5 ; presets `qemu-mps2-an386-embos` (hard,
