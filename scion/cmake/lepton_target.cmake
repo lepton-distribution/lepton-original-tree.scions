@@ -7,6 +7,22 @@
 add_library(lepton_options INTERFACE)
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC})
 
+# lepton_freestanding([<options du compilateur pour -print-file-name>])
+# Le code Lepton ne voit aucun en-tête de la libc du système (types en conflit : time_t, ino_t,
+# ssize_t…) : seuls ceux du compilateur (stdint, stdarg, stddef) et les déclarations minimales
+# kernel/core/include/libc (string, stdlib, ctype, limits, math ; ABI standard). La libc du
+# système (glibc sur l'hôte, newlib-nano sur cible, décision 2026-09-30) fournit les
+# implémentations à l'édition de liens.
+set(LEPTON_LIBC_DECL_DIR ${LEPTON_SRC}/kernel/core/include/libc)
+function(lepton_freestanding)
+  execute_process(COMMAND ${CMAKE_C_COMPILER} ${ARGN} -print-file-name=include
+                  OUTPUT_VARIABLE gcc_include OUTPUT_STRIP_TRAILING_WHITESPACE)
+  target_compile_options(lepton_options INTERFACE
+    -ffreestanding -nostdinc
+    "SHELL:-isystem ${LEPTON_LIBC_DECL_DIR}"
+    "SHELL:-isystem ${gcc_include}")
+endfunction()
+
 # lepton_add_library(<nom> SOURCES <fichiers relatifs à sys/root/src> [DEPENDS <cibles>])
 # Bibliothèque statique d'un composant ; DEPENDS suit le graphe doc/migration/dependances.md.
 function(lepton_add_library name)

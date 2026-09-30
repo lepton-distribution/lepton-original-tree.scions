@@ -78,6 +78,6 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 ## 7. Noyau statique hôte (preset `host`)
 
 `LEPTON_ISA=host`, `LEPTON_KAL_BACKEND=static` ; ILP32 (`-m32`, décision 2026-09-30),
-freestanding (`-nostdinc`, déclarations libc de `src/kernel/core/arch/host/include/libc/`),
+freestanding (`-nostdinc`, déclarations libc de `src/kernel/core/include/libc/`, communes à toutes les ISA),
 configuration fixe `src/kernel/core/arch/host/static/`, backend `src/kernel/core/core-static/`.
 Tests `ctest --preset host` (label `host`).

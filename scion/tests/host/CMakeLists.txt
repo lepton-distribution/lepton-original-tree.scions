@@ -19,7 +19,7 @@ execute_process(COMMAND ${LEPTON_ARM_GCC} -print-file-name=include
 # Même configuration du noyau que l'hôte (seule l'ABI change) : AAPCS Cortex-M4, enums courts.
 add_test(NAME host.ufs_format_arm
          COMMAND ${LEPTON_ARM_GCC} ${LEPTON_HOST_ARM_CHECK_FLAGS} -std=gnu99 -ffreestanding -nostdinc
-                 -isystem ${LEPTON_HOST_ARCH_DIR}/include/libc -isystem ${arm_gcc_include}
+                 -isystem ${LEPTON_LIBC_DECL_DIR} -isystem ${arm_gcc_include}
                  -DCPU_GNU32 -D__tauon_cpu_device__=__tauon_cpu_device_gnu_synthetic__
                  -DUSE_KERNEL_STATIC -I${LEPTON_SRC} -I${LEPTON_SRC}/${LEPTON_KAL_STATIC_DIR}
                  -fsyntax-only ${CMAKE_CURRENT_SOURCE_DIR}/ufs_format.c)
