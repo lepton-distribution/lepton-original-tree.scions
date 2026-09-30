@@ -268,7 +268,9 @@ Declaration
 
 //specific compiler directive definition
 #if (__tauon_compiler__==__compiler_gnuc__)
-   #define __compiler_directive__packed
+   //compacté comme sous IAR (__packed) ; était vide sous GCC (piège noté à l'étape 1)
+   #include "kernel/core/compiler.h"
+   #define __compiler_directive__packed __lepton_packed
 #elif (__tauon_compiler__==__compiler_win32__)
    #define __compiler_directive__packed
 #elif (__tauon_compiler__==__compiler_iar_m16c__)

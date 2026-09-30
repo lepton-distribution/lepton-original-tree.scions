@@ -44,7 +44,9 @@ Declaration
 #if defined   (__CC_ARM)
 	#define __kernel_compiler_aligned(__a__)    __attribute__((__aligned__(__a__)))
 #elif defined (__GNUC__)
-	#define __kernel_compiler_aligned(__a__)    __attribute__((__aligned__(__a__)))
+	//extensions du compilateur : kernel/core/compiler.h (macros __lepton_*)
+	#include "kernel/core/compiler.h"
+	#define __kernel_compiler_aligned(__a__)    __lepton_align(__a__)
 #endif
 
 // byte order 
