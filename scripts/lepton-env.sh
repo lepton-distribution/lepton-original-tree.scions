@@ -10,7 +10,7 @@
 
 _lepton_find_rootstock() {
   local d="${1:-$PWD}"
-  d="$(cd "$d" && pwd -P)"
+  d="$(cd "$d" 2>/dev/null && pwd -P)" || return 1
   while [ "$d" != "/" ]; do
     [ -f "$d/.scion.rootstock.signature" ] && { printf '%s\n' "$d"; return 0; }
     d="$(dirname "$d")"
