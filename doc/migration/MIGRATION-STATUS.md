@@ -8,7 +8,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Étape | Statut | Date | Notes |
 |---|---|---|---|
 | 0 — Arbre des sources (scion) | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; rootstock `~/lepton`, trunk `trunk/`, clone `master` `055fc60` ; plan sur `migration/etape-0` ; handoff `handoff/etape-0.md` |
-| 1 — Inventaire | EN COURS | 2026-09-30 | branche `migration/etape-1` |
+| 1 — Inventaire | EN COURS | 2026-09-30 | branche `migration/etape-1` ; tâches 0-6 produites (graphe Graphify optionnel non fait) ; en attente : décision code gelé, oracle mklepton bloqué (`libkernel.so`, `libexpat1:i386`) |
 | 2 — Build CMake, noyau statique, mklepton | À FAIRE | | |
 | 3a — Noyau dynamique QEMU, UART | À FAIRE | | |
 | 3b — Noyau dynamique QEMU, Ethernet | À FAIRE | | |
@@ -76,7 +76,11 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Arbre Lepton | `master` | `055fc602f32f` (clone du rootstock, 2026-09-30 ; identique au relevé du 2026-09-29), `lepton-distribution/lepton-original-tree.scions` (tag `version-4.9.0.2` présent ; la branche `main` ne contient qu'un commit initial vide) |
 | QEMU | ≥ 8.2 | cartes mémoire relevées sur 8.2.2 |
 | embOS | embOS-Classic V5.20.0.0 Cortex-M GCC | `$LEPTON_EMBOS_ROOT` (hors git) ; pas de paquet RISC-V dans `archives/` |
-| `gcc-arm-none-eabi`, CMake (≥ 3.24) | à consigner à l'étape 1 | |
+| `gcc-arm-none-eabi` | 14.2.1 (`15:14.2.rel1-1`), newlib 4.5.0.20241231 (nano inclus) | Debian 13, relevé 2026-09-30 |
+| CMake / Ninja | 3.31.6 / 1.12.1 | Debian 13 |
+| QEMU | 10.0.13 | `mps2-an385/386/500`, `microbit` présents |
+| OpenOCD / gdb-multiarch | 0.12.0 / 16.3 | règles udev `60-openocd.rules` |
+| cloc / coccinelle | 2.04 / 1.3 | |
 
 ## Constats vérifiés sur l'arbre (2026-09-29/30)
 
@@ -98,6 +102,19 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - QEMU `mps2-an386` : SSRAM `0x00000000` et `0x20000000` (4 Mo chacune), UART CMSDK à
   `0x40004000`–`0x40007000` et `0x40009000`, LAN9118 à `0x40200000` (`0xA0000000` sur `mps2-an500`).
 
+## Métriques de l'étape 1 (2026-09-30)
+
+| Mesure | Valeur | Source |
+|---|---|---|
+| Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 952 / 304 755 ; gelé proposé 1324 / 262 387 ; hors-projet 762 / 192 635 | `perimetre.md` |
+| IAR-ismes (sévérité `iar`) | **actif 148** (Lepton 90, tiers 58) ; différé 580 ; gelé 933 ; hors-projet 224 | `audit_iar.py --summary` |
+| Sources dérivées | `mps2-an386` : 217 f / 74 323 l ; NUCLEO-F439ZI : 353 f (base Olimex P407) | `perimetre.md` |
+| Écart embOS 5.18.3.1 IAR → 5.20.0.0 GCC | actif : 189 occurrences, 25 fichiers ; 7 écarts (E1 bloquant : branche embOS de `kal.h` réservée IAR/Keil) | `embos-iar-vs-gcc.md` |
+| Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
+
 ## Blocages et dette
 
-(vide)
+- **Oracle mklepton (étape 1, tâche 5)** : `mklepton_gnu` exige `libkernel.so` i386 partagée, absente de l'arbre et non reconstructible (sources `core-ecos`, `x86_static` absentes) ; copies signalées hors arbre sur `/mnt/hgfs/entreprises/lepton/…/x86_static/bin/` (non inspectées, accord utilisateur requis). `libexpat1:i386` non installé (absent de `install-debian.sh`). Script prêt : `tools/migration/mklepton_oracle.sh`.
+- `scripts/install-debian.sh` : correctif newlib-nano non commité dans l'arbre de travail (origine utilisateur présumée, 15:09).
+- Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
+- Pièges à reprendre : `__compiler_directive__packed` vide sous GCC (3 usages actifs) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).
