@@ -110,6 +110,7 @@ if(LEPTON_QEMU_MACHINE)
                      --host-ip ${LEPTON_NET_TEST_HOST_IP} --guest-ip ${LEPTON_NET_TEST_GUEST_IP}
                      --ftp-file ${LEPTON_NET_TEST_FTP_FILE}
                      --ftp-reference ${CMAKE_SOURCE_DIR}/${LEPTON_NET_TEST_FTP_REFERENCE}
+                     --errno-header ${LEPTON_SRC}/kernel/core/errno.h
                      --log ${CMAKE_BINARY_DIR}/net_qemu_uart0.log)
     set_tests_properties(net.ping_ftpd PROPERTIES
                          LABELS "net;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"

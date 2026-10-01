@@ -8,7 +8,10 @@ eth0 et lance ftpd), puis, depuis la pile IP de l'hôte :
   - ping de l'invité (--ping-count réponses exigées) ;
   - session FTP (ftplib, mode passif) : connexion, CWD et LIST d'un répertoire (--ftp-list,
     entrée --ftp-list-expect exigée), téléchargement d'un
-    fichier du rootfs comparé octet à octet à sa source (--ftp-file, --ftp-reference).
+    fichier du rootfs comparé octet à octet à sa source (--ftp-file, --ftp-reference) ;
+  - errno d'un connect() refusé, vu par une application de l'invité (net/tsterrno vers un port fermé
+    de l'hôte) : ECONNREFUSED ou ECONNRESET dans la numérotation Lepton (--errno-header,
+    kernel/core/errno.h), et non dans celle de lwIP (Linux) — étape 4, module kernel/net.
 Échoue explicitement si les espaces de noms utilisateur sont interdits (jamais ignoré).
 Code de retour 0 si tout est conforme (CTest, label net).
 
@@ -89,6 +92,35 @@ def ftp_session(args):
     return welcome, listing, data.getvalue(), reference
 
 
+def errno_values(header, names):
+    """Valeurs des constantes E* de l'errno.h de Lepton."""
+    text = open(header, encoding="latin-1").read()
+    vals = {}
+    for n in names:
+        m = re.search(r"^\s*#\s*define\s+%s\s+(\d+)" % n, text, re.M)
+        if m:
+            vals[n] = int(m.group(1))
+    return vals
+
+
+def errno_check(con, args):
+    """tsterrno vers un port fermé de l'hôte : errno Lepton attendu ; rend (échec, résumé)."""
+    attendus = errno_values(args.errno_header, ("ECONNREFUSED", "ECONNRESET"))
+    if len(attendus) != 2:
+        return "errno : ECONNREFUSED/ECONNRESET introuvables dans %s" % args.errno_header, ""
+    out = run_command(con, "net/tsterrno %s %d" % (args.host_ip, args.refused_port),
+                      args.timeout)
+    m = re.search(rb"connect=(-?\d+) errno=(\d+)", out or b"")
+    if not m:
+        return "tsterrno : sortie inattendue %r" % out, ""
+    r, e = int(m.group(1)), int(m.group(2))
+    noms = [n for n, v in attendus.items() if v == e]
+    if r >= 0 or not noms:
+        return ("tsterrno : connect=%d errno=%d, attendu %s (numérotation Lepton)"
+                % (r, e, " ou ".join("%s=%d" % kv for kv in sorted(attendus.items())))), ""
+    return None, "errno %s=%d" % (noms[0], e)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--qemu", default="qemu-system-arm")
@@ -104,6 +136,8 @@ def main():
     ap.add_argument("--ftp-list-expect", default="lsh", help="entrée attendue dans la liste")
     ap.add_argument("--ftp-file", required=True, help="fichier de l'invité à télécharger")
     ap.add_argument("--ftp-reference", required=True, help="source du fichier (comparaison)")
+    ap.add_argument("--errno-header", required=True, help="kernel/core/errno.h (valeurs Lepton)")
+    ap.add_argument("--refused-port", type=int, default=9, help="port TCP fermé de l'hôte")
     ap.add_argument("--boot-timeout", type=float, default=30.0)
     ap.add_argument("--timeout", type=float, default=10.0)
     ap.add_argument("--log", help="journal de la console (défaut : fichier temporaire)")
@@ -155,8 +189,14 @@ def main():
                     summary = ("ping %d/%d, FTP « %s », LIST %d entrée(s), RETR %s %d octets identique"
                                % (received, args.ping_count, welcome.strip(), len(listing),
                                   args.ftp_file, len(data)))
-                except (ftplib.all_errors, OSError) as e:
+                except ftplib.all_errors as e:  # tuple incluant OSError
                     failures.append("FTP : %s" % e)
+            if not failures:
+                echec, resume = errno_check(con, args)
+                if echec:
+                    failures.append(echec)
+                else:
+                    summary += ", " + resume
             if not failures:
                 out = run_command(con, "ps", args.timeout)
                 if out is None or b"ftpd" not in out:
