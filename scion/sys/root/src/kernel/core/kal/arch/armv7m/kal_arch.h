@@ -30,10 +30,11 @@ either the MPL or the [eCos GPL] License."
 
    #define __va_list_copy(__dest_va_list__,__src_va_list__) memcpy(&__dest_va_list__,&__src_va_list__,sizeof(__dest_va_list__))
 
-   //GD all Cortex-M3 and cortex M4 MCUs have the same systick registers
-      #define __LEPTON_KAL_PIT_BASE    (0xE000E010)
-      #define __LEPTON_KAL_PIT_MR      (*(volatile OS_U32*)(__LEPTON_KAL_PIT_BASE + 0x00))
-      #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1uL << (1));
-      #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1uL << (1));
+   //SysTick (CTRL.TICKINT, bit 1), commun à tous les cœurs ARMv7-M : coupe / relance l'IT du tick
+   //de l'ordonnanceur. Type uint32_t (et non OS_U32 d'embOS) : indépendant du micro-noyau.
+   #define __LEPTON_KAL_PIT_BASE    (0xE000E010)
+   #define __LEPTON_KAL_PIT_MR      (*(volatile uint32_t*)(__LEPTON_KAL_PIT_BASE + 0x00))
+   #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1uL << (1));
+   #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1uL << (1));
 
 #endif //_KAL_ARCH_ARMV7M_H
