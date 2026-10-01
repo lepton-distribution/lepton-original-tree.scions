@@ -1,7 +1,7 @@
 # Handoff étape 4, module `tools/mklepton` → bilan de l'étape 4
 
-État au 2026-10-01 : module fait sur `migration/etape-4-mklepton`, **en attente de validation
-utilisateur**. Dernier module de l'étape 4. Session suivante : bilan de l'étape 4 (critères de
+État au 2026-10-01 : module fait sur `migration/etape-4-mklepton`, validé par l'utilisateur le
+2026-10-01 et fusionné. Dernier module de l'étape 4. Session suivante : bilan de l'étape 4 (critères de
 `ETAPE-4-portage-c.md`, `handoff/etape-4.md`), puis point d'arrêt de fin d'étape. Procédure
 générale : `handoff/etape-4-outillage.md`.
 
