@@ -6,9 +6,9 @@ Critère d'ETAPE-4 : aucune directive d'**ISA** ou de **cœur** dans le code Lep
 
 | Mesure | Valeur |
 |---|---:|
-| Code Lepton, ISA/cœur hors arch (directives) | **101** |
-| Code Lepton, ISA/cœur hors arch (fichiers) | **29** |
-| Code Lepton, puce seule hors arch/BSP (directives) | 42 |
+| Code Lepton, ISA/cœur hors arch (directives) | **68** |
+| Code Lepton, ISA/cœur hors arch (fichiers) | **20** |
+| Code Lepton, puce seule hors arch/BSP (directives) | 32 |
 | Code Lepton, emplacements autorisés | 1 |
 | Code tiers (non modifié, D1a) | 40 |
 
@@ -16,28 +16,19 @@ Critère d'ETAPE-4 : aucune directive d'**ISA** ou de **cœur** dans le code Lep
 
 | Fichier | isa | cœur | puce |
 |---|---:|---:|---:|
-| `sys/root/src/kernel/core/kernelconf.h` | 2 | 19 | 21 |
 | `sys/root/src/kernel/core/kal.h` | 6 | 11 | 20 |
+| `sys/root/src/kernel/core/kernelconf.h` | 1 | 11 | 11 |
 | `sys/root/src/kernel/core/malloc.c` | 8 | 0 | 0 |
-| `sys/root/src/kernel/core/core-segger/kernel.c` | 0 | 5 | 0 |
-| `sys/root/src/kernel/core/kernel.h` | 5 | 0 | 0 |
-| `sys/root/src/kernel/core/kernel_pthread.h` | 4 | 0 | 0 |
+| `sys/root/src/kernel/core/kernel.h` | 4 | 0 | 0 |
 | `sys/root/src/lib/libc/stdio/stdio.h` | 4 | 0 | 0 |
-| `sys/root/src/kernel/core/interrupt.h` | 3 | 0 | 0 |
-| `sys/root/src/kernel/core/net/lwip_core/ethif_core.c` | 3 | 0 | 0 |
-| `sys/root/src/kernel/core/process.h` | 3 | 0 | 0 |
 | `sys/root/src/kernel/fs/rootfs/rootfscore.c` | 3 | 0 | 0 |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3 | 0 | 0 |
-| `sys/root/src/kernel/core/core-segger/kernel_pthread_mutex.c` | 2 | 0 | 0 |
-| `sys/root/src/kernel/core/kernel_sem.h` | 2 | 0 | 0 |
-| `sys/root/src/kernel/core/system.h` | 2 | 0 | 0 |
+| `sys/root/src/kernel/core/core-segger/kernel.c` | 0 | 2 | 0 |
+| `sys/root/src/kernel/core/net/lwip_core/ethif_core.c` | 2 | 0 | 0 |
 | `sys/root/src/kernel/fs/vfs/vfstypes.h` | 2 | 0 | 0 |
 | `sys/root/src/sbin/xmodem.c` | 2 | 0 | 0 |
-| `sys/root/src/kernel/core/core-segger/kernel_object.c` | 1 | 0 | 0 |
-| `sys/root/src/kernel/core/core-segger/process.c` | 1 | 0 | 0 |
-| `sys/root/src/kernel/core/net/uip_core/uip_core.c` | 0 | 1 | 0 |
+| `sys/root/src/kernel/core/kernel_pthread.h` | 1 | 0 | 0 |
 | `sys/root/src/kernel/core/timer.h` | 1 | 0 | 0 |
-| `sys/root/src/kernel/core/types.h` | 1 | 0 | 0 |
 | `sys/root/src/kernel/fs/fat/fat16.c` | 1 | 0 | 0 |
 | `sys/root/src/kernel/fs/fat/fatcore.h` | 1 | 0 | 0 |
 | `sys/root/src/kernel/fs/rootfs/rootfscore.h` | 0 | 0 | 1 |

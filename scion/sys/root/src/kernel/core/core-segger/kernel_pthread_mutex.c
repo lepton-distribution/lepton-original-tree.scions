@@ -77,9 +77,7 @@ int   kernel_pthread_mutex_destroy(kernel_pthread_mutex_t *mutex){
 #ifdef __KERNEL_UCORE_EMBOS
    count = OS_GetSemaValue(&mutex->mutex);
    if(!count) {
-   #ifndef CPU_M16C62       //not supported on m16c embos architecture (embos version is too old for m16c)
       OS_DeleteRSema(&mutex->mutex);
-   #endif
       __atomic_out();
       return 0;   //mutex is not owned by any thread. it could be destroyed.
    }
@@ -95,9 +93,7 @@ int   kernel_pthread_mutex_destroy(kernel_pthread_mutex_t *mutex){
    }
 #endif
 
-#ifndef CPU_M16C62    //not supported on m16c embos architecture (embos version is too old for m16c)
    OS_DeleteRSema(&mutex->mutex);
-#endif
    //
    __atomic_out();
    //

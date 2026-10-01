@@ -123,6 +123,8 @@ RE_ABSTR_LEPTON = re.compile(r"\b(__compiler_directive__packed|__kernel_compiler
 # ---------------------------------------------------------------- ventilation heuristique
 # Première règle qui correspond (chemin relatif au trunk, recherche insensible à la casse).
 REGLES_HEURISTIQUES = [
+    # --- gelé : copies d'origine des fichiers actifs dont les branches gelées ont été retirées
+    (r"^legacy/", "gele", "copie d'origine (transform_iar.py, décisions D2a/D3a), supprimée à l'étape 6"),
     # --- gelé : ARM7, ARM9, M16C, simulations, eCos, outils Windows
     (r"(^|/)(arm7|arm9)(/|$)|embosarm7|at91sam9|at91sam7|at91m55800|(^|/)at91lib(/|$)|"
      r"dev_at91_(mci|rtt|usbdp)|sam9xe|atmelsam9", "gele", "ARM7/ARM9 (AT91)"),

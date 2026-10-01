@@ -3,7 +3,7 @@
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
 Commande : `mass_compile.sh --audit-csv doc/migration/audit-iar.csv --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv -q`
 
-Résultat : **243/348 fichiers C OK (69.8 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
+Résultat : **246/348 fichiers C OK (70.7 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
 Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : `mass-compile.csv`.
 
@@ -11,7 +11,7 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 
 | Module | OK / total | IAR-ismes (Lepton) | IAR-ismes (tiers) |
 |---|---|---:|---:|
-| kernel/core | 47 / 50 | 19 | 38 |
+| kernel/core | 50 / 50 | 7 | 38 |
 | kernel/dev | 65 / 154 | 15 | 16 |
 | kernel/fs | 23 / 26 | 0 | 4 |
 | kernel/net | 38 / 38 | 0 | 0 |
@@ -29,8 +29,8 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | 13 | `expected 'X' before 'X'` | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_eth.c` |
 | 5 | `implicit declaration of function 'X'; did you mean 'X'? [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/httpc/httpc.c` |
 | 5 | `implicit declaration of function 'X' [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/mongoose/mongoose.c` |
-| 5 | `static declaration of 'X' follows non-static declaration` | `sys/root/src/kernel/core/net/modem_core/modem_core.c` |
 | 4 | `passing argument N of 'X' from incompatible pointer type [-Wincompatible-pointer-types]` | `sys/root/src/bin/net/telnetd.c` |
+| 2 | `static declaration of 'X' follows non-static declaration` | `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` |
 | 1 | `conflicting types for 'X'; have 'X'` | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/eth.c` |
 | 1 | `unknown type name 'X'` | `sys/root/src/kernel/fs/fatfs/core/diskio.c` |
 
@@ -43,9 +43,6 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | `sys/root/src/bin/net/mongoose/mongoosed.c` | `sys/root/src/bin/net/mongoose/mongoosed.c:288: implicit declaration of function 'strerror' [-Wimplicit-function-declaration]` |
 | `sys/root/src/bin/net/telnetd.c` | `sys/root/src/bin/net/telnetd.c:105: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]` |
 | `sys/root/src/bin/test2.c` | `sys/root/src/bin/test2.c:237: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]` |
-| `sys/root/src/kernel/core/net/modem_core/modem_core.c` | `sys/root/src/kernel/core/net/modem_core/modem_core.c:766: static declaration of 'modem_core_mq_post_unconnected_request' follows non-static declaration` |
-| `sys/root/src/kernel/core/net/modem_core/modem_core_socket.c` | `sys/root/src/kernel/core/net/modem_core/modem_core_socket.c:145: static declaration of 'modem_core_socket_socket' follows non-static declaration` |
-| `sys/root/src/kernel/core/net/uip_core/uip_core_socket.c` | `sys/root/src/kernel/core/net/uip_core/uip_core_socket.c:243: static declaration of 'uip_core_socket_socket' follows non-static declaration` |
 | `sys/root/src/kernel/dev/arch/all/debug/dev_os_debug.c` | `sys/root/src/kernel/dev/arch/all/debug/dev_os_debug.c:105: passing argument 1 of 'OS_COM_SetRxCallback' from incompatible pointer type [-Wincompatible-pointer-types]` |
 | `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c:215: static declaration of 'dev_rtc_nxp_pca8565_settime' follows non-static declaration` |
 | `sys/root/src/kernel/dev/arch/all/modem/ublox/dev_modem_ublox_sarag3.c` | `sys/root/src/kernel/dev/arch/all/modem/ublox/dev_modem_ublox_sarag3.c:916: implicit declaration of function 'atof'; did you mean 'atol'? [-Wimplicit-function-declaration]` |

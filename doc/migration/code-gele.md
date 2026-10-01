@@ -108,3 +108,13 @@ Décision utilisateur du 2026-09-30 : proposition acceptée, sauf Cortex-M7 Atme
 6. **Non gelés, laissés en différé faute de décision** : STM32WL55 Nucleo (`stm32wlxx`, projets EWARM 9.50 les plus récents de l'arbre), variante `discovery_f4-baseboard-modem`, NFC PN7150, USB device STM32F4. `prj/scons` n'est pas gelé (build du noyau statique mklepton).
 7. **Candidats étape 6 (différé)** : M3 = STM32F1 (`dev/arch/cortexm/stm32f1xx`, recommandé : même famille ST que la base) ou Stellaris LM3S (`stellaris`, produit TI ancien) ; M0+ = SAMD20 (`samd20xplained_pro`, seul BSP M0+ de l'arbre). HYPOTHÈSE À VALIDER : proposition, cartes non choisies.
 
+
+## Ajout de l'étape 4 — copies d'origine `legacy/` (décisions D2a, D3a du 2026-10-01)
+
+Ajouté à la main (hors `build_closure.py`). Quand `tools/migration/transform_iar.py` (règles
+`garde-cible-gelee`, `garde-compilateur`) retire d'un fichier actif des branches de cibles gelées
+(IAR M16C, Win32, ARM7/ARM9, eCos) ou de compilateurs non GCC (Keil, Visual C), il copie d'abord
+le fichier d'origine **à l'identique** sous `legacy/<chemin dans le trunk>` (clone :
+`scion/legacy/…`). Ces copies sont gelées : ni compilées, ni modifiées ; `audit_iar.py` les classe
+« gelé » (règle `^legacy/`). Elles sont supprimées à l'étape 6 avec le reste du code gelé.
+Inventaire : `find "$LEPTON_TRUNK/legacy" -type f`.

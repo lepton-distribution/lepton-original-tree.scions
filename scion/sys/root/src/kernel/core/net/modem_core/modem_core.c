@@ -763,7 +763,7 @@ static void* modem_core_routine(void* arg){
 | Comments:
 | See:
 ----------------------------------------------*/
-static int modem_core_mq_post_unconnected_request(void* data, uint8_t operation_request_code) {
+int modem_core_mq_post_unconnected_request(void* data, uint8_t operation_request_code) {
    modem_core_message_t modem_core_message;
    //
    if(g_modem_core_info.status!=MODEM_CORE_STATUS_STARTED){
@@ -814,7 +814,7 @@ int modem_core_mq_post_unconnected_response(void* data, uint8_t operation_reques
 | Comments:
 | See:
 ----------------------------------------------*/
-static int modem_core_mq_wait_unconnected_response(void** data, uint8_t* operation_response_code,const struct timespec* request_timeout) {
+int modem_core_mq_wait_unconnected_response(void** data, uint8_t* operation_response_code,const struct timespec* request_timeout) {
    modem_core_message_t modem_core_message;
    //
    if(g_modem_core_info.status!=MODEM_CORE_STATUS_STARTED){
@@ -1906,7 +1906,7 @@ struct hostent* modem_core_api_gethostbyname(struct hostent* host, const char *n
       return (struct hostent*)0;
    }
    //
-   if (modem_core_mq_wait_unconnected_response(&p_hostent, &operation_request_code,p_request_timeout)<0) {
+   if (modem_core_mq_wait_unconnected_response((void**)&p_hostent, &operation_request_code,p_request_timeout)<0) {
       //
       kernel_pthread_mutex_unlock(&g_modem_core_info.kernel_mqueue_mutex);
       //

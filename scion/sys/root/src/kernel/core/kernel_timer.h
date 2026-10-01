@@ -37,19 +37,7 @@ either the MPL or the [eCos GPL] License."
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/timer.h"
 
-#ifdef __KERNEL_UCORE_ECOS
-   #include <cyg/kernel/kapi.h>
-   #include "kernel/core/core_rttimer.h"
-
-typedef cyg_handle_t counter_hdl_t;
-typedef struct tmr_obj_st {
-   alrm_hdl_t alarm_hdl;
-   alrm_t alarm_obj;
-   counter_hdl_t cnt_obj;
-}tmr_obj_t;
-#else
 typedef long tmr_obj_t;
-#endif
 /*============================================
 | Declaration
 ==============================================*/
@@ -64,9 +52,6 @@ typedef struct kernel_timer_st {
    StaticTimer_t timer_static;
 #endif
 
-#ifdef __KERNEL_UCORE_ECOS
-   tmr_obj_t timer;
-#endif
    //
    unsigned char created;
    //

@@ -41,13 +41,9 @@ Declaration
 
 #define __kernel_compiler_pragma(__arg__)            _Pragma(#__arg__)
 
-#if defined   (__CC_ARM)
-	#define __kernel_compiler_aligned(__a__)    __attribute__((__aligned__(__a__)))
-#elif defined (__GNUC__)
 	//extensions du compilateur : kernel/core/compiler.h (macros __lepton_*)
 	#include "kernel/core/compiler.h"
 	#define __kernel_compiler_aligned(__a__)    __lepton_align(__a__)
-#endif
 
 // byte order 
 

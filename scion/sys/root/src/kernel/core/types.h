@@ -36,10 +36,6 @@ Includes
 /*===========================================
 Declaration
 =============================================*/
-#ifdef CPU_WIN32
-   #pragma warning ( disable : 4005 )
-   #pragma warning ( disable : 4142 )
-#endif
 
 //process types
 typedef int16_t pid_t;

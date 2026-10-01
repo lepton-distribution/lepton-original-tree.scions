@@ -3,20 +3,12 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 15 fichier(s) modifié(s), 40 occurrence(s) automatique(s), 34 résiduelle(s).
+Résumé : 39 fichier(s) modifié(s), 169 occurrence(s) automatique(s), 26 résiduelle(s).
 
-## Résiduels (34)
+## Résiduels (26)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
-| `sys/root/src/kernel/core/kal.h` | 945 | header-iar | en-tête IAR ioat91m55800.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <ioat91m55800.h>` |
-| `sys/root/src/kernel/core/kal.h` | 949 | header-iar | en-tête IAR ioat91sam7x256.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <ioat91sam7x256.h>` |
-| `sys/root/src/kernel/core/kal.h` | 953 | header-iar | en-tête IAR atmel/ioat91sam9261.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <atmel/ioat91sam9261.h>` |
-| `sys/root/src/kernel/core/kal.h` | 1466 | header-iar | en-tête IAR ioat91m55800.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <ioat91m55800.h>` |
-| `sys/root/src/kernel/core/kal.h` | 1470 | header-iar | en-tête IAR ioat91sam7x256.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <ioat91sam7x256.h>` |
-| `sys/root/src/kernel/core/kal.h` | 1474 | header-iar | en-tête IAR atmel/ioat91sam9261.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <atmel/ioat91sam9261.h>` |
-| `sys/root/src/kernel/core/kernelconf.h` | 277 | garde-iar-arm | branche IAR avec _Pragma/#pragma (placement, étape 5) | `(__tauon_compiler__==__compiler_iar_arm__)` |
-| `sys/root/src/kernel/core/kernelconf.h` | 271 | mot-cle-iar | __packed dans une directive (définition de compatibilité ?) | `#define __compiler_directive__packed __packed` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2 | garde-iar-arm | branche IAR avec _Pragma/#pragma (placement, étape 5) | `defined(__IAR_SYSTEMS_ICC__) && _DLIB_INCLUDE_DLMALLOC_ALTERNATIVE` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 4 | garde-iar-arm | branche IAR avec _Pragma/#pragma (placement, étape 5) | `defined(__IAR_SYSTEMS_ICC__)` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3 | header-iar | en-tête IAR yvals.h : équivalent CMSIS/newlib ou branche gelée à traiter à la main | `#include <yvals.h>` |
@@ -44,27 +36,57 @@ Résumé : 15 fichier(s) modifié(s), 40 occurrence(s) automatique(s), 34 résid
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (40)
+## Automatiques (169)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
-| `sys/root/src/bin/test2.c` | 1 | garde-iar-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
-| `sys/root/src/bin/test2.c` | 1665 | garde-iar-gelee | branche IAR M16C retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/kernel/core/core-segger/kernel.c` | 1 | garde-iar-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/core-segger/kernel.c` |
-| `sys/root/src/kernel/core/core-segger/kernel.c` | 93 | garde-iar-gelee | branche IAR M16C retirée | `( (__tauon_compiler__==__compiler_iar_m16c__))` |
-| `sys/root/src/kernel/core/core-segger/kernel_elfloader.c` | 658 | garde-iar-arm | branche IAR ARM retirée | `(__tauon_compiler__==__compiler_iar_arm__)` |
-| `sys/root/src/kernel/core/interrupt.h` | 1 | garde-iar-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/interrupt.h` |
-| `sys/root/src/kernel/core/interrupt.h` | 125 | garde-iar-gelee | branche IAR M16C retirée | `(__tauon_compiler__==__compiler_iar_m16c__)` |
-| `sys/root/src/kernel/core/interrupt.h` | 130 | garde-iar-gelee | #else toujours pris | `` |
-| `sys/root/src/kernel/core/kal.h` | 1 | garde-iar-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kal.h` |
-| `sys/root/src/kernel/core/kal.h` | 912 | garde-iar-gelee | branche IAR M16C retirée | `( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))` |
-| `sys/root/src/kernel/core/kernelconf.h` | 1 | garde-iar-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kernelconf.h` |
-| `sys/root/src/kernel/core/kernelconf.h` | 75 | garde-iar-gelee | branche IAR M16C retirée | `defined(__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/kernel/core/kernelconf.h` | 198 | garde-iar-gelee | branche IAR M16C retirée | `(__tauon_compiler__==__compiler_iar_m16c__)` |
-| `sys/root/src/kernel/core/kernelconf.h` | 224 | garde-iar-gelee | branche IAR M16C retirée | `(__tauon_compiler__==__compiler_iar_m16c__)` |
-| `sys/root/src/kernel/core/kernelconf.h` | 276 | garde-iar-gelee | branche IAR M16C retirée | `(__tauon_compiler__==__compiler_iar_m16c__)` |
-| `sys/root/src/kernel/core/system.h` | 1 | garde-iar-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/system.h` |
-| `sys/root/src/kernel/core/system.h` | 43 | garde-iar-gelee | branche IAR M16C retirée | `( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))` |
+| `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
+| `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
+| `sys/root/src/kernel/core/kal.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kal.h` |
+| `sys/root/src/kernel/core/kal.h` | 53 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS) && defined(CPU_GNU32)` |
+| `sys/root/src/kernel/core/kal.h` | 293 | garde-cible-gelee | branche cible gelée retirée | `(defined(__GNUC__)) && (defined(CPU_ARM7) \|\| defined(CPU_ARM9))` |
+| `sys/root/src/kernel/core/kal.h` | 667 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_WIN32)` |
+| `sys/root/src/kernel/core/kal.h` | 912 | garde-cible-gelee | branche cible gelée retirée | `( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))` |
+| `sys/root/src/kernel/core/kal.h` | 1084 | garde-cible-gelee | condition simplifiée | `defined (__KERNEL_UCORE_EMBOS) &&((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)) → defined(__KERNEL_UCORE_EMBOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))` |
+| `sys/root/src/kernel/core/kal.h` | 1452 | garde-cible-gelee | branche cible gelée retirée | `(defined(__GNUC__)) && defined(CPU_CORTEXM) && defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/kernel/core/kal.h` | 1623 | garde-cible-gelee | condition simplifiée | `((__tauon_compiler__ == __compiler_keil_arm__) \|\| (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)) → ((__tauon_compiler__ == __compiler_keil_arm__) \|\| (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))` |
+| `sys/root/src/kernel/core/kal.h` | 1116 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
+| `sys/root/src/kernel/core/kal.h` | 1120 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
+| `sys/root/src/kernel/core/kal.h` | 1124 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
+| `sys/root/src/kernel/core/kal.h` | 1263 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)` |
+| `sys/root/src/kernel/core/kal.h` | 1289 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
+| `sys/root/src/kernel/core/kal.h` | 1296 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
+| `sys/root/src/kernel/core/kal.h` | 1315 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
+| `sys/root/src/kernel/core/kal.h` | 1331 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)` |
+| `sys/root/src/kernel/core/kal.h` | 1383 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)` |
+| `sys/root/src/kernel/core/kal.h` | 1637 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
+| `sys/root/src/kernel/core/kal.h` | 1641 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
+| `sys/root/src/kernel/core/kal.h` | 1645 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
+| `sys/root/src/kernel/core/kal.h` | 1693 | garde-cible-gelee | branche cible gelée retirée | `( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm7tdmi__) \|\| (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm926ejs__) )` |
+| `sys/root/src/kernel/core/kal.h` | 1799 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
+| `sys/root/src/kernel/core/kal.h` | 1806 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
+| `sys/root/src/kernel/core/kal.h` | 1826 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
+| `sys/root/src/kernel/core/kal.h` | 1842 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)` |
+| `sys/root/src/kernel/core/kal.h` | 1894 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)` |
+| `sys/root/src/kernel/core/kal.h` | 403 | garde-compilateur | condition simplifiée | `((__tauon_compiler__ == __compiler_keil_arm__) \|\| (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)) → defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))` |
+| `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | 74 | prototype-static | prototype rendu static (dev_rtc_nxp_pca8565_settime) | `int dev_rtc_nxp_pca8565_settime(desc_t desc,char* buf,int size);` |
+| `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | 75 | prototype-static | prototype rendu static (dev_rtc_nxp_pca8565_gettime) | `int dev_rtc_nxp_pca8565_gettime(desc_t desc,char* buf,int size);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 36 | prototype-static | prototype rendu static (dev_ppp_uip_load) | `int dev_ppp_uip_load(void);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 37 | prototype-static | prototype rendu static (dev_ppp_uip_open) | `int dev_ppp_uip_open(desc_t desc, int o_flag);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 38 | prototype-static | prototype rendu static (dev_ppp_uip_close) | `int dev_ppp_uip_close(desc_t desc);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 39 | prototype-static | prototype rendu static (dev_ppp_uip_isset_read) | `int dev_ppp_uip_isset_read(desc_t desc);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 40 | prototype-static | prototype rendu static (dev_ppp_uip_isset_write) | `int dev_ppp_uip_isset_write(desc_t desc);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 41 | prototype-static | prototype rendu static (dev_ppp_uip_read) | `int dev_ppp_uip_read(desc_t desc, char* buf,int size);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 42 | prototype-static | prototype rendu static (dev_ppp_uip_write) | `int dev_ppp_uip_write(desc_t desc, const char* buf,int size);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 43 | prototype-static | prototype rendu static (dev_ppp_uip_seek) | `int dev_ppp_uip_seek(desc_t desc,int offset,int origin);` |
+| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 44 | prototype-static | prototype rendu static (dev_ppp_uip_ioctl) | `int dev_ppp_uip_ioctl(desc_t desc,int request,va_list ap);` |
+| `sys/root/src/kernel/dev/arch/all/slip/dev_slip.c` | 86 | garde-cible-gelee | garde toujours vraie levée | `!defined(CPU_M16C62)` |
+| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` |
+| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` | 50 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` | 141 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` |
+| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` | 39 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` | 55 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 54 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 59 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 64 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
@@ -81,11 +103,110 @@ Résumé : 15 fichier(s) modifié(s), 40 occurrence(s) automatique(s), 34 résid
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.h` | 34 | mot-cle-iar | __packed struct → struct __lepton_packed | `typedef __packed struct` |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.h` | 58 | mot-cle-iar | __packed struct → struct __lepton_packed | `typedef __packed struct` |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.h` | 31 | mot-cle-iar | inclusion de compiler.h ajoutée (après la garde) | `#include "kernel/core/compiler.h"` |
+| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` |
+| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 110 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
+| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 56 | prototype-static | prototype rendu static (dev_discovery_f4_uart_6_load) | `int dev_discovery_f4_uart_6_load(void);` |
+| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 57 | prototype-static | prototype rendu static (dev_discovery_f4_uart_6_open) | `int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag);` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 101 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 56 | prototype-static | prototype rendu static (dev_olimex_p407_spi_3_load) | `int dev_olimex_p407_spi_3_load(void);` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 57 | prototype-static | prototype rendu static (dev_olimex_p407_spi_3_open) | `int dev_olimex_p407_spi_3_open(desc_t desc, int o_flag);` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 111 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 56 | prototype-static | prototype rendu static (dev_olimex_p407_uart_3_load) | `int dev_olimex_p407_uart_3_load(void);` |
+| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 57 | prototype-static | prototype rendu static (dev_olimex_p407_uart_3_open) | `int dev_olimex_p407_uart_3_open(desc_t desc, int o_flag);` |
+| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` |
+| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 111 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
+| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 56 | prototype-static | prototype rendu static (dev_stm32f469i_eval_uart_1_load) | `int dev_stm32f469i_eval_uart_1_load(void);` |
+| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 57 | prototype-static | prototype rendu static (dev_stm32f469i_eval_uart_1_open) | `int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag);` |
+| `sys/root/src/kernel/fs/fat/fatcore.h` | 236 | garde-cible-gelee | condition simplifiée | `defined(CPU_GNU32) \|\| defined(CPU_ARM9) → defined(CPU_GNU32)` |
+| `sys/root/src/kernel/fs/ufs/ufs.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufs.c` |
+| `sys/root/src/kernel/fs/ufs/ufs.c` | 194 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_WIN32)` |
+| `sys/root/src/kernel/fs/ufs/ufs.c` | 228 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/kernel/fs/ufs/ufscore.c` | 43 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/kernel/fs/ufs/ufscore.h` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufscore.h` |
+| `sys/root/src/kernel/fs/ufs/ufscore.h` | 43 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/ufs/ufscore.h` | 116 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` |
+| `sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` | 43 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` | 68 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` |
+| `sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` | 43 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` | 67 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/ufs/ufsx.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufsx.c` |
+| `sys/root/src/kernel/fs/ufs/ufsx.c` | 224 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_WIN32)` |
+| `sys/root/src/kernel/fs/ufs/ufsx.c` | 255 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/kernel/fs/vfs/vfs.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/vfs/vfs.c` |
+| `sys/root/src/kernel/fs/vfs/vfs.c` | 1879 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/kernel/fs/vfs/vfs.c` | 1889 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/kernel/fs/vfs/vfs.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/vfs/vfs.c` |
+| `sys/root/src/kernel/fs/vfs/vfs.c` | 907 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/kernel/fs/vfs/vfs.c` | 909 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/kernel/fs/vfs/vfs.h` | 34 | garde-compilateur | garde toujours vraie levée | `(__tauon_compiler__==__compiler_keil_arm__) \|\| (__tauon_compiler__==__compiler_gnuc__)` |
+| `sys/root/src/kernel/fs/vfs/vfskernel.c` | 42 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/ctype/ctype.c` | 42 | garde-cible-gelee | garde toujours vraie levée | `!defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/lib/libc/ctype/ctype.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/ctype/ctype.h` |
+| `sys/root/src/lib/libc/ctype/ctype.h` | 37 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_WIN32)` |
+| `sys/root/src/lib/libc/ctype/ctype.h` | 42 | garde-cible-gelee | garde toujours vraie levée | `!defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/lib/libc/stdio/printf.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/stdio/printf.c` |
+| `sys/root/src/lib/libc/stdio/printf.c` | 1181 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/stdio/printf.c` | 1186 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/stdio/printf.c` | 1216 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/stdio/printf.c` | 1221 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/stdio/stdio.c` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 68 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 70 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 78 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 80 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 94 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/stdio/stdio.c` | 96 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/stdio/stdio.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/stdio/stdio.h` |
+| `sys/root/src/lib/libc/stdio/stdio.h` | 106 | garde-cible-gelee | condition simplifiée | `defined(CPU_WIN32) \|\| defined(CPU_GNU32) → defined(CPU_GNU32)` |
+| `sys/root/src/lib/libc/stdio/stdio.h` | 108 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM9)` |
+| `sys/root/src/lib/libc/stdio/stdio.h` | 110 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_M16C62)` |
+| `sys/root/src/lib/libc/unistd/io.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/unistd/io.c` |
+| `sys/root/src/lib/libc/unistd/io.c` | 120 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/unistd/io.c` | 123 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/unistd/io.c` | 178 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/unistd/io.c` | 181 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/unistd/io.c` | 208 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/unistd/io.c` | 211 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/unistd/io.c` | 411 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/unistd/io.c` | 414 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/libc/unistd/io.c` | 462 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/root/src/lib/libc/unistd/io.c` | 465 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/root/src/lib/librt/mq.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/librt/mq.c` |
+| `sys/root/src/lib/librt/mq.c` | 89 | garde-compilateur | branche compilateur retirée | `!defined(__GNUC__)` |
+| `sys/root/src/lib/librt/mq.c` | 91 | garde-compilateur | #else toujours pris | `` |
+| `sys/root/src/sbin/ps.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/sbin/ps.c` |
+| `sys/root/src/sbin/ps.c` | 79 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/sbin/ps.c` | 123 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
+| `sys/root/src/sbin/ps.c` | 133 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/sbin/stty.c` | 268 | prototype-static | prototype rendu static (output) | `case CS5: output("cs5"); break;` |
+| `sys/root/src/sbin/stty.c` | 269 | prototype-static | prototype rendu static (output) | `case CS6: output("cs6"); break;` |
+| `sys/root/src/sbin/stty.c` | 270 | prototype-static | prototype rendu static (output) | `case CS7: output("cs7"); break;` |
+| `sys/root/src/sbin/stty.c` | 271 | prototype-static | prototype rendu static (output) | `case CS8: output("cs8"); break;` |
+| `sys/root/src/sbin/stty.c` | 272 | prototype-static | prototype rendu static (output) | `default: output("cs??"); break;` |
+| `sys/root/src/sbin/xmodem.c` | 103 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_M16C62)` |
+| `sys/root/src/sbin/xmodem.c` | 104 | garde-cible-gelee | condition simplifiée | `defined(CPU_ARM7) \|\| defined(CPU_ARM9) \|\| defined(CPU_WIN32) \|\| defined(__UNIX__) → defined(__UNIX__)` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1438 | garde-iar-arm | condition simplifiée | `!defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__) &&     !defined(__IAR_SYSTEMS_ICC__) → !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3124 | garde-iar-arm | branche IAR ARM retirée | `__IAR_SYSTEMS_ICC__` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3500 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__) && !_DLIB_FULL_LOCALE_SUPPORT` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3504 | garde-iar-arm | #else toujours pris | `` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 4087 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/user/tauon-basic/src/bin/free/dlmalloc.c` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 632 | garde-compilateur | condition simplifiée | `(defined(__GNUC__) && ((defined(__i386__) \|\| defined(__x86_64__)))) \|\| (defined(_MSC_VER) && _MSC_VER>=1310) → (defined(__i386__) \|\| defined(__x86_64__))` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 825 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 827 | garde-compilateur | branche morte (précédente toujours vraie) | `defined(_MSC_VER)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 832 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 834 | garde-compilateur | branche morte (précédente toujours vraie) | `defined(_MSC_VER)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 836 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1470 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2791 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && (defined(__i386__) \|\| defined(__x86_64__)) → (defined(__i386__) \|\| defined(__x86_64__))` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2820 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2895 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && (defined(__i386__) \|\| defined(__x86_64__)) → (defined(__i386__) \|\| defined(__x86_64__))` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2911 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2992 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && __GNUC__ >= 3 → __GNUC__ >= 3` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | _Pragma location → __lepton_section | `EXT_RAM` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 4 | pragma-iar | inclusion de compiler.h ajoutée | `#include "kernel/core/compiler.h"` |
 

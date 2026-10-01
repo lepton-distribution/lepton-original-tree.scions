@@ -50,16 +50,11 @@ Includes
 #include "kernel/core/kernel_sigqueue.h"
 #include "kernel/core/signal.h"
 
-#if defined(__GNUC__)
    #include "kernel/core/kernel_sem.h"
-#endif
 /*===========================================
 Declaration
 =============================================*/
 
-#ifdef CPU_WIN32
-   #pragma pack(push, 8)
-#endif
 
 
 #define PTHREAD_THREADS_MAX   __KERNEL_PTHREAD_MAX //14//8
@@ -189,16 +184,6 @@ typedef struct kernel_pthread_st {
    EventGroupHandle_t event_group_handle; //used by kernel (KERNEL_INTERRUPT and KERNEL_RET_INTERRUPT).
 #endif
 
-#ifdef __KERNEL_UCORE_ECOS
-   tcb_t * tcb;
-   tcb_t * bckup_tcb; //for signal handler
-   thr_id_t thr_id;
-   char * kernel_stack; //pile noyau du thread
-
-   kernel_sem_t sem_wait; //sem for waitpid
-
-   cyg_flag_t io_flag; //flag pour les I/O
-#endif
 
    struct kernel_pthread_st* parent_pthread_ptr;
 
@@ -285,19 +270,12 @@ void* kernel_pthread_alloca(kernel_pthread_t *p, size_t size);
 #endif
 
 //size of kernel stack
-#if defined(__GNUC__)
-   #if defined(CPU_ARM7) || defined(CPU_ARM9)
-      #define KERNEL_STACK 4096   //2048
-   #elif defined(CPU_CORTEXM)
+   #if defined(CPU_CORTEXM)
       #define KERNEL_STACK  2048
    #else
       #define KERNEL_STACK 8192 //4096
    #endif
-#endif
 
-#ifdef CPU_WIN32
-   #pragma pack(pop)
-#endif
 
 
 /** @} */

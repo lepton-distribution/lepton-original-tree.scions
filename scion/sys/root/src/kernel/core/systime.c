@@ -45,9 +45,6 @@ Includes
 
 
 
-#ifdef __KERNEL_UCORE_ECOS
-   #include <ctype.h>
-#endif
 
 
 /*===========================================

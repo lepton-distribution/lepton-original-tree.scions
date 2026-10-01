@@ -70,20 +70,10 @@ Includes
 
 #if defined(WIN32)
    #define __tauon_compiler__ __compiler_win32__
-#elif defined(__GNUC__)
+#else
    #define __tauon_compiler__ __compiler_gnuc__
-#elif defined(__IAR_SYSTEMS_ICC)
-   #define __tauon_compiler__  __compiler_iar_m16c__
-#elif defined (__ARMCC_VERSION)
-   #define __tauon_compiler__ __compiler_keil_arm__
 #endif
 
-#if (__tauon_compiler__==__compiler_win32__)
-   //for win32 simulation
-   #include "kernel/core/arch/win32/kernel_mkconf.h"
-#elif (__tauon_compiler__ == __compiler_keil_arm__)
-   #include "kernel/core/arch/arm/kernel_mkconf.h"
-#elif (__tauon_compiler__==__compiler_gnuc__)
    #if defined(USE_KERNEL_STATIC)
       //for lepton as bootloader (no scheduler, static)
       //configuration fixe du noyau statique, trouvÃ©e par chemin d'inclusion (cmake/kal/static.cmake)
@@ -92,13 +82,10 @@ Includes
       #if defined(CPU_CORTEXM)
          //genere par mklepton dans le repertoire de build (cmake/mklepton.cmake), chemin d'inclusion
          #include "kernel_mkconf.h"
-      #elif defined(CPU_ARM7) || defined(CPU_ARM9)
-         #include "kernel/core/arch/arm/kernel_mkconf.h"
       #else
          #include "kernel/core/arch/synthetic/x86/kernel_mkconf.h"
       #endif
    #endif
-#endif
 
 #if defined(WIN32)
    #define __tauon_cpu_device__ __tauon_cpu_device_win32_simulation__
@@ -111,33 +98,9 @@ Includes
    #endif
 #endif
 
-#if __tauon_cpu_device__==__tauon_cpu_device_win32_simulation__
-   #define __KERNEL_CPU_DEVICE_NAME "x86-win32-sim"
-   #define __tauon_cpu_core__ __tauon_cpu_core_win32_simulation__
-
-#elif __tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
+#if __tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
    #define __KERNEL_CPU_DEVICE_NAME "x86-gnu-synth"
    #define __tauon_cpu_core__ __tauon_cpu_core_gnu_syntetic__
-
-#elif __tauon_cpu_device__==__tauon_cpu_device_arm7_at91m55800a__
-   #define __KERNEL_CPU_DEVICE_NAME "arm7-at91m55800a"
-   #define __tauon_cpu_core__ __tauon_cpu_core_arm_arm7tdmi__
-
-#elif __tauon_cpu_device__==__tauon_cpu_device_arm7_at91sam7se__
-   #define __KERNEL_CPU_DEVICE_NAME "arm7-at91sam7se"
-   #define __tauon_cpu_core__ __tauon_cpu_core_arm_arm7tdmi__
-
-#elif __tauon_cpu_device__==__tauon_cpu_device_arm7_at91sam7x__
-   #define __KERNEL_CPU_DEVICE_NAME "arm7-at91sam7x"
-   #define __tauon_cpu_core__ __tauon_cpu_core_arm_arm7tdmi__
-
-#elif __tauon_cpu_device__==__tauon_cpu_device_arm9_at91sam9260__
-   #define __KERNEL_CPU_DEVICE_NAME "arm9-at91sam9260"
-   #define __tauon_cpu_core__ __tauon_cpu_core_arm_arm926ejs__
-
-#elif __tauon_cpu_device__==__tauon_cpu_device_arm9_at91sam9261__
-   #define __KERNEL_CPU_DEVICE_NAME "arm9-at91sam9261"
-   #define __tauon_cpu_core__ __tauon_cpu_core_arm_arm926ejs__
 
 #elif __tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
    #define __KERNEL_CPU_DEVICE_NAME "cortexM0+-atmel-samd20"
@@ -186,69 +149,31 @@ Declaration
 #define __tauon_posix__
 
 //
-#if (__tauon_compiler__!=__compiler_gnuc__)
-   #define __attribute__(__attr__)
-#endif
 
 //what micro kernel
-#if (__tauon_compiler__==__compiler_gnuc__)
 //#define __KERNEL_UCORE_ECOS
-#elif (__tauon_compiler__==__compiler_win32__)
-   #define __KERNEL_UCORE_EMBOS
-#elif (__tauon_compiler__==__compiler_iar_m16c__)
-   #define __KERNEL_UCORE_EMBOS
-#elif (__tauon_compiler__==__compiler_keil_arm__)
-   #define __KERNEL_UCORE_EMBOS
-#endif
 
 // avoid stdint redefinition conflict
 //in C99 stdint included embedded type xxx_t
-#if (__tauon_compiler__==__compiler_win32__)
-   #define __KERNEL_COMPILER_STDINT_INCLUDED__
-#elif (__tauon_compiler__==__compiler_gnuc__)
    //GCC : toujours C99 ou plus ; les types de <stdint.h> priment (etypes.h dÃ©finissait int64_t en long)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
-#endif
 
 #define __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 32
 #define __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE 64
 
-#if (__tauon_compiler__==__compiler_gnuc__)
 #if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
 #else
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE
 #endif
-#elif (__tauon_compiler__==__compiler_win32__)
-    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
-#elif (__tauon_compiler__==__compiler_iar_m16c__)
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
-#elif (__tauon_compiler__==__compiler_keil_arm__)
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE   
-#endif
 
-#if (__tauon_compiler__==__compiler_win32__)
-   #define USE_COMPILER_TRACE_DEBUG
-#endif
 
 #define CPU_ARCH_32  (32)
 #define CPU_ARCH_16  (16)
 
-#if (__tauon_cpu_core__==__tauon_cpu_core_win32_simulation__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "win32"
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "arm7tdmi"
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "arm926ejs"
-#elif (__tauon_cpu_core__==__tauon_cpu_core_gnu_syntetic__)
+#if (__tauon_cpu_core__==__tauon_cpu_core_gnu_syntetic__)
    #define __KERNEL_CPU_ARCH CPU_ARCH_32
    #define __KERNEL_CPU_NAME "gnu32"
-#elif (__tauon_cpu_core__==__tauon_cpu_core_m16c__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_16
-   #define __KERNEL_CPU_NAME "m16c62"
 #elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)
    #define __KERNEL_CPU_ARCH CPU_ARCH_32
    #define __KERNEL_CPU_NAME "cortexm0"
@@ -267,29 +192,16 @@ Declaration
 #endif
 
 //specific compiler directive definition
-#if (__tauon_compiler__==__compiler_gnuc__)
    //compacté comme sous IAR (__packed) ; était vide sous GCC (piège noté à l'étape 1)
    #include "kernel/core/compiler.h"
    #define __compiler_directive__packed __lepton_packed
-#elif (__tauon_compiler__==__compiler_win32__)
-   #define __compiler_directive__packed
-#elif (__tauon_compiler__==__compiler_iar_m16c__)
-  #define __compiler_directive__packed
-#elif (__tauon_compiler__==__compiler_keil_arm__)
-   #define __compiler_directive__packed __packed
-#endif
 
 //
 //link option: SRAM optimization
-#if (__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32f4__)
-   #if (__tauon_compiler__==__compiler_iar_arm__)
-      //use internal CCM Core Coupled Memory. warning! cannot be used with DMA.
-      #define CORTEXM4_CCM_RAM _Pragma("section=\"CCM_RAM_SECTION\"")\
-      _Pragma("location=\"CCM_RAM_SECTION\"")
-
-      #define __KERNEL_SRAM_LOCATION CORTEXM4_CCM_RAM
-   #endif
-#endif
+//migration (étape 4) : la branche IAR plaçait ces données en CCM (STM32F4, section
+//CCM_RAM_SECTION, sans DMA). Sous GCC elle n'a jamais été active : vide, comme avant. Placement
+//CCM éventuel à l'étape 5 : __lepton_section(".ccmram") défini par la carte et section dans
+//ld/mem_<carte>.ld (original : legacy/sys/root/src/kernel/core/kernelconf.h).
 
 #ifndef __KERNEL_SRAM_LOCATION
    #define __KERNEL_SRAM_LOCATION
@@ -302,12 +214,8 @@ Declaration
 #define __tauon_kernel_profile_full__            0x000F
 #define __tauon_kernel_profile_user_defined__    0x8000
 
-#if (__tauon_cpu_core__==__tauon_cpu_core_gnu_syntetic__) || (__tauon_cpu_core__==__tauon_cpu_core_win32_simulation__)
+#if (__tauon_cpu_core__ == __tauon_cpu_core_gnu_syntetic__)
    #define __tauon_kernel_profile__ __tauon_kernel_profile_full__
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__)
-   #define __tauon_kernel_profile__ __tauon_kernel_profile_classic__
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)
-   #define __tauon_kernel_profile__ __tauon_kernel_profile_classic__
 #elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)
    #define __tauon_kernel_profile__ __tauon_kernel_profile_minimal__
 #endif
@@ -376,11 +284,6 @@ Declaration
 #endif
 
 //
-#if (__tauon_cpu_core__==__tauon_cpu_core_win32_simulation__)
-   #ifdef _DEBUG
-      #define __KERNEL_DEBUG
-   #endif
-#endif
 
 //printk
 #ifdef __KERNEL_PRINTK
@@ -404,11 +307,7 @@ Declaration
 #endif
 #ifndef __KERNEL_HEAP_SIZE
    #pragma message("warning!!! __KERNEL_HEAP_SIZE not defined")
-   #if (__tauon_compiler__==__compiler_keil_arm__) 
-      #define __KERNEL_HEAP_SIZE  0x8000  //32KBytes
-   #else
       #define __KERNEL_HEAP_SIZE  8000 //12000//10000//8000//5000//2000
-   #endif
 #endif
 
 #ifndef __KERNEL_PTHREAD_MAX
@@ -432,34 +331,15 @@ Declaration
 #endif
 
 //profiler
-#if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)\
-    ||(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9260__)\
-    ||(__tauon_cpu_device__== __tauon_cpu_device_arm9_at91sam9261__)
-   #define KERNEL_PROFILER
-#endif
 
 #define KERNEL_PROCESS_VFORK_CLRSET_IRQ
 
 //
-#if (__tauon_cpu_device__==__tauon_cpu_device_arm7_at91m55800a__)
    #ifdef __KERNEL_DEBUG
       #define __KERNEL_ARCH_DELAY_1US 1 //around 30ns per cycle 38:ARM7 at 32 MHz
    #else
       #define __KERNEL_ARCH_DELAY_1US 38
    #endif
-#elif (__tauon_cpu_device__==__tauon_cpu_device_arm9_at91sam9261__)
-   #ifdef __KERNEL_DEBUG
-      #define __KERNEL_ARCH_DELAY_1US 1 //around 30ns per cycle 38:ARM7 at 32 MHz
-   #else
-      #define __KERNEL_ARCH_DELAY_1US 38
-   #endif
-#else //default
-   #ifdef __KERNEL_DEBUG
-      #define __KERNEL_ARCH_DELAY_1US 1 //around 30ns per cycle 38:ARM7 at 32 MHz
-   #else
-      #define __KERNEL_ARCH_DELAY_1US 38
-   #endif
-#endif
 
 //boot device
 #ifndef __BOOT_DEVICE
@@ -511,7 +391,6 @@ Declaration
    #define __KERNEL_IO_SEM
 #endif
 
-#if defined(__GNUC__)
    #define __KERNEL_PTHREAD_SPECIFIC_DATA
    #define __KERNEL_LOAD_LIB
 #if (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM0__)
@@ -529,7 +408,6 @@ Declaration
    #define __KERNEL_IO_SEM
 //test for assert
    #define __KERNEL_USE_ASSERT   1
-#endif
 
 //enable load lib in secondary pthread (used for stdio)
 #if defined(__KERNEL_LOAD_LIB)
@@ -577,11 +455,6 @@ Declaration
 #define __file_system_profile_full__            0x000F
 #define __file_system_profile_user_defined__    0x8000
 
-#if __tauon_cpu_core__ == __tauon_cpu_core_win32_simulation__
-   #if !defined(__file_system_profile__)
-      #define __file_system_profile__  __file_system_profile_classic_yaffs__
-   #endif
-#endif
 
 #if !defined(__file_system_profile__)
    #define __file_system_profile__  __file_system_profile_classic__
@@ -630,9 +503,6 @@ Declaration
 #endif
 
 //file system ufs
-#if !defined(__GNUC__)
-   #define __KERNEL_SUPPORT_UFS_DRIVER_1_3 13 //only 16 bits file size support
-#endif
 #define __KERNEL_SUPPORT_UFS_DRIVER_1_4 14  //16/32 bits file size support
 #define __KERNEL_SUPPORT_UFS_DRIVER_1_5 15  //full 32 bits file size support
 

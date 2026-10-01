@@ -41,9 +41,6 @@ either the MPL or the [eCos GPL] License."
 ==============================================*/
 #ifdef __KERNEL_LOAD_LIB
 
-#if defined(__KERNEL_UCORE_ECOS) && defined(VERBOSE)
-   #pragma message ("use load lib")
-#endif
 
 #endif
 

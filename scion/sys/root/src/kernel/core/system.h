@@ -37,18 +37,6 @@ Includes
 
 #include "kernel/core/kernelconf.h"
 
-#if defined (CPU_WIN32)
-   //#include "kernel/core/windows.h"
-   #include "kernel/core/ucore/embOSW32_100/win32/windows.h"
-#elif ( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))
-   #include <icclbutl.h>
-   #include <intrm16c.h>
-//#include "iom16c62.h"
-   #include "dev/arch/m16c/dev_m16c_62p/iom16c62p136a.h"
-   #include "intm16c.h"
-   #include "rtos.h"
-   #include "stdlib.h"
-#endif
 
 #include "kernel/core/ver.h"
 #include "kernel/core/cpu.h"
