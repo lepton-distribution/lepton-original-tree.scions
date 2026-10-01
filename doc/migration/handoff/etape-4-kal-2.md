@@ -1,7 +1,7 @@
 # Handoff étape 4, module KAL-2 (directives ISA/cœur de `kernel/core`) → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-kal-2` (non fusionnée, en attente de
-validation). Procédure générale : `handoff/etape-4-outillage.md` ; KAL : `handoff/etape-4-kal.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-kal-2`, validé par l'utilisateur le
+2026-10-01 et fusionné. Procédure générale : `handoff/etape-4-outillage.md` ; KAL : `handoff/etape-4-kal.md`.
 
 ## Résultat du module
 - `audit_isa_ifdef.py` : `kernel/core` 30 → **0** directive ISA/cœur hors arch ; total 51 → **21**
