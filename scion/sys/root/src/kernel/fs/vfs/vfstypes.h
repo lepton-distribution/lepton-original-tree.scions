@@ -340,11 +340,7 @@ typedef union {
    uint16_t rwxrwxrwx;
 }ino_mod_t;
 
-#if !defined(CPU_CORTEXM)
 #define MAX_FILESYSTEM  7 //rootfs, ufs, ufsx, kofs, msdos, vfat, (null)
-#else
-#define MAX_FILESYSTEM  7 //rootfs, ufs, ufsx, kofs, msdos, vfat, (null)
-#endif
 extern pfsop_t const fsop_lst[MAX_FILESYSTEM];
 
 //
