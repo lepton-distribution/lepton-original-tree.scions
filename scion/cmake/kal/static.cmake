@@ -14,7 +14,8 @@ set(LEPTON_KAL_STATIC_DIR kernel/core/arch/host/static)
 target_compile_definitions(lepton_options INTERFACE USE_KERNEL_STATIC)
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_STATIC_DIR})
 # KAL, axe micro-noyau : kal_backend.h (inclus par kernel/core/kal.h, dispatcher).
-target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/kal/backend/static)
+set(LEPTON_KAL_BACKEND_DIR kernel/core/kal/backend/static)
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_BACKEND_DIR})
 
 # Backend : successeur de core-ecos/ + arch/synthetic/x86_static/ (absents de l'arbre).
 set(LEPTON_KAL_SOURCES

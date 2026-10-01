@@ -27,7 +27,8 @@ list(APPEND LEPTON_FIRMWARE_SOURCES ${LEPTON_KAL_MAIN_SOURCES} ${LEPTON_KAL_HW_S
 
 target_include_directories(lepton_options INTERFACE ${LEPTON_EMBOS_ROOT}/Start/Inc)
 # KAL, axe micro-noyau : kal_backend.h (inclus par kernel/core/kal.h, dispatcher).
-target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/kal/backend/embos)
+set(LEPTON_KAL_BACKEND_DIR kernel/core/kal/backend/embos)
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_BACKEND_DIR})
 target_compile_definitions(lepton_options INTERFACE
   __KERNEL_UCORE_EMBOS
   $<IF:$<CONFIG:Debug>,OS_LIBMODE_SP,OS_LIBMODE_R>)

@@ -22,6 +22,7 @@ add_test(NAME host.ufs_format_arm
                  -isystem ${LEPTON_LIBC_DECL_DIR} -isystem ${arm_gcc_include}
                  -DCPU_GNU32 -D__tauon_cpu_device__=__tauon_cpu_device_gnu_synthetic__
                  -DUSE_KERNEL_STATIC -I${LEPTON_SRC} -I${LEPTON_SRC}/${LEPTON_KAL_STATIC_DIR}
+                 -I${LEPTON_SRC}/${LEPTON_KAL_ARCH_DIR} -I${LEPTON_SRC}/${LEPTON_KAL_BACKEND_DIR}
                  -fsyntax-only ${CMAKE_CURRENT_SOURCE_DIR}/ufs_format.c)
 
 # --- concordance de kernel_stub.h (mklepton) avec les types du noyau ------------------------------

@@ -19,6 +19,7 @@ set(LEPTON_ISA_ARCH_DIR kernel/core/arch/cortexm)
 # sections critiques à nom neutre (#include "lepton_irq.h") : kernel/core/arch/cortexm
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_ARCH_DIR})
 # KAL, axe ISA : kal_arch.h (inclus par kernel/core/kal.h, dispatcher).
-target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/kal/arch/armv7m)
+set(LEPTON_KAL_ARCH_DIR kernel/core/kal/arch/armv7m)
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_ARCH_DIR})
 set(LEPTON_ISA_STARTUP_SOURCES kernel/core/arch/cortexm/startup_armv7m.c)
 set(LEPTON_FIRMWARE_SOURCES ${LEPTON_ISA_STARTUP_SOURCES})
