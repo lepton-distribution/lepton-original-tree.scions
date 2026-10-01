@@ -846,7 +846,10 @@ def rule_prototype_static(text, path):
     auto, ajouts = [], []
     for d in RE_DEF_STATIC.finditer(masque):
         nom = d.group(1)
-        proto = re.compile(r"^([ \t]*)(?!static\b)(?!return\b)((?:extern[ \t]+)?[A-Za-z_][^;{}()=#]*?\b%s"
+        # préfixe = jetons de type seulement (identifiants, « * », blancs) : exclut les appels
+        # précédés d'une étiquette (« case X: f(); ») ou d'un mot-clé d'instruction
+        proto = re.compile(r"^([ \t]*)(?!(?:static|return|else|do|goto|case|default)\b)"
+                           r"((?:extern[ \t]+)?[A-Za-z_][\w \t\n*]*?\b%s"
                            r"\s*\([^;{}]*\)\s*;)" % re.escape(nom), re.M)
         for m in proto.finditer(masque, 0, d.start()):
             ajouts.append((m.start(2), m.group(2).startswith("extern")))

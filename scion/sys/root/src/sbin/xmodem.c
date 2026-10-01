@@ -100,8 +100,7 @@ Global Declaration
 #define DLY_1S 1000
 #define MAXRETRANS 25
 
-#if defined(CPU_M16C62)
-#elif defined(CPU_ARM7) || defined(CPU_ARM9) || defined(CPU_WIN32) || defined(__UNIX__)
+#if defined(__UNIX__)
    #define MODE_1K_SUPPORTED
 #endif
 

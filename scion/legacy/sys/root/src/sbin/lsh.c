@@ -640,6 +640,12 @@ static int rdstream(FILE* fin,FILE* fout,char *buf, int len)
 
       //
       case '\n':
+#if defined(CPU_GNU32)
+         buf[i] = 0;
+         putc(ch,fout);
+         putc('\r',fout);
+         return i;
+#endif
          break;
 
       case '\r':
