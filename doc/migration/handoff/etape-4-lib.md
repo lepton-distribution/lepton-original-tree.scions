@@ -1,7 +1,7 @@
 # Handoff étape 4, module `lib` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-lib`, en attente de validation
-utilisateur. Module suivant : `sbin`. Procédure générale : `handoff/etape-4-outillage.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-lib`, validé par l'utilisateur
+le 2026-10-01 et fusionné. Module suivant : `sbin`. Procédure générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
 - Périmètre : 46 fichiers actifs (`libc`, `librt`, `pthread`) ; `lib-nxpnfc` et les autres
