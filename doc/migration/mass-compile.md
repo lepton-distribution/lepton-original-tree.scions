@@ -19,7 +19,7 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | sbin | 35 / 35 | 0 | 0 |
 | bin | 8 / 8 | 0 | 0 |
 | tauon-basic | 9 / 9 | 0 | 0 |
-| tools/mklepton | 1 / 1 | 4 | 0 |
+| tools/mklepton | 1 / 1 | 0 | 0 |
 
 ## Histogramme des erreurs (première erreur de chaque fichier)
 

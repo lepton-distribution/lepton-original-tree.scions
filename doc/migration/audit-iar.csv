@@ -6197,7 +6197,3 @@ tools/mklepton/src/mklepton-w32.c,2165,modele_mklepton,#pragma memory,iar,gele,l
 tools/mklepton/src/mklepton-w32.c,2166,modele_mklepton,#pragma memory,iar,gele,lepton,,csv,règle : variante Windows de mklepton,"const char pattern_split_option_m16c62_iar_end_c[]=""\n#pragma memory = default\n"";"
 tools/mklepton/src/mklepton-w32.c,2175,modele_mklepton,#pragma memory,iar,gele,lepton,,csv,règle : variante Windows de mklepton,#pragma memory=constseg(FILECPU_MEMORY):far\n\
 tools/mklepton/src/mklepton-w32.c,2178,modele_mklepton,#pragma memory,iar,gele,lepton,,csv,règle : variante Windows de mklepton,"#pragma memory = default\n"";"
-tools/mklepton/src/mklepton.c,2227,modele_mklepton,#pragma memory,iar,actif,lepton,,csv,"règle de répertoire : mklepton, outil hôte porté à l'étape 2","#pragma memory=constseg(FILECPU_MEMORY):far\n\n"";"
-tools/mklepton/src/mklepton.c,2228,modele_mklepton,#pragma memory,iar,actif,lepton,,csv,"règle de répertoire : mklepton, outil hôte porté à l'étape 2","const char pattern_split_option_m16c62_iar_end_c[]=""\n#pragma memory = default\n"";"
-tools/mklepton/src/mklepton.c,2237,modele_mklepton,#pragma memory,iar,actif,lepton,,csv,"règle de répertoire : mklepton, outil hôte porté à l'étape 2",#pragma memory=constseg(FILECPU_MEMORY):far\n\
-tools/mklepton/src/mklepton.c,2240,modele_mklepton,#pragma memory,iar,actif,lepton,,csv,"règle de répertoire : mklepton, outil hôte porté à l'étape 2","#pragma memory = default\n"";"
