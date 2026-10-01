@@ -1,11 +1,11 @@
 # Handoff étape 4 → 5
 
-État au 2026-10-01 : bilan de l'étape 4 fait sur `migration/etape-4-bilan` ; critères tous verts,
-**en attente de validation utilisateur** (point d'arrêt de fin d'étape). Détail par module :
+État au 2026-10-01 : bilan de l'étape 4 fait sur `migration/etape-4-bilan` ; critères tous verts ;
+**étape 4 validée par l'utilisateur le 2026-10-01**, branche fusionnée. Détail par module :
 `handoff/etape-4-<module>.md` (11 modules, procédure dans `etape-4-outillage.md`).
 
 ## Réponses aux prérequis de 5
-- Étape 4 close : critères verts (ci-dessous) ; clôture effective après validation utilisateur.
+- Étape 4 close : critères verts (ci-dessous), validée par l'utilisateur le 2026-10-01.
 - Socle QEMU vert : `ci/run.sh` vert le 2026-10-01 (outils, hôte 5/5, smoke, net, KAL hard 15/15
   et soft 11/11).
 - Outils de débogage : `openocd` 0.12.0, `gdb-multiarch` 16.3, règles udev `60-openocd.rules`
