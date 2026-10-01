@@ -191,6 +191,41 @@ int _ufs_seekdir(desc_t desc,int loc){
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(CPU_ARM7) || defined(CPU_WIN32)
+static char direntry[__KERNEL_UFS_BLOCK_SIZE_MAX];
+
+inodenb_t _ufs_lookupdir(desc_t desc,char* filename){
+   ufs_inodenb_t _inode=INVALID_INODE_NB;
+   int r;
+   int s = sizeof(ufs_block_dir_t);
+   //
+   ufs_block_dir_t * pdir = NULL;
+
+   //
+   _ufs_open(desc);
+   //read a max of entry in a block
+
+   while((r = _ufs_read(desc, (void*)direntry, __KERNEL_UFS_BLOCK_SIZE_MAX))) {
+      r=r/s-1;
+      pdir = (ufs_block_dir_t *)(direntry+r*s);
+      while(r>=0) {
+         if(!strcmp(pdir->name,filename)) {
+            _inode=(ufs_inodenb_t)__cvt2logicnode(desc,pdir->inode);
+            //break;
+            _ufs_close(desc);
+            return _inode;
+         }
+
+         pdir = (ufs_block_dir_t *)(direntry+(--r)*s); //r--;
+      }
+   }
+
+   _ufs_close(desc);
+
+   return _inode;
+}
+
+#else
 inodenb_t _ufs_lookupdir(desc_t desc,char* filename){
    ufs_inodenb_t _inode=INVALID_INODE_NB;
    ufs_block_dir_t dir;
@@ -212,6 +247,7 @@ inodenb_t _ufs_lookupdir(desc_t desc,char* filename){
 
    return _inode;
 }
+#endif
 
 /*-------------------------------------------
 | Name:_rtfs_mknod

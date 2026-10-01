@@ -233,6 +233,10 @@ either the MPL or the [eCos GPL] License."
 //to clean cluster content
 #define FAT_16_CLEAN_BUFFER_SIZE        FAT16_BS_BPS_VAL
 
+#if defined(CPU_GNU32) || defined(CPU_ARM9)
+   #define FAT_CACHE_FAT
+   #define FAT_CACHE_FAT_SIZE    (FAT16_LCLUSMAX*FAT16_CLUSSZ)
+#endif
 
 //tauon definition for FAT16
 typedef unsigned long fat16_u32_t;
