@@ -117,8 +117,12 @@ void sync(void){
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(__GNUC__)
 int __attribute__ ((visibility("hidden")))
 open(const char *path, int oflag, mode_t mode){
+#else
+int open(const char *path, int oflag, mode_t mode){
+#endif
    pid_t pid= _sys_getpid();
    open_t open_dt;
 
@@ -171,8 +175,12 @@ int creat(const char *path, mode_t mode){
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(__GNUC__)
 int __attribute__ ((visibility("hidden")))
 close(int fildes) {
+#else
+int close(int fildes){
+#endif
    close_t close_dt;
    pid_t pid= _sys_getpid();
 
@@ -197,8 +205,12 @@ close(int fildes) {
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(__GNUC__)
 off_t __attribute__ ((visibility("hidden")))
 lseek(int fildes, off_t offset, int whence){
+#else
+off_t lseek(int fildes, off_t offset, int whence){
+#endif
    kernel_pthread_t* pthread_ptr;
    pid_t pid=0;
    desc_t desc = -1;
@@ -396,8 +408,12 @@ int fdetach(const char *path){
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(__GNUC__)
 ssize_t __attribute__ ((visibility("hidden")))
 read(int fildes, void *buf, size_t nbyte){
+#else
+ssize_t read(int fildes, void *buf, size_t nbyte){
+#endif
    pid_t pid;
    kernel_pthread_t* pthread_ptr;
    desc_t desc;
@@ -443,8 +459,12 @@ read(int fildes, void *buf, size_t nbyte){
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(__GNUC__)
 ssize_t __attribute__ ((visibility("hidden")))
 write(int fildes, const void *buf, size_t nbyte){
+#else
+ssize_t write(int fildes, const void *buf, size_t nbyte){
+#endif
    pid_t pid;
    kernel_pthread_t* pthread_ptr;
    desc_t desc;

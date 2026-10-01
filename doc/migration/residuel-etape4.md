@@ -3,7 +3,7 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 13 fichier(s) modifié(s), 67 occurrence(s) automatique(s), 26 résiduelle(s).
+Résumé : 6 fichier(s) modifié(s), 33 occurrence(s) automatique(s), 26 résiduelle(s).
 
 ## Résiduels (26)
 
@@ -36,46 +36,12 @@ Résumé : 13 fichier(s) modifié(s), 67 occurrence(s) automatique(s), 26 résid
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (67)
+## Automatiques (33)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
 | `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
 | `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/lib/libc/ctype/ctype.c` | 42 | garde-cible-gelee | garde toujours vraie levée | `!defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/lib/libc/ctype/ctype.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/ctype/ctype.h` |
-| `sys/root/src/lib/libc/ctype/ctype.h` | 37 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_WIN32)` |
-| `sys/root/src/lib/libc/ctype/ctype.h` | 42 | garde-cible-gelee | garde toujours vraie levée | `!defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/lib/libc/stdio/printf.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/stdio/printf.c` |
-| `sys/root/src/lib/libc/stdio/printf.c` | 1181 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/stdio/printf.c` | 1186 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/stdio/printf.c` | 1216 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/stdio/printf.c` | 1221 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/stdio/stdio.c` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 68 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 70 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 78 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 80 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 94 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/stdio/stdio.c` | 96 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/stdio/stdio.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/stdio/stdio.h` |
-| `sys/root/src/lib/libc/stdio/stdio.h` | 106 | garde-cible-gelee | condition simplifiée | `defined(CPU_WIN32) \|\| defined(CPU_GNU32) → defined(CPU_GNU32)` |
-| `sys/root/src/lib/libc/stdio/stdio.h` | 108 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM9)` |
-| `sys/root/src/lib/libc/stdio/stdio.h` | 110 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_M16C62)` |
-| `sys/root/src/lib/libc/unistd/io.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/unistd/io.c` |
-| `sys/root/src/lib/libc/unistd/io.c` | 120 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/unistd/io.c` | 123 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/unistd/io.c` | 178 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/unistd/io.c` | 181 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/unistd/io.c` | 208 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/unistd/io.c` | 211 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/unistd/io.c` | 411 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/unistd/io.c` | 414 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/libc/unistd/io.c` | 462 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/lib/libc/unistd/io.c` | 465 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/lib/librt/mq.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/librt/mq.c` |
-| `sys/root/src/lib/librt/mq.c` | 89 | garde-compilateur | branche compilateur retirée | `!defined(__GNUC__)` |
-| `sys/root/src/lib/librt/mq.c` | 91 | garde-compilateur | #else toujours pris | `` |
 | `sys/root/src/sbin/ps.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/sbin/ps.c` |
 | `sys/root/src/sbin/ps.c` | 79 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
 | `sys/root/src/sbin/ps.c` | 123 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |

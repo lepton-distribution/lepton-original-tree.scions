@@ -35,5 +35,8 @@ either the MPL or the [eCos GPL] License."
 #define __KERNEL_POSIX_REALTIME_SIGNALS
 #define __KERNEL_USE_FILE_LOCK
 #define __KERNEL_MAX_SUPER_BLOCK 8 //superblocs montés (vfstypes.h)
+#ifndef __KERNEL_STDIO_PRINTF_BUFSIZ //BUFSIZ de stdio (lib/libc/stdio/stdio.h), sauf mkconf
+   #define __KERNEL_STDIO_PRINTF_BUFSIZ (256)
+#endif
 
 #endif //_KAL_ARCH_HOST_CONF_H
