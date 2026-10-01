@@ -10,10 +10,10 @@ sont sous `sys/root/src/` (abrégé `src/`). Tout fichier est créé dans le clo
 
 | Axe | Variable de cache | Fichier CMake | Code source |
 |---|---|---|---|
-| ISA / famille | `LEPTON_ISA` : `host`, `armv7m`, `armv6m` (→ `rv32`) | `cmake/isa/<isa>.cmake` ; compilateur : `cmake/toolchains/<toolchain>.cmake` | `src/kernel/core/arch/<famille>/`, `src/kernel/dev/arch/<famille>/` |
+| ISA / famille | `LEPTON_ISA` : `host`, `armv7m`, `armv6m` (→ `rv32`) | `cmake/isa/<isa>.cmake` ; compilateur : `cmake/toolchains/<toolchain>.cmake` | `src/kernel/core/arch/<famille>/`, `src/kernel/dev/arch/<famille>/` ; KAL : `src/kernel/core/kal/arch/<isa>/kal_arch.h` (`LEPTON_KAL_ARCH_DIR`) |
 | Cœur | `LEPTON_CPU` : `cortex-m0plus`, `cortex-m3`, `cortex-m4f`, `cortex-m7` | `cmake/cpu/<cœur>.cmake` (flags `-mcpu/-mfpu/-mfloat-abi`, famille de bibliothèque embOS) | aucun, sauf spécificité de cœur (FPU, cache) sous `arch/<famille>/` |
 | Carte | `LEPTON_BOARD` : `qemu-mps2-an386`, `nucleo-f439zi` | `cmake/boards/<carte>.cmake` (BSP, mkconf, mémoire) | `ld/mem_<carte>.ld` ; pilotes `src/kernel/dev/arch/<famille>/…` et `src/kernel/dev/bsp/<carte>/` |
-| Micro-noyau | `LEPTON_KAL_BACKEND` : `static`, `embos` (→ `freertos`) | `cmake/kal/<backend>.cmake` | `src/kernel/core/core-<backend>/` (+ `kal.h`, à éclater en `kal/backend/` à l'étape 4) |
+| Micro-noyau | `LEPTON_KAL_BACKEND` : `static`, `embos` (→ `freertos`) | `cmake/kal/<backend>.cmake` | `src/kernel/core/core-<backend>/` ; KAL : `src/kernel/core/kal/backend/<backend>/kal_backend.h` (`LEPTON_KAL_BACKEND_DIR`) |
 
 Règles : aucun flag compilateur hors de `cmake/` ; aucune adresse de carte hors de `cmake/boards/`,
 `ld/mem_*` et du BSP ; sélection par ces variables (et les macros qu'y posent les fichiers d'axe),
@@ -28,8 +28,8 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 1. `cmake/cpu/<cœur>.cmake` : `cpu_flags` (compilation **et** édition de liens), et
    `LEPTON_EMBOS_LIB_FAMILY` (table variante ↔ flags : `embos-inventaire.md` §3).
 2. Preset dans `CMakePresets.json` (ligne d'enregistrement).
-3. Si le cœur change le contexte sauvegardé (FPU, trame étendue) : code sous `src/kernel/core/arch/<famille>/`,
-   jamais de `#if` de cœur dans le code commun.
+3. Si le cœur change le contexte sauvegardé (FPU, trame étendue) : code sous `src/kernel/core/arch/<famille>/`
+   ou `src/kernel/core/kal/arch/<isa>/`, jamais de `#if` de cœur dans le code commun.
 
 ## 3. Ajouter une famille / ISA
 
@@ -37,7 +37,11 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 2. `cmake/isa/<isa>.cmake` : options communes, macro de famille, `LEPTON_ISA_ARCH_DIR`.
 3. `src/kernel/core/arch/<famille>/` : démarrage, appel système, commutation (ce qu'embOS ou
    FreeRTOS ne fournissent pas) ; `src/kernel/dev/arch/<famille>/` : pilotes communs de la famille.
-4. `cmake/cpu/<cœur>.cmake` pour chaque cœur (§2).
+4. `src/kernel/core/kal/arch/<isa>/kal_arch.h` : primitives du KAL propres à l'ISA (`__va_list_copy`,
+   tick de l'ordonnanceur `__stop_sched`/`__restart_sched`, bits d'EXC_RETURN…), sans type de
+   micro-noyau ; `cmake/isa/<isa>.cmake` pose `LEPTON_KAL_ARCH_DIR` et l'ajoute aux chemins
+   d'inclusion (`kal.h` inclut `kal_arch.h` sans condition).
+5. `cmake/cpu/<cœur>.cmake` pour chaque cœur (§2).
 
 ## 4. Ajouter une carte
 
@@ -53,7 +57,9 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 
 1. `cmake/kal/<backend>.cmake` : chemins du paquet (hors git si licence), macros, bibliothèque,
    `LEPTON_KAL_SOURCES`.
-2. `src/kernel/core/core-<backend>/`.
+2. `src/kernel/core/core-<backend>/`, et `src/kernel/core/kal/backend/<backend>/kal_backend.h` :
+   types et macros du contrat (`kal/contrat.h`), en s'appuyant sur les primitives de `kal_arch.h` ;
+   `cmake/kal/<backend>.cmake` pose `LEPTON_KAL_BACKEND_DIR` et l'ajoute aux chemins d'inclusion.
 3. Banc KAL (`BANC-TEST-KAL-QEMU.md`) sur chaque cœur.
 
 ## 6. Bibliothèques et cycles (décisions de l'étape 2)
