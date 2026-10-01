@@ -1,7 +1,7 @@
 # Handoff étape 4, module `kernel/fs` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-kernel-fs` (non fusionnée, en attente de
-validation). Procédure générale : `handoff/etape-4-outillage.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-kernel-fs`, validé par l'utilisateur
+le 2026-10-01 et fusionné. Procédure générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
 - `mass_compile.sh --only sys/root/src/kernel/fs` : 23 → **26/26** ; périmètre 337 → **340/348**.
