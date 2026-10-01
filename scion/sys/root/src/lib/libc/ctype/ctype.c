@@ -39,7 +39,6 @@ Global Declaration
 Implementation
 =============================================*/
 
-#ifndef __KERNEL_UCORE_ECOS
 
 int __lepton_libc_isdigit ( int ch ) {
    return (unsigned int)(ch - '0') < 10u;
@@ -116,7 +115,6 @@ int __lepton_libc_toupper (int ch) {
       ch += 'A' - 'a';
    return ch;
 }
-#endif
 
 //
 int __lepton_libc_isascii ( int ch ) {

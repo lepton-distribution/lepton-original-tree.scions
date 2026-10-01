@@ -34,8 +34,12 @@ Includes
 Declaration
 =============================================*/
 //win32 patch
+#ifdef CPU_WIN32
+   #define _INC_CTYPE
+#endif
 
 //
+#ifndef __KERNEL_UCORE_ECOS
    //
    #ifndef toascii
       #define toascii(__c__) ((__c__) & 0x7F)
@@ -128,6 +132,7 @@ Declaration
    #endif
    
 
+#endif //ifndef __KERNEL_UCORE_ECOS
 
 
 //

@@ -103,8 +103,12 @@ typedef struct __stdio_file FILE;
 #ifndef __KERNEL_STDIO_PRINTF_BUFSIZ
    #ifdef __AS386_16__
       #define BUFSIZ    (256)
-   #elif defined(CPU_GNU32)
+   #elif defined(CPU_WIN32) || defined(CPU_GNU32)
       #define BUFSIZ    (256)
+   #elif defined(CPU_ARM9)
+      #define BUFSIZ (256)    //if you used shttpd and ftpd
+   #elif defined(CPU_ARM7) || defined(CPU_M16C62)
+      #define BUFSIZ (64)
    #elif defined(CPU_CORTEXM)
       #define BUFSIZ (128)//(256)
    #endif
