@@ -12,7 +12,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
 | 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
 | 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; complément tâche 1 (`compiler.h`, `lepton_irq.h`, amorce `transform_iar.py`) fait le 2026-09-30 ; **étape 3 validée par l'utilisateur le 2026-09-30**, branche `migration/etape-3` fusionnée ; handoff `handoff/etape-3.md` |
-| 4 — Portage C, KAL | À FAIRE | | par module (tableau ci-dessous) |
+| 4 — Portage C, KAL | EN COURS | 2026-10-01 | par module (tableau ci-dessous) ; session 4.0 (outillage, ligne de base) faite sur `migration/etape-4-outillage`, non fusionnée : `transform_iar.py` (7 règles), `mass_compile.sh` 243/348, `audit_isa_ifdef.py` ; aucun source transformé ; handoff `handoff/etape-4-outillage.md` |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
 | 7 — Backend FreeRTOS | À FAIRE | | |
@@ -22,6 +22,17 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Répertoire | Transformé | mass_compile | audit_iar | Notes |
 |---|---|---|---|---|
+| ordre proposé (4.0) | | | | `kernel/core` hors KAL → KAL → `kernel/dev` → `kernel/fs` → `kernel/net` → `lib` → `sbin`, `bin`, `tauon-basic` → `tools/mklepton` |
+| `kernel/core` (hors KAL) | non | 47/50 (2026-10-01) | Lepton 19, tiers 38 | M16C : `garde-iar-gelee` (5 fichiers) ; CCM `kernelconf.h` résiduel ; uIP/modem : `static` après déclaration |
+| KAL (`kernel/core/kal.h`) | non | — | (dans `kernel/core`) | `isa-ifdef.md` : `kal.h` 17 directives ISA/cœur, `kernelconf.h` 21 |
+| `kernel/dev` | non | 65/154 | Lepton 15, tiers 16 | 71 échecs `Legacy/stm32_hal_legacy.h` (casse, HAL tiers) ; `__packed` STM32F4 |
+| `kernel/fs` | non | 23/26 | Lepton 0, tiers 4 | `strtok_r`, `__weak` FatFs, `f_close` |
+| `kernel/net` | non | 38/38 | 0 | |
+| `lib` | non | 27/27 | 0 | |
+| `sbin` | non | 32/35 | 0 | `atof`, `toupper` non déclarés |
+| `bin` | non | 3/8 | 0 | `perror`, `tolower`, `strerror` non déclarés ; `libc_accept` ; M16C `test2.c` |
+| `sys/user/tauon-basic` | non | 7/9 | Lepton 32 | `dlmalloc.c` variante DLIB IAR (manuel) |
+| `tools/mklepton` | non | 1/1 (hôte) | Lepton 4 | `#pragma memory` M16C dans des chaînes de génération |
 
 ## Matrice du banc KAL (T0-T11)
 
@@ -75,6 +86,9 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-09-30 | Étape 3b — pile réseau du socle (et de la F439) : lwIP 2.0.1 de l'arbre et couches `lwip_core` ; choisie par la carte (`LEPTON_NET_STACK`, `USE_LWIP`). |
 | 2026-09-30 | Étape 3b — palier 7 sans privilège : tap créé dans un espace de noms utilisateur et réseau (`unshare --user --map-root-user --net`) par le test ; échec explicite si indisponible. |
 | 2026-09-30 | Étape 3b — frontière libc : `strdup` (tas Lepton) et `strerror` (numérotation errno Lepton) ajoutés à `lib/libc` ; les versions newlib sont exclues pour l'applicatif (tas et numérotation errno différents). |
+| 2026-10-01 | Étape 4 — D1a : code tiers vendored (CMSIS, HAL/driverlib ST, FatFs, yaffs…) non transformé ; ses IAR-ismes (58) justifiés dans `residuel-etape4.md` ; le critère « zéro IAR-isme » porte sur le code Lepton actif (`audit_iar.py`, colonne « code Lepton »). |
+| 2026-10-01 | Étape 4 — D2a : branches gelées (eCos, ARM7/9, M16C IAR, Win32) des fichiers actifs extraites à contenu constant (copie d'origine sous `legacy/`, `kal/legacy/` pour le KAL), classées gelées, supprimées à l'étape 6 ; pas de suppression à l'étape 4. |
+| 2026-10-01 | Étape 4 — plan de la session 4.0 (outillage et ligne de base, sans transformation de source) approuvé ; un module par session ensuite. |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
@@ -164,5 +178,10 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - Étape 3 : `RTOS.h` : avertissement `struct _reent` (type newlib absent en freestanding), sans effet constaté. (`malloc.c` : section atomique rétablie sous GCC, corrigé le 2026-09-30.)
 - Étape 3 : E4 `OS_MakeTaskReady(OS_TASK*)` déclarée par Lepton (HYPOTHÈSE À VALIDER, non documentée par Segger) ; mode embOS SP au lieu de DP (retour à DP possible depuis le verrou en sémaphore, à vérifier) ; `__KERNEL_UCORE_EMBOS` posé par CMake et par les `user_kernel_mkconf.h` des cartes existantes (double définition compatible).
 - Étape 2 : `vfs.c` (I_LINK) transmet un `va_list` par argument variadique (non portable, cause du `-m32`) → passer `va_list*` à l'étape 4 ; `__kernel_set_errno` en mode statique n'enregistre rien ; backend `core-static` = 3ᵉ copie de l'amorçage (`_kernel_warmup_*`) ; `kernelconf.h` : `kernel_mkconf.h` des branches GCC croisées encore en chemin fixe (étape 3).
+- Étape 4 (4.0) : HAL ST inclut `Legacy/stm32_hal_legacy.h`, répertoire `inc/legacy` (casse Windows,
+  code tiers) : 71 fichiers de `kernel/dev` en échec, à résoudre côté build au module `kernel/dev`.
+- Étape 4 (4.0) : `ctest` lancé hors `ci/run.sh` peut écrire `trunk/tests/__pycache__` (exporter
+  `PYTHONDONTWRITEBYTECODE=1`) ; lien greffé vers un `.pyc` ignoré de `scion/tests/__pycache__`
+  (nettoyage par `graft-clean` : décision).
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
 - Pièges à reprendre : `__compiler_directive__packed` = `__lepton_packed` depuis le complément de l'étape 3 (3 usages, `flash.h` : compactage à vérifier à l'étape 5) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; 161 `#if` ISA/cœur hors arch (34 fichiers).
