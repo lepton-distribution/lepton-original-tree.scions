@@ -1,7 +1,7 @@
 # Handoff étape 4, module `sys/user/tauon-basic` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-tauon-basic`, en attente de validation
-par l'utilisateur. Module suivant : `tools/mklepton` (dernier module de l'étape 4). Procédure
+État au 2026-10-01 : module fait sur `migration/etape-4-tauon-basic`, validé par l'utilisateur
+le 2026-10-01 et fusionné. Module suivant : `tools/mklepton` (dernier module de l'étape 4). Procédure
 générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
