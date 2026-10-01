@@ -4137,10 +4137,10 @@ tests/host/stub_check_main.c,actif,"étapes 2-3 : bancs de test (ctest host, ban
 tests/host/ufs_check.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",45,0
 tests/host/ufs_format.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",26,0
 tests/host/vfs_ufs.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",55,0
-tests/kal/kal_bench.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",527,0
-tests/kal/kal_fpu_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",93,0
-tests/kal/kal_regs_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",18,0
-tests/kal/kal_regs_read_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",17,0
+tests/kal/arch/armv7m/kal_bench.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",527,0
+tests/kal/arch/armv7m/kal_fpu_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",93,0
+tests/kal/arch/armv7m/kal_regs_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",18,0
+tests/kal/arch/armv7m/kal_regs_read_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",17,0
 tests/kal/kal_semihost.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",36,0
 tests/kal/kal_test.h,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",15,0
 tools/host/debian/ecos/ports-v3.0/arm/hal_misc.c,gelé,règle : port eCos (backend core-ecos absent de l'arbre),233,0

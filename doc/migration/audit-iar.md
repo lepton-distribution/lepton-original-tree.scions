@@ -18,8 +18,8 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 |---|---:|---:|---:|---:|---:|
 | iar | 56 | 935 | 627 | 224 | 1842 |
 | autre | 108 | 65 | 680 | 414 | 1267 |
-| a_verifier | 1262 | 684 | 763 | 195 | 2904 |
-| info | 43 | 77 | 51 | 14 | 185 |
+| a_verifier | 1263 | 683 | 763 | 195 | 2904 |
+| info | 46 | 74 | 51 | 14 | 185 |
 
 ## Catégorie × ensemble (sévérité `iar`)
 
@@ -44,7 +44,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | asm_multi | a_verifier | 0 | 0 | 4 | 0 |
 | garde_compilateur | a_verifier | 7 | 1 | 29 | 0 |
 | garde_gcc | a_verifier | 39 | 52 | 118 | 51 |
-| intrinsic_cmsis | a_verifier | 880 | 243 | 470 | 32 |
+| intrinsic_cmsis | a_verifier | 881 | 242 | 470 | 32 |
 | mot_cle | a_verifier | 285 | 265 | 0 | 32 |
 | pragma | a_verifier | 47 | 121 | 99 | 80 |
 | symbole_dlib_io | a_verifier | 0 | 2 | 6 | 0 |
@@ -52,7 +52,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | asm_armcc | autre | 0 | 2 | 1 | 16 |
 | garde_autre | autre | 99 | 59 | 224 | 186 |
 | pragma_autre | autre | 9 | 4 | 455 | 212 |
-| asm_gnu | info | 0 | 5 | 3 | 14 |
+| asm_gnu | info | 3 | 2 | 3 | 14 |
 | fichier_iar | info | 43 | 72 | 48 | 0 |
 
 ## Motifs du périmètre actif (sévérité `iar`, top 40)
@@ -129,7 +129,7 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 | syntaxe | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
 | ARMASM (Keil) | 0 | 2 | 1 | 16 |
-| GNU | 0 | 5 | 3 | 14 |
+| GNU | 3 | 2 | 3 | 14 |
 | IAR | 1 | 15 | 12 | 25 |
 | indéterminée | 0 | 0 | 3 | 0 |
 | multi-assembleur (gardes) | 0 | 0 | 4 | 0 |
@@ -137,6 +137,9 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 | fichier | syntaxe | rôle | ensemble | origine |
 |---|---|---|---|---|
 | `sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/startup/iar/startup_stm32f4xx.s` | IAR | démarrage, vecteurs | actif | tiers |
+| `tests/kal/arch/armv7m/kal_fpu_armv7m.S` | GNU | indéterminé | actif | lepton |
+| `tests/kal/arch/armv7m/kal_regs_armv7m.S` | GNU | indéterminé | actif | lepton |
+| `tests/kal/arch/armv7m/kal_regs_read_armv7m.S` | GNU | indéterminé | actif | lepton |
 | `sys/root/src/kernel/core/ucore/cmsis/Device/ARM/ARMCM3/Source/Templates/IAR/startup_ARMCM3.s` | IAR | démarrage, vecteurs | differe | tiers |
 | `sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f2xx/startup/iar/startup_stm32f2xx.s` | IAR | démarrage, vecteurs | differe | tiers |
 | `sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/startup/iar/startup_stm32wl55xx_cm4.s` | IAR | démarrage, vecteurs | differe | tiers |
@@ -156,9 +159,6 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 | `sys/root/src/kernel/core/ucore/freeRTOS_9-0-0/source/portable/IAR/ARM_CM3/portasm.s` | IAR | commutation de contexte | differe | tiers |
 | `sys/root/src/kernel/core/ucore/freeRTOS_9-0-0/source/portable/IAR/ARM_CM4F/portasm.s` | IAR | commutation de contexte | differe | tiers |
 | `sys/root/src/kernel/core/ucore/freeRTOS_9-0-0/source/portable/IAR/ARM_CM7/r0p1/portasm.s` | IAR | commutation de contexte | differe | tiers |
-| `tests/kal/kal_fpu_armv7m.S` | GNU | indéterminé | differe | lepton |
-| `tests/kal/kal_regs_armv7m.S` | GNU | indéterminé | differe | lepton |
-| `tests/kal/kal_regs_read_armv7m.S` | GNU | indéterminé | differe | lepton |
 | `sys/root/src/kernel/core/ucore/embOSARM7-9_388/arch/cpu_at91sam9261/AT91SAM9261_Startup.s` | IAR | démarrage, vecteurs, init. horloges/mémoire | gele | tiers |
 | `sys/root/src/kernel/core/ucore/embOSARM7_360/arch/cpu_at91m55800/AT91M55_CStartup_V4.s79` | IAR | démarrage, init. horloges/mémoire | gele | tiers |
 | `sys/root/src/kernel/core/ucore/embOSARM7_360/arch/cpu_at91m55800/AT91M55_CStartup_V4_bootloader.s79` | IAR | démarrage, bootloader, init. horloges/mémoire | gele | tiers |
@@ -265,13 +265,13 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 - `__get_*`/`__set_*`/`__DSB`… (`intrinsic_cmsis`) : fournis par CMSIS pour GCC, `a_verifier` ; `__enable_interrupt`, `__get_interrupt_state`, `__section_begin`… : IAR seul, `iar`.
 - Syntaxe asm déduite par comptage de directives : un fichier IAR très court ou multi-assembleur peut être mal classé (voir la colonne `motif`).
 - Asm en ligne (`asm("…")`, `__asm`) non audité : syntaxe proche entre IAR et GCC, contraintes d'opérandes à vérifier à la compilation de masse (étape 4).
-- Ventilation : 530 occurrences portent sur des fichiers absents de perimetre.csv (XML mkconf, projets IAR, asm `.s79`…) et sont ventilées par l'heuristique de chemin (colonne `ventilation`).
+- Ventilation : 202 occurrences portent sur des fichiers absents de perimetre.csv (XML mkconf, projets IAR, asm `.s79`…) et sont ventilées par l'heuristique de chemin (colonne `ventilation`).
 
 ## Fichiers analysés
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1107 | 1507 | 905 | 706 |
-| asm | 1 | 22 | 23 | 55 |
+| c | 1119 | 1495 | 905 | 706 |
+| asm | 4 | 19 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 16 | 9 | 2 | 0 |
