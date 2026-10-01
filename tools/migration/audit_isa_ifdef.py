@@ -43,7 +43,7 @@ def actifs(perimetre):
     for row in csv.DictReader(open(perimetre, encoding="utf-8")):
         f = row["fichier"]
         if row["ensemble"] == "actif" and f.endswith((".c", ".h")):
-            yield f if f.startswith(("sys/", "tools/")) else "sys/root/" + f
+            yield f if f.startswith(("sys/", "tools/", "tests/", "legacy/")) else "sys/root/" + f
 
 
 def lignes_logiques(text):
