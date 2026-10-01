@@ -67,16 +67,12 @@ Global Declaration
 
 #if defined   (__CC_ARM)
 	#define COMPILER_SECTION(a)    __attribute__((__section__(a)))
-#elif defined (__ICCARM__)
-	#define COMPILER_SECTION(a)    COMPILER_PRAGMA(location = a)
 #elif defined (__GNUC__)
 	#define COMPILER_SECTION(a)    __attribute__((__section__(a)))
 #endif
 
 #if defined   (__CC_ARM)
 	#define COMPILER_ALIGNED(a)    __attribute__((__aligned__(a)))
-#elif defined (__ICCARM__)
-	#define COMPILER_ALIGNED(a)    COMPILER_PRAGMA(data_alignment = a)
 #elif defined (__GNUC__)
 	#define COMPILER_ALIGNED(a)    __attribute__((__aligned__(a)))
 #endif
