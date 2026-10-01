@@ -89,19 +89,19 @@ dev_map_t  dev_modem_core_socket_map = {
 
 
 //
-int modem_core_socket_socket(desc_t desc, int domain, int type, int protocol);
-int modem_core_socket_bind(desc_t desc, struct sockaddr *name, socklen_t namelen);
-int modem_core_socket_accept(desc_t desc, struct sockaddr *addr, socklen_t *addrlen);
-int modem_core_socket_accepted(desc_t desc, int native_socket_fd);
-int modem_core_socket_connect(desc_t desc, struct sockaddr *name, socklen_t namelen);
-int modem_core_socket_listen(desc_t desc, int backlog);
-int modem_core_socket_shutdown(desc_t desc, int how);
-int modem_core_socket_close(desc_t desc);
+static int modem_core_socket_socket(desc_t desc, int domain, int type, int protocol);
+static int modem_core_socket_bind(desc_t desc, struct sockaddr *name, socklen_t namelen);
+static int modem_core_socket_accept(desc_t desc, struct sockaddr *addr, socklen_t *addrlen);
+static int modem_core_socket_accepted(desc_t desc, int native_socket_fd);
+static int modem_core_socket_connect(desc_t desc, struct sockaddr *name, socklen_t namelen);
+static int modem_core_socket_listen(desc_t desc, int backlog);
+static int modem_core_socket_shutdown(desc_t desc, int how);
+static int modem_core_socket_close(desc_t desc);
 //
-int modem_core_socket_getpeername(desc_t desc, struct sockaddr *name, socklen_t *namelen);
-int modem_core_socket_getsockname(desc_t desc, struct sockaddr *name, socklen_t *namelen);
-int modem_core_socket_getsockopt(desc_t desc, int level, int optname, void *optval, socklen_t *optlen);
-int modem_core_socket_setsockopt(desc_t desc, int level, int optname, const void *optval, socklen_t optlen);
+static int modem_core_socket_getpeername(desc_t desc, struct sockaddr *name, socklen_t *namelen);
+static int modem_core_socket_getsockname(desc_t desc, struct sockaddr *name, socklen_t *namelen);
+static int modem_core_socket_getsockopt(desc_t desc, int level, int optname, void *optval, socklen_t *optlen);
+static int modem_core_socket_setsockopt(desc_t desc, int level, int optname, const void *optval, socklen_t optlen);
 struct hostent* modem_core_socket_gethostbyname(desc_t desc,struct hostent* host,const char *name);
 
 static  const kernel_net_core_socket_op_t kernel_net_core_socket_op = {
