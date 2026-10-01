@@ -1,4 +1,6 @@
 fichier,ligne,axes,origine,emplacement,condition
+sys/root/src/kernel/core/arch/cortexm/startup_armv7m.c,97,coeur,lepton,autorisé,defined(__ARM_FP)
+sys/root/src/kernel/core/kal/backend/embos/kal_backend.h,87,coeur,lepton,autorisé,defined(OS_CPU_HAS_VFP) && (OS_CPU_HAS_VFP == 1)
 sys/root/src/kernel/core/kernelconf.h,85,puce,lepton,hors arch,!defined(__tauon_cpu_device__)
 sys/root/src/kernel/core/kernelconf.h,93,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
 sys/root/src/kernel/core/kernelconf.h,97,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
@@ -51,6 +53,13 @@ sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,226,coeur,tiers,
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,263,coeur,tiers,hors arch,(__CORTEX_M != 0x04)
 sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/system_stm32f4xx.c,171,coeur,tiers,hors arch,(__FPU_PRESENT == 1) && (__FPU_USED == 1)
 sys/root/src/kernel/fs/rootfs/rootfscore.h,41,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
-sys/user/tauon-basic/src/bin/free/dlmalloc.c,632,isa,lepton,hors arch,(defined(__GNUC__) && ((defined(__i386__) || defined(__x86_64__)))) || (defined(_MSC_VER) && _MSC_VER>=1310)
-sys/user/tauon-basic/src/bin/free/dlmalloc.c,2792,isa,lepton,hors arch,defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-sys/user/tauon-basic/src/bin/free/dlmalloc.c,2896,isa,lepton,hors arch,defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+tests/kal/arch/armv7m/kal_bench.c,83,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,164,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,220,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,230,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,253,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,271,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,469,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,481,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,498,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,610,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)

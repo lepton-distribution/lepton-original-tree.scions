@@ -47,6 +47,7 @@ MODULES = [
     ("sys/root/src/bin/", "bin"),
     ("sys/user/tauon-basic/", "tauon-basic"),
     ("tools/mklepton/", "tools/mklepton"),
+    ("tests/", "tests"),
 ]
 
 # profils de compilation par préfixe (le plus long l'emporte) :
@@ -94,6 +95,10 @@ PROFILS = {
     "sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/": UIP,
     "tools/": {"base": "host", "retire": [], "ajoute": []},
     "sys/root/src/kernel/core/arch/host/": {"base": "host", "retire": [], "ajoute": []},
+    # noyau statique hôte et ses tests (étape 2) : preset host, jamais le gabarit ARM
+    "sys/root/src/kernel/core/core-static/": {"base": "host", "retire": [], "ajoute": []},
+    "sys/root/src/kernel/dev/arch/host/": {"base": "host", "retire": [], "ajoute": []},
+    "tests/host/": {"base": "host", "retire": [], "ajoute": []},
 }
 
 
@@ -107,7 +112,7 @@ def actifs(perimetre):
         if row["ensemble"] != "actif" or not row["fichier"].endswith(".c"):
             continue
         f = row["fichier"]
-        out.append(f if f.startswith(("sys/", "tools/")) else "sys/root/" + f)
+        out.append(f if f.startswith(("sys/", "tools/", "tests/", "legacy/")) else "sys/root/" + f)
     return sorted(out)
 
 

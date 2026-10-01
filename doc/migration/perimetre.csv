@@ -1,4 +1,59 @@
 fichier,ensemble,justification,lignes_code,nb_projets
+legacy/sys/root/src/bin/test2.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",771,0
+legacy/sys/root/src/kernel/core/core-segger/kernel.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",734,0
+legacy/sys/root/src/kernel/core/core-segger/process.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",948,0
+legacy/sys/root/src/kernel/core/core_rttimer.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",41,0
+legacy/sys/root/src/kernel/core/dirent.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",68,0
+legacy/sys/root/src/kernel/core/interrupt.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",418,0
+legacy/sys/root/src/kernel/core/ioctl_lcd.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",29,0
+legacy/sys/root/src/kernel/core/kal.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",68,0
+legacy/sys/root/src/kernel/core/kal.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",1297,0
+legacy/sys/root/src/kernel/core/kernel.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",362,0
+legacy/sys/root/src/kernel/core/kernel_compiler.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",16,0
+legacy/sys/root/src/kernel/core/kernel_elfloader.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",450,0
+legacy/sys/root/src/kernel/core/kernel_pthread.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",148,0
+legacy/sys/root/src/kernel/core/kernel_pthread_mutex.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",27,0
+legacy/sys/root/src/kernel/core/kernel_sem.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",35,0
+legacy/sys/root/src/kernel/core/kernel_timer.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",41,0
+legacy/sys/root/src/kernel/core/kernelconf.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",471,0
+legacy/sys/root/src/kernel/core/lib.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",27,0
+legacy/sys/root/src/kernel/core/net/lwip_core/ethif_core.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",309,0
+legacy/sys/root/src/kernel/core/net/uip_core/uip_core.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",787,0
+legacy/sys/root/src/kernel/core/posix_mqueue.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",276,0
+legacy/sys/root/src/kernel/core/process.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",118,0
+legacy/sys/root/src/kernel/core/rttimer.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",38,0
+legacy/sys/root/src/kernel/core/stat.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",62,0
+legacy/sys/root/src/kernel/core/system.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",23,0
+legacy/sys/root/src/kernel/core/systime.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",263,0
+legacy/sys/root/src/kernel/core/timer.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",27,0
+legacy/sys/root/src/kernel/core/types.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",71,0
+legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",117,0
+legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",15,0
+legacy/sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",62,0
+legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",54,0
+legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",62,0
+legacy/sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",63,0
+legacy/sys/root/src/kernel/fs/fat/fat16.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",516,0
+legacy/sys/root/src/kernel/fs/fat/fatcore.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",238,0
+legacy/sys/root/src/kernel/fs/fatfs/fatfscore.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",307,0
+legacy/sys/root/src/kernel/fs/ufs/ufs.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",582,0
+legacy/sys/root/src/kernel/fs/ufs/ufscore.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",55,0
+legacy/sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",35,0
+legacy/sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",35,0
+legacy/sys/root/src/kernel/fs/ufs/ufsx.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",230,0
+legacy/sys/root/src/kernel/fs/vfs/vfs.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",1087,0
+legacy/sys/root/src/lib/libc/ctype/ctype.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",72,0
+legacy/sys/root/src/lib/libc/stdio/printf.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",928,0
+legacy/sys/root/src/lib/libc/stdio/stdio.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",632,0
+legacy/sys/root/src/lib/libc/stdio/stdio.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",186,0
+legacy/sys/root/src/lib/libc/unistd/io.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",256,0
+legacy/sys/root/src/lib/librt/mq.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",269,0
+legacy/sys/root/src/sbin/lsh.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",588,0
+legacy/sys/root/src/sbin/ps.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",147,0
+legacy/sys/user/tauon-basic/src/bin/dhrystone/timers.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",283,0
+legacy/sys/user/tauon-basic/src/bin/free/dlmalloc.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",3320,0
+legacy/sys/user/tauon-basic/src/bin/free/free_main.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",29,0
+legacy/tools/mklepton/src/mklepton.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",1543,0
 prj/vc-2010/windows/build/genhdr/mpversion.h,gelé,règle : projet Visual Studio de la simulation,7,0
 src/bin/bmp.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",169,0
 src/bin/boot.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",277,0
@@ -40,6 +95,13 @@ src/bin/tst/writespi.c,hors-projet,"non déclaré par un projet, non inclus, san
 src/bin/udpsrvd.c,différé,déclaré par tauon-basic_lm3s_6.21/Debug (candidat M3 (étape 6)),156,3
 src/bin/wrapr.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",366,0
 src/bin/xlcdd.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",168,0
+src/kernel/core/arch/cortexm/lepton_irq.h,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),20,0
+src/kernel/core/arch/cortexm/startup_armv7m.c,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),83,0
+src/kernel/core/arch/host/libc_host.c,actif,étape 2 : noyau statique hôte (mklepton),13,0
+src/kernel/core/arch/host/static/bin_mkconf.c,actif,étape 2 : noyau statique hôte (mklepton),5,0
+src/kernel/core/arch/host/static/dev_dskimg.h,actif,étape 2 : noyau statique hôte (mklepton),5,0
+src/kernel/core/arch/host/static/dev_mkconf.c,actif,étape 2 : noyau statique hôte (mklepton),24,0
+src/kernel/core/arch/host/static/kernel_mkconf.h,actif,étape 2 : noyau statique hôte (mklepton),19,0
 src/kernel/core/arch/win32/bin_mkconf.c,gelé,règle : simulation Windows,53,0
 src/kernel/core/arch/win32/dev_dskimg.c,gelé,règle : simulation Windows,642,0
 src/kernel/core/arch/win32/dev_dskimg.h,gelé,règle : simulation Windows,5,0
@@ -49,6 +111,7 @@ src/kernel/core/assert.h,actif,rattaché par répertoire (src/kernel/core),14,0
 src/kernel/core/bin.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",37,7
 src/kernel/core/bin.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",24,7
 src/kernel/core/board.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",0,7
+src/kernel/core/compiler.h,actif,étape 3 : abstraction compilateur (macros __lepton_*),14,0
 src/kernel/core/core-freertos/core_rttimer.c,différé,règle : backend FreeRTOS (étape 7),55,5
 src/kernel/core/core-freertos/fork.c,différé,règle : backend FreeRTOS (étape 7),128,5
 src/kernel/core/core-freertos/heap.c,différé,règle : backend FreeRTOS (étape 7),12,0
@@ -65,6 +128,8 @@ src/kernel/core/core-freertos/process.c,différé,règle : backend FreeRTOS (ét
 src/kernel/core/core-freertos/signal.c,différé,règle : backend FreeRTOS (étape 7),219,5
 src/kernel/core/core-freertos/syscall.c,différé,règle : backend FreeRTOS (étape 7),645,5
 src/kernel/core/core-generic/kernel_pthread_tsd.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",113,3
+src/kernel/core/core-segger/arch/armv7m/embos_init_hw.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",53,0
+src/kernel/core/core-segger/arch/armv7m/embos_main.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",11,0
 src/kernel/core/core-segger/core_rttimer.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",43,7
 src/kernel/core/core-segger/fork.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",125,7
 src/kernel/core/core-segger/heap.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",12,0
@@ -76,10 +141,12 @@ src/kernel/core/core-segger/kernel_pthread.c,actif,"déclaré par tauon_7.80/tau
 src/kernel/core/core-segger/kernel_pthread_mutex.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",88,7
 src/kernel/core/core-segger/kernel_sem.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",90,7
 src/kernel/core/core-segger/kernel_sigqueue.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",157,7
+src/kernel/core/core-segger/kernel_syscall_lock.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",35,0
 src/kernel/core/core-segger/kernel_timer.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",140,7
 src/kernel/core/core-segger/process.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",948,7
 src/kernel/core/core-segger/signal.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",218,7
 src/kernel/core/core-segger/syscall.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",811,7
+src/kernel/core/core-static/kernel_static.c,actif,étape 2 : noyau statique hôte (mklepton),129,0
 src/kernel/core/core_event.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),8,44
 src/kernel/core/core_rttimer.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",41,44
 src/kernel/core/cpu.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",15,7
@@ -97,6 +164,12 @@ src/kernel/core/flock.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-d
 src/kernel/core/flock.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",17,7
 src/kernel/core/fork.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",6,7
 src/kernel/core/heap.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",28,0
+src/kernel/core/include/libc/ctype.h,actif,étape 2 : noyau statique hôte (mklepton),5,0
+src/kernel/core/include/libc/limits.h,actif,étape 2 : noyau statique hôte (mklepton),26,0
+src/kernel/core/include/libc/math.h,actif,étape 2 : noyau statique hôte (mklepton),4,0
+src/kernel/core/include/libc/stdio.h,actif,étape 2 : noyau statique hôte (mklepton),7,0
+src/kernel/core/include/libc/stdlib.h,actif,étape 2 : noyau statique hôte (mklepton),24,0
+src/kernel/core/include/libc/string.h,actif,étape 2 : noyau statique hôte (mklepton),24,0
 src/kernel/core/interrupt.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",418,44
 src/kernel/core/io.h,gelé,inclus par dev_at91sam9261/lib-debug (projet ARM7/ARM9 (cible abandonnée)),24,10
 src/kernel/core/ioctl.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",6,35
@@ -115,8 +188,16 @@ src/kernel/core/ioctl_proc.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex
 src/kernel/core/ioctl_pwr.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",9,7
 src/kernel/core/ioctl_spi.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",5,6
 src/kernel/core/ioctl_usb.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",9,3
-src/kernel/core/kal.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",68,0
 src/kernel/core/kal.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",1288,44
+src/kernel/core/kal/arch/armv6m/kal_arch_conf.h,différé,"étape 4 (KAL-2) : réglages d'ISA M0/M0+ (HYPOTHÈSE À VALIDER), cœurs de l'étape 6",9,0
+src/kernel/core/kal/arch/armv7m/kal_arch.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",9,0
+src/kernel/core/kal/arch/armv7m/kal_arch_conf.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",10,0
+src/kernel/core/kal/arch/host/kal_arch.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",4,0
+src/kernel/core/kal/arch/host/kal_arch_conf.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",12,0
+src/kernel/core/kal/backend/embos/kal_backend.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",137,0
+src/kernel/core/kal/backend/freertos/kal_backend.h,différé,"étape 4 (KAL) : backend FreeRTOS extrait tel quel, étape 7",131,0
+src/kernel/core/kal/backend/static/kal_backend.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",78,0
+src/kernel/core/kal/contrat.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",18,0
 src/kernel/core/kernel.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",345,43
 src/kernel/core/kernel_clock.h,actif,"inclus par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",11,18
 src/kernel/core/kernel_compiler.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",23,4
@@ -952,6 +1033,8 @@ src/kernel/dev/arch/all/eth/dev_eth_dm9000a/dev_eth_dm9000a.c,gelé,"déclaré p
 src/kernel/dev/arch/all/eth/dev_eth_dm9000a/dev_eth_dm9000a.h,gelé,inclus par dev_at91sam9261/lib-debug (projet ARM7/ARM9 (cible abandonnée)),20,10
 src/kernel/dev/arch/all/eth/dev_eth_ksz885x/dev_eth_ksz885x.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",841,0
 src/kernel/dev/arch/all/eth/dev_eth_ksz885x/dev_eth_ksz885x.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",399,0
+src/kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.c,actif,étape 3 : pilote du socle QEMU mps2-an386,299,0
+src/kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.h,actif,étape 3 : pilote du socle QEMU mps2-an386,27,0
 src/kernel/dev/arch/all/flash/amd/dev_flash_am29dlxxxx_1.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",41,7
 src/kernel/dev/arch/all/flash/amd/dev_flash_am29dlxxxx_2.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",41,7
 src/kernel/dev/arch/all/flash/amd/dev_flash_am29dlxxxx_3.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",41,7
@@ -1025,6 +1108,8 @@ src/kernel/dev/arch/all/sdcard/drv_sdcard.c,gelé,"déclaré par tauon/lib-debug
 src/kernel/dev/arch/all/sdcard/drv_sdcard.h,gelé,"déclaré par tauon/lib-debug (noyau EWARM 4.x, AT91SAM9261 (ARM9))",85,1
 src/kernel/dev/arch/all/sdcard/drv_sdcard_arch.h,gelé,"déclaré par tauon/lib-debug (noyau EWARM 4.x, AT91SAM9261 (ARM9))",76,1
 src/kernel/dev/arch/all/slip/dev_slip.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",308,7
+src/kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.c,actif,étape 3 : pilote du socle QEMU mps2-an386,136,0
+src/kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.h,actif,étape 3 : pilote du socle QEMU mps2-an386,26,0
 src/kernel/dev/arch/all/usb/class/eth/usbeth.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",372,0
 src/kernel/dev/arch/all/usb/class/eth/usbeth.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",71,0
 src/kernel/dev/arch/all/usb/class/msd/lun.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",17,0
@@ -2007,8 +2092,8 @@ src/kernel/dev/arch/cortexm/stm32f1xx/tmr.c,différé,règle de répertoire : ca
 src/kernel/dev/arch/cortexm/stm32f1xx/tmr.h,différé,inclus par dev_stm32f1xx_6.21/Debug (candidat M3 (étape 6)),57,1
 src/kernel/dev/arch/cortexm/stm32f1xx/uart.c,différé,déclaré par dev_stm32f1xx_6.21/Debug (candidat M3 (étape 6)),247,1
 src/kernel/dev/arch/cortexm/stm32f1xx/uart.h,différé,déclaré par dev_stm32f1xx_6.21/Debug (candidat M3 (étape 6)),53,1
-src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/legacy/stm32_hal_legacy.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),2328,6
-src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/legacy/stm32f4xx_hal_conf.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),234,6
+src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/Legacy/stm32_hal_legacy.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),2328,6
+src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/Legacy/stm32f4xx_hal_conf.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),234,6
 src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32_assert_template.h,actif,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc),15,0
 src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f407xx.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),13708,6
 src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f429xx.h,actif,inclus par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),14986,6
@@ -2551,6 +2636,10 @@ src/kernel/dev/arch/gnu32/dev_linux_serial_1/dev_linux_serial_1.h,gelé,règle :
 src/kernel/dev/arch/gnu32/dev_linux_serial_pt/dev_linux_serial_pt.c,gelé,règle : simulation Linux/Windows,313,0
 src/kernel/dev/arch/gnu32/dev_linux_serial_pt/dev_linux_serial_pt.h,gelé,règle : simulation Linux/Windows,3,0
 src/kernel/dev/arch/gnu32/dummy_linux_syscall.S,gelé,règle : simulation Linux/Windows,93,0
+src/kernel/dev/arch/host/common/host_posix.c,actif,étape 2 : pilotes du noyau statique hôte,63,0
+src/kernel/dev/arch/host/common/host_posix.h,actif,étape 2 : pilotes du noyau statique hôte,10,0
+src/kernel/dev/arch/host/dev_host_fileflash/dev_host_fileflash.c,actif,étape 2 : pilotes du noyau statique hôte,120,0
+src/kernel/dev/arch/host/dev_host_rtc/dev_host_rtc.c,actif,étape 2 : pilotes du noyau statique hôte,56,0
 src/kernel/dev/arch/win32/dev-bsp-nu.tube/dev_win32_rotary_switch_1.c,gelé,règle : simulation Linux/Windows,45,0
 src/kernel/dev/arch/win32/dev-bsp-nu.tube/dev_win32_rotary_switch_2.c,gelé,règle : simulation Linux/Windows,45,0
 src/kernel/dev/arch/win32/dev-bsp-nu.tube/dev_win32_rotary_switch_3.c,gelé,règle : simulation Linux/Windows,45,0
@@ -2623,6 +2712,8 @@ src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.c,act
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.h,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),49,1
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),54,1
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),62,1
+src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386.h,actif,étape 3 : BSP du socle QEMU mps2-an386,15,0
+src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386_board.c,actif,étape 3 : BSP du socle QEMU mps2-an386,111,0
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/dev_samd20xplained_pro_board.c,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),98,1
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/dev_samd20xplained_pro_board.h,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),319,1
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/samd20_xplained_pro_board_clock.c,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),462,1
@@ -3707,6 +3798,7 @@ src/lib/libc/stdio/stdio.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m
 src/lib/libc/stdio/stdio.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",186,16
 src/lib/libc/stdlib/stdlib.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",31,0
 src/lib/libc/stdlib/stdlib.h,actif,rattaché par répertoire (src/lib/libc),15,0
+src/lib/libc/string/strerror.c,actif,"étape 3b : frontière libc (strerror, numérotation errno Lepton)",89,0
 src/lib/libc/string/string.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",62,5
 src/lib/libc/string/string.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",11,9
 src/lib/libc/termios/tcgetattr.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",6,7
@@ -3750,6 +3842,7 @@ src/sbin/mv.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noya
 src/sbin/net/ifconfig.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",85,7
 src/sbin/net/inetd.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",0,0
 src/sbin/net/slipd.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",160,7
+src/sbin/net/tsterrno.c,actif,étape 4 (kernel/net) : test errno lwIP / Lepton,50,0
 src/sbin/od.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",280,7
 src/sbin/ps.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",147,7
 src/sbin/pwd.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",16,7
@@ -3769,6 +3862,7 @@ sys/user/tauon-basic/src/arch/atmel-at91sam9261-ek/kernel_mkconf/include/user_ke
 sys/user/tauon-basic/src/arch/atmel-at91samd20-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",14,0
 sys/user/tauon-basic/src/arch/atmel-at91samv71-xplained-ultra/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",16,0
 sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",27,0
+sys/user/tauon-basic/src/arch/qemu-mps2-an386/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 3 : configuration de la carte QEMU mps2-an386,13,0
 sys/user/tauon-basic/src/arch/st-stm32f407-discovery/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",26,0
 sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",309,0
 sys/user/tauon-basic/src/arch/st-stm32wl55jci-nucleo/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",29,0
@@ -4038,6 +4132,17 @@ sys/user/tauon_sampleapp/src/test.c,hors-projet,"non déclaré par un projet, no
 sys/user/tauon_sampleapp/src/tsti2c.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",133,0
 sys/user/tauon_sampleapp/src/tstleds.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",32,0
 sys/user/tauon_sampleapp/src/tstsd.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",147,0
+tests/host/stub_check_kernel.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",28,0
+tests/host/stub_check_main.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",48,0
+tests/host/ufs_check.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",45,0
+tests/host/ufs_format.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",26,0
+tests/host/vfs_ufs.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",55,0
+tests/kal/arch/armv7m/kal_bench.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",527,0
+tests/kal/arch/armv7m/kal_fpu_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",93,0
+tests/kal/arch/armv7m/kal_regs_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",18,0
+tests/kal/arch/armv7m/kal_regs_read_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",17,0
+tests/kal/kal_semihost.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",36,0
+tests/kal/kal_test.h,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",15,0
 tools/host/debian/ecos/ports-v3.0/arm/hal_misc.c,gelé,règle : port eCos (backend core-ecos absent de l'arbre),233,0
 tools/host/win32/WpdPack_3_1/WpdPack/Include/Devioctl.h,gelé,règle : outillage hôte Windows (WinPcap),59,0
 tools/host/win32/WpdPack_3_1/WpdPack/Include/Gnuc.h,gelé,règle : outillage hôte Windows (WinPcap),31,0

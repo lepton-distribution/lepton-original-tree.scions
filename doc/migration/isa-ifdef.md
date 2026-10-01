@@ -6,10 +6,10 @@ Critère d'ETAPE-4 : aucune directive d'**ISA** ou de **cœur** dans le code Lep
 
 | Mesure | Valeur |
 |---|---:|
-| Code Lepton, ISA/cœur hors arch (directives) | **3** |
-| Code Lepton, ISA/cœur hors arch (fichiers) | **1** |
+| Code Lepton, ISA/cœur hors arch (directives) | **0** |
+| Code Lepton, ISA/cœur hors arch (fichiers) | **0** |
 | Code Lepton, puce seule hors arch/BSP (directives) | 12 |
-| Code Lepton, emplacements autorisés | 0 |
+| Code Lepton, emplacements autorisés | 12 |
 | Code tiers (non modifié, D1a) | 40 |
 
 ## Code Lepton hors arch, par fichier
@@ -17,5 +17,4 @@ Critère d'ETAPE-4 : aucune directive d'**ISA** ou de **cœur** dans le code Lep
 | Fichier | isa | cœur | puce |
 |---|---:|---:|---:|
 | `sys/root/src/kernel/core/kernelconf.h` | 0 | 0 | 11 |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3 | 0 | 0 |
 | `sys/root/src/kernel/fs/rootfs/rootfscore.h` | 0 | 0 | 1 |
