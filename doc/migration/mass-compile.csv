@@ -38,10 +38,10 @@ sys/root/src/kernel/core/net/kernel_net_core_socket.c,kernel/core,OK,preset qemu
 sys/root/src/kernel/core/net/lwip_core/ethif_core.c,kernel/core,OK,preset qemu,2,
 sys/root/src/kernel/core/net/lwip_core/lwip_core.c,kernel/core,OK,preset qemu,2,
 sys/root/src/kernel/core/net/lwip_core/lwip_core_socket.c,kernel/core,OK,preset qemu,1,
-sys/root/src/kernel/core/net/modem_core/modem_core.c,kernel/core,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/core/net/modem_core/modem_core.c:766: static declaration of 'modem_core_mq_post_unconnected_request' follows non-static declaration
-sys/root/src/kernel/core/net/modem_core/modem_core_socket.c,kernel/core,ÉCHEC,gabarit qemu-mps2-an386-embos,3,sys/root/src/kernel/core/net/modem_core/modem_core_socket.c:145: static declaration of 'modem_core_socket_socket' follows non-static declaration
+sys/root/src/kernel/core/net/modem_core/modem_core.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/core/net/modem_core/modem_core_socket.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,3,
 sys/root/src/kernel/core/net/uip_core/uip_core.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,2,
-sys/root/src/kernel/core/net/uip_core/uip_core_socket.c,kernel/core,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/core/net/uip_core/uip_core_socket.c:243: static declaration of 'uip_core_socket_socket' follows non-static declaration
+sys/root/src/kernel/core/net/uip_core/uip_core_socket.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/core/net/uip_core/uip_slip.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/core/net/uip_core/uip_sock.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/core/pipe.c,kernel/core,OK,preset qemu,1,
