@@ -462,7 +462,7 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
    __wait_ret_int(); \
 }
 
-#elif defined(CPU_GNU32)
+#elif defined(USE_KERNEL_STATIC)
 //
    #define __mk_syscall(__syscall_nb__,__pdata__){ \
    kernel_pthread_t* __pthread_ptr__; \
