@@ -20,6 +20,7 @@ char *strchr(const char *, int);
 char *strrchr(const char *, int);
 char *strstr(const char *, const char *);
 char *strtok(char *, const char *);
+char *strtok_r(char *, const char *, char **); /* newlib / glibc (POSIX) : FAT msdos */
 size_t strspn(const char *, const char *);
 size_t strcspn(const char *, const char *);
 char *strpbrk(const char *, const char *);

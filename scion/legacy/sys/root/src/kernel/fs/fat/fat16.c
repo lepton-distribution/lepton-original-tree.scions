@@ -53,7 +53,9 @@ fat16_ofile_t fat16_ofile_lst[MAX_OPEN_FILE]={0};
 
 #ifdef FAT_CACHE_FAT
 fat16_u8_t fat16_cache[FAT_CACHE_FAT_SIZE]
+   #if !defined(CPU_GNU32)
 __attribute__ ((section(".no_cache")))
+   #endif
 ;
 
 #endif //FAT_CACHE_FAT

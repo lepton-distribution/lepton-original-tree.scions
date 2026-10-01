@@ -215,14 +215,14 @@ sys/root/src/kernel/fs/fat/fat16.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/fs/fat/fat16_msdos.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/fs/fat/fat16_vfat.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/fs/fat/fatcore.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,1,
-sys/root/src/kernel/fs/fat/fatcore_msdos.c,kernel/fs,ÉCHEC,gabarit qemu-mps2-an386-embos,2,sys/root/src/kernel/fs/fat/fatcore_msdos.c:248: implicit declaration of function 'strtok_r'; did you mean 'strtok'? [-Wimplicit-function-declaration]
+sys/root/src/kernel/fs/fat/fatcore_msdos.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/fs/fat/fatcore_vfat.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,2,
-sys/root/src/kernel/fs/fatfs/core/diskio.c,kernel/fs,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/fs/fatfs/core/diskio.c:158: unknown type name '__weak'
+sys/root/src/kernel/fs/fatfs/core/diskio.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/fs/fatfs/core/drivers/sd_diskio.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/fs/fatfs/core/ff.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/fs/fatfs/core/ff_gen_drv.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/fs/fatfs/fatfs.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,1,
-sys/root/src/kernel/fs/fatfs/fatfscore.c,kernel/fs,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/fs/fatfs/fatfscore.c:662: passing argument 1 of 'f_close' from incompatible pointer type [-Wincompatible-pointer-types]
+sys/root/src/kernel/fs/fatfs/fatfscore.c,kernel/fs,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/fs/kofs/kofs.c,kernel/fs,OK,preset qemu,1,
 sys/root/src/kernel/fs/rootfs/rootfs.c,kernel/fs,OK,preset qemu,1,
 sys/root/src/kernel/fs/rootfs/rootfscore.c,kernel/fs,OK,preset qemu,1,

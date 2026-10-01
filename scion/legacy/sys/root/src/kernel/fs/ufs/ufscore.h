@@ -40,6 +40,9 @@ Includes
 
 //begin 1 byte struct alignment
 //force compatiblity with mklepton
+#if (__tauon_compiler__!=__compiler_gnuc__)
+   #pragma pack(push, 1)
+#endif
 
 /*===========================================
 Declaration
@@ -110,6 +113,9 @@ int   _ufs_readfs(mntdev_t* pmntdev);
 int   _ufs_writefs(mntdev_t* pmntdev);
 int   _ufs_checkfs(mntdev_t* pmntdev);
 
+#if (__tauon_compiler__!=__compiler_gnuc__)
+   #pragma pack (pop)
+#endif
 //end 1 byte struct alignment
 
 

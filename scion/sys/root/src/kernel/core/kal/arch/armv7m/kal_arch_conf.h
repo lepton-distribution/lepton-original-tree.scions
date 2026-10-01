@@ -33,6 +33,7 @@ either the MPL or the [eCos GPL] License."
 #define __KERNEL_CPU_ARCH CPU_ARCH_32
 //profil : celui de kernel_mkconf.h (mklepton), sinon minimal (repli de kernelconf.h)
 #define __KERNEL_POSIX_REALTIME_SIGNALS
+#define __KERNEL_MAX_SUPER_BLOCK 4 //superblocs montés (vfstypes.h)
 //pas de verrous de fichiers (__KERNEL_USE_FILE_LOCK) sur Cortex-M
 
 #endif //_KAL_ARCH_ARMV7M_CONF_H

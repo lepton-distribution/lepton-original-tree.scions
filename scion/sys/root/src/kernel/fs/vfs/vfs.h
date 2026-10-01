@@ -31,9 +31,7 @@ Includes
 #include "kernel/fs/vfs/vfstypes.h"
 #include "kernel/fs/vfs/vfsdev.h"
 
-#if (__tauon_compiler__==__compiler_keil_arm__) || (__tauon_compiler__==__compiler_gnuc__)
    #include "kernel/core/stat.h"
-#endif
 /*===========================================
 Declaration
 =============================================*/

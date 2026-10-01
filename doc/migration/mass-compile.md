@@ -3,7 +3,7 @@
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
 Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv --audit-csv doc/migration/audit-iar.csv`
 
-Résultat : **337/348 fichiers C OK (96.8 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
+Résultat : **340/348 fichiers C OK (97.7 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
 Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : `mass-compile.csv`.
 
@@ -13,7 +13,7 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 |---|---|---:|---:|
 | kernel/core | 50 / 50 | 0 | 38 |
 | kernel/dev | 154 / 154 | 0 | 16 |
-| kernel/fs | 23 / 26 | 0 | 4 |
+| kernel/fs | 26 / 26 | 0 | 2 |
 | kernel/net | 38 / 38 | 0 | 0 |
 | lib | 27 / 27 | 0 | 0 |
 | sbin | 34 / 35 | 0 | 0 |
@@ -26,9 +26,8 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | Fichiers | Erreur normalisée | Exemple |
 |---:|---|---|
 | 5 | `implicit declaration of function 'X' [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/mongoose/mongoose.c` |
-| 3 | `passing argument N of 'X' from incompatible pointer type [-Wincompatible-pointer-types]` | `sys/root/src/bin/net/telnetd.c` |
-| 2 | `implicit declaration of function 'X'; did you mean 'X'? [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/httpc/httpc.c` |
-| 1 | `unknown type name 'X'` | `sys/root/src/kernel/fs/fatfs/core/diskio.c` |
+| 2 | `passing argument N of 'X' from incompatible pointer type [-Wincompatible-pointer-types]` | `sys/root/src/bin/net/telnetd.c` |
+| 1 | `implicit declaration of function 'X'; did you mean 'X'? [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/httpc/httpc.c` |
 
 ## Fichiers en échec
 
@@ -39,9 +38,6 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | `sys/root/src/bin/net/mongoose/mongoosed.c` | `sys/root/src/bin/net/mongoose/mongoosed.c:288: implicit declaration of function 'strerror' [-Wimplicit-function-declaration]` |
 | `sys/root/src/bin/net/telnetd.c` | `sys/root/src/bin/net/telnetd.c:105: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]` |
 | `sys/root/src/bin/test2.c` | `sys/root/src/bin/test2.c:237: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]` |
-| `sys/root/src/kernel/fs/fat/fatcore_msdos.c` | `sys/root/src/kernel/fs/fat/fatcore_msdos.c:248: implicit declaration of function 'strtok_r'; did you mean 'strtok'? [-Wimplicit-function-declaration]` |
-| `sys/root/src/kernel/fs/fatfs/core/diskio.c` | `sys/root/src/kernel/fs/fatfs/core/diskio.c:158: unknown type name '__weak'` |
-| `sys/root/src/kernel/fs/fatfs/fatfscore.c` | `sys/root/src/kernel/fs/fatfs/fatfscore.c:662: passing argument 1 of 'f_close' from incompatible pointer type [-Wincompatible-pointer-types]` |
 | `sys/root/src/sbin/stty.c` | `sys/root/src/sbin/stty.c:1158: implicit declaration of function 'toupper' [-Wimplicit-function-declaration]` |
 | `sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c` | `sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c:157: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]` |
 | `sys/user/tauon-basic/src/bin/dhrystone/dhrystone_main.c` | `sys/user/tauon-basic/src/bin/dhrystone/dhrystone_main.c:98: implicit declaration of function 'runDhrystone' [-Wimplicit-function-declaration]` |

@@ -904,7 +904,11 @@ int _vfs_ioctl2(desc_t desc, int request, va_list ap){
    switch(request) {
    case I_LINK: {
       desc_t desc_link;
+#if defined(__GNUC__)
       desc_link = va_arg(_ap, int);
+#else
+      desc_link = va_arg(_ap, desc_t);
+#endif
       if(desc_link<0)
          return -1;
       if(_vfs_link_desc(desc,desc_link)<0)
@@ -1872,6 +1876,8 @@ int _vfs_ls(char* ref){
 
 #if defined(__KERNEL_UCORE_EMBOS)
    printf("ls %s\n",ref);
+#elif defined(__KERNEL_UCORE_ECOS)
+   int i=0;
 #endif
 
    if((desc=_vfs_opendir(ref))<0)
@@ -1880,6 +1886,8 @@ int _vfs_ls(char* ref){
    while(_vfs_readdir(desc,&dirent)) {
 #if defined(__KERNEL_UCORE_EMBOS)
       printf("[%d] %s\n",dirent.inodenb,dirent.d_name);
+#elif defined(__KERNEL_UCORE_ECOS)
+      i++;
 #endif
    }
 

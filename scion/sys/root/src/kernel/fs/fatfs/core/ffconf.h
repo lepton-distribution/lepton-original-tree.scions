@@ -42,6 +42,12 @@
 
 #ifndef _FFCONF
 #define _FFCONF 32020	/* Revision ID */
+/* Lepton (migration GCC, decision 2026-10-01) : __weak, mot-cle natif d'IAR, est fourni dans
+ * le paquet ST par le HAL inclus depuis ce fichier de configuration ; ici par compiler.h. */
+#include "kernel/core/compiler.h"
+#ifndef __weak
+#define __weak __lepton_weak
+#endif
 
 /*-----------------------------------------------------------------------------/
 / Additional user header to be used  

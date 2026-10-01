@@ -50,16 +50,7 @@ sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,121,coeur,tiers,
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,226,coeur,tiers,hors arch,(__CORTEX_M != 0x04)
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,263,coeur,tiers,hors arch,(__CORTEX_M != 0x04)
 sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/system_stm32f4xx.c,171,coeur,tiers,hors arch,(__FPU_PRESENT == 1) && (__FPU_USED == 1)
-sys/root/src/kernel/fs/fat/fat16.c,56,isa,lepton,hors arch,!defined(CPU_GNU32)
-sys/root/src/kernel/fs/fat/fatcore.h,236,isa,lepton,hors arch,defined(CPU_GNU32) || defined(CPU_ARM9)
-sys/root/src/kernel/fs/rootfs/rootfscore.c,53,isa,lepton,hors arch,defined (WIN32) || defined(CPU_GNU32)
-sys/root/src/kernel/fs/rootfs/rootfscore.c,62,isa,lepton,hors arch,defined (WIN32) || defined(CPU_GNU32)
-sys/root/src/kernel/fs/rootfs/rootfscore.c,74,isa,lepton,hors arch,defined (WIN32) || defined(CPU_GNU32)
 sys/root/src/kernel/fs/rootfs/rootfscore.h,41,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
-sys/root/src/kernel/fs/ufs/ufs.c,194,isa,lepton,hors arch,defined(CPU_ARM7) || defined(CPU_WIN32)
-sys/root/src/kernel/fs/ufs/ufsx.c,224,isa,lepton,hors arch,defined(CPU_ARM7) || defined(CPU_WIN32)
-sys/root/src/kernel/fs/vfs/vfstypes.h,150,isa,lepton,hors arch,!defined(CPU_CORTEXM)
-sys/root/src/kernel/fs/vfs/vfstypes.h,343,isa,lepton,hors arch,!defined(CPU_CORTEXM)
 sys/root/src/lib/libc/ctype/ctype.h,37,isa,lepton,hors arch,CPU_WIN32
 sys/root/src/lib/libc/stdio/stdio.h,106,isa,lepton,hors arch,defined(CPU_WIN32) || defined(CPU_GNU32)
 sys/root/src/lib/libc/stdio/stdio.h,108,isa,lepton,hors arch,defined(CPU_ARM9)

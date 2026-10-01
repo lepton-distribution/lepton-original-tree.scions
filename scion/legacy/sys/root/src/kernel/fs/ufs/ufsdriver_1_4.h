@@ -40,6 +40,9 @@ either the MPL or the [eCos GPL] License."
 ==============================================*/
 //begin 1 byte struct alignment
 //force compatiblity with mklepton
+#if (__tauon_compiler__!=__compiler_gnuc__)
+   #pragma pack(push, 1)
+#endif
 //
 typedef unsigned short ufs_attr_t;
 typedef unsigned short ufs_oflags_t;
@@ -61,6 +64,9 @@ typedef struct __attribute__((aligned(UFS_ALIGNEMENT))){
    ufs_blocknb_t blk_dbl;
 } ufs_block_node_1_4_t;
 
+#if (__tauon_compiler__!=__compiler_gnuc__)
+   #pragma pack (pop)
+#endif
 //end 1 byte struct alignment
 
 extern ufs_block_node_1_4_t ufs_block_node_1_4;
