@@ -3,7 +3,7 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 23 fichier(s) modifié(s), 92 occurrence(s) automatique(s), 26 résiduelle(s).
+Résumé : 13 fichier(s) modifié(s), 67 occurrence(s) automatique(s), 26 résiduelle(s).
 
 ## Résiduels (26)
 
@@ -36,37 +36,12 @@ Résumé : 23 fichier(s) modifié(s), 92 occurrence(s) automatique(s), 26 résid
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (92)
+## Automatiques (67)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
 | `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
 | `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/kernel/fs/fat/fatcore.h` | 236 | garde-cible-gelee | condition simplifiée | `defined(CPU_GNU32) \|\| defined(CPU_ARM9) → defined(CPU_GNU32)` |
-| `sys/root/src/kernel/fs/ufs/ufs.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufs.c` |
-| `sys/root/src/kernel/fs/ufs/ufs.c` | 194 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_WIN32)` |
-| `sys/root/src/kernel/fs/ufs/ufs.c` | 228 | garde-cible-gelee | #else toujours pris | `` |
-| `sys/root/src/kernel/fs/ufs/ufscore.c` | 43 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/kernel/fs/ufs/ufscore.h` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufscore.h` |
-| `sys/root/src/kernel/fs/ufs/ufscore.h` | 43 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/ufs/ufscore.h` | 116 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` |
-| `sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` | 43 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/ufs/ufsdriver_1_3.h` | 68 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` |
-| `sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` | 43 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/ufs/ufsdriver_1_4.h` | 67 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__!=__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/ufs/ufsx.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufsx.c` |
-| `sys/root/src/kernel/fs/ufs/ufsx.c` | 224 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_WIN32)` |
-| `sys/root/src/kernel/fs/ufs/ufsx.c` | 255 | garde-cible-gelee | #else toujours pris | `` |
-| `sys/root/src/kernel/fs/vfs/vfs.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/vfs/vfs.c` |
-| `sys/root/src/kernel/fs/vfs/vfs.c` | 1879 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/fs/vfs/vfs.c` | 1889 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/fs/vfs/vfs.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/vfs/vfs.c` |
-| `sys/root/src/kernel/fs/vfs/vfs.c` | 907 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/root/src/kernel/fs/vfs/vfs.c` | 909 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/root/src/kernel/fs/vfs/vfs.h` | 34 | garde-compilateur | garde toujours vraie levée | `(__tauon_compiler__==__compiler_keil_arm__) \|\| (__tauon_compiler__==__compiler_gnuc__)` |
-| `sys/root/src/kernel/fs/vfs/vfskernel.c` | 42 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
 | `sys/root/src/lib/libc/ctype/ctype.c` | 42 | garde-cible-gelee | garde toujours vraie levée | `!defined(__KERNEL_UCORE_ECOS)` |
 | `sys/root/src/lib/libc/ctype/ctype.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/lib/libc/ctype/ctype.h` |
 | `sys/root/src/lib/libc/ctype/ctype.h` | 37 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_WIN32)` |
@@ -133,7 +108,7 @@ Résumé : 23 fichier(s) modifié(s), 92 occurrence(s) automatique(s), 26 résid
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | _Pragma location → __lepton_section | `EXT_RAM` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 4 | pragma-iar | inclusion de compiler.h ajoutée | `#include "kernel/core/compiler.h"` |
 
-## Code tiers non modifié — justifiés (58)
+## Code tiers non modifié — justifiés (56)
 
 Décision D1a (2026-10-01) : le code vendored (CMSIS, HAL/driverlib ST, FatFs, yaffs…) n'est pas transformé ; ses branches IAR sont inactives sous GCC (en-têtes multi-compilateurs du fournisseur). Source : `audit-iar.csv`.
 
@@ -194,7 +169,5 @@ Décision D1a (2026-10-01) : le code vendored (CMSIS, HAL/driverlib ST, FatFs, y
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_hal_def.h` | 200 | garde_iar | __ICCARM__ |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_hal_def.h` | 204 | pragma | _Pragma optimize |
 | `sys/root/src/kernel/fs/fatfs/core/diskio.c` | 158 | mot_cle | __weak |
-| `sys/root/src/kernel/fs/fatfs/fatfscore.c` | 70 | garde_iar | __ICCARM__ |
-| `sys/root/src/kernel/fs/fatfs/fatfscore.c` | 78 | garde_iar | __ICCARM__ |
 | `sys/root/src/kernel/fs/yaffs/core/yportenv.h` | 25 | garde_iar | __compiler_iar_arm__ |
 
