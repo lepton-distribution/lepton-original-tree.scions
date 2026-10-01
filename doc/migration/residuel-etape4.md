@@ -3,7 +3,7 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 38 fichier(s) modifié(s), 142 occurrence(s) automatique(s), 26 résiduelle(s).
+Résumé : 23 fichier(s) modifié(s), 92 occurrence(s) automatique(s), 26 résiduelle(s).
 
 ## Résiduels (26)
 
@@ -36,62 +36,12 @@ Résumé : 38 fichier(s) modifié(s), 142 occurrence(s) automatique(s), 26 rési
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (142)
+## Automatiques (92)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
 | `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
 | `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | 74 | prototype-static | prototype rendu static (dev_rtc_nxp_pca8565_settime) | `int dev_rtc_nxp_pca8565_settime(desc_t desc,char* buf,int size);` |
-| `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | 75 | prototype-static | prototype rendu static (dev_rtc_nxp_pca8565_gettime) | `int dev_rtc_nxp_pca8565_gettime(desc_t desc,char* buf,int size);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 36 | prototype-static | prototype rendu static (dev_ppp_uip_load) | `int dev_ppp_uip_load(void);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 37 | prototype-static | prototype rendu static (dev_ppp_uip_open) | `int dev_ppp_uip_open(desc_t desc, int o_flag);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 38 | prototype-static | prototype rendu static (dev_ppp_uip_close) | `int dev_ppp_uip_close(desc_t desc);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 39 | prototype-static | prototype rendu static (dev_ppp_uip_isset_read) | `int dev_ppp_uip_isset_read(desc_t desc);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 40 | prototype-static | prototype rendu static (dev_ppp_uip_isset_write) | `int dev_ppp_uip_isset_write(desc_t desc);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 41 | prototype-static | prototype rendu static (dev_ppp_uip_read) | `int dev_ppp_uip_read(desc_t desc, char* buf,int size);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 42 | prototype-static | prototype rendu static (dev_ppp_uip_write) | `int dev_ppp_uip_write(desc_t desc, const char* buf,int size);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 43 | prototype-static | prototype rendu static (dev_ppp_uip_seek) | `int dev_ppp_uip_seek(desc_t desc,int offset,int origin);` |
-| `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 44 | prototype-static | prototype rendu static (dev_ppp_uip_ioctl) | `int dev_ppp_uip_ioctl(desc_t desc,int request,va_list ap);` |
-| `sys/root/src/kernel/dev/arch/all/slip/dev_slip.c` | 86 | garde-cible-gelee | garde toujours vraie levée | `!defined(CPU_M16C62)` |
-| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` |
-| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` | 50 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c` | 141 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` |
-| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` | 39 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h` | 55 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 54 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 59 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 64 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c` | 69 | garde-iar-arm | branche IAR retirée (data_alignment doublé par l'alignement GCC) | `defined ( __ICCARM__ ) /*!< IAR Compiler */` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.c` | 37 | mot-cle-iar | __packed union → union __lepton_packed | `typedef __packed union` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.c` | 40 | mot-cle-iar | __packed struct → struct __lepton_packed | `__packed struct` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.c` | 31 | mot-cle-iar | inclusion de compiler.h ajoutée | `#include "kernel/core/compiler.h"` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.h` | 73 | mot-cle-iar | __packed struct → struct __lepton_packed | `typedef __packed struct` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.h` | 32 | mot-cle-iar | inclusion de compiler.h ajoutée (après la garde) | `#include "kernel/core/compiler.h"` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/spi.h` | 36 | mot-cle-iar | __packed struct → struct __lepton_packed | `typedef __packed struct` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/spi.h` | 34 | mot-cle-iar | inclusion de compiler.h ajoutée | `#include "kernel/core/compiler.h"` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h` | 58 | mot-cle-iar | __packed union → union __lepton_packed | `typedef __packed union` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h` | 32 | mot-cle-iar | inclusion de compiler.h ajoutée (après la garde) | `#include "kernel/core/compiler.h"` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.h` | 34 | mot-cle-iar | __packed struct → struct __lepton_packed | `typedef __packed struct` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.h` | 58 | mot-cle-iar | __packed struct → struct __lepton_packed | `typedef __packed struct` |
-| `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.h` | 31 | mot-cle-iar | inclusion de compiler.h ajoutée (après la garde) | `#include "kernel/core/compiler.h"` |
-| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` |
-| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 110 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
-| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 56 | prototype-static | prototype rendu static (dev_discovery_f4_uart_6_load) | `int dev_discovery_f4_uart_6_load(void);` |
-| `sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c` | 57 | prototype-static | prototype rendu static (dev_discovery_f4_uart_6_open) | `int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag);` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 101 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 56 | prototype-static | prototype rendu static (dev_olimex_p407_spi_3_load) | `int dev_olimex_p407_spi_3_load(void);` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c` | 57 | prototype-static | prototype rendu static (dev_olimex_p407_spi_3_open) | `int dev_olimex_p407_spi_3_open(desc_t desc, int o_flag);` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 111 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 56 | prototype-static | prototype rendu static (dev_olimex_p407_uart_3_load) | `int dev_olimex_p407_uart_3_load(void);` |
-| `sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c` | 57 | prototype-static | prototype rendu static (dev_olimex_p407_uart_3_open) | `int dev_olimex_p407_uart_3_open(desc_t desc, int o_flag);` |
-| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` |
-| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 111 | garde-compilateur | branche compilateur retirée | `(__tauon_compiler__==__compiler_keil_arm__)` |
-| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 56 | prototype-static | prototype rendu static (dev_stm32f469i_eval_uart_1_load) | `int dev_stm32f469i_eval_uart_1_load(void);` |
-| `sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c` | 57 | prototype-static | prototype rendu static (dev_stm32f469i_eval_uart_1_open) | `int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag);` |
 | `sys/root/src/kernel/fs/fat/fatcore.h` | 236 | garde-cible-gelee | condition simplifiée | `defined(CPU_GNU32) \|\| defined(CPU_ARM9) → defined(CPU_GNU32)` |
 | `sys/root/src/kernel/fs/ufs/ufs.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/fs/ufs/ufs.c` |
 | `sys/root/src/kernel/fs/ufs/ufs.c` | 194 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_ARM7) \|\| defined(CPU_WIN32)` |

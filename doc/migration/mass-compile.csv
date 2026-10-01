@@ -57,7 +57,7 @@ sys/root/src/kernel/core/timer.c,kernel/core,OK,preset qemu,1,
 sys/root/src/kernel/core/truncate.c,kernel/core,OK,preset qemu,1,
 sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/system_stm32f4xx.c,kernel/core,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/core/wait.c,kernel/core,OK,preset qemu,1,
-sys/root/src/kernel/dev/arch/all/debug/dev_os_debug.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/all/debug/dev_os_debug.c:105: passing argument 1 of 'OS_COM_SetRxCallback' from incompatible pointer type [-Wincompatible-pointer-types]
+sys/root/src/kernel/dev/arch/all/debug/dev_os_debug.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/all/flash/amd/dev_flash_am29dlxxxx_1.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
 sys/root/src/kernel/dev/arch/all/flash/amd/dev_flash_am29dlxxxx_2.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
 sys/root/src/kernel/dev/arch/all/flash/amd/dev_flash_am29dlxxxx_3.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
@@ -71,13 +71,13 @@ sys/root/src/kernel/dev/arch/all/i2c/bq/dev_bq27510_g3_x.c,kernel/dev,OK,gabarit
 sys/root/src/kernel/dev/arch/all/i2c/dev_eeprom_24xxx.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/all/i2c/dev_eeprom_24xxx_0.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/all/i2c/fram/dev_fram_24clxx.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
-sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c:215: static declaration of 'dev_rtc_nxp_pca8565_settime' follows non-static declaration
+sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/all/lcd/dev_oled_ssd1305.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/dev/arch/all/lcd/dev_oled_ssd1322.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/dev/arch/all/modem/simcom/dev_modem_simcom.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
-sys/root/src/kernel/dev/arch/all/modem/ublox/dev_modem_ublox_sarag3.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/all/modem/ublox/dev_modem_ublox_sarag3.c:916: implicit declaration of function 'atof'; did you mean 'atol'? [-Wimplicit-function-declaration]
+sys/root/src/kernel/dev/arch/all/modem/ublox/dev_modem_ublox_sarag3.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/ahdlc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c:223: static declaration of 'dev_ppp_uip_load' follows non-static declaration
+sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/ipcp.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/ipv6cp.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/lcp.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
@@ -88,120 +88,120 @@ sys/root/src/kernel/dev/arch/cmsis/dev_cmsis_cpu/dev_cmsis_cpu.c,kernel/dev,OK,g
 sys/root/src/kernel/dev/arch/cmsis/dev_cmsis_itm/dev_cmsis_itm.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/cmsis/dev_cmsis_itm/dev_cmsis_itm_0.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_adc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_adc_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_can.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cec.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cortex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_crc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cryp.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cryp_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dac.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dac_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dcmi.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dcmi_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dma.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dma2d.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dma_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_eth.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_flash.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_flash_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_flash_ramfunc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_fmpi2c.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_fmpi2c_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_gpio.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_hash.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_hash_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_hcd.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2c.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2c_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2s.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2s_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_irda.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_iwdg.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_ltdc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_msp_template.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_nand.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_nor.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pccard.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pcd.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pcd_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pwr.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pwr_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_qspi.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rcc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rcc_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rng.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rtc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rtc_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sai.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sai_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sd.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sdram.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_smartcard.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_spdifrx.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_spi.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sram.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_tim.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_tim_ex.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_uart.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_usart.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_wwdg.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_fmc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_fsmc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_adc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_adc_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_can.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cec.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cortex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_crc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cryp.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_cryp_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dac.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dac_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dcmi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dcmi_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dma.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dma2d.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_dma_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_eth.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_flash.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_flash_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_flash_ramfunc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_fmpi2c.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_fmpi2c_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_gpio.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_hash.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_hash_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_hcd.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2c.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2c_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2s.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_i2s_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_irda.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_iwdg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_ltdc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_msp_template.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_nand.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_nor.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pccard.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pcd.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pcd_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pwr.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_pwr_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_qspi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rcc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rcc_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rng.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rtc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_rtc_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sai.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sai_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sd.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sdram.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_smartcard.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_spdifrx.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_spi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_sram.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_tim.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_tim_ex.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_uart.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_usart.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_hal_wwdg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_fmc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_fsmc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_rcc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_sdmmc.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_usb.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cpu_x.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_dac_x.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,2,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_eth.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_flash.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_i2c_x.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_sdio.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_spi_x.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,2,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_uart_x.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,2,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/misc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4x7_eth.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_adc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_can.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_crc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_cryp_aes.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_cryp_des.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_cryp_tdes.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dac.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dbgmcu.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dcmi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dma.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_exti.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_flash.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_gpio.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_hash_md5.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_hash_sha1.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_i2c.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_iwdg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_pwr.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_rcc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_rng.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_rtc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_spi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_syscfg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_tim.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_usart.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_wwdg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/eth.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:51: conflicting types for 's32'; have 'int'
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/flash_if.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/stm32f4xx_hal_def.h:49: Legacy/stm32_hal_legacy.h: No such file or directory
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/spi.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,2,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_board/dev_discovery_f4_board.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,12,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,21,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_board/dev_stm32f469i_eval_board.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,12,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
-sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c,kernel/dev,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/types.h:58: expected ';' before 'union'
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_sdmmc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/src/stm32f4xx_ll_usb.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cpu_x.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_cubemx_eth.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_dac_x.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_eth.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_flash.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_i2c_x.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_sdio.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_spi_x.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_uart_x.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/misc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4x7_eth.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_adc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_can.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_crc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_cryp_aes.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_cryp_des.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_cryp_tdes.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dac.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dbgmcu.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dcmi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_dma.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_exti.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_flash.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_gpio.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_hash_md5.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_hash_sha1.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_i2c.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_iwdg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_pwr.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_rcc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_rng.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_rtc.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_spi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_syscfg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_tim.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_usart.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx_wwdg.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/eth.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/flash_if.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/gpio.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/spi.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/uart.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,3,
+sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_board/dev_discovery_f4_board.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_board/dev_stm32f469i_eval_board.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/dev/dev_cpufs/dev_cpufs.c,kernel/dev,OK,preset qemu,1,
 sys/root/src/kernel/dev/dev_fb/dev_fb.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/dev/dev_head/dev_head.c,kernel/dev,OK,preset qemu,1,
@@ -302,7 +302,7 @@ sys/root/src/lib/librt/sem.c,lib,OK,preset qemu,1,
 sys/root/src/lib/pthread/pthread.c,lib,OK,preset qemu,1,
 sys/root/src/lib/pthread/pthread_cond.c,lib,OK,preset qemu,1,
 sys/root/src/lib/pthread/pthread_mutex.c,lib,OK,preset qemu,6,
-sys/root/src/sbin/btb.c,sbin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/sbin/btb.c:462: implicit declaration of function 'atof'; did you mean 'atol'? [-Wimplicit-function-declaration]
+sys/root/src/sbin/btb.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/cat.c,sbin,OK,preset qemu,1,
 sys/root/src/sbin/compress.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/cp.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
@@ -335,7 +335,7 @@ sys/root/src/sbin/sync.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/touch.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/umount.c,sbin,OK,preset qemu,1,
 sys/root/src/sbin/uname.c,sbin,OK,preset qemu,1,
-sys/root/src/sbin/wrapr.c,sbin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/sbin/wrapr.c:356: implicit declaration of function 'atof'; did you mean 'atol'? [-Wimplicit-function-declaration]
+sys/root/src/sbin/wrapr.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/xmodem.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/user/tauon-basic/src/bin/dhrystone/dhry21a.c,tauon-basic,OK,gabarit qemu-mps2-an386-embos,1,
 sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c,tauon-basic,ÉCHEC,gabarit qemu-mps2-an386-embos,0,sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c:157: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
