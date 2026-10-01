@@ -14,6 +14,7 @@ void *realloc(void *, size_t);
 void free(void *);
 int atoi(const char *);
 long atol(const char *);
+double atof(const char *); /* newlib (cible) : pilote modem u-blox */
 long strtol(const char *, char **, int);
 unsigned long strtoul(const char *, char **, int);
 int abs(int);
