@@ -229,6 +229,20 @@ class PrototypeStatic(unittest.TestCase):
                               "int h(void) { return 0; }\nstatic int k(void) { return 0; }\nint k(void);\n")
         self.assertEqual(len(auto), 3)
 
+    def test_appels_non_prototypes(self):
+        # faux positif relevé sur sbin/stty.c : appel précédé d'une étiquette ou d'un mot-clé
+        src = ("static void out(char *s);\nvoid g(int c) {\n  switch (c) {\n"
+               "  case 1: out(\"a\"); break;\n  default: out(\"b\"); break;\n  }\n"
+               "  if (c) out(\"c\");\n  else out(\"d\");\n}\nstatic void out(char *s) { }\n")
+        new, auto, resid = t.rule_prototype_static(src, "t.c")
+        self.assertEqual(new, src)
+        self.assertEqual(auto, [])
+
+    def test_prototype_pointeur(self):
+        src = "char *\nf(int a);\nstatic char *f(int a) { return 0; }\n"
+        new, auto, resid = t.rule_prototype_static(src, "t.c")
+        self.assertEqual(new, "static char *\nf(int a);\nstatic char *f(int a) { return 0; }\n")
+
     def test_entete_ignore(self):
         src = "int f(void);\nstatic int f(void) { return 0; }\n"
         self.assertEqual(t.rule_prototype_static(src, "t.h")[0], src)
