@@ -93,7 +93,94 @@ class IntrinsicsCmsis(unittest.TestCase):
     def test_residuels(self):
         src = "p = __sfe(\"CSTACK\");\n#include <intrinsics.h>\n"
         new, auto, resid = t.rule_intrinsics_cmsis(src, "test.c")
-        self.assertEqual((new, len(auto), len(resid)), (src, 0, 2))
+        self.assertEqual((new, len(auto), len(resid)), (src, 0, 1))
+
+
+class GardeAlignement(unittest.TestCase):
+    def test_data_alignment_double_par_gcc(self):
+        src = ("#if defined ( __ICCARM__ )\n  #pragma data_alignment=4\n#endif\n"
+               "__ALIGN_BEGIN static int t[4] __ALIGN_END;\n")
+        new, a, r = garde(src)
+        self.assertEqual((new, a, r), ("__ALIGN_BEGIN static int t[4] __ALIGN_END;\n", 1, 0))
+
+    def test_data_alignment_sans_gcc_residuel(self):
+        src = "#if defined ( __ICCARM__ )\n  #pragma data_alignment=4\n#endif\nstatic int t[4];\n"
+        new, a, r = garde(src)
+        self.assertEqual((new, a, r), (src, 0, 1))
+
+
+class GardeIarGelee(unittest.TestCase):
+    def test_m16c_retire(self):
+        src = ("#if (__tauon_compiler__==__compiler_iar_m16c__)\nA\n"
+               "#elif defined(__IAR_SYSTEMS_ICC)\nB\n#else\nC\n#endif\n")
+        new, auto, resid = t.rule_garde_iar_gelee(src, "test.c")
+        self.assertEqual((new, len(resid)), ("C\n", 0))
+
+    def test_arm_non_touche(self):
+        src = "#if defined(__ICCARM__)\nA\n#endif\n"
+        self.assertEqual(t.rule_garde_iar_gelee(src, "test.c"), (src, [], []))
+
+    def test_pragma_m16c_retire(self):
+        src = "#if (__tauon_compiler__==__compiler_iar_m16c__)\n#pragma memory=far\n#endif\nx\n"
+        self.assertEqual(t.rule_garde_iar_gelee(src, "test.c")[0], "x\n")
+
+
+class MotCleIar(unittest.TestCase):
+    def test_packed_struct_et_include(self):
+        src = ('#include "a.h"\ntypedef __packed union {\n  __packed struct { int a:8; } b;\n} u;\n'
+               "/* __packed */ char *s = \"__packed\";\n")
+        new, auto, resid = t.rule_mot_cle_iar(src, "test.c")
+        self.assertEqual(new, '#include "a.h"\n#include "kernel/core/compiler.h"\n'
+                              "typedef union __lepton_packed {\n"
+                              "  struct __lepton_packed { int a:8; } b;\n} u;\n"
+                              "/* __packed */ char *s = \"__packed\";\n")
+        self.assertEqual(len(resid), 0)
+
+    def test_include_apres_garde_entete(self):
+        src = "/* x */\n#ifndef X_H\n#define X_H\n__no_init int v;\n#endif\n"
+        new, auto, resid = t.rule_mot_cle_iar(src, "x.h")
+        self.assertEqual(new, "/* x */\n#ifndef X_H\n#define X_H\n"
+                              '#include "kernel/core/compiler.h"\n__lepton_no_init int v;\n#endif\n')
+
+    def test_residuels(self):
+        src = ('#include "kernel/core/compiler.h"\n#define P __packed\n__packed int *p;\n'
+               "__root const int k = 1;\n")
+        new, auto, resid = t.rule_mot_cle_iar(src, "test.c")
+        self.assertEqual(new, '#include "kernel/core/compiler.h"\n#define P __packed\n'
+                              "__packed int *p;\n__lepton_used const int k = 1;\n")
+        self.assertEqual((len(auto), len(resid)), (1, 2))
+
+    def test_sous_garde_iar_ignore(self):
+        src = "#if defined(__ICCARM__)\n__packed struct s;\n#endif\n"
+        self.assertEqual(t.rule_mot_cle_iar(src, "t.c"), (src, [], []))
+
+
+class PragmaIar(unittest.TestCase):
+    def test_retires_et_residuels(self):
+        src = ("#pragma optimize=none\n#pragma diag_suppress=Pe177\nint a;\n"
+               "#pragma location=\"X\"\nint b;\n#pragma pack(1)\n")
+        new, auto, resid = t.rule_pragma_iar(src, "t.c")
+        self.assertEqual(new, "int a;\n#pragma location=\"X\"\nint b;\n#pragma pack(1)\n")
+        self.assertEqual((len(auto), len(resid)), (2, 1))
+
+    def test_location_operateur(self):
+        src = '#include "a.h"\n#define R _Pragma("location = \\"ZZZ_INCONNUE\\"")\n'
+        new, auto, resid = t.rule_pragma_iar(src, "t.c")
+        self.assertEqual(new, '#include "a.h"\n#include "kernel/core/compiler.h"\n'
+                              '#define R __lepton_section("ZZZ_INCONNUE")\n')
+        self.assertEqual(len(resid), 1)          # section absente des scripts .ld
+
+
+class Signalements(unittest.TestCase):
+    def test_header_et_symbole(self):
+        src = "#include <yvals.h>\n#include <stdio.h>\nx = __iar_dlmalloc(4); // __iar_x\n"
+        self.assertEqual(len(t.rule_header_iar(src, "t.c")[2]), 1)
+        self.assertEqual(len(t.rule_symbole_iar(src, "t.c")[2]), 1)
+        self.assertEqual(t.rule_symbole_iar(src, "t.c")[0], src)
+
+    def test_tiers(self):
+        self.assertTrue(t.est_tiers("sys/root/src/kernel/fs/fatfs/core/diskio.c"))
+        self.assertFalse(t.est_tiers("sys/root/src/kernel/fs/ufs/ufscore.c"))
 
 
 if __name__ == "__main__":

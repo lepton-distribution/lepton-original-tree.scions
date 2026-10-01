@@ -6,6 +6,9 @@
 #   ci/run.sh            tous les presets
 #   ci/run.sh --no-kal   sans le banc KAL (le temps de sa construction à l'étape 3)
 set -euo pipefail
+# les tests Python importent leurs voisins (net_qemu → smoke_lsh) : sans cela, le cache
+# __pycache__ serait écrit en fichier régulier dans le trunk (contrôle final en échec)
+export PYTHONDONTWRITEBYTECODE=1
 
 here="$(cd "$(dirname "$0")/.." && pwd)"
 # argument explicite : sinon lepton-env.sh lirait les options de ce script ($1)
