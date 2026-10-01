@@ -153,33 +153,14 @@ Declaration
 #define __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 32
 #define __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE 64
 
-#if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
-#else
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE
-#endif
-
-
 #define CPU_ARCH_32  (32)
 #define CPU_ARCH_16  (16)
 
-#if (__tauon_cpu_core__==__tauon_cpu_core_gnu_syntetic__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "gnu32"
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "cortexm0"
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "cortexm3"
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "cortexm4"
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
-   #define __KERNEL_CPU_NAME "cortexm7"
-#else
-   #define __KERNEL_CPU_ARCH CPU_ARCH_32
+//Reglages dependant de l'ISA (support 64 bits, largeur, profil, signaux temps reel, verrous de
+//fichiers) : kal/arch/<isa>/kal_arch_conf.h, par chemin d'inclusion (LEPTON_KAL_ARCH_DIR).
+#include "kal_arch_conf.h"
+//Nom du coeur (uname) : pose par cmake/cpu/<coeur>.cmake (hote : cmake/isa/host.cmake).
+#ifndef __KERNEL_CPU_NAME
    #define __KERNEL_CPU_NAME "unknow"
 #endif
 
@@ -205,12 +186,6 @@ Declaration
 #define __tauon_kernel_profile_classic__         0x0002
 #define __tauon_kernel_profile_full__            0x000F
 #define __tauon_kernel_profile_user_defined__    0x8000
-
-#if (__tauon_cpu_core__ == __tauon_cpu_core_gnu_syntetic__)
-   #define __tauon_kernel_profile__ __tauon_kernel_profile_full__
-#elif (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)
-   #define __tauon_kernel_profile__ __tauon_kernel_profile_minimal__
-#endif
 
 #if !defined(__tauon_kernel_profile__)
    #define __tauon_kernel_profile__ __tauon_kernel_profile_minimal__
@@ -382,16 +357,7 @@ Declaration
 
    #define __KERNEL_PTHREAD_SPECIFIC_DATA
    #define __KERNEL_LOAD_LIB
-#if (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM0__)
-   #define __KERNEL_POSIX_REALTIME_SIGNALS
-#endif
-
-   #if (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM3__)\
-       && (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM4__)\
-       && (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM7__)\
-       && (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM0__)
-      #define __KERNEL_USE_FILE_LOCK
-   #endif
+   //__KERNEL_POSIX_REALTIME_SIGNALS, __KERNEL_USE_FILE_LOCK : kal_arch_conf.h (ISA)
           
    //#define __KERNEL_IO_EVENT
    #define __KERNEL_IO_SEM
