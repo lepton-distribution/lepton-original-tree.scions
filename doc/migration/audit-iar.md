@@ -18,7 +18,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 |---|---:|---:|---:|---:|---:|
 | iar | 92 | 935 | 596 | 224 | 1847 |
 | autre | 136 | 65 | 652 | 414 | 1267 |
-| a_verifier | 1281 | 684 | 744 | 195 | 2904 |
+| a_verifier | 1270 | 684 | 755 | 195 | 2904 |
 | info | 43 | 77 | 51 | 14 | 185 |
 
 ## Catégorie × ensemble (sévérité `iar`)
@@ -43,7 +43,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | asm_inconnu | a_verifier | 0 | 0 | 3 | 0 |
 | asm_multi | a_verifier | 0 | 0 | 4 | 0 |
 | garde_compilateur | a_verifier | 9 | 1 | 27 | 0 |
-| garde_gcc | a_verifier | 56 | 52 | 101 | 51 |
+| garde_gcc | a_verifier | 45 | 52 | 112 | 51 |
 | intrinsic_cmsis | a_verifier | 880 | 243 | 470 | 32 |
 | mot_cle | a_verifier | 285 | 265 | 0 | 32 |
 | pragma | a_verifier | 47 | 121 | 99 | 80 |
@@ -294,13 +294,13 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 - `__get_*`/`__set_*`/`__DSB`… (`intrinsic_cmsis`) : fournis par CMSIS pour GCC, `a_verifier` ; `__enable_interrupt`, `__get_interrupt_state`, `__section_begin`… : IAR seul, `iar`.
 - Syntaxe asm déduite par comptage de directives : un fichier IAR très court ou multi-assembleur peut être mal classé (voir la colonne `motif`).
 - Asm en ligne (`asm("…")`, `__asm`) non audité : syntaxe proche entre IAR et GCC, contraintes d'opérandes à vérifier à la compilation de masse (étape 4).
-- Ventilation : 452 occurrences portent sur des fichiers absents de perimetre.csv (XML mkconf, projets IAR, asm `.s79`…) et sont ventilées par l'heuristique de chemin (colonne `ventilation`).
+- Ventilation : 463 occurrences portent sur des fichiers absents de perimetre.csv (XML mkconf, projets IAR, asm `.s79`…) et sont ventilées par l'heuristique de chemin (colonne `ventilation`).
 
 ## Fichiers analysés
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1107 | 1507 | 892 | 706 |
+| c | 1107 | 1507 | 898 | 706 |
 | asm | 1 | 22 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 16 | 9 | 2 | 0 |

@@ -51,11 +51,6 @@ sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,226,coeur,tiers,
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_sc300.h,263,coeur,tiers,hors arch,(__CORTEX_M != 0x04)
 sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/system_stm32f4xx.c,171,coeur,tiers,hors arch,(__FPU_PRESENT == 1) && (__FPU_USED == 1)
 sys/root/src/kernel/fs/rootfs/rootfscore.h,41,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
-sys/root/src/lib/libc/ctype/ctype.h,37,isa,lepton,hors arch,CPU_WIN32
-sys/root/src/lib/libc/stdio/stdio.h,106,isa,lepton,hors arch,defined(CPU_WIN32) || defined(CPU_GNU32)
-sys/root/src/lib/libc/stdio/stdio.h,108,isa,lepton,hors arch,defined(CPU_ARM9)
-sys/root/src/lib/libc/stdio/stdio.h,110,isa,lepton,hors arch,defined(CPU_ARM7) || defined(CPU_M16C62)
-sys/root/src/lib/libc/stdio/stdio.h,112,isa,lepton,hors arch,defined(CPU_CORTEXM)
 sys/root/src/sbin/initd.c,209,isa,lepton,hors arch,(defined(EVAL_BOARD) || defined(CPU_GNU32)) && !defined(USE_KERNEL_STATIC)
 sys/root/src/sbin/lsh.c,643,isa,lepton,hors arch,defined(CPU_GNU32)
 sys/root/src/sbin/xmodem.c,103,isa,lepton,hors arch,defined(CPU_M16C62)
