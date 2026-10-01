@@ -87,13 +87,22 @@ def replace_exact(lines, old, new, label):
 
 
 def apply(clone, rel, fn, dry, need_legacy=False):
+    """Calcule la transformation de rel ; rien n'est écrit avant que toute la règle ait réussi."""
     lines = read(clone, rel)
     new, n = fn(lines)
     if not n:
-        raise SystemExit("%s : rien à faire (règle déjà appliquée ?)" % rel)
-    if need_legacy:
-        legacy(clone, rel, dry)
-    write(clone, rel, new, dry)
+        raise SystemExit("%s : rien à faire (règle déjà appliquée ?) ; aucun fichier écrit" % rel)
+    PENDING.append((rel, new, need_legacy))
+
+
+PENDING = []
+
+
+def commit_all(clone, dry):
+    for rel, new, need_legacy in PENDING:
+        if need_legacy:
+            legacy(clone, rel, dry)
+        write(clone, rel, new, dry)
 
 
 # --- règle statique -------------------------------------------------------------------------
@@ -131,8 +140,8 @@ KERNELCONF_MKCONF_OLD = """   #if defined(USE_KERNEL_STATIC)
    #endif
 """
 KERNELCONF_MKCONF_NEW = """   //kernel_mkconf.h, par chemin d'inclusion : configuration fixe du noyau statique
-   //(cmake/kal/static.cmake, lepton comme bootloader sans ordonnanceur) ou générée par mklepton
-   //dans le répertoire de build (cmake/mklepton.cmake).
+   //(cmake/kal/static.cmake, lepton comme bootloader sans ordonnanceur) ou generee par mklepton
+   //dans le repertoire de build (cmake/mklepton.cmake).
    #include "kernel_mkconf.h"
 """
 
@@ -144,8 +153,10 @@ def rule_gelee(clone, dry):
                       "eCos Cortex-M, simulation Linux")
 
     def kernelconf(lines):
-        # fichier en Latin-1, lu en Latin-1 : les accents se comparent directement
-        return replace_exact(lines, KERNELCONF_MKCONF_OLD, KERNELCONF_MKCONF_NEW,
+        # fichier Latin-1 dont ce bloc (ajouté à l'étape 2) est en UTF-8 : comparaison sur les
+        # octets UTF-8 lus en Latin-1 ; le texte de remplacement est en ASCII
+        old = KERNELCONF_MKCONF_OLD.encode("utf-8").decode("latin-1")
+        return replace_exact(lines, old, KERNELCONF_MKCONF_NEW,
                              "kernel_mkconf.h de la simulation x86")
 
     def ethif(lines):
@@ -201,6 +212,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
     RULES[a.regle](a.clone, a.dry_run)
+    commit_all(a.clone, a.dry_run)
 
 
 if __name__ == "__main__":
