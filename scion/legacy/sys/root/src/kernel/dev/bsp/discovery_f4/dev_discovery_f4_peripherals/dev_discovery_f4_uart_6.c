@@ -51,10 +51,10 @@ Includes
 /*===========================================
 Global Declaration
 =============================================*/
-const char dev_stm32f469i_eval_uart_1_name[]="ttys1\0";
+const char dev_discovery_f4_uart_6_name[]="ttys6\0";
 
-int dev_stm32f469i_eval_uart_1_load(void);
-int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag);
+int dev_discovery_f4_uart_6_load(void);
+int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag);
 
 extern int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
 extern int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
@@ -66,11 +66,11 @@ extern int dev_stm32f4xx_uart_x_isset_read(desc_t desc);
 extern int dev_stm32f4xx_uart_x_isset_write(desc_t desc);
 extern int dev_stm32f4xx_uart_x_seek(desc_t desc,int offset,int origin);
 
-dev_map_t dev_stm32f469i_eval_uart_1_map={
-   dev_stm32f469i_eval_uart_1_name,
+dev_map_t dev_discovery_f4_uart_6_map={
+   dev_discovery_f4_uart_6_name,
    S_IFCHR,
-   dev_stm32f469i_eval_uart_1_load,
-   dev_stm32f469i_eval_uart_1_open,
+   dev_discovery_f4_uart_6_load,
+   dev_discovery_f4_uart_6_open,
    dev_stm32f4xx_uart_x_close,
    dev_stm32f4xx_uart_x_isset_read,
    dev_stm32f4xx_uart_x_isset_write,
@@ -80,54 +80,55 @@ dev_map_t dev_stm32f469i_eval_uart_1_map={
    dev_stm32f4xx_uart_x_ioctl
 };
 
-
-// uart 3 configuration. see in board device driver of current bsp
-extern board_stm32f4xx_uart_info_t stm32f469i_eval_uart_1; 
+// uart 6 configuration. see in board device driver of current bsp
+extern board_stm32f4xx_uart_info_t discovery_f4_uart_6;
 
 /*===========================================
 Implementation
 =============================================*/
 
-void USART1_IRQHandler(void)
+void USART6_IRQHandler(void)
 {
-  uart_irq_handler(&stm32f469i_eval_uart_1.uart_descriptor);
+  uart_irq_handler(&discovery_f4_uart_6.uart_descriptor);
 }
 
-void DMA2_Stream2_IRQHandler(void)
+void DMA2_Stream1_IRQHandler(void)
 {
-  uart_dma_irq_handler(&stm32f469i_eval_uart_1.uart_descriptor);
+  uart_dma_irq_handler(&discovery_f4_uart_6.uart_descriptor);
 }
 
 /*-------------------------------------------
-| Name:dev_stm32f469i_eval_uart_1_load
+| Name:dev_discovery_f4_uart_6_load
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-static int dev_stm32f469i_eval_uart_1_load(void) {
+static int dev_discovery_f4_uart_6_load(void) {
    
-   stm32f469i_eval_uart_1.uart_descriptor.board_uart_info=&stm32f469i_eval_uart_1;
-   stm32f469i_eval_uart_1.desc_r=-1;
-   stm32f469i_eval_uart_1.desc_w=-1;
-   stm32f469i_eval_uart_1.baudrate=115200; //ublox ble NINA-B1:115200 //ublox modem: 19200  / ublox gnss: 9600
+   #if (__tauon_compiler__==__compiler_keil_arm__)
+      memcpy(&discovery_f4_uart_6.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
+   #endif
+   discovery_f4_uart_6.uart_descriptor.board_uart_info=&discovery_f4_uart_6;
+   discovery_f4_uart_6.desc_r=-1;
+   discovery_f4_uart_6.desc_w=-1;
    
-   return dev_stm32f4xx_uart_x_load(&stm32f469i_eval_uart_1);
+   return dev_stm32f4xx_uart_x_load(&discovery_f4_uart_6);
 }
    
 /*-------------------------------------------
-| Name:dev_stm32f469i_eval_uart_1_open
+| Name:dev_discovery_f4_uart_6_open
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-static int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag) {
-   return dev_stm32f4xx_uart_x_open(desc, o_flag, &stm32f469i_eval_uart_1);
+static int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag) {
+   return dev_stm32f4xx_uart_x_open(desc, o_flag, &discovery_f4_uart_6);
 }
 
 /*============================================
-| End of Source  : dev_stm32f469i_eval_uart_1.c
+| End of Source  : dev_discovery_f4_uart_6.c
 ==============================================*/

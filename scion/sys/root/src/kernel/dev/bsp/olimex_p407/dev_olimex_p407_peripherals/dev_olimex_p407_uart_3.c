@@ -108,9 +108,6 @@ void DMA1_Stream1_IRQHandler(void)
 ---------------------------------------------*/
 static int dev_olimex_p407_uart_3_load(void) {
    
-   #if (__tauon_compiler__==__compiler_keil_arm__)
-      memcpy(&olimex_p407_uart_3.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
-   #endif
    olimex_p407_uart_3.uart_descriptor.board_uart_info=&olimex_p407_uart_3;
    olimex_p407_uart_3.desc_r=-1;
    olimex_p407_uart_3.desc_w=-1;

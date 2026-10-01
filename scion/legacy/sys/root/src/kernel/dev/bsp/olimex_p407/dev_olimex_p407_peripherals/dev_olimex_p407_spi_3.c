@@ -29,7 +29,7 @@ either the MPL or the [eCos GPL] License."
 Includes
 =============================================*/
 #include <stdint.h>
-
+//
 #include "kernel/core/kernelconf.h"
 #include "kernel/core/types.h"
 #include "kernel/core/interrupt.h"
@@ -44,90 +44,82 @@ Includes
 #include "kernel/dev/arch/cortexm/stm32f4xx/types.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/gpio.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/dma.h"
-#include "kernel/dev/arch/cortexm/stm32f4xx/uart.h"
+#include "kernel/dev/arch/cortexm/stm32f4xx/spi.h"
 
-#include "kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_uart_x.h"
+#include "kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_spi_x.h"
 
 /*===========================================
 Global Declaration
 =============================================*/
-const char dev_stm32f469i_eval_uart_1_name[]="ttys1\0";
+const char dev_olimex_p407_spi_3_name[]="spi0\0";
 
-int dev_stm32f469i_eval_uart_1_load(void);
-int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag);
+int dev_olimex_p407_spi_3_load(void);
+int dev_olimex_p407_spi_3_open(desc_t desc, int o_flag);
 
-extern int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
-extern int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
-extern int dev_stm32f4xx_uart_x_close(desc_t desc);
-extern int dev_stm32f4xx_uart_x_read(desc_t desc, char* buf,int cb);
-extern int dev_stm32f4xx_uart_x_write(desc_t desc, const char* buf,int cb);
-extern int dev_stm32f4xx_uart_x_ioctl(desc_t desc,int request,va_list ap);
-extern int dev_stm32f4xx_uart_x_isset_read(desc_t desc);
-extern int dev_stm32f4xx_uart_x_isset_write(desc_t desc);
-extern int dev_stm32f4xx_uart_x_seek(desc_t desc,int offset,int origin);
+extern int dev_stm32f4xx_spi_x_load(board_stm32f4xx_spi_info_t * uart_info);
+extern int dev_stm32f4xx_spi_x_open(desc_t desc, int o_flag, board_stm32f4xx_spi_info_t * uart_info);
+extern int dev_stm32f4xx_spi_x_close(desc_t desc);
+extern int dev_stm32f4xx_spi_x_read(desc_t desc, char* buf,int cb);
+extern int dev_stm32f4xx_spi_x_write(desc_t desc, const char* buf,int cb);
+extern int dev_stm32f4xx_spi_x_ioctl(desc_t desc,int request,va_list ap);
+extern int dev_stm32f4xx_spi_x_isset_read(desc_t desc);
+extern int dev_stm32f4xx_spi_x_isset_write(desc_t desc);
+extern int dev_stm32f4xx_spi_x_seek(desc_t desc,int offset,int origin);
 
-dev_map_t dev_stm32f469i_eval_uart_1_map={
-   dev_stm32f469i_eval_uart_1_name,
+dev_map_t dev_olimex_p407_spi_3_map={
+   dev_olimex_p407_spi_3_name,
    S_IFCHR,
-   dev_stm32f469i_eval_uart_1_load,
-   dev_stm32f469i_eval_uart_1_open,
-   dev_stm32f4xx_uart_x_close,
-   dev_stm32f4xx_uart_x_isset_read,
-   dev_stm32f4xx_uart_x_isset_write,
-   dev_stm32f4xx_uart_x_read,
-   dev_stm32f4xx_uart_x_write,
-   dev_stm32f4xx_uart_x_seek,
-   dev_stm32f4xx_uart_x_ioctl
+   dev_olimex_p407_spi_3_load,
+   dev_olimex_p407_spi_3_open,
+   dev_stm32f4xx_spi_x_close,
+   dev_stm32f4xx_spi_x_isset_read,
+   dev_stm32f4xx_spi_x_isset_write,
+   dev_stm32f4xx_spi_x_read,
+   dev_stm32f4xx_spi_x_write,
+   dev_stm32f4xx_spi_x_seek,
+   dev_stm32f4xx_spi_x_ioctl
 };
 
-
-// uart 3 configuration. see in board device driver of current bsp
-extern board_stm32f4xx_uart_info_t stm32f469i_eval_uart_1; 
+// spi 3 configuration. see in board device driver of current bsp
+extern board_stm32f4xx_spi_info_t olimex_p407_spi_3;
 
 /*===========================================
 Implementation
 =============================================*/
 
-void USART1_IRQHandler(void)
-{
-  uart_irq_handler(&stm32f469i_eval_uart_1.uart_descriptor);
-}
-
-void DMA2_Stream2_IRQHandler(void)
-{
-  uart_dma_irq_handler(&stm32f469i_eval_uart_1.uart_descriptor);
-}
 
 /*-------------------------------------------
-| Name:dev_stm32f469i_eval_uart_1_load
+| Name:dev_olimex_p407_spi_3_load
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-static int dev_stm32f469i_eval_uart_1_load(void) {
+static int dev_olimex_p407_spi_3_load(void) {
    
-   stm32f469i_eval_uart_1.uart_descriptor.board_uart_info=&stm32f469i_eval_uart_1;
-   stm32f469i_eval_uart_1.desc_r=-1;
-   stm32f469i_eval_uart_1.desc_w=-1;
-   stm32f469i_eval_uart_1.baudrate=115200; //ublox ble NINA-B1:115200 //ublox modem: 19200  / ublox gnss: 9600
+   #if (__tauon_compiler__==__compiler_keil_arm__)
+      memcpy(&olimex_p407_spi_3.spi_descriptor,&spi_descriptor,sizeof(_Spi_Descriptor));
+   #endif
+   olimex_p407_spi_3.spi_descriptor.board_spi_info=&olimex_p407_spi_3;
+   olimex_p407_spi_3.desc_r=-1;
+   olimex_p407_spi_3.desc_w=-1;
    
-   return dev_stm32f4xx_uart_x_load(&stm32f469i_eval_uart_1);
+   return dev_stm32f4xx_spi_x_load(&olimex_p407_spi_3);
 }
    
 /*-------------------------------------------
-| Name:dev_stm32f469i_eval_uart_1_open
+| Name:dev_olimex_p407_spi_3_open
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-static int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag) {
-   return dev_stm32f4xx_uart_x_open(desc, o_flag, &stm32f469i_eval_uart_1);
+static int dev_olimex_p407_spi_3_open(desc_t desc, int o_flag) {
+   return dev_stm32f4xx_spi_x_open(desc, o_flag, &olimex_p407_spi_3);
 }
 
 /*============================================
-| End of Source  : dev_stm32f469i_eval_uart_1.c
+| End of Source  : dev_olimex_p407_spi_3.c
 ==============================================*/

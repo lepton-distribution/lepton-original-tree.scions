@@ -98,9 +98,6 @@ Implementation
 ---------------------------------------------*/
 static int dev_olimex_p407_spi_3_load(void) {
    
-   #if (__tauon_compiler__==__compiler_keil_arm__)
-      memcpy(&olimex_p407_spi_3.spi_descriptor,&spi_descriptor,sizeof(_Spi_Descriptor));
-   #endif
    olimex_p407_spi_3.spi_descriptor.board_spi_info=&olimex_p407_spi_3;
    olimex_p407_spi_3.desc_r=-1;
    olimex_p407_spi_3.desc_w=-1;

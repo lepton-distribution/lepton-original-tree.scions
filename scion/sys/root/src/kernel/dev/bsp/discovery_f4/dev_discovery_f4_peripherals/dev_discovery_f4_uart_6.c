@@ -107,9 +107,6 @@ void DMA2_Stream1_IRQHandler(void)
 ---------------------------------------------*/
 static int dev_discovery_f4_uart_6_load(void) {
    
-   #if (__tauon_compiler__==__compiler_keil_arm__)
-      memcpy(&discovery_f4_uart_6.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
-   #endif
    discovery_f4_uart_6.uart_descriptor.board_uart_info=&discovery_f4_uart_6;
    discovery_f4_uart_6.desc_r=-1;
    discovery_f4_uart_6.desc_w=-1;
