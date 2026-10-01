@@ -198,15 +198,10 @@ Declaration
 
 //
 //link option: SRAM optimization
-#if (__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32f4__)
-   #if (__tauon_compiler__==__compiler_iar_arm__)
-      //use internal CCM Core Coupled Memory. warning! cannot be used with DMA.
-      #define CORTEXM4_CCM_RAM _Pragma("section=\"CCM_RAM_SECTION\"")\
-      _Pragma("location=\"CCM_RAM_SECTION\"")
-
-      #define __KERNEL_SRAM_LOCATION CORTEXM4_CCM_RAM
-   #endif
-#endif
+//migration (étape 4) : la branche IAR plaçait ces données en CCM (STM32F4, section
+//CCM_RAM_SECTION, sans DMA). Sous GCC elle n'a jamais été active : vide, comme avant. Placement
+//CCM éventuel à l'étape 5 : __lepton_section(".ccmram") défini par la carte et section dans
+//ld/mem_<carte>.ld (original : legacy/sys/root/src/kernel/core/kernelconf.h).
 
 #ifndef __KERNEL_SRAM_LOCATION
    #define __KERNEL_SRAM_LOCATION
