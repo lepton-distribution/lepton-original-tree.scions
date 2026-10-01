@@ -223,6 +223,8 @@ def main():
     ap.add_argument("--csv", help="résultat par fichier (CSV)")
     ap.add_argument("--audit-csv", help="audit-iar.csv : colonne IAR-ismes par module")
     ap.add_argument("--quiet", "-q", action="store_true")
+    ap.add_argument("--db-out", help="écrit les commandes au format compile_commands.json (pour "
+                                     "transform_iar.py --cpp-snapshot/--cpp-compare) sans compiler")
     a = ap.parse_args()
 
     trunk = env("LEPTON_TRUNK", os.path.join(CLONE, "../../../../trunk"))
@@ -237,6 +239,11 @@ def main():
     for rel in files:
         cmd, cwd, origine = commande(rel, dbs, trunk, objdir)
         jobs.append((rel, cmd, cwd, origine))
+    if a.db_out:
+        json.dump([{"directory": cwd, "file": cmd[-1], "command": shlex.join(cmd)}
+                   for rel, cmd, cwd, origine in jobs], open(a.db_out, "w"), indent=1)
+        print("mass_compile : %d commande(s) écrite(s) dans %s" % (len(jobs), a.db_out))
+        return 0
     with concurrent.futures.ThreadPoolExecutor(a.jobs) as ex:
         res = sorted(ex.map(compiler, jobs))
 

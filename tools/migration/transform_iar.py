@@ -881,8 +881,9 @@ def cpp_outputs(compile_db):
         # __DATE__/__TIME__ figés : seules les différences de code comptent
         cmd += (" -Wno-builtin-macro-redefined -D'__DATE__=\"Jan  1 1970\"'"
                 " -D'__TIME__=\"00:00:00\"'")
+        # sources en Latin-1 (arbre hérité) : décodage sans perte, identique avant/après
         r = subprocess.run(cmd + " -E -P -o -", shell=True, cwd=ent["directory"],
-                           capture_output=True, text=True)
+                           capture_output=True, encoding="latin-1")
         res[ent["file"]] = r.stdout if r.returncode == 0 else "ERREUR : " + r.stderr
     return res
 
