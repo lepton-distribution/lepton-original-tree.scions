@@ -62,7 +62,7 @@ STM32F4 = {
                "-DUSE_STDPERIPH_DRIVER", "-DSTM32F429xx",
                "-I@/sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc",
-               "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/legacy",
+               "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/Legacy",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx"],
 }

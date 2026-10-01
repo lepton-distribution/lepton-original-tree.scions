@@ -122,7 +122,7 @@ INCLUDE_DIRS = [  # relatifs à sys/root/src (projets IAR tauon_8.40 / dev_stm32
     "kernel/fs/yaffs/core/direct",
     "kernel/net/uip2.5",
     "kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc",
-    "kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/legacy",
+    "kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/Legacy",
 ]
 
 DEFINES = [
