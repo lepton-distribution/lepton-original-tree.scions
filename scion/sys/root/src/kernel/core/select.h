@@ -33,10 +33,8 @@ Includes
 /*===========================================
 Declaration
 =============================================*/
-#if defined(__GNUC__)
 //typedef struct timeval timeval;
    #include "kernel/core/time.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

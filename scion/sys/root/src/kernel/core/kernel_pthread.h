@@ -50,9 +50,7 @@ Includes
 #include "kernel/core/kernel_sigqueue.h"
 #include "kernel/core/signal.h"
 
-#if defined(__GNUC__)
    #include "kernel/core/kernel_sem.h"
-#endif
 /*===========================================
 Declaration
 =============================================*/
@@ -272,13 +270,11 @@ void* kernel_pthread_alloca(kernel_pthread_t *p, size_t size);
 #endif
 
 //size of kernel stack
-#if defined(__GNUC__)
    #if defined(CPU_CORTEXM)
       #define KERNEL_STACK  2048
    #else
       #define KERNEL_STACK 8192 //4096
    #endif
-#endif
 
 
 

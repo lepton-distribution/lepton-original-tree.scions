@@ -70,18 +70,10 @@ Includes
 
 #if defined(WIN32)
    #define __tauon_compiler__ __compiler_win32__
-#elif defined(__GNUC__)
+#else
    #define __tauon_compiler__ __compiler_gnuc__
-#elif defined (__ARMCC_VERSION)
-   #define __tauon_compiler__ __compiler_keil_arm__
 #endif
 
-#if (__tauon_compiler__==__compiler_win32__)
-   //for win32 simulation
-   #include "kernel/core/arch/win32/kernel_mkconf.h"
-#elif (__tauon_compiler__ == __compiler_keil_arm__)
-   #include "kernel/core/arch/arm/kernel_mkconf.h"
-#elif (__tauon_compiler__==__compiler_gnuc__)
    #if defined(USE_KERNEL_STATIC)
       //for lepton as bootloader (no scheduler, static)
       //configuration fixe du noyau statique, trouvÃ©e par chemin d'inclusion (cmake/kal/static.cmake)
@@ -94,7 +86,6 @@ Includes
          #include "kernel/core/arch/synthetic/x86/kernel_mkconf.h"
       #endif
    #endif
-#endif
 
 #if defined(WIN32)
    #define __tauon_cpu_device__ __tauon_cpu_device_win32_simulation__
@@ -158,46 +149,24 @@ Declaration
 #define __tauon_posix__
 
 //
-#if (__tauon_compiler__!=__compiler_gnuc__)
-   #define __attribute__(__attr__)
-#endif
 
 //what micro kernel
-#if (__tauon_compiler__==__compiler_gnuc__)
 //#define __KERNEL_UCORE_ECOS
-#elif (__tauon_compiler__==__compiler_win32__)
-   #define __KERNEL_UCORE_EMBOS
-#elif (__tauon_compiler__==__compiler_keil_arm__)
-   #define __KERNEL_UCORE_EMBOS
-#endif
 
 // avoid stdint redefinition conflict
 //in C99 stdint included embedded type xxx_t
-#if (__tauon_compiler__==__compiler_win32__)
-   #define __KERNEL_COMPILER_STDINT_INCLUDED__
-#elif (__tauon_compiler__==__compiler_gnuc__)
    //GCC : toujours C99 ou plus ; les types de <stdint.h> priment (etypes.h dÃ©finissait int64_t en long)
    #define __KERNEL_COMPILER_STDINT_INCLUDED__
-#endif
 
 #define __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 32
 #define __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE 64
 
-#if (__tauon_compiler__==__compiler_gnuc__)
 #if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
 #else
    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE
 #endif
-#elif (__tauon_compiler__==__compiler_win32__)
-    #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_32_BITS_TYPE 
-#elif (__tauon_compiler__==__compiler_keil_arm__)
-   #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE   
-#endif
 
-#if (__tauon_compiler__==__compiler_win32__)
-   #define USE_COMPILER_TRACE_DEBUG
-#endif
 
 #define CPU_ARCH_32  (32)
 #define CPU_ARCH_16  (16)
@@ -223,15 +192,9 @@ Declaration
 #endif
 
 //specific compiler directive definition
-#if (__tauon_compiler__==__compiler_gnuc__)
    //compacté comme sous IAR (__packed) ; était vide sous GCC (piège noté à l'étape 1)
    #include "kernel/core/compiler.h"
    #define __compiler_directive__packed __lepton_packed
-#elif (__tauon_compiler__==__compiler_win32__)
-   #define __compiler_directive__packed
-#elif (__tauon_compiler__==__compiler_keil_arm__)
-   #define __compiler_directive__packed __packed
-#endif
 
 //
 //link option: SRAM optimization
@@ -349,11 +312,7 @@ Declaration
 #endif
 #ifndef __KERNEL_HEAP_SIZE
    #pragma message("warning!!! __KERNEL_HEAP_SIZE not defined")
-   #if (__tauon_compiler__==__compiler_keil_arm__) 
-      #define __KERNEL_HEAP_SIZE  0x8000  //32KBytes
-   #else
       #define __KERNEL_HEAP_SIZE  8000 //12000//10000//8000//5000//2000
-   #endif
 #endif
 
 #ifndef __KERNEL_PTHREAD_MAX
@@ -437,7 +396,6 @@ Declaration
    #define __KERNEL_IO_SEM
 #endif
 
-#if defined(__GNUC__)
    #define __KERNEL_PTHREAD_SPECIFIC_DATA
    #define __KERNEL_LOAD_LIB
 #if (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM0__)
@@ -455,7 +413,6 @@ Declaration
    #define __KERNEL_IO_SEM
 //test for assert
    #define __KERNEL_USE_ASSERT   1
-#endif
 
 //enable load lib in secondary pthread (used for stdio)
 #if defined(__KERNEL_LOAD_LIB)
@@ -551,9 +508,6 @@ Declaration
 #endif
 
 //file system ufs
-#if !defined(__GNUC__)
-   #define __KERNEL_SUPPORT_UFS_DRIVER_1_3 13 //only 16 bits file size support
-#endif
 #define __KERNEL_SUPPORT_UFS_DRIVER_1_4 14  //16/32 bits file size support
 #define __KERNEL_SUPPORT_UFS_DRIVER_1_5 15  //full 32 bits file size support
 

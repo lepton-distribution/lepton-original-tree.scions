@@ -29,7 +29,7 @@ Includes
 #include <stdint.h>
 #include <stdarg.h>
 
-#include "kernel/core//types.h"
+#include "kernel/core/types.h"
 #include "kernel/core/interrupt.h"
 #include "kernel/core/syscall.h"
 #include "kernel/core/kernel.h"
@@ -37,7 +37,6 @@ Includes
 #include "kernel/core/dirent.h"
 #include "kernel/fs/vfs/vfstypes.h"
 #include "kernel/fs/vfs/vfskernel.h"
-#include "kernel/core//stat.h"
 
 
 /*===========================================
@@ -45,127 +44,163 @@ Global Declaration
 =============================================*/
 
 
-
-
 /*===========================================
 Implementation
 =============================================*/
 
 /*-------------------------------------------
-| Name:mknod
+| Name:opendir
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int mknod(const char *path, mode_t mode, dev_t dev){
-   mknod_t mknod_dt;
+#if defined(__GNUC__)
+__attribute__ ((visibility("hidden")))
+DIR* opendir(char * dirname) {
+#else
+DIR* opendir(char * dirname){
+#endif
+   opendir_t opendir_dt;
 
-   mknod_dt.path=path;
-   mknod_dt.mode=mode;
-   if(mode&S_IFIFO)
-      mknod_dt.ext.pipe_desc=-1;
-   else
-      mknod_dt.ext.dev=dev;
-   __mk_syscall(_SYSCALL_MKNOD,mknod_dt);
+   opendir_dt.dirname= dirname;
 
-   return mknod_dt.ret;
+   __mk_syscall(_SYSCALL_OPENDIR,opendir_dt)
+
+   return opendir_dt.dir;
 }
 
 /*-------------------------------------------
-| Name:mkfifo
+| Name:closedir
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int mkfifo(const char *path, mode_t mode){
-   mknod_t mknod_dt;
-
-   mknod_dt.path=path;
-   mknod_dt.mode=mode|S_IFIFO;
-   mknod_dt.ext.pipe_desc=-1;
-   __mk_syscall(_SYSCALL_MKNOD,mknod_dt);
-
-   return mknod_dt.ret;
-}
-
-/*-------------------------------------------
-| Name:mkdir
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int mkdir(const char * path, mode_t mode){
-   mkdir_t mkdir_dt;
-   mkdir_dt.path  = path;
-   mkdir_dt.mode  = mode;
-   __mk_syscall(_SYSCALL_MKDIR,mkdir_dt);
-   return mkdir_dt.ret;
-}
-
-/*-------------------------------------------
-| Name:stat
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
+#if defined(__GNUC__)
 int __attribute__ ((visibility("hidden")))
-stat(const char * ref, struct stat * stat){
-   stat_t stat_dt;
-   stat_dt.ref = ref;
-   stat_dt.stat = stat;
-   __mk_syscall(_SYSCALL_STAT,stat_dt);
-   return stat_dt.ret;
+closedir(DIR* dir){
+#else
+int closedir(DIR* dir){
+#endif
+   closedir_t closedir_dt;
+
+   closedir_dt.dir = dir;
+
+   __mk_syscall(_SYSCALL_CLOSEDIR,closedir_dt)
+
+   return closedir_dt.ret;
 }
 
 /*-------------------------------------------
-| Name:fstat
+| Name:readdir
+| Description:
+| Parameters:
+| Return Type:
+| Comments: now conform with posix 1003.1
+| See:
+---------------------------------------------*/
+#if defined(__GNUC__)
+__attribute__ ((visibility("hidden")))
+struct dirent * readdir(DIR *dir){
+#else
+struct dirent *readdir(DIR *dir){
+#endif
+
+   readdir_t readdir_dt;
+
+   readdir_dt.dir = dir;
+   readdir_dt.dirent = (struct dirent*)0;
+
+   __mk_syscall(_SYSCALL_READDIR,readdir_dt)
+
+   return readdir_dt.dirent;
+}
+
+/*-------------------------------------------
+| Name:readdir2
+| Description:
+| Parameters:
+| Return Type:
+| Comments: to preserve compatibility wtih previous version of lepton
+| See:
+---------------------------------------------*/
+struct dirent *readdir2(DIR *dir,struct dirent* dirent){
+
+   readdir_t readdir_dt;
+
+   readdir_dt.dir = dir;
+   readdir_dt.dirent = dirent;
+
+   __mk_syscall(_SYSCALL_READDIR,readdir_dt)
+
+   return readdir_dt.dirent;
+}
+
+
+/*-------------------------------------------
+| Name:readdir_r
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int fstat(int fd, struct stat * stat){
-   fstat_t fstat_dt;
-   fstat_dt.fd = fd;
-   fstat_dt.stat = stat;
-   __mk_syscall(_SYSCALL_FSTAT,fstat_dt);
-   return fstat_dt.ret;
-}
-
+//int readdir_r(DIR *, struct dirent *, struct dirent **);//not yet implemented
 
 /*-------------------------------------------
-| Name:access
+| Name:rewinddir
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int access(const char * name, int type) {
-   return 0;
+void rewinddir(DIR* dir){
+   rewinddir_t rewinddir_dt;
+
+   rewinddir_dt.dir = dir;
+
+   __mk_syscall(_SYSCALL_REWINDDIR,rewinddir_dt)
 }
 
 /*-------------------------------------------
-| Name:chmod
+| Name:seekdir
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int chmod(const char *path, mode_t mode) {
-   return 0;
+void seekdir(DIR * dir, int loc){
+   seekdir_t seekdir_dt;
+
+   seekdir_dt.dir = dir;
+   seekdir_dt.loc = loc;
+
+   __mk_syscall(_SYSCALL_SEEKDIR,seekdir_dt)
+}
+
+/*-------------------------------------------
+| Name:telldir
+| Description:
+| Parameters:
+| Return Type:
+| Comments:
+| See:
+---------------------------------------------*/
+int telldir(DIR * dir){
+   telldir_t telldir_dt;
+
+   telldir_dt.dir = dir;
+
+   __mk_syscall(_SYSCALL_TELLDIR,telldir_dt)
+
+   return telldir_dt.loc;
 }
 
 /*===========================================
-End of Source stat.c
+End of Sourcedirent.c
 =============================================*/

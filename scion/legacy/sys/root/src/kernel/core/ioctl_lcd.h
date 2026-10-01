@@ -59,6 +59,9 @@ either the MPL or the [eCos GPL] License."
 #define FBIOPUTCMAP        0x0010
 #define FBIOGETCMAP        0x0011
 
+#if (__tauon_compiler__!=__compiler_gnuc__)
+   #pragma pack(push, 1)
+#endif
 
 typedef struct fbcmap {
    unsigned char red;              /* red color map elements */
@@ -67,6 +70,9 @@ typedef struct fbcmap {
    unsigned char pe_flags;
 }fbcmap_t;
 
+#if (__tauon_compiler__!=__compiler_gnuc__)
+   #pragma pack(pop)
+#endif
 //end 1 byte struct alignment
 
 #endif

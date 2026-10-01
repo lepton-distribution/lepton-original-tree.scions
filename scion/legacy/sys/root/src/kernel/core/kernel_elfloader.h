@@ -38,6 +38,9 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Declaration
 ==============================================*/
+#if !defined(__GNUC__)
+   #pragma pack(push, 1)
+#endif
 
 typedef int int32;
 typedef unsigned int uint32;
@@ -664,6 +667,9 @@ typedef struct {
       follow those. */
 } Elf_Hash;
 
+#if !defined(__GNUC__)
+   #pragma pack (pop)
+#endif
 
 int _kernel_warmup_elfloader(void);
 

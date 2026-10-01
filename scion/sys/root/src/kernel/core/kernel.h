@@ -462,7 +462,7 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
    __wait_ret_int(); \
 }
 
-#elif defined(__GNUC__) && defined(CPU_GNU32)
+#elif defined(CPU_GNU32)
 //
    #define __mk_syscall(__syscall_nb__,__pdata__){ \
    kernel_pthread_t* __pthread_ptr__; \
@@ -503,7 +503,7 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
    __set_irq(); \
 }
 
-#elif defined(__GNUC__) && defined(CPU_CORTEXM)
+#elif defined(CPU_CORTEXM)
 //
    #define __mk_syscall(__syscall_nb__,__pdata__){ \
    kernel_pthread_t* __pthread_ptr__; \
@@ -560,7 +560,6 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
 
 
 
-#if defined(__GNUC__)
 //gestion des syscall sous synthetic
 void _init_syscall(void);
 void _kernel_routine(void* arg);
@@ -575,7 +574,6 @@ void do_swi(void);
 void _kernel_syscall_handler(void);
    #endif
 
-#endif
 
 //trace in kernel for system call
 #define KERNEL_SYSCALL_STATUS_START       0x01

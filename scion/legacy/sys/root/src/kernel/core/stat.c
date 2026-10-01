@@ -116,8 +116,12 @@ int mkdir(const char * path, mode_t mode){
 | Comments:
 | See:
 ---------------------------------------------*/
+#if defined(__GNUC__)
 int __attribute__ ((visibility("hidden")))
 stat(const char * ref, struct stat * stat){
+#else
+int stat(const char * ref, struct stat * stat){
+#endif
    stat_t stat_dt;
    stat_dt.ref = ref;
    stat_dt.stat = stat;
