@@ -76,6 +76,9 @@ int ps_main(int argc,char* argv[]){
    int cb;
    int i;
    unsigned int opt=0;
+#if defined(__KERNEL_UCORE_ECOS)
+   int pid, ppid, pgid;
+#endif
    //get option
    for(i=1; i<argc; i++) {
       if(argv[i][0]=='-') {
@@ -117,12 +120,24 @@ int ps_main(int argc,char* argv[]){
       char cbuf[26];
       if(!cb) continue;
 
+#if defined(__KERNEL_UCORE_ECOS)
+      pid = (int)process_info.pid;
+      ppid = (int)process_info.ppid;
+      pgid = (int)process_info.pgid;
+      printf("%4d %4d %4d  %.8s   %.32s\r\n",
+             pid,
+             ppid,
+             pgid,
+             ctime_r(&process_info.start_time,cbuf)+ 11,
+             process_info.argv[0]);
+#else
       printf("%c %4d %4d %4d  %.8s   %.32s\r\n", ((process_info.pthread_ptr->stat & PTHREAD_STATUS_ZOMBI)? 'Z' : ' '),
              process_info.pid,
              process_info.ppid,
              process_info.pgid,
              ctime_r(&process_info.start_time,cbuf)+ 11,
              process_info.argv[0]);
+#endif
    }
 
 #ifdef KERNEL_PROFILER
