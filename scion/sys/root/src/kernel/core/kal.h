@@ -49,21 +49,11 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Declaration
 ==============================================*/
-//for eCos
-#if defined(CPU_GNU32) && defined(USE_KERNEL_STATIC)
-   #include "kernel/core/kal/arch/host/kal_arch.h"
-   #include "kernel/core/kal/backend/static/kal_backend.h"
-#elif defined (__KERNEL_UCORE_EMBOS)\
- &&((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\
- || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
-   #include "kernel/core/kal/arch/armv7m/kal_arch.h"
-   #include "kernel/core/kal/backend/embos/kal_backend.h"
-#elif ((__tauon_compiler__ == __compiler_keil_arm__) || (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
-   #include "kernel/core/kal/backend/freertos/kal_backend.h"
-#endif
+//Dispatcher du KAL (ETAPE-4 tâche 3, kal_split.py) : l'ISA et le micro-noyau sont choisis
+//par les chemins d'inclusion, posés par cmake/isa/<isa>.cmake (kal/arch/<famille>/) et par
+//cmake/kal/<backend>.cmake (kal/backend/<backend>/). Contrat : kal/contrat.h.
+#include "kal_arch.h"
+#include "kal_backend.h"
 
 
 #define __bckup_thread_start_context(__context__,__pthread_ptr__) __inline_bckup_thread_start_context(__context__,__pthread_ptr__)
