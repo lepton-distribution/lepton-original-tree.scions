@@ -1,7 +1,7 @@
 # Handoff étape 4, module `kernel/dev` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-kernel-dev` (non fusionnée, en attente de
-validation). Procédure générale : `handoff/etape-4-outillage.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-kernel-dev`, validé par l'utilisateur
+le 2026-10-01 et fusionné. Procédure générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
 - `mass_compile.sh --only sys/root/src/kernel/dev` : 65 → **154/154** ; périmètre 246 → **337/348**
