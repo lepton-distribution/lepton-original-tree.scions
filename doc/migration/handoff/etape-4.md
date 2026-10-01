@@ -9,8 +9,10 @@
 - Socle QEMU vert : `ci/run.sh` vert le 2026-10-01 (outils, hôte 5/5, smoke, net, KAL hard 15/15
   et soft 11/11).
 - Outils de débogage : `openocd` 0.12.0, `gdb-multiarch` 16.3, règles udev `60-openocd.rules`
-  installés. **Carte non raccordée** au 2026-10-01 (aucun ST-Link par `lsusb`, pas de
-  `/dev/ttyACM*`) : à brancher avant la session 5.
+  installés. Carte raccordée le 2026-10-01 : **NUCLEO-F429ZI** (ST-LINK/V2.1 `0483:374b`,
+  `/dev/ttyACM0`), remplaçante de la F439ZI (décision 2026-10-01 au statut : nommage
+  `nucleo-f439zi` conservé, puce `STM32F429xx` par la configuration de la carte, ni CRYP ni
+  HASH, paliers à rejouer sur une F439ZI). Aucun accès à la carte fait (ni sonde ni flash).
 - BSP embOS le plus proche : `ST/STM32F429_STM32F429ZI_Nucleo` (étape 1 ; vecteur CRYP et RAM à
   adapter), décision ouverte au statut.
 
