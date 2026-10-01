@@ -466,3 +466,20 @@ Non déclarés, non inclus, sans règle : bibliothèques tierces partiellement u
 - `src/kernel/dev/arch/all/debug` : 1 fichiers, 32 lignes
 - `src/kernel/core/core-segger` : 1 fichiers, 12 lignes
 
+<!-- perimetre_complement.py : début -->
+
+## Complément de l'étape 4 (bilan)
+
+Généré par `tools/migration/perimetre_complement.py` (idempotent ; rejouer après `build_closure.py`). Ajoute les sources créées par la migration (étapes 2 à 4 : KAL décomposé, démarrage GCC, pilotes et BSP QEMU, noyau statique hôte, bancs `tests/`, copies `legacy/`), classées par règle de chemin (`REGLES` du script, colonne `justification`) ; retire les lignes des fichiers disparus ; applique les renommages (`inc/legacy` → `inc/Legacy`). Les tableaux ci-dessus restent ceux de l'étape 1.
+
+Lignes retirées : `src/kernel/core/kal.c`.
+
+| Ensemble | Fichiers ajoutés | Lignes ajoutées | Fichiers (total) | Lignes (total) |
+|---|---|---|---|---|
+| actif | 49 | 2692 | 1123 | 317465 |
+| différé | 2 | 140 | 1513 | 409221 |
+| gelé | 55 | 19636 | 820 | 177697 |
+| hors-projet | 0 | 0 | 761 | 192567 |
+| **total** | 106 | 22468 | 4217 | 1096950 |
+
+<!-- perimetre_complement.py : fin -->
