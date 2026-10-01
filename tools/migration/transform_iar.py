@@ -13,15 +13,22 @@ Règles :
                     logique à trois valeurs (GCC seul : prédicats IAR faux, autres atomes
                     inconnus) ; branche fausse retirée, branche toujours vraie déballée, condition
                     mixte simplifiée. Résiduels : condition non décidable (ex. « || » avec un
-                    atome inconnu restant IAR), IAR M16C (règle garde-iar-gelee), branche retirée
+                    atome inconnu restant IAR), IAR M16C (règle garde-cible-gelee), branche retirée
                     contenant un _Pragma/#pragma (placement mémoire à reporter, étape 5) — sauf
                     « #pragma data_alignment » doublé par l'alignement GCC de la déclaration
                     suivante (__ALIGN_BEGIN/__ALIGN_END, aligned) : branche retirée.
-  garde-iar-gelee   branches réservées à IAR M16C (__compiler_iar_m16c__, __IAR_SYSTEMS_ICC),
-                    code gelé (décision D2a du 2026-10-01) : même évaluation, prédicats M16C
-                    faux ; le fichier d'origine est d'abord copié à l'identique sous
-                    --legacy-dir (défaut scion/legacy/<chemin>, classé gelé, supprimé à
-                    l'étape 6) ; jamais d'écrasement d'une copie existante.
+  garde-cible-gelee branches des cibles gelées (décisions D2a et D3a du 2026-10-01) : IAR M16C
+                    (__compiler_iar_m16c__, __IAR_SYSTEMS_ICC), Win32, ARM7/ARM9, eCos
+                    (CPU_WIN32, CPU_ARM7, CPU_ARM9, CPU_M16C62, __KERNEL_UCORE_ECOS, valeurs
+                    de __tauon_cpu_core__ et __tauon_cpu_device__ correspondantes) : même
+                    évaluation, prédicats faux.
+  garde-compilateur gardes de compilateur sous GCC seul (D3a) : __GNUC__ et __compiler_gnuc__
+                    vrais ; __CC_ARM, _MSC_VER, __compiler_keil_arm__, __compiler_win32__ faux.
+                    Les branches GCC héritées de la simulation Linux sont déballées sans
+                    correction (valeurs à revoir : handoff de l'étape 3).
+  Ces deux règles copient d'abord le fichier d'origine à l'identique sous --legacy-dir (défaut
+  scion/legacy/<chemin>, classé gelé, supprimé à l'étape 6) dès qu'elles retirent du code ;
+  jamais d'écrasement d'une copie existante.
   header-iar        en-têtes de la bibliothèque ou des périphériques IAR (intrinsics.h, yvals.h,
                     ysizet.h, DLib_*.h, io<puce>.h) : signalés, toujours résiduels.
   intrinsics-cmsis  intrinsics IAR → CMSIS-Core (Cortex-M) ; résiduels : symboles de l'éditeur de
@@ -72,23 +79,55 @@ TIERS = ("sys/root/src/kernel/core/ucore/", "sys/root/src/kernel/net/lwip/api/",
 # ---------------------------------------------------------------------------------------------
 # expressions de préprocesseur : logique à trois valeurs
 # ---------------------------------------------------------------------------------------------
+T, F, U = "T", "F", "U"
 IAR_ARM_MACROS = ("__ICCARM__", "__IAR_SYSTEMS_ICC__")
 IAR_OTHER = re.compile(r"__compiler_iar_m16c__|\b__IAR_SYSTEMS_ICC\b(?!__)")
 
 
 class Preds:
-    """Prédicats décidés faux sous GCC : macros du compilateur et valeurs de __tauon_compiler__."""
-    def __init__(self, nom, macros, compilers):
-        self.nom, self.macros, self.compilers = nom, macros, compilers
+    """Prédicats décidés sous GCC seul.
+    macros : macros non définies (defined → faux, valeur 0) ; vrais : macros définies (defined →
+    vrai) ; faux_val / vrai_val : {variable: prédicat(valeur)} pour « variable ==/!= valeur »
+    (ex. __tauon_compiler__ == __compiler_iar_arm__) ; motifs : texte qui signale le contexte."""
+    def __init__(self, nom, macros=(), vrais=(), faux_val=None, vrai_val=None, motifs=()):
+        self.nom, self.macros, self.vrais = nom, tuple(macros), tuple(vrais)
+        self.faux_val, self.vrai_val = faux_val or {}, vrai_val or {}
+        self.motifs = re.compile("|".join([r"\b%s\b" % re.escape(x)
+                                           for x in self.macros + self.vrais] + list(motifs)))
 
     def mentionne(self, expr):
-        return any(re.search(r"\b%s\b" % re.escape(x), expr) for x in self.macros + self.compilers)
+        return bool(self.motifs.search(expr))
+
+    def decide_rel(self, var, val):
+        """Valeur de « var == val » : T, F ou None (non décidé)."""
+        if var in self.vrai_val and self.vrai_val[var](val):
+            return T
+        if var in self.faux_val and self.faux_val[var](val):
+            return F
+        return None
 
 
-ARM = Preds("IAR ARM", IAR_ARM_MACROS, ("__compiler_iar_arm__",))
-GELE = Preds("IAR M16C", ("__IAR_SYSTEMS_ICC",), ("__compiler_iar_m16c__",))
-T, F, U = "T", "F", "U"
-
+ARM = Preds("IAR ARM", IAR_ARM_MACROS, faux_val={"__tauon_compiler__": lambda v: v == "__compiler_iar_arm__"},
+            motifs=[r"\b__compiler_iar_arm__\b"])
+# cibles gelées (code-gele.md ; décisions D2a et D3a) : IAR M16C, Win32, ARM7/ARM9, eCos
+CIBLES_GELEES_COEURS = ("__tauon_cpu_core_arm_arm7tdmi__", "__tauon_cpu_core_arm_arm926ejs__",
+                        "__tauon_cpu_core_win32_simulation__", "__tauon_cpu_core_m16c__")
+GELE = Preds("cible gelée",
+             ("__IAR_SYSTEMS_ICC", "CPU_WIN32", "CPU_ARM7", "CPU_ARM9", "CPU_M16C62",
+              "__KERNEL_UCORE_ECOS"),
+             faux_val={"__tauon_compiler__": lambda v: v == "__compiler_iar_m16c__",
+                       "__tauon_cpu_core__": lambda v: v in CIBLES_GELEES_COEURS,
+                       "__tauon_cpu_device__": lambda v: v.startswith(
+                           ("__tauon_cpu_device_arm7_", "__tauon_cpu_device_arm9_",
+                            "__tauon_cpu_device_win32_simulation__"))},
+             motifs=[r"\b__compiler_iar_m16c__\b", r"\b__tauon_cpu_device_arm[79]_\w+",
+                     r"\b__tauon_cpu_device_win32_simulation__\b"]
+             + [r"\b%s\b" % c for c in CIBLES_GELEES_COEURS])
+# compilateurs : GCC seul (compiler.h) ; Keil et Visual C (simulation Win32) jamais
+GCC = Preds("compilateur", ("__CC_ARM", "_MSC_VER"), ("__GNUC__",),
+            faux_val={"__tauon_compiler__": lambda v: v in ("__compiler_keil_arm__", "__compiler_win32__")},
+            vrai_val={"__tauon_compiler__": lambda v: v == "__compiler_gnuc__"},
+            motifs=[r"\b__compiler_(keil_arm|win32|gnuc)__\b"])
 TOKEN = re.compile(r"\s*(defined|[A-Za-z_]\w*|0[xX][0-9a-fA-F]+[uUlL]*|\d+[uUlL]*|&&|\|\||==|!=|"
                    r"<=|>=|<<|>>|[()!<>+\-*/%&|^~?:,])")
 
@@ -221,13 +260,11 @@ def evaluate(n, ctx=ARM):
     if op == "paren":
         v, s, t = evaluate(n.args[0], ctx)
         return v, (s if s.op in ("atom", "defined", "paren", "not") else Node("paren", s)), t
-    if op == "defined":
+    if op in ("defined", "atom"):
         if n.args[0] in ctx.macros:
             return F, n, True
-        return U, n, False
-    if op == "atom":
-        if n.args[0] in ctx.macros:
-            return F, n, True
+        if n.args[0] in ctx.vrais:
+            return T, n, True
         return U, n, False
     if op == "not":
         v, s, t = evaluate(n.args[0], ctx)
@@ -236,8 +273,11 @@ def evaluate(n, ctx=ARM):
         a, rel, b = n.args
         names = {strip_paren(a).args[0] if strip_paren(a).op == "atom" else None,
                  strip_paren(b).args[0] if strip_paren(b).op == "atom" else None}
-        if names & set(ctx.compilers) and "__tauon_compiler__" in names and rel in ("==", "!="):
-            return (F if rel == "==" else T), n, True
+        if rel in ("==", "!=") and None not in names and len(names) == 2:
+            x, y = [strip_paren(z).args[0] for z in (a, b)]
+            v = ctx.decide_rel(x, y) or ctx.decide_rel(y, x)
+            if v is not None:
+                return (v if rel == "==" else {T: F, F: T}[v]), n, True
         va, vb = value_of(a, ctx), value_of(b, ctx)
         iar = any(strip_paren(x).op == "atom" and strip_paren(x).args[0] in ctx.macros
                   for x in (a, b))
@@ -401,7 +441,7 @@ def rewrite(lines, items, path, auto, resid, ctx=ARM):
                     resid.append((line, "condition non analysée (%s)" % err, expr.strip()))
             if not touched:
                 if ctx is ARM and IAR_OTHER.search(expr):
-                    resid.append((line, "IAR M16C (règle garde-iar-gelee)", expr.strip()))
+                    resid.append((line, "IAR M16C (règle garde-cible-gelee)", expr.strip()))
                 elif ctx.mentionne(expr):
                     resid.append((line, "condition %s non décidable" % ctx.nom, expr.strip()))
                 kept.append([kind, cond, (s, e), body, indent, None])
@@ -470,9 +510,15 @@ def rule_garde_iar_arm(text, path):
     return _gardes(text, path, ARM)
 
 
-def rule_garde_iar_gelee(text, path):
-    """Branches IAR M16C (code gelé) ; la copie à l'identique est faite par main() (--legacy-dir)."""
+def rule_garde_cible_gelee(text, path):
+    """Branches des cibles gelées ; la copie à l'identique est faite par main() (--legacy-dir)."""
     return _gardes(text, path, GELE)
+
+
+def rule_garde_compilateur(text, path):
+    """Gardes de compilateur sous GCC seul (GCC vrai ; Keil, Visual C faux) ; copie d'origine par
+    main() si du code non GCC est retiré."""
+    return _gardes(text, path, GCC)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -785,12 +831,13 @@ def rule_pragma_iar(text, path):
     return new, auto, resid
 
 
-RULES = {"garde-iar-arm": rule_garde_iar_arm, "garde-iar-gelee": rule_garde_iar_gelee,
+RULES = {"garde-iar-arm": rule_garde_iar_arm, "garde-cible-gelee": rule_garde_cible_gelee,
+         "garde-compilateur": rule_garde_compilateur,
          "header-iar": rule_header_iar, "intrinsics-cmsis": rule_intrinsics_cmsis,
          "mot-cle-iar": rule_mot_cle_iar, "pragma-iar": rule_pragma_iar,
          "symbole-iar": rule_symbole_iar}
 # ordre d'application : gardes d'abord (une branche IAR retirée n'a plus de mots-clés à traiter)
-ORDRE = ["garde-iar-gelee", "garde-iar-arm", "intrinsics-cmsis", "mot-cle-iar", "pragma-iar",
+ORDRE = ["garde-cible-gelee", "garde-iar-arm", "garde-compilateur", "intrinsics-cmsis", "mot-cle-iar", "pragma-iar",
          "header-iar", "symbole-iar"]
 
 # ---------------------------------------------------------------------------------------------
@@ -848,7 +895,7 @@ def main():
     ap.add_argument("--perimetre-actif", metavar="CSV",
                     help="ajoute les .c/.h de l'ensemble actif de perimetre.csv")
     ap.add_argument("--legacy-dir", default="legacy",
-                    help="garde-iar-gelee : copie d'origine sous scion/<DIR>/<chemin> (défaut legacy)")
+                    help="garde-cible-gelee, garde-compilateur : copie d'origine sous scion/<DIR>/<chemin> (défaut legacy)")
     ap.add_argument("--tiers-from-audit", metavar="AUDIT_CSV",
                     help="rapport : ajoute les IAR-ismes du code tiers actif (non transformé, D1a)")
     ap.add_argument("--quiet", "-q", action="store_true", help="résumé seulement")
@@ -897,7 +944,7 @@ def main():
         for r in rules:
             avant = new
             new, auto, resid = RULES[r](new, rel)
-            if r == "garde-iar-gelee" and new != avant:
+            if r in COPIE_LEGACY and code_retire(avant, new):
                 copie = copie_legacy(clone, args.legacy_dir, rel, text, args.apply)
                 auto.insert(0, (1, "copie à l'identique (code gelé)", copie))
             for (line, what, detail) in auto:
@@ -934,6 +981,20 @@ def main():
             if args.tiers_from_audit:
                 ecrire_tiers(f, args.tiers_from_audit)
     return 0
+
+
+COPIE_LEGACY = ("garde-cible-gelee", "garde-compilateur")
+
+
+RE_COND = re.compile(r"^\s*#\s*(if|ifdef|ifndef|elif|else|endif)\b")
+
+
+def code_retire(avant, apres):
+    """Vrai si des lignes ont disparu hors directives conditionnelles (#if … #endif) : du code
+    ou des définitions d'une branche retirée."""
+    def code(t):
+        return [l for l in t.splitlines() if l.strip() and not RE_COND.match(l)]
+    return len(code(apres)) < len(code(avant))
 
 
 def est_tiers(rel):

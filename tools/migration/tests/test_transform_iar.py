@@ -109,20 +109,67 @@ class GardeAlignement(unittest.TestCase):
         self.assertEqual((new, a, r), (src, 0, 1))
 
 
-class GardeIarGelee(unittest.TestCase):
+class GardeCibleGelee(unittest.TestCase):
     def test_m16c_retire(self):
         src = ("#if (__tauon_compiler__==__compiler_iar_m16c__)\nA\n"
                "#elif defined(__IAR_SYSTEMS_ICC)\nB\n#else\nC\n#endif\n")
-        new, auto, resid = t.rule_garde_iar_gelee(src, "test.c")
+        new, auto, resid = t.rule_garde_cible_gelee(src, "test.c")
         self.assertEqual((new, len(resid)), ("C\n", 0))
 
     def test_arm_non_touche(self):
         src = "#if defined(__ICCARM__)\nA\n#endif\n"
-        self.assertEqual(t.rule_garde_iar_gelee(src, "test.c"), (src, [], []))
+        self.assertEqual(t.rule_garde_cible_gelee(src, "test.c"), (src, [], []))
 
     def test_pragma_m16c_retire(self):
         src = "#if (__tauon_compiler__==__compiler_iar_m16c__)\n#pragma memory=far\n#endif\nx\n"
-        self.assertEqual(t.rule_garde_iar_gelee(src, "test.c")[0], "x\n")
+        self.assertEqual(t.rule_garde_cible_gelee(src, "test.c")[0], "x\n")
+
+
+class GardeCibleGeleeEtendue(unittest.TestCase):
+    def test_isa_coeur_puce(self):
+        src = ("#if defined(CPU_ARM7) || defined(CPU_ARM9)\nA\n#elif defined(CPU_CORTEXM)\nB\n#endif\n"
+               "#if (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)\nC\n#endif\n"
+               "#if (__tauon_cpu_device__==__tauon_cpu_device_arm7_at91sam7x__) || defined(X)\nD\n#endif\n"
+               "#ifdef CPU_WIN32\nE\n#else\nF\n#endif\n")
+        new, auto, resid = t.rule_garde_cible_gelee(src, "t.c")
+        self.assertEqual(new, "#if defined(CPU_CORTEXM)\nB\n#endif\n#if defined(X)\nD\n#endif\nF\n")
+        self.assertEqual(resid, [])
+
+    def test_coeur_actif_inchange(self):
+        src = ("#if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\nA\n#endif\n"
+               "#if defined(CPU_GNU32)\nB\n#endif\n")
+        self.assertEqual(t.rule_garde_cible_gelee(src, "t.c"), (src, [], []))
+
+    def test_simplification_dans_parentheses(self):
+        src = "#if defined(__GNUC__) && (defined(CPU_ARM7) || defined(CPU_GNU32))\nA\n#endif\n"
+        new = t.rule_garde_cible_gelee(src, "t.c")[0]
+        self.assertEqual(new, "#if defined(__GNUC__) && defined(CPU_GNU32)\nA\n#endif\n")
+
+
+class GardeCompilateur(unittest.TestCase):
+    def test_gcc_vrai_keil_win32_faux(self):
+        src = ("#if (__tauon_compiler__==__compiler_keil_arm__)\nK\n"
+               "#elif (__tauon_compiler__==__compiler_win32__)\nW\n"
+               "#elif (__tauon_compiler__==__compiler_gnuc__)\nG\n#else\nZ\n#endif\n")
+        new, auto, resid = t.rule_garde_compilateur(src, "t.c")
+        self.assertEqual((new, resid), ("G\n", []))
+
+    def test_gnuc_defini(self):
+        src = ("#if defined(__GNUC__)\nA\n#else\nB\n#endif\n#if !defined(__GNUC__)\nC\n#endif\n"
+               "#if defined   (__CC_ARM)\nD\n#elif defined (__GNUC__)\nE\n#endif\n")
+        self.assertEqual(t.rule_garde_compilateur(src, "t.c")[0], "A\nE\n")
+
+    def test_mixte_et_non_decidable(self):
+        src = ("#if defined(__GNUC__) && defined(CPU_CORTEXM)\nA\n#endif\n"
+               "#if __GNUC__ >= 4\nB\n#endif\n")
+        new, auto, resid = t.rule_garde_compilateur(src, "t.c")
+        self.assertEqual(new, "#if defined(CPU_CORTEXM)\nA\n#endif\n#if __GNUC__ >= 4\nB\n#endif\n")
+        self.assertEqual(len(resid), 1)
+
+    def test_code_retire(self):
+        self.assertTrue(t.code_retire("#if X\na\n#endif\n", ""))
+        self.assertFalse(t.code_retire("#if defined(__GNUC__)\na\n#endif\n", "a\n"))
+        self.assertTrue(t.code_retire("#ifdef CPU_WIN32\n#define X 1\n#endif\n", ""))
 
 
 class MotCleIar(unittest.TestCase):
