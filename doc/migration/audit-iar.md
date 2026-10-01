@@ -300,7 +300,7 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1107 | 1507 | 898 | 706 |
+| c | 1107 | 1507 | 900 | 706 |
 | asm | 1 | 22 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 16 | 9 | 2 | 0 |

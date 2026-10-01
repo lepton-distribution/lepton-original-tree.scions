@@ -3,7 +3,7 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 6 fichier(s) modifié(s), 33 occurrence(s) automatique(s), 26 résiduelle(s).
+Résumé : 3 fichier(s) modifié(s), 22 occurrence(s) automatique(s), 26 résiduelle(s).
 
 ## Résiduels (26)
 
@@ -36,23 +36,12 @@ Résumé : 6 fichier(s) modifié(s), 33 occurrence(s) automatique(s), 26 résidu
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (33)
+## Automatiques (22)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
 | `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
 | `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/sbin/ps.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/sbin/ps.c` |
-| `sys/root/src/sbin/ps.c` | 79 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/sbin/ps.c` | 123 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/sbin/ps.c` | 133 | garde-cible-gelee | #else toujours pris | `` |
-| `sys/root/src/sbin/stty.c` | 268 | prototype-static | prototype rendu static (output) | `case CS5: output("cs5"); break;` |
-| `sys/root/src/sbin/stty.c` | 269 | prototype-static | prototype rendu static (output) | `case CS6: output("cs6"); break;` |
-| `sys/root/src/sbin/stty.c` | 270 | prototype-static | prototype rendu static (output) | `case CS7: output("cs7"); break;` |
-| `sys/root/src/sbin/stty.c` | 271 | prototype-static | prototype rendu static (output) | `case CS8: output("cs8"); break;` |
-| `sys/root/src/sbin/stty.c` | 272 | prototype-static | prototype rendu static (output) | `default: output("cs??"); break;` |
-| `sys/root/src/sbin/xmodem.c` | 103 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_M16C62)` |
-| `sys/root/src/sbin/xmodem.c` | 104 | garde-cible-gelee | condition simplifiée | `defined(CPU_ARM7) \|\| defined(CPU_ARM9) \|\| defined(CPU_WIN32) \|\| defined(__UNIX__) → defined(__UNIX__)` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1438 | garde-iar-arm | condition simplifiée | `!defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__) &&     !defined(__IAR_SYSTEMS_ICC__) → !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3124 | garde-iar-arm | branche IAR ARM retirée | `__IAR_SYSTEMS_ICC__` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3500 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__) && !_DLIB_FULL_LOCALE_SUPPORT` |

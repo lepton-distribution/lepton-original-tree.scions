@@ -330,7 +330,7 @@ sys/root/src/sbin/rm.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/rmdir.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/shutdown.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/sleep.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
-sys/root/src/sbin/stty.c,sbin,ÉCHEC,gabarit qemu-mps2-an386-embos,3,sys/root/src/sbin/stty.c:1158: implicit declaration of function 'toupper' [-Wimplicit-function-declaration]
+sys/root/src/sbin/stty.c,sbin,OK,gabarit qemu-mps2-an386-embos,3,
 sys/root/src/sbin/sync.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/touch.c,sbin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/sbin/umount.c,sbin,OK,preset qemu,1,
