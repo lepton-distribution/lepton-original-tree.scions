@@ -224,7 +224,18 @@ def step_anciens(clone, dry):
     if not find_arms(lines, is_ancien):
         raise SystemExit("anciens-coeurs : rien à retirer (étape déjà appliquée ?)")
     lines, _ = remove_all(lines, is_ancien, None, "sous-branches ARM7/ARM9/AT91")
-    write(kal_h, lines, dry)
+    # commentaires d'en-tête des blocs de profilage AT91 retirés (orphelins), avec la ligne vide
+    orphan = re.compile(r"^\s*//profiler macros for arm[79] \(at91")
+    out, n, i = [], 0, 0
+    while i < len(lines):
+        if orphan.match(lines[i]):
+            n += 1
+            i += 2 if i + 1 < len(lines) and not lines[i + 1].strip() else 1
+            continue
+        out.append(lines[i])
+        i += 1
+    print("  %-48s %d" % ("commentaires orphelins retirés", n))
+    write(kal_h, out, dry)
 
 
 # --- étape extraire --------------------------------------------------------------------------
