@@ -204,7 +204,7 @@ int socket_test(void){
    char buffer[100];
    int newSock;
    struct sockaddr acc_sin;
-   int sin_len=sizeof(struct sockaddr);
+   uint32_t sin_len=sizeof(struct sockaddr);
 
    sock=socket(AF_INET,SOCK_STREAM,0);
    if(sock<0)
@@ -234,7 +234,7 @@ int socket_test(void){
 
 
    //
-   newSock = accept( sock,(struct sockaddr*) &acc_sin,(int*) &sin_len);
+   newSock = accept( sock,(struct sockaddr*) &acc_sin,&sin_len);
    for(;; ) {
       int cb;
       int i=0;

@@ -78,7 +78,7 @@ int telnetd_main(int argc, char* argv[]){
    int sock_c = -1;
    int dup_sock_c = -1;
    struct sockaddr_in addr;
-   int addrlen;
+   uint32_t addrlen;
 
    int r;
 
