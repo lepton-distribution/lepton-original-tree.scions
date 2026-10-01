@@ -106,13 +106,15 @@ board_stm32f4xx_uart_info_t  stm32f469i_eval_uart_1=
 Implementation
 =============================================*/
 /*******************************************************************************
-* Function Name  : gpio_startup_init
+* Function Name  : stm32f469i_eval_gpio_startup_init
 * Description    : Initialize all defined GPIOs
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-static void gpio_startup_init(void)
+//fonction locale de la carte, distincte de gpio_startup_init (stm32f4xx/gpio.h) : renommée
+//(GCC refuse static après une déclaration externe ; sous IAR, l'appel restait local)
+static void stm32f469i_eval_gpio_startup_init(void)
 {
   u8 i;
 
@@ -136,7 +138,7 @@ static void gpio_startup_init(void)
 | See:
 ---------------------------------------------*/
 int dev_stm32f469i_eval_board_load(void){
-   gpio_startup_init();
+   stm32f469i_eval_gpio_startup_init();
    dma_startup_init();
    return 0;
 }
