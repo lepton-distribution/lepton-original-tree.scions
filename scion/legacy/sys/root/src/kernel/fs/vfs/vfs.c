@@ -1876,6 +1876,8 @@ int _vfs_ls(char* ref){
 
 #if defined(__KERNEL_UCORE_EMBOS)
    printf("ls %s\n",ref);
+#elif defined(__KERNEL_UCORE_ECOS)
+   int i=0;
 #endif
 
    if((desc=_vfs_opendir(ref))<0)
@@ -1884,6 +1886,8 @@ int _vfs_ls(char* ref){
    while(_vfs_readdir(desc,&dirent)) {
 #if defined(__KERNEL_UCORE_EMBOS)
       printf("[%d] %s\n",dirent.inodenb,dirent.d_name);
+#elif defined(__KERNEL_UCORE_ECOS)
+      i++;
 #endif
    }
 
