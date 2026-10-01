@@ -35,6 +35,7 @@ Includes
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "kernel/core/errno.h"
 #include "kernel/core/libstd.h"
