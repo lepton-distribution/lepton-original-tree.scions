@@ -655,14 +655,6 @@ unsigned long _kernel_elfloader(unsigned long flash_base, unsigned long base)
    //boot!!!!
    boot_handler();
 
-#if (__tauon_compiler__==__compiler_iar_arm__)
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-#endif
 
    return 1;
 }
