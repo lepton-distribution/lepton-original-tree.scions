@@ -647,7 +647,7 @@ int fatfscore_extern_stat(const char* path, struct stat * stat){
       fno.fattrib=AM_DIR;
       fno.fsize=0;
       //
-      f_close(&root_dir);
+      f_closedir(&root_dir); //DIR ouvert par f_opendir (etait f_close : FIL attendu, comportement indefini)
    }else{
       fr=f_stat(path,&fno);	
       if(fr!=FR_OK)
