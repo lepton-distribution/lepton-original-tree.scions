@@ -428,6 +428,9 @@ int pipe_test(int argc,char* argv[]){
       cb=read(STDIN_FILENO,buf,5); //read pipe
       if(cb<=0) {
          printf("\r\n no writer\r\n");
+#ifdef WIN32
+         Sleep(10);
+#endif
       }
 
       for(i=0; i<cb; i++) {
