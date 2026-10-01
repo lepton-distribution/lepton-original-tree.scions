@@ -218,6 +218,22 @@ class PragmaIar(unittest.TestCase):
         self.assertEqual(len(resid), 1)          # section absente des scripts .ld
 
 
+class PrototypeStatic(unittest.TestCase):
+    def test_prototypes(self):
+        src = ("int f(int a);\nextern int g(void);\nint h(void);\nint k(void);\n"
+               "static int f(int a) {\n  return a;\n}\nstatic int g(void)\n{ return f(1); }\n"
+               "int h(void) { return 0; }\nstatic int k(void) { return 0; }\nint k(void);\n")
+        new, auto, resid = t.rule_prototype_static(src, "t.c")
+        self.assertEqual(new, "static int f(int a);\nstatic int g(void);\nint h(void);\nstatic int k(void);\n"
+                              "static int f(int a) {\n  return a;\n}\nstatic int g(void)\n{ return f(1); }\n"
+                              "int h(void) { return 0; }\nstatic int k(void) { return 0; }\nint k(void);\n")
+        self.assertEqual(len(auto), 3)
+
+    def test_entete_ignore(self):
+        src = "int f(void);\nstatic int f(void) { return 0; }\n"
+        self.assertEqual(t.rule_prototype_static(src, "t.h")[0], src)
+
+
 class Signalements(unittest.TestCase):
     def test_header_et_symbole(self):
         src = "#include <yvals.h>\n#include <stdio.h>\nx = __iar_dlmalloc(4); // __iar_x\n"

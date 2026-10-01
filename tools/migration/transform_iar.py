@@ -42,6 +42,10 @@ Règles :
                     section S n'existe dans aucun ld/*.ld) ; #pragma optimize, diag_*, rtmodel
                     retirés ; autres pragmas IAR (location, data_alignment, language, inline,
                     required, segment, memory…) résiduels.
+  prototype-static  (portabilité GCC 14, pas un IAR-isme) fonction définie « static » après un
+                    prototype non static du même fichier : « static » ajouté au prototype (erreur
+                    GCC « static declaration follows non-static declaration », tolérée par IAR).
+                    Prototype dans un en-tête : hors règle (correction manuelle).
   symbole-iar       symboles de la bibliothèque IAR DLIB (__iar_*) et de l'éditeur de liens
                     (__ICFEDIT_*) : signalés, toujours résiduels.
 
@@ -831,14 +835,40 @@ def rule_pragma_iar(text, path):
     return new, auto, resid
 
 
+RE_DEF_STATIC = re.compile(r"^[ \t]*static\b[^;{}()=#]*?\b(\w+)\s*\([^;{}]*\)\s*\{", re.M)
+
+
+def rule_prototype_static(text, path):
+    """Ajoute « static » aux prototypes non static d'une fonction définie static plus loin."""
+    if not path.endswith(".c"):
+        return text, [], []
+    masque = masquer(text)
+    auto, ajouts = [], []
+    for d in RE_DEF_STATIC.finditer(masque):
+        nom = d.group(1)
+        proto = re.compile(r"^([ \t]*)(?!static\b)(?!return\b)((?:extern[ \t]+)?[A-Za-z_][^;{}()=#]*?\b%s"
+                           r"\s*\([^;{}]*\)\s*;)" % re.escape(nom), re.M)
+        for m in proto.finditer(masque, 0, d.start()):
+            ajouts.append((m.start(2), m.group(2).startswith("extern")))
+            auto.append((num_ligne(text, m.start()), "prototype rendu static (%s)" % nom,
+                         ligne_de(text, m.start()).strip()))
+    for pos, ext in sorted(set(ajouts), reverse=True):
+        if ext:
+            text = text[:pos] + "static" + text[pos + len("extern"):]
+        else:
+            text = text[:pos] + "static " + text[pos:]
+    return text, sorted(auto), []
+
+
 RULES = {"garde-iar-arm": rule_garde_iar_arm, "garde-cible-gelee": rule_garde_cible_gelee,
          "garde-compilateur": rule_garde_compilateur,
          "header-iar": rule_header_iar, "intrinsics-cmsis": rule_intrinsics_cmsis,
          "mot-cle-iar": rule_mot_cle_iar, "pragma-iar": rule_pragma_iar,
+         "prototype-static": rule_prototype_static,
          "symbole-iar": rule_symbole_iar}
 # ordre d'application : gardes d'abord (une branche IAR retirée n'a plus de mots-clés à traiter)
 ORDRE = ["garde-cible-gelee", "garde-iar-arm", "garde-compilateur", "intrinsics-cmsis", "mot-cle-iar", "pragma-iar",
-         "header-iar", "symbole-iar"]
+         "header-iar", "symbole-iar", "prototype-static"]
 
 # ---------------------------------------------------------------------------------------------
 # fichiers, vérification gcc -E, rapport
@@ -940,7 +970,8 @@ def main():
         if est_tiers(rel) or not rel.endswith((".c", ".h")):
             continue
         rel, path = resolve(clone, rel)
-        text = open(path, encoding="latin-1").read()
+        with open(path, encoding="latin-1", newline="") as fh:   # fins de ligne conservées
+            text = fh.read()
         new = text
         for r in rules:
             avant = new
@@ -957,7 +988,8 @@ def main():
         if new != text:
             n_changed += 1
             if args.apply:
-                open(path, "w", encoding="latin-1").write(new)
+                with open(path, "w", encoding="latin-1", newline="") as fh:
+                    fh.write(new)
     mode = "appliqué" if args.apply else "simulation"
     print("transform_iar (%s) : règles %s ; %d fichier(s) modifié(s), %d automatique(s), "
           "%d résiduel(s)" % (mode, ",".join(rules), n_changed, n_auto, n_resid))
@@ -1007,7 +1039,8 @@ def copie_legacy(clone, legacy_dir, rel, text, apply):
     dest = os.path.join(clone, "scion", legacy_dir, rel)
     if apply and not os.path.exists(dest):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
-        open(dest, "w", encoding="latin-1").write(text)
+        with open(dest, "w", encoding="latin-1", newline="") as fh:
+            fh.write(text)
     return os.path.join(legacy_dir, rel)
 
 
