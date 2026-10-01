@@ -1,0 +1,48 @@
+# Conditions d'ISA, de cœur et de puce hors des répertoires d'architecture
+
+Généré par `tools/migration/audit_isa_ifdef.py` — ne pas éditer à la main. Occurrences : `isa-ifdef.csv`.
+
+Critère d'ETAPE-4 : aucune directive d'**ISA** ou de **cœur** dans le code Lepton actif hors de `kal/arch/` et des répertoires d'architecture. L'axe **puce** (`__tauon_cpu_device__`) relève de la carte : autorisé dans `dev/arch` et `dev/bsp`, listé ici pour la décomposition.
+
+| Mesure | Valeur |
+|---|---:|
+| Code Lepton, ISA/cœur hors arch (directives) | **101** |
+| Code Lepton, ISA/cœur hors arch (fichiers) | **29** |
+| Code Lepton, puce seule hors arch/BSP (directives) | 42 |
+| Code Lepton, emplacements autorisés | 1 |
+| Code tiers (non modifié, D1a) | 40 |
+
+## Code Lepton hors arch, par fichier
+
+| Fichier | isa | cœur | puce |
+|---|---:|---:|---:|
+| `sys/root/src/kernel/core/kernelconf.h` | 2 | 19 | 21 |
+| `sys/root/src/kernel/core/kal.h` | 6 | 11 | 20 |
+| `sys/root/src/kernel/core/malloc.c` | 8 | 0 | 0 |
+| `sys/root/src/kernel/core/core-segger/kernel.c` | 0 | 5 | 0 |
+| `sys/root/src/kernel/core/kernel.h` | 5 | 0 | 0 |
+| `sys/root/src/kernel/core/kernel_pthread.h` | 4 | 0 | 0 |
+| `sys/root/src/lib/libc/stdio/stdio.h` | 4 | 0 | 0 |
+| `sys/root/src/kernel/core/interrupt.h` | 3 | 0 | 0 |
+| `sys/root/src/kernel/core/net/lwip_core/ethif_core.c` | 3 | 0 | 0 |
+| `sys/root/src/kernel/core/process.h` | 3 | 0 | 0 |
+| `sys/root/src/kernel/fs/rootfs/rootfscore.c` | 3 | 0 | 0 |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3 | 0 | 0 |
+| `sys/root/src/kernel/core/core-segger/kernel_pthread_mutex.c` | 2 | 0 | 0 |
+| `sys/root/src/kernel/core/kernel_sem.h` | 2 | 0 | 0 |
+| `sys/root/src/kernel/core/system.h` | 2 | 0 | 0 |
+| `sys/root/src/kernel/fs/vfs/vfstypes.h` | 2 | 0 | 0 |
+| `sys/root/src/sbin/xmodem.c` | 2 | 0 | 0 |
+| `sys/root/src/kernel/core/core-segger/kernel_object.c` | 1 | 0 | 0 |
+| `sys/root/src/kernel/core/core-segger/process.c` | 1 | 0 | 0 |
+| `sys/root/src/kernel/core/net/uip_core/uip_core.c` | 0 | 1 | 0 |
+| `sys/root/src/kernel/core/timer.h` | 1 | 0 | 0 |
+| `sys/root/src/kernel/core/types.h` | 1 | 0 | 0 |
+| `sys/root/src/kernel/fs/fat/fat16.c` | 1 | 0 | 0 |
+| `sys/root/src/kernel/fs/fat/fatcore.h` | 1 | 0 | 0 |
+| `sys/root/src/kernel/fs/rootfs/rootfscore.h` | 0 | 0 | 1 |
+| `sys/root/src/kernel/fs/ufs/ufs.c` | 1 | 0 | 0 |
+| `sys/root/src/kernel/fs/ufs/ufsx.c` | 1 | 0 | 0 |
+| `sys/root/src/lib/libc/ctype/ctype.h` | 1 | 0 | 0 |
+| `sys/root/src/sbin/initd.c` | 1 | 0 | 0 |
+| `sys/root/src/sbin/lsh.c` | 1 | 0 | 0 |
