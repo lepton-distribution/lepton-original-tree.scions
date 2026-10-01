@@ -37,4 +37,8 @@ either the MPL or the [eCos GPL] License."
    #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1uL << (1));
    #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1uL << (1));
 
+   //EXC_RETURN : bit 4 (FType) à 0 = cadre de pile étendu, contexte FPU sauvegardé (ARMv7-M avec
+   //FPU : M4F, M7). Utilisé par le backend pour la taille et le PC du cadre sauvegardé (écart E3).
+   #define __kal_arch_exc_return_fpu_frame(__exc_return__) (((__exc_return__) & 0x10u) == 0u)
+
 #endif //_KAL_ARCH_ARMV7M_H

@@ -82,12 +82,12 @@ typedef int thr_id_t;
 
    //Ecart E3 (embos-iar-vs-gcc.md) : avec FPU (OS_CPU_HAS_VFP, defini par RTOS.h), embOS sauvegarde
    //un cadre etendu OS_REGS_BASE_FPU (S16-S31 avant R0, S0-S15 et FPSCR apres xPSR) pour une tache
-   //ayant un contexte FPU actif, signale par le bit 4 d'EXC_RETURN a 0 (meme position dans les deux
+   //ayant un contexte FPU actif, signale par EXC_RETURN (kal_arch.h, meme position dans les deux
    //cadres). Le contexte copie le cadre effectif ; sans FPU, cadre OS_REGS_GENERIC inchange.
    #if defined(OS_CPU_HAS_VFP) && (OS_CPU_HAS_VFP == 1)
       #define OS_REGS_CONTEXT    OS_REGS
       #define __os_regs_is_fpu(__regs__) \
-         ((((OS_REGS_BASE OS_STACKPTR *)(__regs__))->OS_REG_EXC_RETURN & 0x10u) == 0u)
+         __kal_arch_exc_return_fpu_frame(((OS_REGS_BASE OS_STACKPTR *)(__regs__))->OS_REG_EXC_RETURN)
       #define __os_regs_size(__regs__) \
          (__os_regs_is_fpu(__regs__) ? sizeof(OS_REGS_BASE_FPU) : sizeof(OS_REGS_BASE))
       #define __os_regs_pc(__regs__) \
