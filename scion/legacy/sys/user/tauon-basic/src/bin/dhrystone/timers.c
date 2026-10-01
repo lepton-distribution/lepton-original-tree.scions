@@ -432,6 +432,18 @@ double dtime()
 /*  Windows NT (32 bit) dtime() routine             */
 /*  Provided by: Piers Haken, piersh@microsoft.com  */
 /****************************************************/
+#ifdef WIN32
+#include <windows.h>
+
+double dtime(void)
+{
+ double q;
+
+ q = (double)GetTickCount() * 1.0e-03;
+
+ return q;
+}
+#endif
 
 /*****************************************************/
 /* Time according to POSIX.1  -  <J.Pelan@qub.ac.uk> */
