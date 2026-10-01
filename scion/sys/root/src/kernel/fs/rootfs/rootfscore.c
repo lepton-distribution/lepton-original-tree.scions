@@ -50,7 +50,7 @@ Global Declaration
 
 //
 //patch: optimization for code memory occupation.
-#if defined (WIN32) || defined(CPU_GNU32)
+#if defined(USE_KERNEL_STATIC)
    rtfs_block_node_t rtfsinode_lst[RTFS_NODETBL_SIZE]={S_IFNULL};
 #else
    __KERNEL_SRAM_LOCATION
@@ -59,7 +59,7 @@ Global Declaration
 
 //
 //patch: optimization for code memory occupation.
-#if defined (WIN32) || defined(CPU_GNU32)
+#if defined(USE_KERNEL_STATIC)
    rtfs_block_data_t rtfsblk_lst[RTFS_BLKTBL_SIZE]={0};
 #else
    __KERNEL_SRAM_LOCATION
@@ -71,7 +71,7 @@ const int rtfs_blkalloc_size      = RTFS_BLOCK_ALLOC_SIZE;
 const int rtfs_superblk_size      = RTFS_BLOCK_ALLOC_SIZE;
 
 //patch: optimization for code memory occupation.
-#if defined (WIN32) || defined(CPU_GNU32)
+#if defined(USE_KERNEL_STATIC)
 char rtfs_superblk[RTFS_BLOCK_ALLOC_SIZE]={0};
 #else
 __KERNEL_SRAM_LOCATION
