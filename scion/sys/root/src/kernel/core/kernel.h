@@ -533,10 +533,6 @@ void _kernel_routine(void* arg);
 //wrapper for external call
 void __wrpr_kernel_dev_gettime(desc_t __desc, char * __buf, int __size);
 
-   #if defined(CPU_CORTEXM)
-void do_swi(void);
-void _kernel_syscall_handler(void);
-   #endif
 
 
 //trace in kernel for system call
