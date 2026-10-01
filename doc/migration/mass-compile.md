@@ -3,7 +3,7 @@
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
 Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv --audit-csv doc/migration/audit-iar.csv`
 
-Résultat : **341/348 fichiers C OK (98.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
+Résultat : **346/348 fichiers C OK (99.4 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
 Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : `mass-compile.csv`.
 
@@ -17,7 +17,7 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | kernel/net | 38 / 38 | 0 | 0 |
 | lib | 27 / 27 | 0 | 0 |
 | sbin | 35 / 35 | 0 | 0 |
-| bin | 3 / 8 | 0 | 0 |
+| bin | 8 / 8 | 0 | 0 |
 | tauon-basic | 7 / 9 | 32 | 0 |
 | tools/mklepton | 1 / 1 | 4 | 0 |
 
@@ -25,18 +25,11 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 
 | Fichiers | Erreur normalisée | Exemple |
 |---:|---|---|
-| 4 | `implicit declaration of function 'X' [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/mongoose/mongoose.c` |
-| 2 | `passing argument N of 'X' from incompatible pointer type [-Wincompatible-pointer-types]` | `sys/root/src/bin/net/telnetd.c` |
-| 1 | `implicit declaration of function 'X'; did you mean 'X'? [-Wimplicit-function-declaration]` | `sys/root/src/bin/net/httpc/httpc.c` |
+| 2 | `implicit declaration of function 'X' [-Wimplicit-function-declaration]` | `sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c` |
 
 ## Fichiers en échec
 
 | Fichier | Première erreur |
 |---|---|
-| `sys/root/src/bin/net/httpc/httpc.c` | `sys/root/src/bin/net/httpc/httpc.c:223: implicit declaration of function 'perror'; did you mean 'error'? [-Wimplicit-function-declaration]` |
-| `sys/root/src/bin/net/mongoose/mongoose.c` | `sys/root/src/bin/net/mongoose/mongoose.c:521: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]` |
-| `sys/root/src/bin/net/mongoose/mongoosed.c` | `sys/root/src/bin/net/mongoose/mongoosed.c:288: implicit declaration of function 'strerror' [-Wimplicit-function-declaration]` |
-| `sys/root/src/bin/net/telnetd.c` | `sys/root/src/bin/net/telnetd.c:105: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]` |
-| `sys/root/src/bin/test2.c` | `sys/root/src/bin/test2.c:237: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]` |
 | `sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c` | `sys/user/tauon-basic/src/bin/dhrystone/dhry21b.c:157: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]` |
 | `sys/user/tauon-basic/src/bin/dhrystone/dhrystone_main.c` | `sys/user/tauon-basic/src/bin/dhrystone/dhrystone_main.c:98: implicit declaration of function 'runDhrystone' [-Wimplicit-function-declaration]` |

@@ -135,6 +135,21 @@ class GardeCibleGeleeEtendue(unittest.TestCase):
         self.assertEqual(new, "#if defined(CPU_CORTEXM)\nB\n#endif\n#if defined(X)\nD\n#endif\nF\n")
         self.assertEqual(resid, [])
 
+    def test_win32_compilateur(self):
+        # macro Win32 du compilateur (module bin, 2026-10-01) ; _WIN32 non visé
+        src = "#ifdef WIN32\nA\n#endif\nB\n#ifndef WIN32\nC\n#endif\n#ifdef _WIN32\nD\n#endif\n"
+        new, auto, resid = t.rule_garde_cible_gelee(src, "t.c")
+        self.assertEqual(new, "B\nC\n#ifdef _WIN32\nD\n#endif\n")
+        self.assertEqual(resid, [])
+
+    def test_directive_dans_commentaire(self):
+        # « #endif*/ » ferme un bloc commenté : ni la garde ni la fin de commentaire ne sont retirées
+        src = ("/*x;\n#if defined (__IAR_SYSTEMS_ICC)\ny();\n#endif*/\nz;\n"
+               "#ifdef WIN32 /* w */\nA\n#endif /* WIN32 */\n")
+        new, auto, resid = t.rule_garde_cible_gelee(src, "t.c")
+        self.assertEqual(new, "/*x;\n#if defined (__IAR_SYSTEMS_ICC)\ny();\n#endif*/\nz;\n")
+        self.assertEqual(len(auto), 1)
+
     def test_coeur_actif_inchange(self):
         src = ("#if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\nA\n#endif\n"
                "#if defined(CPU_GNU32)\nB\n#endif\n")

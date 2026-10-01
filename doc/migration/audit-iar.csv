@@ -1,4 +1,5 @@
 fichier,ligne,categorie,motif,severite,ensemble,origine,genere,ventilation,justification,extrait
+legacy/sys/root/src/bin/test2.c,431,garde_autre,WIN32,autre,gele,lepton,,heuristique,"copie d'origine (transform_iar.py, décisions D2a/D3a), supprimée à l'étape 6",#ifdef WIN32
 legacy/sys/root/src/kernel/core/core-segger/kernel.c,93,garde_iar,__compiler_iar_m16c__,iar,gele,lepton,,heuristique,"copie d'origine (transform_iar.py, décisions D2a/D3a), supprimée à l'étape 6",#if ( (__tauon_compiler__==__compiler_iar_m16c__))
 legacy/sys/root/src/kernel/core/core-segger/kernel.c,95,garde_autre,__compiler_keil_arm__,autre,gele,lepton,,heuristique,"copie d'origine (transform_iar.py, décisions D2a/D3a), supprimée à l'étape 6",#elif ( (__tauon_compiler__==__compiler_keil_arm__) && (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__))
 legacy/sys/root/src/kernel/core/core-segger/kernel.c,97,garde_autre,__compiler_keil_arm__,autre,gele,lepton,,heuristique,"copie d'origine (transform_iar.py, décisions D2a/D3a), supprimée à l'étape 6",#elif ( (__tauon_compiler__==__compiler_keil_arm__) && (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__))
@@ -312,26 +313,25 @@ sys/root/prj/iar/lib/lib-nxpnfc/settings/lib-nxpnfc.cortex-m7-debug.general.xcl,
 sys/root/src/bin/memd.c,62,pragma,#pragma pack,a_verifier,hors_projet,lepton,,csv,"non déclaré par un projet, non inclus, sans règle","#pragma pack(push, 1)"
 sys/root/src/bin/memd.c,73,pragma,#pragma pack,a_verifier,hors_projet,lepton,,csv,"non déclaré par un projet, non inclus, sans règle",#pragma pack(pop)
 sys/root/src/bin/net/mongoose/mongoose.c,67,pragma,#pragma pack,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#pragma pack(1)
-sys/root/src/bin/net/mongoose/mongoose.c,168,garde_compilateur,#define _WIN32,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#undef _WIN32
-sys/root/src/bin/net/mongoose/mongoose.c,201,garde_gcc,__GNUC__,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(__GNUC__)
-sys/root/src/bin/net/mongoose/mongoose.c,791,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
-sys/root/src/bin/net/mongoose/mongoose.c,1150,garde_gcc,__GNUC__,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(__GNUC__)
-sys/root/src/bin/net/mongoose/mongoose.c,1484,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
-sys/root/src/bin/net/mongoose/mongoose.c,2803,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoose.c,3460,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoose.c,3508,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
-sys/root/src/bin/net/mongoose/mongoose.c,3687,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoose.c,3723,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoose.c,4081,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
-sys/root/src/bin/net/mongoose/mongoose.c,4124,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoose.c,4166,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoose.c,170,garde_compilateur,#define _WIN32,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#undef _WIN32
+sys/root/src/bin/net/mongoose/mongoose.c,203,garde_gcc,__GNUC__,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(__GNUC__)
+sys/root/src/bin/net/mongoose/mongoose.c,793,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
+sys/root/src/bin/net/mongoose/mongoose.c,1152,garde_gcc,__GNUC__,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(__GNUC__)
+sys/root/src/bin/net/mongoose/mongoose.c,1486,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
+sys/root/src/bin/net/mongoose/mongoose.c,2805,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoose.c,3462,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoose.c,3510,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
+sys/root/src/bin/net/mongoose/mongoose.c,3689,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoose.c,3725,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoose.c,4083,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
+sys/root/src/bin/net/mongoose/mongoose.c,4126,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoose.c,4168,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
 sys/root/src/bin/net/mongoose/mongoose.h,26,garde_gcc,__GNUC__,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(__GNUC__)
-sys/root/src/bin/net/mongoose/mongoosed.c,72,garde_compilateur,#define _WIN32,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#undef _WIN32
-sys/root/src/bin/net/mongoose/mongoosed.c,136,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoosed.c,337,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
-sys/root/src/bin/net/mongoose/mongoosed.c,417,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(_WIN32)
-sys/root/src/bin/net/mongoose/mongoosed.c,422,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifndef _WIN32
-sys/root/src/bin/test2.c,431,garde_autre,WIN32,autre,actif,lepton,,csv,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",#ifdef WIN32
+sys/root/src/bin/net/mongoose/mongoosed.c,73,garde_compilateur,#define _WIN32,a_verifier,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#undef _WIN32
+sys/root/src/bin/net/mongoose/mongoosed.c,137,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if !defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoosed.c,338,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifdef _WIN32
+sys/root/src/bin/net/mongoose/mongoosed.c,418,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#if defined(_WIN32)
+sys/root/src/bin/net/mongoose/mongoosed.c,423,garde_autre,_WIN32,autre,actif,tiers,,csv,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),#ifndef _WIN32
 sys/root/src/bin/tst/tstport.c,75,pragma,#pragma pack,a_verifier,hors_projet,lepton,,csv,"non déclaré par un projet, non inclus, sans règle","#pragma pack(push, 1)"
 sys/root/src/bin/tst/tstport.c,82,pragma,#pragma pack,a_verifier,hors_projet,lepton,,csv,"non déclaré par un projet, non inclus, sans règle",#pragma pack(pop)
 sys/root/src/kernel/core/compiler.h,12,garde_gcc,__GNUC__,a_verifier,actif,lepton,,heuristique,noyau / KAL / CMSIS commun,#if !defined(__GNUC__)

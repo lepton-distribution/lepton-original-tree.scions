@@ -17,7 +17,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | sévérité | actif | differe | gele | hors_projet | total |
 |---|---:|---:|---:|---:|---:|
 | iar | 92 | 935 | 596 | 224 | 1847 |
-| autre | 136 | 65 | 652 | 414 | 1267 |
+| autre | 135 | 65 | 653 | 414 | 1267 |
 | a_verifier | 1270 | 684 | 755 | 195 | 2904 |
 | info | 43 | 77 | 51 | 14 | 185 |
 
@@ -50,7 +50,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | symbole_dlib_io | a_verifier | 0 | 2 | 6 | 0 |
 | xml_mklepton | a_verifier | 1 | 0 | 34 | 0 |
 | asm_armcc | autre | 0 | 2 | 1 | 16 |
-| garde_autre | autre | 122 | 59 | 201 | 186 |
+| garde_autre | autre | 121 | 59 | 202 | 186 |
 | pragma_autre | autre | 14 | 4 | 450 | 212 |
 | asm_gnu | info | 0 | 5 | 3 | 14 |
 | fichier_iar | info | 43 | 72 | 48 | 0 |
@@ -294,13 +294,13 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 - `__get_*`/`__set_*`/`__DSB`… (`intrinsic_cmsis`) : fournis par CMSIS pour GCC, `a_verifier` ; `__enable_interrupt`, `__get_interrupt_state`, `__section_begin`… : IAR seul, `iar`.
 - Syntaxe asm déduite par comptage de directives : un fichier IAR très court ou multi-assembleur peut être mal classé (voir la colonne `motif`).
 - Asm en ligne (`asm("…")`, `__asm`) non audité : syntaxe proche entre IAR et GCC, contraintes d'opérandes à vérifier à la compilation de masse (étape 4).
-- Ventilation : 463 occurrences portent sur des fichiers absents de perimetre.csv (XML mkconf, projets IAR, asm `.s79`…) et sont ventilées par l'heuristique de chemin (colonne `ventilation`).
+- Ventilation : 464 occurrences portent sur des fichiers absents de perimetre.csv (XML mkconf, projets IAR, asm `.s79`…) et sont ventilées par l'heuristique de chemin (colonne `ventilation`).
 
 ## Fichiers analysés
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1107 | 1507 | 900 | 706 |
+| c | 1107 | 1507 | 901 | 706 |
 | asm | 1 | 22 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 16 | 9 | 2 | 0 |

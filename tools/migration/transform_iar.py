@@ -19,7 +19,7 @@ Règles :
                     suivante (__ALIGN_BEGIN/__ALIGN_END, aligned) : branche retirée.
   garde-cible-gelee branches des cibles gelées (décisions D2a et D3a du 2026-10-01) : IAR M16C
                     (__compiler_iar_m16c__, __IAR_SYSTEMS_ICC), Win32, ARM7/ARM9, eCos
-                    (CPU_WIN32, CPU_ARM7, CPU_ARM9, CPU_M16C62, __KERNEL_UCORE_ECOS, valeurs
+                    (CPU_WIN32, WIN32, CPU_ARM7, CPU_ARM9, CPU_M16C62, __KERNEL_UCORE_ECOS, valeurs
                     de __tauon_cpu_core__ et __tauon_cpu_device__ correspondantes) : même
                     évaluation, prédicats faux.
   garde-compilateur gardes de compilateur sous GCC seul (D3a) : __GNUC__ et __compiler_gnuc__
@@ -117,7 +117,7 @@ ARM = Preds("IAR ARM", IAR_ARM_MACROS, faux_val={"__tauon_compiler__": lambda v:
 CIBLES_GELEES_COEURS = ("__tauon_cpu_core_arm_arm7tdmi__", "__tauon_cpu_core_arm_arm926ejs__",
                         "__tauon_cpu_core_win32_simulation__", "__tauon_cpu_core_m16c__")
 GELE = Preds("cible gelée",
-             ("__IAR_SYSTEMS_ICC", "CPU_WIN32", "CPU_ARM7", "CPU_ARM9", "CPU_M16C62",
+             ("__IAR_SYSTEMS_ICC", "CPU_WIN32", "WIN32", "CPU_ARM7", "CPU_ARM9", "CPU_M16C62",
               "__KERNEL_UCORE_ECOS"),
              faux_val={"__tauon_compiler__": lambda v: v == "__compiler_iar_m16c__",
                        "__tauon_cpu_core__": lambda v: v in CIBLES_GELEES_COEURS,
@@ -347,13 +347,34 @@ class Cond:
         self.endif = None    # (s, e)
 
 
-def parse_block(lines, spans, k, top):
-    """Rend (liste d'éléments, index suivant) ; élément = (s, e) de texte ou Cond."""
+def directive(lines, s, e, masque=None):
+    """Directive conditionnelle de la ligne logique [s, e) ; None si ce n'est pas une directive
+    ou si le « # » est dans un commentaire (texte masqué, ex. « #endif*/ » dans un bloc commenté).
+    Les groupes sont pris sur le texte d'origine."""
+    if masque is not None:
+        vu = "".join(l.rstrip("\r\n").rstrip("\\") for l in masque[s:e])
+        if not DIRECTIVE.match(vu):
+            return None
+    return DIRECTIVE.match("".join(l.rstrip("\r\n").rstrip("\\") for l in lines[s:e]))
+
+
+def lignes_masquees(lines):
+    """Lignes du texte masqué (masquer : commentaires et littéraux), mêmes indices que lines
+    (masquer conserve les longueurs : découpe par longueur, pas par splitlines)."""
+    vu, out, i = masquer("".join(lines)), [], 0
+    for l in lines:
+        out.append(vu[i:i + len(l)])
+        i += len(l)
+    return out
+
+
+def parse_block(lines, spans, k, top, masque=None):
+    """Rend (liste d'éléments, index suivant) ; élément = (s, e) de texte ou Cond.
+    masque : lignes_masquees(lines) ; les directives situées dans un commentaire sont du texte."""
     items = []
     while k < len(spans):
         s, e = spans[k]
-        text = "".join(l.rstrip("\r\n").rstrip("\\") for l in lines[s:e])
-        m = DIRECTIVE.match(text)
+        m = directive(lines, s, e, masque)
         if m and m.group(2) in ("elif", "else", "endif"):
             if top:
                 raise ValueError("ligne %d : #%s sans #if" % (s + 1, m.group(2)))
@@ -363,13 +384,12 @@ def parse_block(lines, spans, k, top):
             kind, cond, indent = m.group(2), m.group(3), m.group(1)
             k += 1
             while True:
-                body, k = parse_block(lines, spans, k, False)
+                body, k = parse_block(lines, spans, k, False, masque)
                 c.branches.append([kind, cond, (s, e), body, indent])
                 if k >= len(spans):
                     raise ValueError("#if sans #endif (ligne %d)" % (s + 1))
                 s, e = spans[k]
-                text = "".join(l.rstrip("\r\n").rstrip("\\") for l in lines[s:e])
-                m = DIRECTIVE.match(text)
+                m = directive(lines, s, e, masque)
                 k += 1
                 if m.group(2) == "endif":
                     c.endif = (s, e)
@@ -504,7 +524,7 @@ def rewrite(lines, items, path, auto, resid, ctx=ARM):
 def _gardes(text, path, ctx):
     lines = text.splitlines(keepends=True)
     spans = logical_lines(lines)
-    items, _ = parse_block(lines, spans, 0, True)
+    items, _ = parse_block(lines, spans, 0, True, lignes_masquees(lines))
     auto, resid = [], []
     new = "".join(rewrite(lines, items, path, auto, resid, ctx))
     return new, auto, resid
@@ -609,7 +629,7 @@ def lignes_sous_garde_iar(text):
     les règles de mots-clés et de pragmas."""
     lines = text.splitlines(keepends=True)
     try:
-        items, _ = parse_block(lines, logical_lines(lines), 0, True)
+        items, _ = parse_block(lines, logical_lines(lines), 0, True, lignes_masquees(lines))
     except ValueError:
         return set()
     out = set()

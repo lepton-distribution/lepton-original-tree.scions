@@ -36,6 +36,7 @@ Includes
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "kernel/core/kernelconf.h"
 #include "kernel/core/dirent.h"
@@ -53,6 +54,7 @@ Includes
 #include "lib/libc/unistd.h"
 #include "lib/libc/stdio/stdio.h"
 #include "lib/libc/ctype/ctype.h"
+#include "lib/libc/string/string.h"
 #include "lib/pthread/pthread.h"
 #include "lib/libc/net/socket.h"
 #include "lib/libc/net/netdb.h"
@@ -220,7 +222,7 @@ Implementation
 =============================================*/
 
 static void error(const char *msg) { 
-   perror(msg); exit(0); 
+   fprintf(stderr, "%s: %s\n", msg, strerror(errno)); exit(0); 
 }
 
 /* ------------------------------------------------------------------------ *

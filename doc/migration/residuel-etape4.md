@@ -3,7 +3,7 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 3 fichier(s) modifié(s), 22 occurrence(s) automatique(s), 26 résiduelle(s).
+Résumé : 9 fichier(s) modifié(s), 62 occurrence(s) automatique(s), 26 résiduelle(s).
 
 ## Résiduels (26)
 
@@ -36,30 +36,70 @@ Résumé : 3 fichier(s) modifié(s), 22 occurrence(s) automatique(s), 26 résidu
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (22)
+## Automatiques (62)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
-| `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
-| `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1438 | garde-iar-arm | condition simplifiée | `!defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__) &&     !defined(__IAR_SYSTEMS_ICC__) → !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3124 | garde-iar-arm | branche IAR ARM retirée | `__IAR_SYSTEMS_ICC__` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3500 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__) && !_DLIB_FULL_LOCALE_SUPPORT` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3504 | garde-iar-arm | #else toujours pris | `` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 4087 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__)` |
+| `sys/root/src/kernel/core/core-segger/fork.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/core-segger/fork.c` |
+| `sys/root/src/kernel/core/core-segger/fork.c` | 59 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32) && defined(LEPTON_CHKESP)` |
+| `sys/root/src/kernel/core/interrupt.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/interrupt.h` |
+| `sys/root/src/kernel/core/interrupt.h` | 255 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/root/src/kernel/core/interrupt.h` | 260 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/kernel/core/kernel_compiler.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kernel_compiler.h` |
+| `sys/root/src/kernel/core/kernel_compiler.h` | 50 | garde-cible-gelee | branche cible gelée retirée | `defined (WIN32)` |
+| `sys/root/src/kernel/core/kernel_pthread.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kernel_pthread.h` |
+| `sys/root/src/kernel/core/kernel_pthread.h` | 266 | garde-cible-gelee | branche cible gelée retirée | `defined (WIN32) && defined(_DEBUG)` |
+| `sys/root/src/kernel/core/kernel_pthread.h` | 268 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/kernel/core/kernelconf.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kernelconf.h` |
+| `sys/root/src/kernel/core/kernelconf.h` | 71 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/root/src/kernel/core/kernelconf.h` | 73 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/kernel/core/kernelconf.h` | 82 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/root/src/kernel/core/kernelconf.h` | 84 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/root/src/kernel/dev/arch/all/flash/dev_ftl/dev_ftl.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/dev/arch/all/flash/dev_ftl/dev_ftl.c` |
+| `sys/root/src/kernel/dev/arch/all/flash/dev_ftl/dev_ftl.c` | 52 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/dhrystone/timers.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/user/tauon-basic/src/bin/dhrystone/timers.c` |
+| `sys/user/tauon-basic/src/bin/dhrystone/timers.c` | 435 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/user/tauon-basic/src/bin/free/dlmalloc.c` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 585 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 594 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 713 | garde-cible-gelee | condition simplifiée | `(MORECORE_CONTIGUOUS \|\| defined(WIN32)) → MORECORE_CONTIGUOUS` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1384 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1446 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1451 | garde-cible-gelee | branche morte (précédente toujours vraie) | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1489 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1503 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1505 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1581 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1605 | garde-cible-gelee | branche morte (précédente toujours vraie) | `/* WIN32 */` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1645 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1751 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1851 | garde-cible-gelee | branche morte (précédente toujours vraie) | `/* WIN32 */` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1921 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1953 | garde-cible-gelee | branche morte (précédente toujours vraie) | `/* WIN32 */` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2637 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2639 | garde-cible-gelee | #else toujours pris | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3065 | garde-cible-gelee | garde toujours vraie levée | `!defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3068 | garde-cible-gelee | branche morte (précédente toujours vraie) | `/* WIN32 */` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3122 | garde-cible-gelee | branche cible gelée retirée | `defined(WIN32)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1412 | garde-iar-arm | condition simplifiée | `!defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__) &&     !defined(__IAR_SYSTEMS_ICC__) → !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2917 | garde-iar-arm | branche IAR ARM retirée | `__IAR_SYSTEMS_ICC__` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2919 | garde-iar-arm | #else toujours pris | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3293 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__) && !_DLIB_FULL_LOCALE_SUPPORT` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3297 | garde-iar-arm | #else toujours pris | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 3880 | garde-iar-arm | branche IAR ARM retirée | `defined(__IAR_SYSTEMS_ICC__)` |
 | `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1 | garde-compilateur | copie à l'identique (code gelé) | `legacy/sys/user/tauon-basic/src/bin/free/dlmalloc.c` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 632 | garde-compilateur | condition simplifiée | `(defined(__GNUC__) && ((defined(__i386__) \|\| defined(__x86_64__)))) \|\| (defined(_MSC_VER) && _MSC_VER>=1310) → (defined(__i386__) \|\| defined(__x86_64__))` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 825 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 827 | garde-compilateur | branche morte (précédente toujours vraie) | `defined(_MSC_VER)` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 832 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 834 | garde-compilateur | branche morte (précédente toujours vraie) | `defined(_MSC_VER)` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 836 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1470 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2791 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && (defined(__i386__) \|\| defined(__x86_64__)) → (defined(__i386__) \|\| defined(__x86_64__))` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2820 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2895 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && (defined(__i386__) \|\| defined(__x86_64__)) → (defined(__i386__) \|\| defined(__x86_64__))` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2911 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
-| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2992 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && __GNUC__ >= 3 → __GNUC__ >= 3` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 609 | garde-compilateur | condition simplifiée | `(defined(__GNUC__) && ((defined(__i386__) \|\| defined(__x86_64__)))) \|\| (defined(_MSC_VER) && _MSC_VER>=1310) → (defined(__i386__) \|\| defined(__x86_64__))` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 802 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 804 | garde-compilateur | branche morte (précédente toujours vraie) | `defined(_MSC_VER)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 809 | garde-compilateur | garde toujours vraie levée | `defined(__GNUC__)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 811 | garde-compilateur | branche morte (précédente toujours vraie) | `defined(_MSC_VER)` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 813 | garde-compilateur | branche morte (précédente toujours vraie) | `` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 1426 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2596 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && (defined(__i386__) \|\| defined(__x86_64__)) → (defined(__i386__) \|\| defined(__x86_64__))` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2625 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2700 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && (defined(__i386__) \|\| defined(__x86_64__)) → (defined(__i386__) \|\| defined(__x86_64__))` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2716 | garde-compilateur | branche compilateur retirée | `defined(_MSC_VER) && _MSC_VER>=1300` |
+| `sys/user/tauon-basic/src/bin/free/dlmalloc.c` | 2797 | garde-compilateur | condition simplifiée | `defined(__GNUC__) && __GNUC__ >= 3 → __GNUC__ >= 3` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | _Pragma location → __lepton_section | `EXT_RAM` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 4 | pragma-iar | inclusion de compiler.h ajoutée | `#include "kernel/core/compiler.h"` |
 

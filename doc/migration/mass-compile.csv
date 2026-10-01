@@ -1,11 +1,11 @@
 fichier,module,statut,commande,avertissements,premiere_erreur
 sys/root/src/bin/net/ftpd/ftpd.c,bin,OK,preset qemu,4,
 sys/root/src/bin/net/ftpd/ls.c,bin,OK,preset qemu,1,
-sys/root/src/bin/net/httpc/httpc.c,bin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/bin/net/httpc/httpc.c:223: implicit declaration of function 'perror'; did you mean 'error'? [-Wimplicit-function-declaration]
-sys/root/src/bin/net/mongoose/mongoose.c,bin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/bin/net/mongoose/mongoose.c:521: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
-sys/root/src/bin/net/mongoose/mongoosed.c,bin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/bin/net/mongoose/mongoosed.c:288: implicit declaration of function 'strerror' [-Wimplicit-function-declaration]
-sys/root/src/bin/net/telnetd.c,bin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/bin/net/telnetd.c:105: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]
-sys/root/src/bin/test2.c,bin,ÉCHEC,gabarit qemu-mps2-an386-embos,1,sys/root/src/bin/test2.c:237: passing argument 3 of 'libc_accept' from incompatible pointer type [-Wincompatible-pointer-types]
+sys/root/src/bin/net/httpc/httpc.c,bin,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/bin/net/mongoose/mongoose.c,bin,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/bin/net/mongoose/mongoosed.c,bin,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/bin/net/telnetd.c,bin,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/bin/test2.c,bin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/bin/tst/tsteth.c,bin,OK,gabarit qemu-mps2-an386-embos,1,
 sys/root/src/kernel/core/bin.c,kernel/core,OK,preset qemu,2,
 sys/root/src/kernel/core/core-generic/kernel_pthread_tsd.c,kernel/core,OK,preset qemu,1,
