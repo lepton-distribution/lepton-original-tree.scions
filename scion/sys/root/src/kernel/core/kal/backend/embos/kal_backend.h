@@ -146,10 +146,8 @@ typedef struct {
       _sys_free(__pthread_ptr__->bckup_stack); \
 }
 
-#if   (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
-       || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\
-       || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)
-         
+//Cadre de pile ARMv7-M (M3, M4, M7) : seul cas du backend embOS (kal/arch/armv7m) ; ARMv6-M
+//(M0/M0+) à l'étape 6.
    #if (OS_VERSION_GENERIC>=51800u)
       #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
          /*modif for 3.06h version*/ \
@@ -184,8 +182,6 @@ typedef struct {
          OS_MakeTaskReady(__pthread_ptr__->tcb); \
       }
    #endif
-
-#endif
 
 /*TS_WAIT_TIME*/
    #define __inline_exit_signal_handler(__pthread_ptr__){ \
