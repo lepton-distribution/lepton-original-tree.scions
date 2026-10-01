@@ -199,13 +199,6 @@ enum enum_synth_regs {
 /*modif for segger version 3.28h */
 //#include "OSKern.H"
    //GD-TODO lm3S: improve? 
-   #if   (__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM3__)\
-       &&(__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM4__)\
-       &&(__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM7__)
-      #if OS_VERSION_GENERIC != (38607) 
-        // #include "OS_Priv.h"
-      #endif
-   #endif
 /*modif for segger version 3.52e */
 //#include "OSint.h"
 
@@ -216,17 +209,8 @@ enum enum_synth_regs {
 
    #include "stdlib.h"
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-      #include <ioat91m55800.h>
-   #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-      #include <ioat91sam7x256.h>
-   #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-      #include <atmel/ioat91sam9261.h>
-   #endif
 
    #define __va_list_copy(__dest_va_list__,__src_va_list__) memcpy(&__dest_va_list__,&__src_va_list__,sizeof(__dest_va_list__))
 //for compatibility with m16c 3.06h
@@ -363,15 +347,6 @@ typedef struct {
       }
    #endif
 
-#elif  (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)
-   #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
-      /* phlb - modif for 3.88, "PC" from OS_REGS_BASE for arm7/arm9  core*/\
-      ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->PC= (OS_U32)(__sig_handler__);\
-      ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->Counters= 0;\
-      __pthread_ptr__->tcb->Timeout=0; \
-      __pthread_ptr__->tcb->Stat=0; \
-      OS_MakeTaskReady(__pthread_ptr__->tcb); \
-   }
 #endif
 
 /*TS_WAIT_TIME*/
@@ -389,21 +364,7 @@ typedef struct {
 //restart task switching
    #define __atomic_out() OS_LeaveRegion(); //restart task switching
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-//stop timer (TIMER A0) tick for scheduler.TABSR.0=0;
-      #define __stop_sched() __TC_CCRC0 &= ~(1);
-//restart timer (TIMER A0) tick for scheduler.TABSR.0=1;
-      #define __restart_sched() __TC_CCRC0 |= 1;
-   #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-      #define __LEPTON_KAL_PIT_BASE     (0xFFFFFD30)
-      #define __LEPTON_KAL_PIT_MR       (*(volatile OS_U32*) (__LEPTON_KAL_PIT_BASE + 0x00))
-//stop timer (PIT periodic interval timer) tick for scheduler.PITIEN=0;
-      #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1<<25);
-//restart timer (PIT periodic interval timer) tick for scheduler.PITIEN=1;
-      #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1<<25);
-   #endif
 
    //GD all Cortex-M3 and cortex M4 MCUs have the same systick registers
    #if   (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
@@ -415,131 +376,12 @@ typedef struct {
       #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1uL << (1));
    #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-      #define __LEPTON_KAL_PIT_BASE     (0xFFFFFD30)
-      #define __LEPTON_KAL_PIT_MR       (*(volatile OS_U32*) (__LEPTON_KAL_PIT_BASE + 0x00))
-//stop timer (PIT periodic interval timer) tick for scheduler.PITIEN=0;
-      #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1<<25);
-//restart timer (PIT periodic interval timer) tick for scheduler.PITIEN=1;
-      #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1<<25);
-   #endif
 
 
 //uninterruptible section in
    #define __disable_interrupt_section_in() OS_IncDI()
 //uninterruptible section out
    #define __disable_interrupt_section_out() OS_DecRI()
-
-//profiler macros for arm7 (at91m55800a)
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)
-//
-      #define PROFILER_PERIOD (1024.0/32000000.0)
-//
-      #define PROFILER_START_COUNTER_VALUE 0xFFFF
-//
-      #define __kernel_profiler_start(){ \
-      __APMC_PCER |= 0x200; \
-      __TC_BMR1   = 0x02; \
-      __TC_CCR1C0 = 2; \
-      __TC_CMR1C0 = 0x00004004; \
-      __TC_RC1C1 = PROFILER_START_COUNTER_VALUE;   /*0x0bdb;*//*32000000/2/1000;*/ \
-      __TC_CCR1C0 = 1; \
-      __TC_CCR1C0 = 5; \
-}
-//
-      #define __kernel_profiler_stop(__pthread_ptr__){ \
-      __TC_CCR1C0 = 2; \
-      if(__pthread_ptr__) \
-         __pthread_ptr__->_profile_counter=__TC_CV1C0; \
-}
-//
-      #define __kernel_profiler_get_counter(__pthread_ptr__) (__pthread_ptr__?__pthread_ptr__->_profile_counter:0)
-
-//io
-      #define __io_profiler_init(){ \
-      __APMC_PCER |= 0x400; \
-      __TC_CCR1C1 = 2; \
-      __TC_BMR1   = 0x02; \
-      __TC_CMR1C1 = 0x00000004; \
-      __TC_RC1C1 = PROFILER_START_COUNTER_VALUE; \
-      __TC_CCR1C1 = 1; \
-      __TC_CCR1C1 = 5; \
-}
-//
-      #define __io_profiler_start(__desc__){ \
-      ofile_lst[__desc__]._profile_counter=(__TC_CV1C1); \
-}
-//
-      #define __io_profiler_stop(__desc__){ \
-      unsigned short __counter__ = __TC_CV1C1; \
-      if(__counter__ > ofile_lst[__desc__]._profile_counter ) \
-         ofile_lst[__desc__]._profile_counter=(__counter__)-ofile_lst[__desc__]._profile_counter; \
-      else \
-            ofile_lst[__desc__]._profile_counter=(PROFILER_START_COUNTER_VALUE-ofile_lst[__desc__]._profile_counter)+__counter__;\
-}
-//
-      #define __io_profiler_get_counter(__desc__) ofile_lst[__desc__]._profile_counter
-//
-   #endif //END KERNEL_PROFILER CPU_ARM7
-
-//profiler macros for arm9 (at91sam9260 and at91sam9261)
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)
-
-//
-      #define PROFILER_PERIOD           (1.0/32000.0)
-//
-      #define PROFILER_START_COUNTER_VALUE 0xFFFF
-//
-//#define __kernel_profiler_start()
-//#define __kernel_profiler_stop(__pid__)
-//#define __kernel_profiler_get_counter(__pid__) (0)
-
-      #define __kernel_profiler_start(){ \
-      *AT91C_PMC_PCER |= 0x80000; \
-      *AT91C_TCB0_BMR = 0x02; \
-      *AT91C_TC2_CCR  = 2; \
-      *AT91C_TC2_CMR  = 0x00004004; \
-      *AT91C_TC2_RC   = PROFILER_START_COUNTER_VALUE; \
-      *AT91C_TC2_CCR  = 1; \
-      *AT91C_TC2_CCR  = 5; \
-}
-
-//
-      #define __kernel_profiler_stop(__pthread_ptr__){ \
-      *AT91C_TC2_CCR = 2; \
-      if(__pthread_ptr__) \
-         __pthread_ptr__->_profile_counter=*AT91C_TC2_CV; \
-}
-//
-      #define __kernel_profiler_get_counter(__pthread_ptr__) (__pthread_ptr__?__pthread_ptr__->_profile_counter:0)
-
-//
-      #define __io_profiler_init(){ \
-      *AT91C_PMC_PCER |= 0x40000; \
-      *AT91C_TCB0_BMR = 0x01; \
-      *AT91C_TC1_CCR  = 2; \
-      *AT91C_TC1_CMR  = 0x00004004; \
-      *AT91C_TC1_RC   = PROFILER_START_COUNTER_VALUE; \
-      *AT91C_TC1_CCR  = 1; \
-      *AT91C_TC1_CCR  = 5; \
-}
-//
-      #define __io_profiler_start(__desc__){ \
-      ofile_lst[__desc__]._profile_counter=(*AT91C_TC1_CV); \
-}
-//
-      #define __io_profiler_stop(__desc__){ \
-      unsigned short __counter__ = (*AT91C_TC1_CV); \
-      if(__counter__ > ofile_lst[__desc__]._profile_counter ) \
-         ofile_lst[__desc__]._profile_counter=(__counter__)-ofile_lst[__desc__]._profile_counter; \
-      else \
-            ofile_lst[__desc__]._profile_counter=(PROFILER_START_COUNTER_VALUE-ofile_lst[__desc__]._profile_counter)+__counter__;\
-}
-//
-      #define __io_profiler_get_counter(__desc__) ofile_lst[__desc__]._profile_counter
-
-//
-   #endif //END KERNEL_PROFILER CPU_ARM9
 
 //profiling option not enabled (see in sys/root/src/kernel/core/kernelconf.h)
    #if (!defined(KERNEL_PROFILER) || !defined(__kernel_profiler_start)) //GD trick for default/unkown CPU
@@ -566,17 +408,8 @@ typedef struct {
    #include "kernel/core/ucore/freeRTOS_8-0-0/source/include/kal_freertos.h"
 
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-      #include <ioat91m55800.h>
-   #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-      #include <ioat91sam7x256.h>
-   #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-      #include <atmel/ioat91sam9261.h>
-   #endif
 
    #define __va_list_copy(__dest_va_list__,__src_va_list__) memcpy(&__dest_va_list__,&__src_va_list__,sizeof(__dest_va_list__))
 
@@ -622,27 +455,6 @@ typedef struct {
            uint32_t  OS_REG_PC;
            uint32_t  OS_REG_XPSR;
          } cpu_regs_t;
-   #elif ( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm7tdmi__) || (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm926ejs__) )
-      typedef struct {
-         uint32_t counters_critical_nesting;
-         uint32_t SPSR;
-         uint32_t R0;
-         uint32_t R1;
-         uint32_t R2;
-         uint32_t R3;
-         uint32_t R4;
-         uint32_t R5;
-         uint32_t R6;
-         uint32_t R7;
-         uint32_t R8;
-         uint32_t R9;
-         uint32_t R10;
-         uint32_t R11;
-         uint32_t R12;
-         uint32_t R13;
-         uint32_t R14;
-         uint32_t OS_REG_PC;
-      } cpu_regs_t;
    #endif
     
    
@@ -728,21 +540,7 @@ typedef struct {
    //restart task switching
    #define __atomic_out() xTaskResumeAll()
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-      //stop timer (TIMER A0) tick for scheduler.TABSR.0=0;
-      #define __stop_sched() __TC_CCRC0 &= ~(1);
-      //restart timer (TIMER A0) tick for scheduler.TABSR.0=1;
-      #define __restart_sched() __TC_CCRC0 |= 1;
-   #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-      #define __LEPTON_KAL_PIT_BASE     (0xFFFFFD30)
-      #define __LEPTON_KAL_PIT_MR       (*(volatile uint32_t*) (__LEPTON_KAL_PIT_BASE + 0x00))
-      //stop timer (PIT periodic interval timer) tick for scheduler.PITIEN=0;
-      #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1<<25);
-      //restart timer (PIT periodic interval timer) tick for scheduler.PITIEN=1;
-      #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1<<25);
-   #endif
 
    //GD all Cortex-M3 and cortex M4 MCUs have the same systick registers
    #if   (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)\
@@ -755,131 +553,12 @@ typedef struct {
       #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1uL << (1));
    #endif
 
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-      #define __LEPTON_KAL_PIT_BASE     (0xFFFFFD30)
-      #define __LEPTON_KAL_PIT_MR       (*(volatile uint32_t*) (__LEPTON_KAL_PIT_BASE + 0x00))
-      //stop timer (PIT periodic interval timer) tick for scheduler.PITIEN=0;
-      #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1<<25);
-      //restart timer (PIT periodic interval timer) tick for scheduler.PITIEN=1;
-      #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1<<25);
-   #endif
 
    //uninterruptible section in
    #define __disable_interrupt_section_in() taskENTER_CRITICAL()
    
    //uninterruptible section out
    #define __disable_interrupt_section_out() taskEXIT_CRITICAL()
-
-   //profiler macros for arm7 (at91m55800a)
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)
-      //
-      #define PROFILER_PERIOD (1024.0/32000000.0)
-      //
-      #define PROFILER_START_COUNTER_VALUE 0xFFFF
-      //
-      #define __kernel_profiler_start(){ \
-         __APMC_PCER |= 0x200; \
-         __TC_BMR1   = 0x02; \
-         __TC_CCR1C0 = 2; \
-         __TC_CMR1C0 = 0x00004004; \
-         __TC_RC1C1 = PROFILER_START_COUNTER_VALUE;   /*0x0bdb;*//*32000000/2/1000;*/ \
-         __TC_CCR1C0 = 1; \
-         __TC_CCR1C0 = 5; \
-      }
-      //
-      #define __kernel_profiler_stop(__pthread_ptr__){ \
-         __TC_CCR1C0 = 2; \
-         if(__pthread_ptr__) \
-            __pthread_ptr__->_profile_counter=__TC_CV1C0; \
-      }
-      //
-      #define __kernel_profiler_get_counter(__pthread_ptr__) (__pthread_ptr__?__pthread_ptr__->_profile_counter:0)
-
-      //io
-      #define __io_profiler_init(){ \
-         __APMC_PCER |= 0x400; \
-         __TC_CCR1C1 = 2; \
-         __TC_BMR1   = 0x02; \
-         __TC_CMR1C1 = 0x00000004; \
-         __TC_RC1C1 = PROFILER_START_COUNTER_VALUE; \
-         __TC_CCR1C1 = 1; \
-         __TC_CCR1C1 = 5;    
-      }
-      //
-      #define __io_profiler_start(__desc__){ \
-         ofile_lst[__desc__]._profile_counter=(__TC_CV1C1); \
-      }
-      //
-      #define __io_profiler_stop(__desc__){ \
-         unsigned short __counter__ = __TC_CV1C1; \
-         if(__counter__ > ofile_lst[__desc__]._profile_counter ) \
-               ofile_lst[__desc__]._profile_counter=(__counter__)-ofile_lst[__desc__]._profile_counter; \
-            else \
-                  ofile_lst[__desc__]._profile_counter=(PROFILER_START_COUNTER_VALUE-ofile_lst[__desc__]._profile_counter)+__counter__;\
-         }
-      //
-      #define __io_profiler_get_counter(__desc__) ofile_lst[__desc__]._profile_counter
-   //
-   #endif //END KERNEL_PROFILER CPU_ARM7
-
-   //profiler macros for arm9 (at91sam9260 and at91sam9261)
-   #if (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)
-
-      //
-      #define PROFILER_PERIOD           (1.0/32000.0)
-      //
-      #define PROFILER_START_COUNTER_VALUE 0xFFFF
-      //
-      //#define __kernel_profiler_start()
-      //#define __kernel_profiler_stop(__pid__)
-      //#define __kernel_profiler_get_counter(__pid__) (0)
-
-      #define __kernel_profiler_start(){ \
-         *AT91C_PMC_PCER |= 0x80000; \
-         *AT91C_TCB0_BMR = 0x02; \
-         *AT91C_TC2_CCR  = 2; \
-         *AT91C_TC2_CMR  = 0x00004004; \
-         *AT91C_TC2_RC   = PROFILER_START_COUNTER_VALUE; \
-         *AT91C_TC2_CCR  = 1; \
-         *AT91C_TC2_CCR  = 5; \
-      }
-
-      //
-      #define __kernel_profiler_stop(__pthread_ptr__){ \
-         *AT91C_TC2_CCR = 2; \
-         if(__pthread_ptr__) \
-            __pthread_ptr__->_profile_counter=*AT91C_TC2_CV; \
-      }  
-      //
-      #define __kernel_profiler_get_counter(__pthread_ptr__) (__pthread_ptr__?__pthread_ptr__->_profile_counter:0)
-
-      //
-      #define __io_profiler_init(){ \
-         *AT91C_PMC_PCER |= 0x40000; \
-         *AT91C_TCB0_BMR = 0x01; \
-         *AT91C_TC1_CCR  = 2; \
-         *AT91C_TC1_CMR  = 0x00004004; \
-         *AT91C_TC1_RC   = PROFILER_START_COUNTER_VALUE; \
-         *AT91C_TC1_CCR  = 1; \
-         *AT91C_TC1_CCR  = 5; \
-      }
-      //
-      #define __io_profiler_start(__desc__){ \
-         ofile_lst[__desc__]._profile_counter=(*AT91C_TC1_CV); \
-      }
-      //
-      #define __io_profiler_stop(__desc__){ \
-         unsigned short __counter__ = (*AT91C_TC1_CV); \
-         if(__counter__ > ofile_lst[__desc__]._profile_counter ) \
-            ofile_lst[__desc__]._profile_counter=(__counter__)-ofile_lst[__desc__]._profile_counter; \
-         else \
-            ofile_lst[__desc__]._profile_counter=(PROFILER_START_COUNTER_VALUE-ofile_lst[__desc__]._profile_counter)+__counter__;\
-      }
-      //
-      #define __io_profiler_get_counter(__desc__) ofile_lst[__desc__]._profile_counter
-
-   //
-   #endif //END KERNEL_PROFILER CPU_ARM9
 
    //profiling option not enabled (see in sys/root/src/kernel/core/kernelconf.h)
    #if (!defined(KERNEL_PROFILER) || !defined(__kernel_profiler_start)) //GD trick for default/unkown CPU
