@@ -11,6 +11,8 @@ add_compile_options(-m32)
 add_link_options(-m32)
 
 set(LEPTON_HOST_ARCH_DIR ${LEPTON_SRC}/kernel/core/arch/host)
+# KAL, axe ISA : kal_arch.h (inclus par kernel/core/kal.h, dispatcher).
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/kal/arch/host)
 
 # Contrôle croisé du format UFS (tests/host, host.ufs_format_arm) : ABI AAPCS de la cible de base.
 set(LEPTON_HOST_ARM_CHECK_FLAGS -mcpu=cortex-m4 -mthumb)

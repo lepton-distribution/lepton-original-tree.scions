@@ -10,3 +10,4 @@ target_compile_definitions(lepton_options INTERFACE CPU_CORTEXM)
 set(LEPTON_ISA_ARCH_DIR kernel/core/arch/cortexm)
 # sections critiques à nom neutre (#include "lepton_irq.h") : kernel/core/arch/cortexm
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_ARCH_DIR})
+# KAL, axe ISA : kernel/core/kal/arch/armv6m/ (kal_arch.h) à créer à l'étape 6.
