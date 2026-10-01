@@ -396,7 +396,10 @@ def step_dispatcher(clone, dry, lines, lic):
         "#include \"kal_arch.h\"\n",
         "#include \"kal_backend.h\"\n",
     ]
-    return lines[:g.arms[0][0]] + dispatch + lines[g.endif[1]:]
+    start = g.arms[0][0]
+    if lines[start - 1].strip() == "//for eCos":  # en-tête de l'ancienne première branche
+        start -= 1
+    return lines[:start] + dispatch + lines[g.endif[1]:]
 
 
 EXTRACT = {"extraire-contrat": step_contrat, "extraire-freertos": step_freertos,
