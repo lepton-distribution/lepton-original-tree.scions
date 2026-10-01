@@ -1,6 +1,7 @@
 
 
 #include <stdint.h>
+#include "kernel/core/compiler.h"
 #include <stdlib.h>
 #include <string.h>
 //
@@ -17,7 +18,7 @@
 #define SDRAM_END_ADDRESS 0x3FFFFF
 
 #ifndef EXT_RAM_REGION
-#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")
+#define EXT_RAM_REGION      __lepton_section("EXT_RAM")
 #endif
 
 //*****************************************************************************
