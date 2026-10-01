@@ -34,5 +34,6 @@ either the MPL or the [eCos GPL] License."
 #define __tauon_kernel_profile__ __tauon_kernel_profile_full__
 #define __KERNEL_POSIX_REALTIME_SIGNALS
 #define __KERNEL_USE_FILE_LOCK
+#define __KERNEL_MAX_SUPER_BLOCK 8 //superblocs montés (vfstypes.h)
 
 #endif //_KAL_ARCH_HOST_CONF_H

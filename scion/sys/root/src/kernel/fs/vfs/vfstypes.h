@@ -147,11 +147,8 @@ typedef struct {
  * nombre maximum de de superblock (voir MAX_MOUNT_DEVICE).
  *
  */
-#if !defined(CPU_CORTEXM)
-#define MAX_SUPER_BLOCK 8 //6//4 //4
-#else
-#define MAX_SUPER_BLOCK 4
-#endif
+//par ISA : kal/arch/<isa>/kal_arch_conf.h (hote 8, Cortex-M 4)
+#define MAX_SUPER_BLOCK __KERNEL_MAX_SUPER_BLOCK
 
 extern superblk_t superblk_lst[MAX_SUPER_BLOCK];
 
