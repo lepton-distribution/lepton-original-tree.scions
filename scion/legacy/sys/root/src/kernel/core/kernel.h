@@ -462,7 +462,7 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
    __wait_ret_int(); \
 }
 
-#elif defined(__GNUC__) && defined(CPU_GNU32)
+#elif defined(__GNUC__) && (defined(CPU_ARM7) || defined(CPU_ARM9) || defined(CPU_GNU32))
 //
    #define __mk_syscall(__syscall_nb__,__pdata__){ \
    kernel_pthread_t* __pthread_ptr__; \
@@ -566,10 +566,14 @@ void _init_syscall(void);
 void _kernel_routine(void* arg);
 
 //wrapper for external call
+   #ifndef __KERNEL_UCORE_ECOS
 void __wrpr_kernel_dev_gettime(desc_t __desc, char * __buf, int __size);
+   #endif
 
    #if defined(CPU_GNU32) && !defined(USE_KERNEL_STATIC)
 void _kernel_syscall_handler_synth(int sig, cyg_hal_sys_siginfo_t * info, void *ptr);
+   #elif defined(CPU_ARM7) || defined(CPU_ARM9)
+void _kernel_syscall_handler(cyg_addrword_t data, cyg_code_t number, cyg_addrword_t info);
    #elif defined(CPU_CORTEXM)
 void do_swi(void);
 void _kernel_syscall_handler(void);

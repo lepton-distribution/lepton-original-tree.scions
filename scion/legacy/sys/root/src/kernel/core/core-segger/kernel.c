@@ -90,10 +90,14 @@ kernel_pthread_t kernel_thread;
 tmr_t kernel_tmr;
 
 //
-#if ( (__tauon_compiler__==__compiler_keil_arm__)   && (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__))
+#if ( (__tauon_compiler__==__compiler_iar_m16c__))
+   #define KERNEL_STACK_SIZE  1024 //1024//512 M16C
+#elif ( (__tauon_compiler__==__compiler_keil_arm__)   && (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__))
    #define KERNEL_STACK_SIZE  2048 //CORTEXM3
 #elif ( (__tauon_compiler__==__compiler_keil_arm__)   && (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__))
    #define KERNEL_STACK_SIZE  2048 //CORTEXM4
+#elif ( (__tauon_compiler__==__compiler_win32__)      && (__tauon_cpu_core__ == __tauon_cpu_core_win32_simulation__))
+   #define KERNEL_STACK_SIZE  1024
 #elif ( (__tauon_compiler__==__compiler_gnuc__)       && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)))
    #define KERNEL_STACK_SIZE  4096 //CORTEXM4, CORTEXM7 (valeurs IAR)
 #elif ( (__tauon_compiler__==__compiler_gnuc__)       && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)))

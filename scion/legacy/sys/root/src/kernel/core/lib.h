@@ -26,41 +26,54 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Compiler Directive
 ==============================================*/
-#ifndef _KERNEL_PTHREAD_MUTEX_H
-#define _KERNEL_PTHREAD_MUTEX_H
+#ifndef _LIB_H
+#define _LIB_H
 
 
 /*============================================
 | Includes
 ==============================================*/
-#include "kernel/core/kal.h"
+#include "kernel/core/kernelconf.h"
+#include "kernel/core/process.h"
 
 /*============================================
 | Declaration
 ==============================================*/
-#define PTHREAD_MUTEX_DEFAULT 0
-#define PTHREAD_MUTEX_NORMAL  1
+#ifdef __KERNEL_LOAD_LIB
 
-
-//
-typedef struct {
-#ifdef __KERNEL_UCORE_EMBOS
-   OS_RSEMA mutex;
+#if defined(__KERNEL_UCORE_ECOS) && defined(VERBOSE)
+   #pragma message ("use load lib")
 #endif
-#ifdef __KERNEL_UCORE_FREERTOS
-   xSemaphoreHandle mutex;
-   StaticSemaphore_t mutex_static;
+
 #endif
-}kernel_pthread_mutex_t;
 
-typedef int pthread_mutexattr_t;
+#define LIB_INVALID_OFFSET 0xffffffff
 
-int   kernel_pthread_mutex_init     (kernel_pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
-int   kernel_pthread_mutex_destroy  (kernel_pthread_mutex_t *mutex); //pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-int   kernel_pthread_mutex_lock     (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_trylock  (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_unlock   (kernel_pthread_mutex_t *mutex);
+   #define __declare_lib_data_offset(__lib_name__) lib_data_offset_t __lib_name__##lib_data_offset =LIB_INVALID_OFFSET
+   #define __extern_lib_data_offset(__lib_name__) extern lib_data_offset_t __lib_name__##lib_data_offset
+#define __implement_lib_data_offset(__lib_name__) __lib_name__ ## lib_data_offset
 
-//int kernel_pthread_mutex_owner_destroy(struct kernel_pthread_st *thread_ptr, kernel_pthread_mutex_t *mutex);
+   #define __lib_data_alloc(__pthread_ptr__,__size__) (kernel_pthread_alloca(__pthread_ptr__,__size__))
+   #define __lib_data(__lib_name__) (void*)((char*)kernel_pthread_self()->attr.stackaddr+__implement_lib_data_offset(libc))
+
+   #define __declare_fct_lib_entrypoint(__lib_name__) extern int __lib_name__##_lib_entrypoint(kernel_pthread_t* pthread_ptr) //GD-TODO fix type ?
+#define __implement_fct_lib_entrypoint(__lib_name__) __lib_name__ ## _lib_entrypoint
+
+
+
+typedef void* plib_t;
+typedef unsigned long lib_data_offset_t;
+
+typedef int (*LIB_ENTRY_POINT)(kernel_pthread_t* pthread_ptr);
+typedef LIB_ENTRY_POINT lib_entry_point_t;
+
+typedef struct lib_st {
+   lib_entry_point_t lib_entry_point;
+   lib_data_offset_t* p_lib_data_offset;
+}lib_t;
+
+int load_lib(kernel_pthread_t* pthread_ptr);
+
+
 
 #endif

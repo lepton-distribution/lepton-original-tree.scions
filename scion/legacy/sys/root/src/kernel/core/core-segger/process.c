@@ -60,7 +60,11 @@ Global Declaration
 pid_t pid_counter;
 
 //patch: optimization for code memory occupation.
+#if defined (CPU_WIN32)
+process_t* __process_lst[PROCESS_MAX]={0};
+#else
 process_t* __process_lst[PROCESS_MAX];
+#endif
 
 process_t** process_lst=0;
 kernel_pthread_t* process_thread_lst=0;

@@ -26,41 +26,67 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Compiler Directive
 ==============================================*/
-#ifndef _KERNEL_PTHREAD_MUTEX_H
-#define _KERNEL_PTHREAD_MUTEX_H
+#ifndef _KERNEL_TIMER_H
+#define _KERNEL_TIMER_H
 
 
 /*============================================
 | Includes
 ==============================================*/
-#include "kernel/core/kal.h"
+#include "kernel/core/types.h"
+#include "kernel/core/kernel_pthread.h"
+#include "kernel/core/timer.h"
 
+#ifdef __KERNEL_UCORE_ECOS
+   #include <cyg/kernel/kapi.h>
+   #include "kernel/core/core_rttimer.h"
+
+typedef cyg_handle_t counter_hdl_t;
+typedef struct tmr_obj_st {
+   alrm_hdl_t alarm_hdl;
+   alrm_t alarm_obj;
+   counter_hdl_t cnt_obj;
+}tmr_obj_t;
+#else
+typedef long tmr_obj_t;
+#endif
 /*============================================
 | Declaration
 ==============================================*/
-#define PTHREAD_MUTEX_DEFAULT 0
-#define PTHREAD_MUTEX_NORMAL  1
 
-
-//
-typedef struct {
+typedef struct kernel_timer_st {
 #ifdef __KERNEL_UCORE_EMBOS
-   OS_RSEMA mutex;
+   OS_TIMER timer;
 #endif
+
 #ifdef __KERNEL_UCORE_FREERTOS
-   xSemaphoreHandle mutex;
-   StaticSemaphore_t mutex_static;
+   xTimerHandle timer;
+   StaticTimer_t timer_static;
 #endif
-}kernel_pthread_mutex_t;
 
-typedef int pthread_mutexattr_t;
+#ifdef __KERNEL_UCORE_ECOS
+   tmr_obj_t timer;
+#endif
+   //
+   unsigned char created;
+   //
+   clockid_t clockid;
+   //
+   struct sigevent sigevent;
+   //
+   struct itimerspec itimerspec;
+   //
+   struct kernel_pthread_st* kernel_pthread;
+   //
+   unsigned char interval; //0:timer period, 1: interval timer period
+}kernel_timer_t;
 
-int   kernel_pthread_mutex_init     (kernel_pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
-int   kernel_pthread_mutex_destroy  (kernel_pthread_mutex_t *mutex); //pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-int   kernel_pthread_mutex_lock     (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_trylock  (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_unlock   (kernel_pthread_mutex_t *mutex);
 
-//int kernel_pthread_mutex_owner_destroy(struct kernel_pthread_st *thread_ptr, kernel_pthread_mutex_t *mutex);
+int kernel_timer_create(clockid_t, struct sigevent *,kernel_timer_t *);
+int kernel_timer_delete(kernel_timer_t*);
+int kernel_timer_gettime(kernel_timer_t*, struct itimerspec *);
+int kernel_timer_getoverrun(kernel_timer_t*);
+int kernel_timer_settime(kernel_timer_t*, int, const struct itimerspec *,struct itimerspec *);
+
 
 #endif

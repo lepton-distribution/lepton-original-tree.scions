@@ -35,6 +35,9 @@ either the MPL or the [eCos GPL] License."
 ==============================================*/
 #include "kernel/core/kal.h"
 
+#ifdef __KERNEL_UCORE_ECOS
+   #include <cyg/kernel/kapi.h>
+#endif
 /*============================================
 | Declaration
 ==============================================*/
@@ -50,6 +53,9 @@ typedef struct {
 #ifdef __KERNEL_UCORE_FREERTOS
    xSemaphoreHandle mutex;
    StaticSemaphore_t mutex_static;
+#endif
+#ifdef __KERNEL_UCORE_ECOS
+   cyg_mutex_t mutex;
 #endif
 }kernel_pthread_mutex_t;
 

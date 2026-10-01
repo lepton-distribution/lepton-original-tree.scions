@@ -142,11 +142,9 @@ int kernel_object_destructor_pthread_mutex(kernel_object_t* p){
    if(kernel_pthread_mutex_destroy(&p->object.kernel_object_pthread_mutex.kernel_pthread_mutex)<0)
       return -1;
 
-#ifndef CPU_M16C62
    p->type = KERNEL_OBJECT_FREE; //could be reused for any kernel object type
    //
    memset(&p->object.kernel_object_pthread_mutex.kernel_pthread_mutex,0,sizeof(kernel_pthread_mutex_t));
-#endif
 
    return 0;
 }

@@ -47,6 +47,9 @@ Includes
 #include "kernel/core/signal.h"
 
 
+#ifdef CPU_WIN32
+   #pragma pack(push, 8)
+#endif
 
 
 #include "kernel/core/kernel_pthread.h"
@@ -170,6 +173,9 @@ extern process_t** process_lst;
 extern kernel_pthread_t* process_thread_lst;
 
 
+#ifdef CPU_WIN32
+void display_stack(HANDLE h, char* title);
+#endif
 
 //process pthread container operation
 int _sys_process_insert_pthread(process_t* process,kernel_pthread_t* p);
@@ -241,6 +247,9 @@ int _sys_pthread_cancel_all_except(pid_t pid,kernel_pthread_t* except_pthread_pt
 
 #define __sys_errno __kernel_pthread_errno
 
+#ifdef CPU_WIN32
+   #pragma pack(pop)
+#endif
 
 /** @} */
 /** @} */

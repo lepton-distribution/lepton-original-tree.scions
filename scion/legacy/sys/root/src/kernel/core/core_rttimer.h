@@ -51,6 +51,15 @@ typedef OS_TIMER tmr_t;
       StaticTimer_t timer_static;
    }tmr_t;
 
+#elif __KERNEL_UCORE_ECOS
+   typedef cyg_handle_t alrm_hdl_t;    //handle sur l'objet alarme
+   typedef cyg_alarm alrm_t;    //objet alarme
+   typedef void (*_tmr_func_t)(alrm_hdl_t alarm_handle, cyg_addrword_t data );
+   typedef _tmr_func_t tmr_func_t;    //fonction exécuter lor du déclenchement
+   typedef struct tmr_st {
+      alrm_hdl_t alarm_hdl;
+      alrm_t alarm_obj;
+   }tmr_t;
 #elif USE_KERNEL_STATIC
    typedef void (*_tmr_func_t)(void);
    typedef _tmr_func_t tmr_func_t;
@@ -64,6 +73,9 @@ typedef struct rttmr_attr_st {
    time_t tm_msec; //delay
    tmr_func_t func;
    
+#if defined __KERNEL_UCORE_ECOS
+   cyg_addrword_t data;
+#endif
 }rttmr_attr_t;
 
 

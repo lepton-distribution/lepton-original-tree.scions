@@ -22,45 +22,62 @@ If you do not delete the provisions above, a recipient may use your version of t
 either the MPL or the [eCos GPL] License."
 */
 
+/*===========================================
+Compiler Directive
+=============================================*/
+#ifndef _RTTIMER_H_
+#define _RTTIMER_H_
 
-/*============================================
-| Compiler Directive
-==============================================*/
-#ifndef _KERNEL_PTHREAD_MUTEX_H
-#define _KERNEL_PTHREAD_MUTEX_H
 
-
-/*============================================
-| Includes
-==============================================*/
+/*===========================================
+Includes
+=============================================*/
 #include "kernel/core/kal.h"
 
-/*============================================
-| Declaration
-==============================================*/
-#define PTHREAD_MUTEX_DEFAULT 0
-#define PTHREAD_MUTEX_NORMAL  1
 
+/*===========================================
+Declaration
+=============================================*/
+#if defined(__KERNEL_UCORE_EMBOS)
+typedef void (*_tmr_func_t)(void);
+typedef _tmr_func_t tmr_func_t;
+typedef OS_TIMER tmr_t;
 
-//
-typedef struct {
-#ifdef __KERNEL_UCORE_EMBOS
-   OS_RSEMA mutex;
+#elif defined(__KERNEL_UCORE_FREERTOS)
+typedef void (*_tmr_func_t)(void);
+typedef _tmr_func_t tmr_func_t;
+typedef xTimerHandle tmr_t;
+
+#elif defined(__KERNEL_UCORE_ECOS)
+typedef cyg_handle_t alrm_hdl_t;
+typedef cyg_alarm alrm_t;
+typedef void (*_tmr_func_t)(alrm_hdl_t alarm_handle, cyg_addrword_t data );
+typedef _tmr_func_t tmr_func_t;
+typedef struct tmr_st {
+   alrm_hdl_t alarm_hdl;
+   alrm_t alarm_obj;
+}tmr_t;
+
+#elif defined(USE_KERNEL_STATIC)
+typedef void (*_tmr_func_t)(void);
+typedef _tmr_func_t tmr_func_t;
+typedef int tmr_t;
+
 #endif
-#ifdef __KERNEL_UCORE_FREERTOS
-   xSemaphoreHandle mutex;
-   StaticSemaphore_t mutex_static;
+
+
+typedef struct rttmr_attr_st {
+   time_t tm_msec; //delay
+   tmr_func_t func;
+#if defined __KERNEL_UCORE_ECOS
+   cyg_addrword_t data;
 #endif
-}kernel_pthread_mutex_t;
+}rttmr_attr_t;
 
-typedef int pthread_mutexattr_t;
-
-int   kernel_pthread_mutex_init     (kernel_pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
-int   kernel_pthread_mutex_destroy  (kernel_pthread_mutex_t *mutex); //pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-int   kernel_pthread_mutex_lock     (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_trylock  (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_unlock   (kernel_pthread_mutex_t *mutex);
-
-//int kernel_pthread_mutex_owner_destroy(struct kernel_pthread_st *thread_ptr, kernel_pthread_mutex_t *mutex);
+int rttmr_create(tmr_t* tmr,rttmr_attr_t* rttmr_attr);
+int rttmr_start(tmr_t* tmr);
+int rttmr_stop(tmr_t* tmr);
+int rttmr_restart(tmr_t* tmr);
+int rttmr_delete(tmr_t* tmr);
 
 #endif

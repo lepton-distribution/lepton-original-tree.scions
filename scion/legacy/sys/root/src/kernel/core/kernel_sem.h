@@ -22,45 +22,71 @@ If you do not delete the provisions above, a recipient may use your version of t
 either the MPL or the [eCos GPL] License."
 */
 
+/**
+ * \addtogroup lepton_kernel
+ * @{
+ */
+
+/**
+ * \addtogroup kernel_sem les kernel semaphore
+ * @{
+ *
+ */
+
 
 /*============================================
 | Compiler Directive
 ==============================================*/
-#ifndef _KERNEL_PTHREAD_MUTEX_H
-#define _KERNEL_PTHREAD_MUTEX_H
+#ifndef _KERNEL_SEM_H
+#define _KERNEL_SEM_H
 
 
 /*============================================
 | Includes
 ==============================================*/
+
+#include "kernel/core/kernelconf.h"
 #include "kernel/core/kal.h"
+#include "kernel/core/timer.h"
 
 /*============================================
 | Declaration
 ==============================================*/
-#define PTHREAD_MUTEX_DEFAULT 0
-#define PTHREAD_MUTEX_NORMAL  1
+#ifdef CPU_WIN32
+#pragma pack(push, 8)
+#endif
 
-
-//
-typedef struct {
+typedef struct kernel_sem_st {
 #ifdef __KERNEL_UCORE_EMBOS
-   OS_RSEMA mutex;
+   OS_CSEMA sem;
 #endif
 #ifdef __KERNEL_UCORE_FREERTOS
-   xSemaphoreHandle mutex;
-   StaticSemaphore_t mutex_static;
+   xSemaphoreHandle sem;
+   StaticSemaphore_t sem_static;
+   signed portBASE_TYPE xHigherPriorityTaskWoken; //used by semaphore in interrupt context 
 #endif
-}kernel_pthread_mutex_t;
+#ifdef __KERNEL_UCORE_ECOS
+   cyg_sem_t sem;
+#endif
+}kernel_sem_t;
 
-typedef int pthread_mutexattr_t;
+#ifdef CPU_WIN32
+#pragma pack(pop)
+#endif
 
-int   kernel_pthread_mutex_init     (kernel_pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
-int   kernel_pthread_mutex_destroy  (kernel_pthread_mutex_t *mutex); //pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-int   kernel_pthread_mutex_lock     (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_trylock  (kernel_pthread_mutex_t *mutex);
-int   kernel_pthread_mutex_unlock   (kernel_pthread_mutex_t *mutex);
+int            kernel_sem_close(kernel_sem_t * );
+int            kernel_sem_destroy(kernel_sem_t *);
+int            kernel_sem_getvalue(kernel_sem_t *, int *);
+int            kernel_sem_init(kernel_sem_t *, int, unsigned int);
+kernel_sem_t * kernel_sem_open(const char *, int, ...);
+int            kernel_sem_post(kernel_sem_t *);
 
-//int kernel_pthread_mutex_owner_destroy(struct kernel_pthread_st *thread_ptr, kernel_pthread_mutex_t *mutex);
+int            kernel_sem_trywait(kernel_sem_t *);
+int            kernel_sem_unlink(const char *);
+int            kernel_sem_wait(kernel_sem_t *);
+int            kernel_sem_timedwait(kernel_sem_t *, int, const struct timespec *);
+
+/** @} */
+/** @} */
 
 #endif

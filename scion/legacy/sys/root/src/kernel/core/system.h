@@ -9,8 +9,11 @@ specific language governing rights and limitations under the License.
 
 The Original Code is Lepton.
 
-The Initial Developer of the Original Code is Chauvin-Arnoux.
-Portions created by Chauvin-Arnoux are Copyright (C) 2011. All Rights Reserved.
+The Initial Developer of the Original Code is Philippe Le Boulanger.
+Portions created by Philippe Le Boulanger are Copyright (C) 2011 <lepton.phlb@gmail.com>.
+All Rights Reserved.
+
+Contributor(s): Jean-Jacques Pitrolle <lepton.jjp@gmail.com>.
 
 Alternatively, the contents of this file may be used under the terms of the eCos GPL license
 (the  [eCos GPL] License), in which case the provisions of [eCos GPL] License are applicable
@@ -25,46 +28,50 @@ either the MPL or the [eCos GPL] License."
 /*===========================================
 Compiler Directive
 =============================================*/
-#ifndef _RTTIMER_H_
-#define _RTTIMER_H_
-
+#ifndef _SYSTEM_H_
+#define _SYSTEM_H_
 
 /*===========================================
 Includes
 =============================================*/
-#include "kernel/core/kal.h"
+
+#include "kernel/core/kernelconf.h"
+
+#if defined (CPU_WIN32)
+   //#include "kernel/core/windows.h"
+   #include "kernel/core/ucore/embOSW32_100/win32/windows.h"
+#elif ( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))
+   #include <icclbutl.h>
+   #include <intrm16c.h>
+//#include "iom16c62.h"
+   #include "dev/arch/m16c/dev_m16c_62p/iom16c62p136a.h"
+   #include "intm16c.h"
+   #include "rtos.h"
+   #include "stdlib.h"
+#endif
+
+#include "kernel/core/ver.h"
+#include "kernel/core/cpu.h"
 
 
 /*===========================================
 Declaration
 =============================================*/
-#if defined(__KERNEL_UCORE_EMBOS)
-typedef void (*_tmr_func_t)(void);
-typedef _tmr_func_t tmr_func_t;
-typedef OS_TIMER tmr_t;
 
-#elif defined(__KERNEL_UCORE_FREERTOS)
-typedef void (*_tmr_func_t)(void);
-typedef _tmr_func_t tmr_func_t;
-typedef xTimerHandle tmr_t;
-
-#elif defined(USE_KERNEL_STATIC)
-typedef void (*_tmr_func_t)(void);
-typedef _tmr_func_t tmr_func_t;
-typedef int tmr_t;
-
-#endif
+//
+extern const int STDIN_FILENO;
+extern const int STDOUT_FILENO;
+extern const int STDERR_FILENO;
 
 
-typedef struct rttmr_attr_st {
-   time_t tm_msec; //delay
-   tmr_func_t func;
-}rttmr_attr_t;
+//see fcntl.h FD_CLOEXEC 0x8000
 
-int rttmr_create(tmr_t* tmr,rttmr_attr_t* rttmr_attr);
-int rttmr_start(tmr_t* tmr);
-int rttmr_stop(tmr_t* tmr);
-int rttmr_restart(tmr_t* tmr);
-int rttmr_delete(tmr_t* tmr);
+//file descriptor
+#define INVALID_DESC             -1
+
+//file seek option
+#define SEEK_SET   0
+#define SEEK_CUR   1
+#define SEEK_END   2
 
 #endif
