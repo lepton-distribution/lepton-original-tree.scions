@@ -2214,8 +2214,31 @@ int _mk_dev(void){
 | Comments:
 | See:
 ---------------------------------------------*/
-// option cpufs "-split" (modele IAR M16C62, cible gelee) retiree : copie d'origine sous
-// legacy/tools/mklepton/src/mklepton.c (migration, etape 4, D2a/D3a).
+#define CPUFS_SPLIT_OPTION "-split"
+//cpu variant
+#define CPUFS_SPLIT_OPTION_M16C62_FLAG (0x01)
+const char pattern_split_option_m16c62_iar_begin_c[]=
+   "\n\
+/*\n\
+be aware ( jcvd ;) ) -split option in .xml !!! :\n\
+must be used with the following directive in iar linker command file (.xcl):\n\
+-Z(FARCONST)FILECPU_MEMORY=B0000\n\
+*/\n\n\
+#pragma memory=constseg(FILECPU_MEMORY):far\n\n";
+const char pattern_split_option_m16c62_iar_end_c[]="\n#pragma memory = default\n";
+
+const char pattern_split_option_m16c62_iar_header_c[]=
+   "\n\
+/*\n\
+be aware ( jcvd ;) ) -split option in .xml !!! :\n\
+must be used with the following directive in iar linker command file (.xcl):\n\
+-Z(FARCONST)FILECPU_MEMORY=B0000\n\
+*/\n\n\
+#pragma memory=constseg(FILECPU_MEMORY):far\n\
+extern  const unsigned char filecpu_memory[];\n\
+extern  const unsigned long filecpu_memory_size;\n\
+#pragma memory = default\n";
+
 const char pattern_no_split_option_default_header_c[]=
    "extern  const unsigned char filecpu_memory[];\n\
 extern  const unsigned long filecpu_memory_size;\n";
@@ -2225,6 +2248,8 @@ int _mk_dskimg(int argc, char* argv[])
 {
    int r=0;
    int cb=0;
+   char* cpufs_option_token;
+   unsigned long cpufs_option_mask=0;
 
    //source file
    if( (fsrc = open (fname_src,O_RDONLY|O_EXCL,S_IREAD)) == -1 ) {
@@ -2232,6 +2257,26 @@ int _mk_dskimg(int argc, char* argv[])
       //printf("cannot open file %s\n",fname_src);
       return -1;
    }
+
+   //parse cpufs option
+   if(g_kernel_conf.str_cpufs_option) {
+      cpufs_option_token = strtok(g_kernel_conf.str_cpufs_option," ");
+      while(cpufs_option_token) {
+         if(!strcmp(cpufs_option_token,CPUFS_SPLIT_OPTION)) {
+            switch(g_kernel_conf.cpu_type) {
+            //
+            case CPU_TYPE_M16C62:
+               cpufs_option_mask|=CPUFS_SPLIT_OPTION_M16C62_FLAG;
+               break;
+            //
+            default:
+               break;
+            }
+         }
+         cpufs_option_token = strtok(NULL," ");
+      }
+   }
+   //
 
    //dev_dskimg.c
    //destination file
@@ -2248,6 +2293,12 @@ int _mk_dskimg(int argc, char* argv[])
    //reset position at begining of file.
    lseek( fsrc, 0, SEEK_SET );
    lseek( fdest, 0, SEEK_SET );
+
+   //write split option pattern for m16c62 and iar
+   if(cpufs_option_mask&CPUFS_SPLIT_OPTION_M16C62_FLAG) {
+      write(fdest,pattern_split_option_m16c62_iar_begin_c,
+            strlen(pattern_split_option_m16c62_iar_begin_c));
+   }
 
    //write start
    write(fdest,pattern_start_c,strlen(pattern_start_c));
@@ -2273,6 +2324,12 @@ int _mk_dskimg(int argc, char* argv[])
 
    //write end
    write(fdest,pattern_end_c,strlen(pattern_end_c));
+
+   //write split option pattern for m16c62 and iar
+   if(cpufs_option_mask&CPUFS_SPLIT_OPTION_M16C62_FLAG) {
+      write(fdest,pattern_split_option_m16c62_iar_end_c,
+            strlen(pattern_split_option_m16c62_iar_end_c));
+   }
 
    close(fsrc);
    close(fdest);
@@ -2300,8 +2357,14 @@ int _mk_dskimg(int argc, char* argv[])
    write(fdest,dskimg_decl_header,strlen(dskimg_decl_header));
 
 
-   write(fdest,pattern_no_split_option_default_header_c,
-         strlen(pattern_no_split_option_default_header_c));
+   //write split option pattern for m16c62 and iar
+   if(cpufs_option_mask&CPUFS_SPLIT_OPTION_M16C62_FLAG) {
+      write(fdest,pattern_split_option_m16c62_iar_header_c,
+            strlen(pattern_split_option_m16c62_iar_header_c));
+   }else{
+      write(fdest,pattern_no_split_option_default_header_c,
+            strlen(pattern_no_split_option_default_header_c));
+   }
 
    //bottom header
    write(fdest,dskimg_bottom_header,strlen(dskimg_bottom_header));
