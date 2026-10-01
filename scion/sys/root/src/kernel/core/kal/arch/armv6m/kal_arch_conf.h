@@ -23,51 +23,17 @@ either the MPL or the [eCos GPL] License."
 */
 
 
-/*============================================
-| Compiler Directive
-==============================================*/
-#ifndef _TIMER_H
-#define _TIMER_H
+//Configuration du noyau dépendant de l'ISA : ARMv6-M (Cortex-M0/M0+).
+//Inclus par kernel/core/kernelconf.h (chemin d'inclusion LEPTON_KAL_ARCH_DIR) ; valeurs reprises
+//des branches __tauon_cpu_core__ de kernelconf.h (KAL-2, 2026-10-01).
+//HYPOTHÈSE À VALIDER : valeurs M0 de la configuration IAR, jamais compilées sous GCC ; non
+//compilé avant l'étape 6 (kal/arch/armv6m/kal_arch.h à créer, aucun preset armv6m).
+#ifndef _KAL_ARCH_ARMV6M_CONF_H
+#define _KAL_ARCH_ARMV6M_CONF_H
 
+#define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
+#define __KERNEL_CPU_ARCH CPU_ARCH_32
+//profil : celui de kernel_mkconf.h (mklepton), sinon minimal (repli de kernelconf.h)
+//ni signaux temps réel (__KERNEL_POSIX_REALTIME_SIGNALS) ni verrous de fichiers sur Cortex-M0
 
-/*============================================
-| Includes
-==============================================*/
-
-
-/*============================================
-| Declaration
-==============================================*/
-
-   #define _SC_CLK_TCK     100 //100 ticks/s 1ticks/ 10ms
-
-#define CLOCK_REALTIME     0x01
-#define CLOCK_VITRUAL      0x02
-#define CLOCK_PROF         0x03
-#define CLOCK_MONOTONIC    0x04
-
-#define TIMER_ABSTIME      0xFF
-
-typedef unsigned long timer_t; //timer id
-typedef unsigned char clockid_t; //only CLOCK_REALTIME supported at this time.
-
-typedef struct timespec {
-   time_t tv_sec;     //Seconds.
-   long tv_nsec;      //Nanoseconds.
-}timespec_t;
-
-//The <time.h> header shall also declare the itimerspec structure, which has at least the following members:
-typedef struct itimerspec {
-   struct timespec it_interval; //  Timer period.
-   struct timespec it_value; //     Timer expiration
-}itimerspec_t;
-
-
-#define __time_ns_to_ms(__ns__) ((__ns__)/1000000L)
-#define __time_ms_to_ns(__ms__) ((__ms__)*1000000L)
-
-#define __time_s_to_ms(__ns__) ((__ns__)*1000L)
-#define __time_ms_to_s(__ms__) ((__ms__)/1000L)
-
-
-#endif
+#endif //_KAL_ARCH_ARMV6M_CONF_H

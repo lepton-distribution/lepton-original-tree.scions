@@ -39,7 +39,11 @@ either the MPL or the [eCos GPL] License."
 | Declaration
 ==============================================*/
 
+#if defined(CPU_GNU32) || defined(CPU_CORTEXM)
    #define _SC_CLK_TCK     100 //100 ticks/s 1ticks/ 10ms
+#else
+   #define _SC_CLK_TCK     1000 //1000 ticks/s 1ticks/ms
+#endif
 
 #define CLOCK_REALTIME     0x01
 #define CLOCK_VITRUAL      0x02

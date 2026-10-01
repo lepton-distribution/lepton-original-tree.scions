@@ -24,6 +24,7 @@ lepton_freestanding(-m32)
 # (sans ordonnanceur) est utilisée. Elle n'est posée qu'ici (axe ISA).
 target_compile_definitions(lepton_options INTERFACE
   CPU_GNU32
+  __KERNEL_CPU_NAME="gnu32"
   __tauon_cpu_device__=__tauon_cpu_device_gnu_synthetic__)
 
 # libc Lepton : le noyau statique n'en exige que __sprintf et __lepton_libc_isascii, fournis par

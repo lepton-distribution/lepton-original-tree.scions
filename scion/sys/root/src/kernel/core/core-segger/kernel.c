@@ -90,11 +90,12 @@ kernel_pthread_t kernel_thread;
 tmr_t kernel_tmr;
 
 //
-#if ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
-   #define KERNEL_STACK_SIZE  4096 //CORTEXM4, CORTEXM7 (valeurs IAR)
-#elif ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__))
-   #define KERNEL_STACK_SIZE  2048 //CORTEXM3, CORTEXM0
+//pile du thread noyau : par coeur, posee par cmake/cpu/<coeur>.cmake (valeurs IAR : 4096 M4/M7,
+//2048 M3/M0)
+#ifndef __KERNEL_STACK_SIZE
+   #error "__KERNEL_STACK_SIZE non defini (cmake/cpu/<coeur>.cmake)"
 #endif
+#define KERNEL_STACK_SIZE  __KERNEL_STACK_SIZE
 
 #define KERNEL_PRIORITY    150
 //

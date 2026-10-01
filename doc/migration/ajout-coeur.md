@@ -25,8 +25,10 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 
 ## 2. Ajouter un cœur (même famille)
 
-1. `cmake/cpu/<cœur>.cmake` : `cpu_flags` (compilation **et** édition de liens), et
-   `LEPTON_EMBOS_LIB_FAMILY` (table variante ↔ flags : `embos-inventaire.md` §3).
+1. `cmake/cpu/<cœur>.cmake` : `cpu_flags` (compilation **et** édition de liens),
+   `LEPTON_EMBOS_LIB_FAMILY` (table variante ↔ flags : `embos-inventaire.md` §3), et les
+   définitions propres au cœur : `__KERNEL_CPU_NAME` (nom vu par `uname`) et
+   `__KERNEL_STACK_SIZE` (pile du thread noyau, `core-segger/kernel.c`).
 2. Preset dans `CMakePresets.json` (ligne d'enregistrement).
 3. Si le cœur change le contexte sauvegardé (FPU, trame étendue) : code sous `src/kernel/core/arch/<famille>/`
    ou `src/kernel/core/kal/arch/<isa>/`, jamais de `#if` de cœur dans le code commun.
@@ -40,7 +42,9 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 4. `src/kernel/core/kal/arch/<isa>/kal_arch.h` : primitives du KAL propres à l'ISA (`__va_list_copy`,
    tick de l'ordonnanceur `__stop_sched`/`__restart_sched`, bits d'EXC_RETURN…), sans type de
    micro-noyau ; `cmake/isa/<isa>.cmake` pose `LEPTON_KAL_ARCH_DIR` et l'ajoute aux chemins
-   d'inclusion (`kal.h` inclut `kal_arch.h` sans condition).
+   d'inclusion (`kal.h` inclut `kal_arch.h` sans condition) ; `kal_arch_conf.h` dans le même
+   répertoire : configuration du noyau dépendant de l'ISA (`__KERNEL_COMPILER_SUPPORT_TYPE`,
+   `__KERNEL_CPU_ARCH`, signaux temps réel, verrous de fichiers), incluse par `kernelconf.h`.
 5. `cmake/cpu/<cœur>.cmake` pour chaque cœur (§2).
 
 ## 4. Ajouter une carte

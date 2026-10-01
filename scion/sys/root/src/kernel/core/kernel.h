@@ -462,7 +462,7 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
    __wait_ret_int(); \
 }
 
-#elif defined(CPU_GNU32)
+#elif defined(USE_KERNEL_STATIC)
 //
    #define __mk_syscall(__syscall_nb__,__pdata__){ \
    kernel_pthread_t* __pthread_ptr__; \
@@ -503,40 +503,6 @@ __profiler_add_result(__pthread_ptr__,__syscall_nb__,__kernel_profiler_get_count
    __set_irq(); \
 }
 
-#elif defined(CPU_CORTEXM)
-//
-   #define __mk_syscall(__syscall_nb__,__pdata__){ \
-   kernel_pthread_t* __pthread_ptr__; \
-   __pthread_ptr__ = kernel_pthread_self(); \
-   __pthread_ptr__->reg.from_pthread_ptr = __pthread_ptr__; \
-   __pthread_ptr__->reg.syscall=__syscall_nb__; \
-   __pthread_ptr__->reg.data=(void*)&__pdata__; \
-   __pthread_ptr__->irq_nb=KERNEL_INTERRUPT_NB; \
-   __pthread_ptr__->irq_prior=-1; \
-   __make_interrupt(__pthread_ptr__,__pthread_ptr__->irq_nb); \
-}
-
-   #define __mk_syscall0(__syscall_nb__,__pdata__){ \
-   kernel_pthread_t* __pthread_ptr__; \
-   __pthread_ptr__ = kernel_pthread_self(); \
-   __pthread_ptr__->reg.from_pthread_ptr = __pthread_ptr__; \
-   __pthread_ptr__->reg.syscall=__syscall_nb__; \
-   __pthread_ptr__->reg.data=(void*)&__pdata__; \
-   __pthread_ptr__->irq_nb=KERNEL_INTERRUPT_NB; \
-   __pthread_ptr__->irq_prior=-1; \
-   __make_interrupt(__pthread_ptr__,__pthread_ptr__->irq_nb); \
-}
-
-   #define __mk_syscall2(__syscall_nb__){ \
-   kernel_pthread_t* __pthread_ptr__; \
-   __pthread_ptr__ = kernel_pthread_self(); \
-   __pthread_ptr__->reg.from_pthread_ptr = __pthread_ptr__; \
-   __pthread_ptr__->reg.syscall=__syscall_nb__; \
-   __pthread_ptr__->reg.data=(void*)0; \
-   __pthread_ptr__->irq_nb=KERNEL_INTERRUPT_NB; \
-   __pthread_ptr__->irq_prior=-1; \
-   __make_interrupt(__pthread_ptr__,__pthread_ptr__->irq_nb); \
-}
 #endif
 /**
  * rinitialise la structure de donnes du processus qui contient les informations sur l'appel systme en cours.
@@ -567,12 +533,6 @@ void _kernel_routine(void* arg);
 //wrapper for external call
 void __wrpr_kernel_dev_gettime(desc_t __desc, char * __buf, int __size);
 
-   #if defined(CPU_GNU32) && !defined(USE_KERNEL_STATIC)
-void _kernel_syscall_handler_synth(int sig, cyg_hal_sys_siginfo_t * info, void *ptr);
-   #elif defined(CPU_CORTEXM)
-void do_swi(void);
-void _kernel_syscall_handler(void);
-   #endif
 
 
 //trace in kernel for system call

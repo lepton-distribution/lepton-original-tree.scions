@@ -269,12 +269,6 @@ void* kernel_pthread_alloca(kernel_pthread_t *p, size_t size);
    #define _dbg_printf(...) 
 #endif
 
-//size of kernel stack
-   #if defined(CPU_CORTEXM)
-      #define KERNEL_STACK  2048
-   #else
-      #define KERNEL_STACK 8192 //4096
-   #endif
 
 
 

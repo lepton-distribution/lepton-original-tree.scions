@@ -27,7 +27,7 @@ step() { printf '\n== %s\n' "$*"; }
 
 cd "$LEPTON_TRUNK"
 
-step "outils de migration : tests unitaires (transform_iar.py, kal_split.py)"
+step "outils de migration : tests unitaires (transform_iar.py, kal_split.py, axes_kernel_core.py)"
 python3 -m unittest discover -s "$here/tools/migration/tests"
 
 step "preset host : configuration, build, ctest -L host"
