@@ -34,6 +34,9 @@ either the MPL or the [eCos GPL] License."
 #define __KERNEL_COMPILER_SUPPORT_TYPE __KERNEL_COMPILER_SUPPORT_64_BITS_TYPE
 #define __KERNEL_CPU_ARCH CPU_ARCH_32
 #define __KERNEL_MAX_SUPER_BLOCK 4 //superblocs montés (vfstypes.h)
+#ifndef __KERNEL_STDIO_PRINTF_BUFSIZ //BUFSIZ de stdio (lib/libc/stdio/stdio.h), sauf mkconf
+   #define __KERNEL_STDIO_PRINTF_BUFSIZ (128)
+#endif
 //profil : celui de kernel_mkconf.h (mklepton), sinon minimal (repli de kernelconf.h)
 //ni signaux temps réel (__KERNEL_POSIX_REALTIME_SIGNALS) ni verrous de fichiers sur Cortex-M0
 

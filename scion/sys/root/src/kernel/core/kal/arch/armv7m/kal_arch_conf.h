@@ -34,6 +34,9 @@ either the MPL or the [eCos GPL] License."
 //profil : celui de kernel_mkconf.h (mklepton), sinon minimal (repli de kernelconf.h)
 #define __KERNEL_POSIX_REALTIME_SIGNALS
 #define __KERNEL_MAX_SUPER_BLOCK 4 //superblocs montés (vfstypes.h)
+#ifndef __KERNEL_STDIO_PRINTF_BUFSIZ //BUFSIZ de stdio (lib/libc/stdio/stdio.h), sauf mkconf
+   #define __KERNEL_STDIO_PRINTF_BUFSIZ (128)
+#endif
 //pas de verrous de fichiers (__KERNEL_USE_FILE_LOCK) sur Cortex-M
 
 #endif //_KAL_ARCH_ARMV7M_CONF_H

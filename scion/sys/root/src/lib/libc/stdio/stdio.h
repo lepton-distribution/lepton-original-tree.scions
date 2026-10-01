@@ -100,17 +100,8 @@ typedef struct __stdio_file FILE;
 //not thread safe
 //low ram
 
-#ifndef __KERNEL_STDIO_PRINTF_BUFSIZ
-   #ifdef __AS386_16__
-      #define BUFSIZ    (256)
-   #elif defined(CPU_GNU32)
-      #define BUFSIZ    (256)
-   #elif defined(CPU_CORTEXM)
-      #define BUFSIZ (128)//(256)
-   #endif
-#else
-   #define BUFSIZ __KERNEL_STDIO_PRINTF_BUFSIZ
-#endif
+//taille : __KERNEL_STDIO_PRINTF_BUFSIZ (mkconf de la carte, sinon kal/arch/<isa>/kal_arch_conf.h)
+#define BUFSIZ __KERNEL_STDIO_PRINTF_BUFSIZ
 
 
 #if !defined(__KERNEL_LOAD_LIB)
