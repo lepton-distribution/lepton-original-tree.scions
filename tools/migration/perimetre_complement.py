@@ -193,11 +193,11 @@ def main():
             aj[r["ensemble"]][0] += 1
             aj[r["ensemble"]][1] += int(r["lignes_code"] or 0)
     md = open(a.md, encoding="utf-8").read()
-    if retires:
-        ligne_retires = "Lignes retirées : " + ", ".join("`%s`" % r["fichier"] for r in retires) + "."
-    else:  # rejeu : conserver la liste de la première exécution
-        m = re.search(r"^Lignes retirées : .*$", md, re.M)
-        ligne_retires = m.group(0) if m else "Lignes retirées : aucune."
+    # liste cumulée des lignes retirées (exécutions précédentes, lue dans perimetre.md)
+    m = re.search(r"^Lignes retirées : (.*)\.$", md, re.M)
+    deja = re.findall(r"`([^`]+)`", m.group(1)) if m else []
+    tous = deja + [r["fichier"] for r in retires if r["fichier"] not in deja]
+    ligne_retires = "Lignes retirées : " + (", ".join("`%s`" % f for f in tous) or "aucune") + "."
     L = [DEBUT_MD, "", "## Complément de l'étape 4 (bilan)", "",
          "Généré par `tools/migration/perimetre_complement.py` (idempotent ; rejouer après "
          "`build_closure.py`). Ajoute les sources créées par la migration (étapes 2 à 4 : KAL "
