@@ -53,8 +53,8 @@ Global Declaration
 =============================================*/
 const char dev_discovery_f4_uart_6_name[]="ttys6\0";
 
-static int dev_discovery_f4_uart_6_load(void);
-static int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag);
+int dev_discovery_f4_uart_6_load(void);
+int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag);
 
 extern int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
 extern int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
@@ -107,6 +107,9 @@ void DMA2_Stream1_IRQHandler(void)
 ---------------------------------------------*/
 static int dev_discovery_f4_uart_6_load(void) {
    
+   #if (__tauon_compiler__==__compiler_keil_arm__)
+      memcpy(&discovery_f4_uart_6.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
+   #endif
    discovery_f4_uart_6.uart_descriptor.board_uart_info=&discovery_f4_uart_6;
    discovery_f4_uart_6.desc_r=-1;
    discovery_f4_uart_6.desc_w=-1;

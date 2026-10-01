@@ -121,13 +121,15 @@ board_stm32f4xx_uart_info_t discovery_f4_uart_6=
 Implementation
 =============================================*/
 /*******************************************************************************
-* Function Name  : gpio_startup_init
+* Function Name  : discovery_f4_gpio_startup_init
 * Description    : Initialize all defined GPIOs
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-static void gpio_startup_init(void)
+//fonction locale de la carte, distincte de gpio_startup_init (stm32f4xx/gpio.h) : renommée
+//(GCC refuse static après une déclaration externe ; sous IAR, l'appel restait local)
+static void discovery_f4_gpio_startup_init(void)
 {
   u8 i;
 
@@ -148,7 +150,7 @@ static void gpio_startup_init(void)
 | See:
 ---------------------------------------------*/
 int dev_discovery_f4_board_load(void){
-   gpio_startup_init();
+   discovery_f4_gpio_startup_init();
    dma_startup_init();
    return 0;
 }

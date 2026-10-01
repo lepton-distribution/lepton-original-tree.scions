@@ -45,7 +45,7 @@ dev_map_t dev_os_debug_map={
     dev_os_debug_ioctl
 };
 
-void dev_os_debug_isr(char c);
+void dev_os_debug_isr(unsigned char c);
 
 /*============================================
 | Implementation 
@@ -341,7 +341,7 @@ int dev_os_debug_ioctl(desc_t desc, int request, va_list ap){
 | Comments   : -   
 | See        : -        
 ----------------------------------------------*/
-void dev_os_debug_isr(char c){
+void dev_os_debug_isr(unsigned char c){ //unsigned char : OS_ROUTINE_CHAR d'embOS (OS_U8)
    uint16_t tail; 
    uint16_t head;
 #if defined(__KERNEL_UCORE_EMBOS)

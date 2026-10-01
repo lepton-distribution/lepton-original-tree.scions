@@ -83,9 +83,7 @@ dev_map_t dev_slip_map={
 #define ESC_END        (unsigned char)220 /*0334*/    /* ESC ESC_END means END data byte */
 #define ESC_ESC        (unsigned char)221 /*0335*/    /* ESC ESC_ESC means ESC data byte */
 
-#if !defined(CPU_M16C62)
    #define USE_SLIP_IO_BUFFER //not supported for very small arch
-#endif
 
 #ifdef USE_SLIP_IO_BUFFER
 //#define USE_SLIP_READ_BUFFER

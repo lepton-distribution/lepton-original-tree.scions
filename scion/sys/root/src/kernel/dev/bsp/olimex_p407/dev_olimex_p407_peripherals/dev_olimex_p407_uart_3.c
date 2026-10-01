@@ -53,8 +53,8 @@ Global Declaration
 =============================================*/
 const char dev_olimex_p407_uart_3_name[]="ttys3\0";
 
-int dev_olimex_p407_uart_3_load(void);
-int dev_olimex_p407_uart_3_open(desc_t desc, int o_flag);
+static int dev_olimex_p407_uart_3_load(void);
+static int dev_olimex_p407_uart_3_open(desc_t desc, int o_flag);
 
 extern int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
 extern int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
@@ -108,9 +108,6 @@ void DMA1_Stream1_IRQHandler(void)
 ---------------------------------------------*/
 static int dev_olimex_p407_uart_3_load(void) {
    
-   #if (__tauon_compiler__==__compiler_keil_arm__)
-      memcpy(&olimex_p407_uart_3.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
-   #endif
    olimex_p407_uart_3.uart_descriptor.board_uart_info=&olimex_p407_uart_3;
    olimex_p407_uart_3.desc_r=-1;
    olimex_p407_uart_3.desc_w=-1;

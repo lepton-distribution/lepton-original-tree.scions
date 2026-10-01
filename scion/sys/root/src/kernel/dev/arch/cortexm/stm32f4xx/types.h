@@ -29,6 +29,8 @@ either the MPL or the [eCos GPL] License."
 
 #ifndef __TYPES_H
 #define __TYPES_H
+#include "kernel/core/compiler.h"
+#include <stdint.h>
 
 /* Includes ------------------------------------------------------------------*/
 //#include <stdio.h>
@@ -48,14 +50,16 @@ typedef signed char         s8;
 typedef unsigned char       u8;
 typedef short               s16;
 typedef unsigned short      u16;
-typedef int                 s32;
-typedef unsigned int        u32;
+//int32_t / uint32_t comme CMSIS (stm32f4xx.h) : sous newlib, int32_t est long ; int et long
+//(même taille) sont des types distincts et les deux typedef se rencontrent (eth.c)
+typedef int32_t             s32;
+typedef uint32_t            u32;
 typedef long long           s64;
 typedef unsigned long long  u64;
 typedef float               f32;
 typedef double              f64;
 
-typedef __packed union
+typedef union __lepton_packed
 {
   char c[4];
   u32 u;

@@ -51,18 +51,26 @@ MODULES = [
 
 # profils de compilation par préfixe (le plus long l'emporte) :
 #   base : preset dont on prend le gabarit ; retire : options retirées du gabarit (regex) ;
-#   ajoute : options ajoutées (chemins relatifs au trunk préfixés par « @/ »).
+#   ajoute : options ajoutées (chemins relatifs au trunk préfixés par « @/ ») ;
+#   mkconf : mkconf de l'application de la carte (XML relatif au trunk) ; mass_compile le fait
+#            générer par le mklepton hôte (cible cortexm_lepton) et son kernel_mkconf.h remplace
+#            celui de QEMU (generated/board) : les pilotes STM32F4 reçoivent leur carte (UART_NB,
+#            _GPIO_DEFAULT_SPEED…) par user_kernel_mkconf.h, comme sous IAR.
 # HYPOTHÈSE À VALIDER : définitions STM32F4 relevées dans dev_stm32f4xx_8.40.ewp et
 # tauon-basic_stm32f4* (STM32F429xx, USE_STDPERIPH_DRIVER) ; la configuration exacte de la
 # NUCLEO-F439ZI est l'objet de l'étape 5.
+# Base de la NUCLEO-F439ZI (étape 1) : application tauon-basic Olimex STM32-P407.
+MKCONF_P407 = "sys/user/tauon-basic/etc/mkconf_tauon_basic_lwip_stm32f4-olimex-p407.xml"
 STM32F4 = {
     "base": "qemu-mps2-an386-embos",
-    "retire": [r"-D__tauon_cpu_device__=\S+", r"-I\S*/bsp/qemu_mps2_an386"],
+    "mkconf": MKCONF_P407,
+    "retire": [r"-D__tauon_cpu_device__=\S+", r"-I\S*/bsp/qemu_mps2_an386",
+               r"-I\S*/generated/board"],
     "ajoute": ["-D__tauon_cpu_device__=__tauon_cpu_device_cortexM4_stm32f4__",
                "-DUSE_STDPERIPH_DRIVER", "-DSTM32F429xx",
                "-I@/sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc",
-               "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/legacy",
+               "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/inc/Legacy",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx"],
 }
@@ -71,10 +79,16 @@ UIP = {"base": "qemu-mps2-an386-embos", "retire": [],
 PROFILS = {
     "": {"base": "qemu-mps2-an386-embos", "retire": [], "ajoute": []},
     "sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/": STM32F4,
-    "sys/root/src/kernel/dev/bsp/discovery_f4/": STM32F4,
+    # HAL CubeMX (tiers) : sans carte ; le mkconf de carte apporte la SPL (driverlib), dont les
+    # types entrent en conflit avec ceux du HAL (RCC_PLLI2SInitTypeDef…)
+    "sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/cubemx_hal_driver/": dict(
+        STM32F4, mkconf=None, retire=STM32F4["retire"][:-1]),
+    "sys/root/src/kernel/dev/bsp/discovery_f4/": dict(
+        STM32F4, mkconf="sys/user/tauon-basic/etc/mkconf_tauon_basic_stm32f4-discovery.xml"),
     "sys/root/src/kernel/dev/bsp/olimex_p407/": STM32F4,
     "sys/root/src/kernel/dev/bsp/stm32f469i-eval/": dict(
-        STM32F4, ajoute=[o.replace("STM32F429xx", "STM32F469xx") for o in STM32F4["ajoute"]]),
+        STM32F4, mkconf="sys/user/tauon-basic/etc/mkconf_tauon_basic_stm32f469i-eval.xml",
+        ajoute=[o.replace("STM32F429xx", "STM32F469xx") for o in STM32F4["ajoute"]]),
     # pile uIP (contiki) : chemins d'inclusion de uip/core (projets IAR : uip/core et uip2.5)
     "sys/root/src/kernel/core/net/uip_core/": UIP,
     "sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/": UIP,
@@ -157,7 +171,27 @@ def plus_proche(rel, db):
     return max(sorted(db), key=lambda k: commun(rel, k))
 
 
-def commande(rel, dbs, trunk, objdir):
+def generer_mkconf(xml, trunk, build):
+    """kernel_mkconf.h de l'application xml (mklepton hôte, cible cortexm_lepton) ; rend le
+    répertoire de sortie. Régénéré si le XML est plus récent."""
+    out = os.path.join(build, "mass-compile", "mkconf",
+                       os.path.splitext(os.path.basename(xml))[0])
+    gen = os.path.join(out, "kernel_mkconf.h")
+    if os.path.exists(gen) and os.path.getmtime(gen) >= os.path.getmtime(os.path.join(trunk, xml)):
+        return out
+    tool = os.path.join(build, "host", "mklepton")
+    if not os.path.exists(tool):
+        raise SystemExit("mklepton hôte absent : %s (cmake --build --preset host)" % tool)
+    os.makedirs(out, exist_ok=True)
+    r = subprocess.run([tool, "-s", trunk, "-o", out, "-t", "cortexm_lepton", xml], cwd=out,
+                       capture_output=True, text=True, errors="replace",
+                       env=dict(os.environ, SOURCE_DATE_EPOCH="0"))
+    if r.returncode != 0 or not os.path.exists(gen):
+        raise SystemExit("mklepton %s : échec\n%s" % (xml, r.stderr[-2000:]))
+    return out
+
+
+def commande(rel, dbs, trunk, objdir, mkconfs=None):
     prof = profil_de(rel)
     src = os.path.join(trunk, rel)
     obj = os.path.join(objdir, rel + ".o")
@@ -172,6 +206,10 @@ def commande(rel, dbs, trunk, objdir):
     for motif in prof["retire"]:
         opts = [o for o in opts if not re.fullmatch(motif, o)]
     opts += [o.replace("@/", trunk + "/") for o in prof["ajoute"]]
+    if prof.get("mkconf"):
+        # la puce (STM32F407xx…) est définie par le user_kernel_mkconf.h de l'application
+        opts = [o for o in opts if not re.fullmatch(r"-DSTM32F4\w+", o)]
+        opts.append("-I" + mkconfs[prof["mkconf"]])
     return opts + ["-o", obj, "-c", src], ent["directory"], origine
 
 
@@ -235,9 +273,14 @@ def main():
     files = actifs(a.perimetre)
     if a.only:
         files = [f for f in files if f.startswith(tuple(a.only))]
+    mkconfs = {}
+    for rel in files:
+        xml = profil_de(rel).get("mkconf")
+        if xml and xml not in mkconfs:
+            mkconfs[xml] = generer_mkconf(xml, trunk, build)
     jobs = []
     for rel in files:
-        cmd, cwd, origine = commande(rel, dbs, trunk, objdir)
+        cmd, cwd, origine = commande(rel, dbs, trunk, objdir, mkconfs)
         jobs.append((rel, cmd, cwd, origine))
     if a.db_out:
         json.dump([{"directory": cwd, "file": cmd[-1], "command": shlex.join(cmd)}

@@ -36,6 +36,9 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Includes 
 ==============================================*/
+#if defined(__KERNEL_UCORE_ECOS)
+	#include "pkgconf/hal_arm_****.h"
+#endif
 
 /*============================================
 | Declaration  
@@ -49,6 +52,8 @@ either the MPL or the [eCos GPL] License."
 	//	 Master Clock <= 119 MHz
 	#define DEV_LM3S_MASTER_CLOCK       (DEV_LM3S_PLLA_FREQ/2)
 	
+#elif defined(__KERNEL_UCORE_ECOS)
+	#define DEV_LM3S_MASTER_CLOCK       (CYGNUM_HAL_ARM_LM3S_CLOCK_SPEED)		
 #endif
 
 #endif

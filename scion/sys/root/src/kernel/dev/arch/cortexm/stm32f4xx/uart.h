@@ -28,10 +28,11 @@ either the MPL or the [eCos GPL] License."
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __UART_H
 #define __UART_H
+#include "kernel/core/compiler.h"
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-typedef __packed struct
+typedef struct __lepton_packed
 {
   u8 HwCtrl;
   const _Gpio_Descriptor *Gpio;
@@ -55,7 +56,7 @@ typedef __packed struct
     
 } _Uart_Ctrl;
 
-typedef __packed struct
+typedef struct __lepton_packed
 {
   USART_TypeDef *UARTx;
   void (*RCC_APBxPeriphClockCmd)(uint32_t, FunctionalState);

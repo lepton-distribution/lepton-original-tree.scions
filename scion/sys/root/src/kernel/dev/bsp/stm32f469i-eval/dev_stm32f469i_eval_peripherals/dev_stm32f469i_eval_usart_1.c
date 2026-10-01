@@ -53,8 +53,8 @@ Global Declaration
 =============================================*/
 const char dev_stm32f469i_eval_uart_1_name[]="ttys1\0";
 
-int dev_stm32f469i_eval_uart_1_load(void);
-int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag);
+static int dev_stm32f469i_eval_uart_1_load(void);
+static int dev_stm32f469i_eval_uart_1_open(desc_t desc, int o_flag);
 
 extern int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
 extern int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
@@ -108,9 +108,6 @@ void DMA2_Stream2_IRQHandler(void)
 ---------------------------------------------*/
 static int dev_stm32f469i_eval_uart_1_load(void) {
    
-   #if (__tauon_compiler__==__compiler_keil_arm__)
-      memcpy(&stm32f469i_eval_uart_1.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
-   #endif
    stm32f469i_eval_uart_1.uart_descriptor.board_uart_info=&stm32f469i_eval_uart_1;
    stm32f469i_eval_uart_1.desc_r=-1;
    stm32f469i_eval_uart_1.desc_w=-1;

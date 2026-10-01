@@ -29,7 +29,7 @@ either the MPL or the [eCos GPL] License."
 Includes
 =============================================*/
 #include <stdint.h>
-
+//
 #include "kernel/core/kernelconf.h"
 #include "kernel/core/types.h"
 #include "kernel/core/interrupt.h"
@@ -51,10 +51,10 @@ Includes
 /*===========================================
 Global Declaration
 =============================================*/
-const char dev_discovery_f4_uart_6_name[]="ttys6\0";
+const char dev_olimex_p407_uart_3_name[]="ttys3\0";
 
-static int dev_discovery_f4_uart_6_load(void);
-static int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag);
+int dev_olimex_p407_uart_3_load(void);
+int dev_olimex_p407_uart_3_open(desc_t desc, int o_flag);
 
 extern int dev_stm32f4xx_uart_x_load(board_stm32f4xx_uart_info_t * uart_info);
 extern int dev_stm32f4xx_uart_x_open(desc_t desc, int o_flag, board_stm32f4xx_uart_info_t * uart_info);
@@ -66,11 +66,11 @@ extern int dev_stm32f4xx_uart_x_isset_read(desc_t desc);
 extern int dev_stm32f4xx_uart_x_isset_write(desc_t desc);
 extern int dev_stm32f4xx_uart_x_seek(desc_t desc,int offset,int origin);
 
-dev_map_t dev_discovery_f4_uart_6_map={
-   dev_discovery_f4_uart_6_name,
+dev_map_t dev_olimex_p407_uart_3_map={
+   dev_olimex_p407_uart_3_name,
    S_IFCHR,
-   dev_discovery_f4_uart_6_load,
-   dev_discovery_f4_uart_6_open,
+   dev_olimex_p407_uart_3_load,
+   dev_olimex_p407_uart_3_open,
    dev_stm32f4xx_uart_x_close,
    dev_stm32f4xx_uart_x_isset_read,
    dev_stm32f4xx_uart_x_isset_write,
@@ -80,52 +80,56 @@ dev_map_t dev_discovery_f4_uart_6_map={
    dev_stm32f4xx_uart_x_ioctl
 };
 
-// uart 6 configuration. see in board device driver of current bsp
-extern board_stm32f4xx_uart_info_t discovery_f4_uart_6;
+
+// uart 3 configuration. see in board device driver of current bsp
+extern board_stm32f4xx_uart_info_t olimex_p407_uart_3; 
 
 /*===========================================
 Implementation
 =============================================*/
 
-void USART6_IRQHandler(void)
+void USART3_IRQHandler(void)
 {
-  uart_irq_handler(&discovery_f4_uart_6.uart_descriptor);
+  uart_irq_handler(&olimex_p407_uart_3.uart_descriptor);
 }
 
-void DMA2_Stream1_IRQHandler(void)
+void DMA1_Stream1_IRQHandler(void)
 {
-  uart_dma_irq_handler(&discovery_f4_uart_6.uart_descriptor);
+  uart_dma_irq_handler(&olimex_p407_uart_3.uart_descriptor);
 }
 
 /*-------------------------------------------
-| Name:dev_discovery_f4_uart_6_load
+| Name:dev_olimex_p407_uart_3_load
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-static int dev_discovery_f4_uart_6_load(void) {
+static int dev_olimex_p407_uart_3_load(void) {
    
-   discovery_f4_uart_6.uart_descriptor.board_uart_info=&discovery_f4_uart_6;
-   discovery_f4_uart_6.desc_r=-1;
-   discovery_f4_uart_6.desc_w=-1;
+   #if (__tauon_compiler__==__compiler_keil_arm__)
+      memcpy(&olimex_p407_uart_3.uart_descriptor,&uart_descriptor,sizeof(_Uart_Descriptor));
+   #endif
+   olimex_p407_uart_3.uart_descriptor.board_uart_info=&olimex_p407_uart_3;
+   olimex_p407_uart_3.desc_r=-1;
+   olimex_p407_uart_3.desc_w=-1;
    
-   return dev_stm32f4xx_uart_x_load(&discovery_f4_uart_6);
+   return dev_stm32f4xx_uart_x_load(&olimex_p407_uart_3);
 }
    
 /*-------------------------------------------
-| Name:dev_discovery_f4_uart_6_open
+| Name:dev_olimex_p407_uart_3_open
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-static int dev_discovery_f4_uart_6_open(desc_t desc, int o_flag) {
-   return dev_stm32f4xx_uart_x_open(desc, o_flag, &discovery_f4_uart_6);
+static int dev_olimex_p407_uart_3_open(desc_t desc, int o_flag) {
+   return dev_stm32f4xx_uart_x_open(desc, o_flag, &olimex_p407_uart_3);
 }
 
 /*============================================
-| End of Source  : dev_discovery_f4_uart_6.c
+| End of Source  : dev_olimex_p407_uart_3.c
 ==============================================*/

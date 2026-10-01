@@ -47,6 +47,9 @@ either the MPL or the [eCos GPL] License."
 //#include "kernel/core/ucore/embOSARM7_332/arch/cpu_lm3s/lm3s_init.h"
 //#include <ioat91sam9261.h>
 //#include <intrinsic.h>
+#elif defined(__KERNEL_UCORE_ECOS)
+#include "dev_lm3s_cpu.h"//GD-TODO ?
+#include "cyg/hal/lm3s.h"
 #endif
 
 /*============================================
@@ -135,6 +138,7 @@ int dev_lm3s_cpu_load(void){
 #if defined(__KERNEL_UCORE_EMBOS)
    // Pointer initialization
 //   g_p_fct_dbg_interrupt =  NULL;
+#elif defined(__KERNEL_UCORE_ECOS)
 #endif
          
    return 0;
