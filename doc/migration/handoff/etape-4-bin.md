@@ -1,7 +1,7 @@
 # Handoff étape 4, module `bin` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-bin`, **en attente de validation
-utilisateur**. Module suivant : `sys/user/tauon-basic`. Procédure générale :
+État au 2026-10-01 : module fait sur `migration/etape-4-bin`, validé par l'utilisateur le
+2026-10-01 et fusionné. Module suivant : `sys/user/tauon-basic`. Procédure générale :
 `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
@@ -22,11 +22,11 @@ utilisateur**. Module suivant : `sys/user/tauon-basic`. Procédure générale :
 - `perror` : remplacement local dans `httpc.c` ; `lib/libc` non modifié.
 - `garde-cible-gelee` couvre la macro `WIN32` (D3a) ; `_WIN32` non visé (mongoose, tiers).
 
-## Décision demandée à l'utilisateur
+## Gardes WIN32 restantes : reportées à l'étape 6 (décision 2026-10-01)
 - La règle élargie trouve des gardes `WIN32` actives dans des modules **déjà validés** :
   `kernel/core` (`core-segger/fork.c`, `interrupt.h`, `kernel_compiler.h`,
-  `kernel_pthread.h`, `kernelconf.h`) et `kernel/dev` (`dev_ftl.c`). Non transformées (hors
-  module). Options : petit module de reprise, ou report à l'étape 6. Détail : simulation dans
+  `kernel_pthread.h`, `kernelconf.h`) et `kernel/dev` (`dev_ftl.c`). Non transformées à l'étape 4 ;
+  à retirer à l'étape 6 avec le code gelé. Détail : simulation dans
   `residuel-etape4.md`. `tauon-basic` (`timers.c`, `dlmalloc.c`) : à traiter à son module.
 
 ## Artefacts produits (manifeste)
