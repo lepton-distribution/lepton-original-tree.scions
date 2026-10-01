@@ -29,6 +29,7 @@ either the MPL or the [eCos GPL] License."
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __GPIO_H
 #define __GPIO_H
+#include "kernel/core/compiler.h"
 
 /* Includes ------------------------------------------------------------------*/
 #ifdef _GPIO_I2CIO_SUPPORT
@@ -70,7 +71,7 @@ enum {
   };
 
 /* Exported types ------------------------------------------------------------*/
-typedef __packed struct
+typedef struct __lepton_packed
 {
   u8 Type;
   const void *Port;

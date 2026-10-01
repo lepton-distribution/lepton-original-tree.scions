@@ -31,9 +31,10 @@ either the MPL or the [eCos GPL] License."
 
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
+#include "kernel/core/compiler.h"
 
 /* Exported types ------------------------------------------------------------*/
-typedef __packed struct
+typedef struct __lepton_packed
 {
   SPI_TypeDef *SPIx;
   void (*RCC_APBxPeriphClockCmd)(uint32_t, FunctionalState);

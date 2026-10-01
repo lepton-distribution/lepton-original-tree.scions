@@ -28,16 +28,17 @@ either the MPL or the [eCos GPL] License."
 
 /* Includes ------------------------------------------------------------------*/
 #include "kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4xx.h"
+#include "kernel/core/compiler.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/types.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/gpio.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 #pragma anon_unions
-typedef __packed union
+typedef union __lepton_packed
 {
   u32 Val;
-  __packed struct
+  struct __lepton_packed
   {
     u32 Function  :8;
     u32 Type      :8;

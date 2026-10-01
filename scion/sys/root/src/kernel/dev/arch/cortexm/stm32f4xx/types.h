@@ -29,6 +29,7 @@ either the MPL or the [eCos GPL] License."
 
 #ifndef __TYPES_H
 #define __TYPES_H
+#include "kernel/core/compiler.h"
 
 /* Includes ------------------------------------------------------------------*/
 //#include <stdio.h>
@@ -55,7 +56,7 @@ typedef unsigned long long  u64;
 typedef float               f32;
 typedef double              f64;
 
-typedef __packed union
+typedef union __lepton_packed
 {
   char c[4];
   u32 u;
