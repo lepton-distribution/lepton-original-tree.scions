@@ -74,18 +74,10 @@ Includes
    #define __tauon_compiler__ __compiler_gnuc__
 #endif
 
-   #if defined(USE_KERNEL_STATIC)
-      //for lepton as bootloader (no scheduler, static)
-      //configuration fixe du noyau statique, trouvée par chemin d'inclusion (cmake/kal/static.cmake)
-      #include "kernel_mkconf.h"
-   #else
-      #if defined(CPU_CORTEXM)
-         //genere par mklepton dans le repertoire de build (cmake/mklepton.cmake), chemin d'inclusion
-         #include "kernel_mkconf.h"
-      #else
-         #include "kernel/core/arch/synthetic/x86/kernel_mkconf.h"
-      #endif
-   #endif
+   //kernel_mkconf.h, par chemin d'inclusion : configuration fixe du noyau statique
+   //(cmake/kal/static.cmake, lepton comme bootloader sans ordonnanceur) ou generee par mklepton
+   //dans le repertoire de build (cmake/mklepton.cmake).
+   #include "kernel_mkconf.h"
 
 #if defined(WIN32)
    #define __tauon_cpu_device__ __tauon_cpu_device_win32_simulation__

@@ -90,9 +90,6 @@ static int  ethif_core_input(struct netif *netif);
 static err_t ethif_core_output(struct netif *netif, struct pbuf *p, const ip4_addr_t *ipaddr);
 
 //to do: remove this ugly code quickly!
-#if defined(CPU_GNU32)
-extern unsigned char lwip_ethaddr[6];
-#endif
 
 extern unsigned char *cur_packet;
 
@@ -118,9 +115,6 @@ static void low_level_init(struct netif *netif){
    struct lwip_if_st *p_lwip_if=(struct lwip_if_st *)netif->state;
 
    //to do: to fix.
-#if defined(CPU_GNU32)
-   memcpy(p_lwip_if->ethaddr,lwip_ethaddr,6);
-#else
    {
       unsigned char lowlevel_ethaddr[6]={0};
       //arm7
@@ -133,7 +127,6 @@ static void low_level_init(struct netif *netif){
 
       __atomic_out(); //critical section out. end of parano�ac protection.
    }
-#endif
 
 #ifdef NETIF_DEBUG
    LWIP_DEBUGF(NETIF_DEBUG, ("pktif: eth_addr %02X%02X%02X%02X%02X%02X\n",
