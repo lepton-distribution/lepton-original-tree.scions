@@ -1,7 +1,7 @@
 # Handoff étape 4, module KAL (`kernel/core/kal.h`) → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-kal` (non fusionnée, en attente de
-validation) ; `ci/run.sh` vert. Procédure générale : `handoff/etape-4-outillage.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-kal`, validé par l'utilisateur le
+2026-10-01 et fusionné ; `ci/run.sh` vert. Procédure générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
 - `kal.h` : 2137 → 71 lignes, **dispatcher sans condition** : `#include "kal_arch.h"` puis
