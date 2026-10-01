@@ -64,6 +64,7 @@
    #include "lib/libc/unistd.h"
    #include "lib/libc/stdio/stdio.h"
    #include "lib/libc/ctype/ctype.h"
+   #include "lib/libc/string/string.h"
    #include "lib/pthread/pthread.h"
    #include "lib/libc/net/socket.h"
 
