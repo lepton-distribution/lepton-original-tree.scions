@@ -14,7 +14,9 @@
 
 #define TCP_LISTEN_BACKLOG         0
 
-#define LWIP_PROVIDE_ERRNO         1 //lepton
+//lepton : errno dans la numerotation Lepton (kernel/core/errno.h) ; LWIP_PROVIDE_ERRNO (numeros
+//Linux de lwip/errno.h) donnait aux applications des errno de socket faux (etape 4, kernel/net).
+#define LWIP_ERRNO_INCLUDE         "kernel/core/errno.h"
 #define LWIP_SOCKET                1 
 #define LWIP_COMPAT_SOCKETS        0
 #define LWIP_SO_RCVTIMEO           1

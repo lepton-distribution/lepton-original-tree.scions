@@ -77,9 +77,12 @@
    <bin name="echo"     stack="2048"    priority="100" timeslice="1" />
 </binaries>
 
-<!-- /usr/sbin/net -->
+<!-- /usr/sbin/net ; tsterrno : test du palier reseau, errno d'un connect() refuse
+     (tests/net_qemu.py) ; place ici et non dans /usr/bin/net, repertoire cree sans /usr/bin
+     (defaut du rootfs, MIGRATION-STATUS) -->
 <binaries src_path="sbin/net" dest_path="sbin/net">
    <bin name="ifconfig" stack="4096"    priority="100" timeslice="1" />
+   <bin name="tsterrno" stack="2048"    priority="100" timeslice="1" />
 </binaries>
 
 <!-- /usr/bin/net -->
