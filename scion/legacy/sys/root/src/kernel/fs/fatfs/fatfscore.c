@@ -65,9 +65,17 @@ Global Declaration
 #define COMPILER_PRAGMA(arg)            _Pragma(#arg)
 
 
+#if defined   (__CC_ARM)
 	#define COMPILER_SECTION(a)    __attribute__((__section__(a)))
+#elif defined (__GNUC__)
+	#define COMPILER_SECTION(a)    __attribute__((__section__(a)))
+#endif
 
+#if defined   (__CC_ARM)
 	#define COMPILER_ALIGNED(a)    __attribute__((__aligned__(a)))
+#elif defined (__GNUC__)
+	#define COMPILER_ALIGNED(a)    __attribute__((__aligned__(a)))
+#endif
 
 
 static char g_sd_path[4];  /* SD logical drive path */
