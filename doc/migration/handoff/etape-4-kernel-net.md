@@ -1,7 +1,7 @@
 # Handoff étape 4, module `kernel/net` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-kernel-net` (non fusionnée, en attente de
-validation). Procédure générale : `handoff/etape-4-outillage.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-kernel-net`, validé par l'utilisateur
+le 2026-10-01 et fusionné. Module suivant : `lib`. Procédure générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
 - **Rien à porter** : les 376 fichiers de `kernel/net` (lwIP, uIP, uIP 2.5, y compris
