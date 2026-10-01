@@ -196,7 +196,10 @@ def step_gel(clone, dry):
         if dry:
             print("  (dry-run) supprimerait kal.c")
             return
-        subprocess.run(["git", "-C", clone, "rm", "-q", "scion/" + CORE + "/kal.c"], check=True)
+        if os.path.exists(os.path.join(clone, ".git")):
+            subprocess.run(["git", "-C", clone, "rm", "-q", "scion/" + CORE + "/kal.c"], check=True)
+        else:  # arbre de test (tests/test_kal_split.py)
+            os.remove(kal_c)
         print("  kal.c supprimé (copie sous legacy/)")
 
 
