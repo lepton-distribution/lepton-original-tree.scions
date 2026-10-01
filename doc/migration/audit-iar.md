@@ -8,7 +8,7 @@ Détail ligne à ligne : `doc/migration/audit-iar.csv`.
 
 ## Métrique
 
-> **Total IAR-ismes périmètre actif (sévérité `iar`) : 60** — code Lepton : 4, code tiers vendored dans l'arbre (CMSIS, HAL ST, embOS IAR, lwIP…) : 56.
+> **Total IAR-ismes périmètre actif (sévérité `iar`) : 56** — code Lepton : 0, code tiers vendored dans l'arbre (CMSIS, HAL ST, embOS IAR, lwIP…) : 56.
 
 Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sévérités : `iar` = à traiter (comptée) ; `autre` = Keil/MSVC, à retirer ; `a_verifier` = portable ou toléré par GCC (CMSIS, `#pragma pack/weak`, garde `__GNUC__`, définition de compatibilité) ; `info` = inventaire (projets IAR, asm GNU). Ensemble `hors_projet` (perimetre.csv) : fichier déclaré par aucun projet ni inclus, hors métrique.
 
@@ -16,7 +16,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 
 | sévérité | actif | differe | gele | hors_projet | total |
 |---|---:|---:|---:|---:|---:|
-| iar | 60 | 935 | 627 | 224 | 1846 |
+| iar | 56 | 935 | 627 | 224 | 1842 |
 | autre | 108 | 65 | 680 | 414 | 1267 |
 | a_verifier | 1262 | 684 | 763 | 195 | 2904 |
 | info | 43 | 77 | 51 | 14 | 185 |
@@ -32,8 +32,8 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | intrinsic | 0 | 26 | 87 | 2 | 115 |
 | header | 3 | 14 | 75 | 1 | 93 |
 | asm_iar | 1 | 15 | 12 | 25 | 53 |
-| modele_mklepton | 4 | 0 | 4 | 0 | 8 |
 | placement_@ | 0 | 3 | 1 | 1 | 5 |
+| modele_mklepton | 0 | 0 | 4 | 0 | 4 |
 
 ## Catégorie × ensemble (toutes sévérités hors `iar`)
 
@@ -63,7 +63,6 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | pragma | `#pragma system_include` | 7 |
 | pragma | `_Pragma optimize` | 4 |
 | pragma | `#pragma data_alignment` | 4 |
-| modele_mklepton | `#pragma memory` | 4 |
 | header | `cmsis_iar.h` | 3 |
 | mot_cle | `__ramfunc` | 2 |
 | asm_iar | `IAR — démarrage, vecteurs` | 1 |
@@ -76,7 +75,6 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 |---|---|---:|
 | `sys/root/src/kernel/core/ucore/cmsis/CMSIS` | tiers | 37 |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx` | tiers | 15 |
-| `tools/mklepton/src` | lepton | 4 |
 | `sys/root/src/kernel/core/ucore/cmsis/Device` | tiers | 1 |
 | `sys/root/src/kernel/dev/arch/cmsis/dev_cmsis_itm` | tiers | 1 |
 | `sys/root/src/kernel/fs/fatfs/core` | tiers | 1 |
@@ -255,9 +253,9 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 - `__compiler_directive__packed` (abstraction Lepton, `kernel/core/kernelconf.h`) : vaut `__packed` sous IAR/Keil et **rien sous GCC** — les structures concernées perdent l'attribut packed : 3 usages (catégorie `abstraction_lepton`, dont 3 actifs). Point à traiter à l'étape 4 (`compiler.h`).
 - Sélection du compilateur par `__tauon_compiler__` (`kernelconf.h`, valeurs `__compiler_iar_arm__`, `__compiler_gnuc__`, `__compiler_keil_arm__`…) : 16 gardes `garde_iar` sur `__compiler_iar_*`, 1004 sur `__ICCARM__`/`__IAR_SYSTEMS_*` (tous ensembles).
 - `_Pragma` dans des macros (ex. `CORTEXM4_CCM_RAM` : `section`/`location` pour la CCM du STM32F4) : 23 occurrences détectées via `_Pragma("…")`.
-- Modèles émis par mklepton (`tools/mklepton/src`) : 8 IAR-ismes dans les chaînes générées (catégorie `modele_mklepton`, `#pragma memory=constseg` M16C) ; XML `mkconf*` : 35 chemins Windows absolus (`c:/tauon/…`, sévérité `a_verifier`), 0 références IAR.
+- Modèles émis par mklepton (`tools/mklepton/src`) : 4 IAR-ismes dans les chaînes générées (catégorie `modele_mklepton`, `#pragma memory=constseg` M16C) ; XML `mkconf*` : 35 chemins Windows absolus (`c:/tauon/…`, sévérité `a_verifier`), 0 références IAR.
 - Fichiers générés par mklepton présents dans l'arbre (colonne `genere`) : 9 fichiers (`sys/root/src/kernel/core/arch/host/static/bin_mkconf.c`, `sys/root/src/kernel/core/arch/host/static/dev_dskimg.h`, `sys/root/src/kernel/core/arch/host/static/dev_mkconf.c`, `sys/root/src/kernel/core/arch/host/static/kernel_mkconf.h`, `sys/root/src/kernel/core/arch/win32/bin_mkconf.c`, `sys/root/src/kernel/core/arch/win32/dev_dskimg.c`, `sys/root/src/kernel/core/arch/win32/dev_dskimg.h`, `sys/root/src/kernel/core/arch/win32/dev_mkconf.c`, `sys/root/src/kernel/core/arch/win32/kernel_mkconf.h`) ; 0 occurrences toutes sévérités, dont 0 `iar`.
-- Code tiers : 56 des 60 IAR-ismes actifs sont dans du code vendored (CMSIS/HAL fournissent déjà des branches GCC ; les copies embOS IAR de `ucore/` sont remplacées par le port GCC Segger, non traduites).
+- Code tiers : 56 des 56 IAR-ismes actifs sont dans du code vendored (CMSIS/HAL fournissent déjà des branches GCC ; les copies embOS IAR de `ucore/` sont remplacées par le port GCC Segger, non traduites).
 
 ## Limites et faux positifs connus
 
@@ -273,7 +271,7 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1107 | 1507 | 904 | 706 |
+| c | 1107 | 1507 | 905 | 706 |
 | asm | 1 | 22 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 16 | 9 | 2 | 0 |

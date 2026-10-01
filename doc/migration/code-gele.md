@@ -119,4 +119,6 @@ le fichier d'origine **à l'identique** sous `legacy/<chemin dans le trunk>` (cl
 « gelé » (règle `^legacy/`). Elles sont supprimées à l'étape 6 avec le reste du code gelé.
 Module KAL (2026-10-01) : `tools/migration/kal_split.py` (étape `gel`) y copie de même `kal.h`
 et `kal.c` (Win32 seul) avant d'en retirer les branches gelées.
+Module `tools/mklepton` (2026-10-01) : `mklepton.c` copié à l'identique avant le retrait, à la
+main (commit sémantique), de l'option `cpufs` `-split` (modèles de code IAR M16C62 générés).
 Inventaire : `find "$LEPTON_TRUNK/legacy" -type f`.
