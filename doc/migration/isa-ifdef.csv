@@ -1,43 +1,6 @@
 fichier,ligne,axes,origine,emplacement,condition
 sys/root/src/kernel/core/core-segger/kernel.c,93,coeur,lepton,hors arch,((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
 sys/root/src/kernel/core/core-segger/kernel.c,95,coeur,lepton,hors arch,((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__))
-sys/root/src/kernel/core/kal.h,53,isa,lepton,hors arch,defined(__KERNEL_UCORE_ECOS) && defined(CPU_GNU32)
-sys/root/src/kernel/core/kal.h,293,isa,lepton,hors arch,(defined(__GNUC__)) && (defined(CPU_ARM7) || defined(CPU_ARM9))
-sys/root/src/kernel/core/kal.h,456,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9260__)
-sys/root/src/kernel/core/kal.h,460,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-sys/root/src/kernel/core/kal.h,465,puce,lepton,hors arch,((__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9260__) || (__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)) && defined(KERNEL_PROFILER)
-sys/root/src/kernel/core/kal.h,533,isa,lepton,hors arch,defined(CPU_GNU32) && defined(USE_KERNEL_STATIC)
-sys/root/src/kernel/core/kal.h,667,isa,lepton,hors arch,defined(CPU_WIN32)
-sys/root/src/kernel/core/kal.h,912,isa,lepton,hors arch,( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))
-sys/root/src/kernel/core/kal.h,1084,coeur,lepton,hors arch,defined (__KERNEL_UCORE_EMBOS) &&((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) || (__tauo
-sys/root/src/kernel/core/kal.h,1099,coeur,lepton,hors arch,(__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM3__) &&(__tauon_cpu_core__ != __tauon_cpu_core_arm_cortexM4__) &&(__tauon_cpu_core__ != __tauon_cpu_core_arm_
-sys/root/src/kernel/core/kal.h,1116,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-sys/root/src/kernel/core/kal.h,1120,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-sys/root/src/kernel/core/kal.h,1124,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-sys/root/src/kernel/core/kal.h,1162,coeur,lepton,hors arch,defined(OS_CPU_HAS_VFP) && (OS_CPU_HAS_VFP == 1)
-sys/root/src/kernel/core/kal.h,1224,coeur,lepton,hors arch,(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_ar
-sys/root/src/kernel/core/kal.h,1263,coeur,lepton,hors arch,(__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)
-sys/root/src/kernel/core/kal.h,1289,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-sys/root/src/kernel/core/kal.h,1296,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-sys/root/src/kernel/core/kal.h,1306,coeur,lepton,hors arch,(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_
-sys/root/src/kernel/core/kal.h,1315,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-sys/root/src/kernel/core/kal.h,1331,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)
-sys/root/src/kernel/core/kal.h,1383,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)
-sys/root/src/kernel/core/kal.h,1452,isa,lepton,hors arch,(defined(__GNUC__)) && defined(CPU_CORTEXM) && defined(__KERNEL_UCORE_ECOS)
-sys/root/src/kernel/core/kal.h,1601,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_cortexm_k60n512__) && defined(KERNEL_PROFILER)
-sys/root/src/kernel/core/kal.h,1623,coeur,lepton,hors arch,((__tauon_compiler__ == __compiler_keil_arm__) || (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __ta
-sys/root/src/kernel/core/kal.h,1637,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-sys/root/src/kernel/core/kal.h,1641,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-sys/root/src/kernel/core/kal.h,1645,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-sys/root/src/kernel/core/kal.h,1651,coeur,lepton,hors arch,( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM0__) )
-sys/root/src/kernel/core/kal.h,1671,coeur,lepton,hors arch,( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ ==__tauon_cpu_core_arm
-sys/root/src/kernel/core/kal.h,1693,coeur,lepton,hors arch,( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm7tdmi__) || (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm926ejs__) )
-sys/root/src/kernel/core/kal.h,1799,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)
-sys/root/src/kernel/core/kal.h,1806,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)
-sys/root/src/kernel/core/kal.h,1816,coeur,lepton,hors arch,(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_
-sys/root/src/kernel/core/kal.h,1826,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)
-sys/root/src/kernel/core/kal.h,1842,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)
-sys/root/src/kernel/core/kal.h,1894,puce,lepton,hors arch,(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)
 sys/root/src/kernel/core/kernel.h,465,isa,lepton,hors arch,defined(CPU_GNU32)
 sys/root/src/kernel/core/kernel.h,506,isa,lepton,hors arch,defined(CPU_CORTEXM)
 sys/root/src/kernel/core/kernel.h,570,isa,lepton,hors arch,defined(CPU_GNU32) && !defined(USE_KERNEL_STATIC)

@@ -12,7 +12,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2 — Build CMake, noyau statique, mklepton | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; branche `migration/etape-2` fusionnée ; `ctest -L host` 5/5 ; handoff `handoff/etape-2.md` |
 | 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
 | 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; complément tâche 1 (`compiler.h`, `lepton_irq.h`, amorce `transform_iar.py`) fait le 2026-09-30 ; **étape 3 validée par l'utilisateur le 2026-09-30**, branche `migration/etape-3` fusionnée ; handoff `handoff/etape-3.md` |
-| 4 — Portage C, KAL | EN COURS | 2026-10-01 | par module (tableau ci-dessous) ; session 4.0 (outillage, ligne de base) validée par l'utilisateur le 2026-10-01, branche `migration/etape-4-outillage` fusionnée : `transform_iar.py` (7 règles), `mass_compile.sh` 243/348, `audit_isa_ifdef.py` ; aucun source transformé ; handoff `handoff/etape-4-outillage.md` ; module `kernel/core` (hors KAL) fait le 2026-10-01 sur `migration/etape-4-kernel-core`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kernel-core.md` |
+| 4 — Portage C, KAL | EN COURS | 2026-10-01 | par module (tableau ci-dessous) ; session 4.0 (outillage, ligne de base) validée par l'utilisateur le 2026-10-01, branche `migration/etape-4-outillage` fusionnée : `transform_iar.py` (7 règles), `mass_compile.sh` 243/348, `audit_isa_ifdef.py` ; aucun source transformé ; handoff `handoff/etape-4-outillage.md` ; module `kernel/core` (hors KAL) fait le 2026-10-01 sur `migration/etape-4-kernel-core`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kernel-core.md` ; module KAL fait le 2026-10-01 sur `migration/etape-4-kal`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kal.md` ; module KAL-2 (directives ISA/cœur restantes) retenu par l'utilisateur le 2026-10-01 |
 | 5 — NUCLEO-F439ZI | À FAIRE | | |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
 | 7 — Backend FreeRTOS | À FAIRE | | |
@@ -24,7 +24,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 |---|---|---|---|---|
 | ordre proposé (4.0) | | | | `kernel/core` hors KAL → KAL → `kernel/dev` → `kernel/fs` → `kernel/net` → `lib` → `sbin`, `bin`, `tauon-basic` → `tools/mklepton` |
 | `kernel/core` (hors KAL) | oui (2026-10-01) | **50/50** (47 avant) | Lepton 7 (tous dans `kal.h`), tiers 38 | règles `garde-cible-gelee`, `garde-iar-arm`, `garde-compilateur`, `prototype-static` ; CCM et `modem_core.c` à la main ; gcc -E identique ; 24 copies `legacy/` ; reste 25 directives ISA/cœur de cibles actives → session KAL |
-| KAL (`kernel/core/kal.h`) | non | — | (dans `kernel/core`) | `isa-ifdef.md` : `kal.h` 17 directives ISA/cœur, `kernelconf.h` 21 |
+| KAL (`kernel/core/kal.h`) | oui (2026-10-01) | `kernel/core` 50/50 | `kal.h` 7 → 0 (`kernel/core` Lepton 0) | `kal.h` dispatcher sans condition (2137 → 71 l.) ; `kal/arch/{armv7m,host}`, `kal/backend/{embos,static,freertos}`, `kal/contrat.h` ; `kal_split.py` ; gcc -E identique, code objet identique ; ISA/cœur hors arch 68 → 51 |
+| KAL-2 (directives ISA/cœur restantes, retenu le 2026-10-01) | non | — | — | 51 directives / 19 fichiers, dont `kernel/core` 30 (`kernelconf.h`, `malloc.c`, `kernel.h`, `KERNEL_STACK_SIZE`…) : sémantique ; décision utilisateur (handoff KAL) |
 | `kernel/dev` | non | 65/154 | Lepton 15, tiers 16 | 71 échecs `Legacy/stm32_hal_legacy.h` (casse, HAL tiers) ; `__packed` STM32F4 |
 | `kernel/fs` | non | 23/26 | Lepton 0, tiers 4 | `strtok_r`, `__weak` FatFs, `f_close` |
 | `kernel/net` | non | 38/38 | 0 | |
@@ -89,6 +90,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-10-01 | Étape 4 — D1a : code tiers vendored (CMSIS, HAL/driverlib ST, FatFs, yaffs…) non transformé ; ses IAR-ismes (58) justifiés dans `residuel-etape4.md` ; le critère « zéro IAR-isme » porte sur le code Lepton actif (`audit_iar.py`, colonne « code Lepton »). |
 | 2026-10-01 | Étape 4 — D2a : branches gelées (eCos, ARM7/9, M16C IAR, Win32) des fichiers actifs extraites à contenu constant (copie d'origine sous `legacy/`, `kal/legacy/` pour le KAL), classées gelées, supprimées à l'étape 6 ; pas de suppression à l'étape 4. |
 | 2026-10-01 | Étape 4 — D3a : extension de D2a aux branches des cibles gelées Win32, ARM7/ARM9, M16C, eCos (macros CPU_*, valeurs de cœur et de puce) et des compilateurs non GCC (Keil, Visual C) : retirées avec copie d'origine sous `legacy/` ; gardes GCC levées (branches héritées de la simulation Linux non corrigées). |
+| 2026-10-01 | Étape 4, module KAL : décomposition sous `kernel/core/kal/{arch,backend}/`, `kal.h` dispatcher par chemins d'inclusion (`LEPTON_KAL_ARCH_DIR`, `LEPTON_KAL_BACKEND_DIR`) ; copies d'origine sous `legacy/` ; branche FreeRTOS extraite telle quelle (ses `#if` de cœur jusqu'à l'étape 7). |
 | 2026-10-01 | Étape 4 — plan de la session 4.0 (outillage et ligne de base, sans transformation de source) approuvé ; un module par session ensuite. |
 | 2026-09-30 | Étape 2 — critère mklepton reformulé (oracle sans binaire) : C généré structurellement conforme à `mklepton-ref.md`, deux exécutions identiques octet à octet, image UFS relue par le test hôte puis montée sous QEMU (étape 3). |
 
@@ -142,7 +144,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | Mesure | Valeur | Source |
 |---|---|---|
 | Volumétrie (cloc, code) | actif 1074 f / 314 773 l ; différé 1511 / 409 081 ; gelé 765 / 158 061 ; hors-projet 762 / 192 635 | `perimetre.md` |
-| IAR-ismes (sévérité `iar`) | **actif 116** au 2026-10-01 (Lepton 58, tiers 58 ; après le module `kernel/core`) ; 128 à la fin de l'étape 3 (147 avant le complément, 148 à l'étape 1) ; chaîne minimale : 31 dont 12 CMSIS (tiers) et 19 résiduels (`residuel-etape3.md`) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
+| IAR-ismes (sévérité `iar`) | **actif 109** au 2026-10-01 (Lepton 51, tiers 58 ; après le module KAL) ; 116 après `kernel/core` ; 128 à la fin de l'étape 3 (147 avant le complément, 148 à l'étape 1) ; chaîne minimale : 31 dont 12 CMSIS (tiers) et 19 résiduels (`residuel-etape3.md`) ; différé 935 ; gelé 578 ; hors-projet 224 | `audit_iar.py --summary` |
 | Sources dérivées | `mps2-an386` : 217 f / 74 323 l ; NUCLEO-F439ZI : 353 f (base Olimex P407) | `perimetre.md` |
 | Écart embOS 5.18.3.1 IAR → 5.20.0.0 GCC | actif : 189 occurrences, 25 fichiers ; 7 écarts (E1 bloquant : branche embOS de `kal.h` réservée IAR/Keil) | `embos-iar-vs-gcc.md` |
 | Graphe | CFC principale de 15 composants (376 symboles) : core, core-segger, vfs, net, libc, fs | `dependances.md` |
@@ -187,5 +189,10 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - Étape 4 : sources en Latin-1 : l'outil Edit les réécrit en UTF-8 et altère les accents existants
   (éditer par script, `encoding="latin-1"`) ; branches `defined(__GNUC__)` héritées de la simulation
   Linux levées sans correction (`dirent.c`, `stat.c`, `kernel_pthread.h`, `select.h`, `kernelconf.h`).
+- Étape 4 (KAL) : `perimetre.csv` (étape 1) ne couvre aucun fichier créé par la migration (`kal/`,
+  `startup_armv7m.c`, `embos_main.c`…) : `audit_iar.py` et `audit_isa_ifdef.py` ne les voient pas
+  (`kal/` audité à part : conforme). Compléter ou régénérer le périmètre avant le bilan de l'étape 4.
+- Étape 4 (KAL) : tests compilant hors `lepton_options` (ex. `host.ufs_format_arm`) : reprendre
+  `LEPTON_KAL_ARCH_DIR`/`LEPTON_KAL_BACKEND_DIR` ; `kal/arch/armv6m` à créer à l'étape 6.
 - Code Segger embOS IAR déjà versionné sous `src/kernel/core/ucore/embOS*` (licence Segger) : à considérer avant tout push.
-- Pièges à reprendre : `__compiler_directive__packed` = `__lepton_packed` depuis le complément de l'étape 3 (3 usages, `flash.h` : compactage à vérifier à l'étape 5) ; `kal.h` ligne ~1089 précédence `|| cortexM7` ; `int64_t` = `long` dans `etypes.h` ; `#if` ISA/cœur hors arch : 68 (20 fichiers) au 2026-10-01 (`audit_isa_ifdef.py` ; 161/34 à l'étape 1, autre méthode).
+- Pièges à reprendre : `__compiler_directive__packed` = `__lepton_packed` depuis le complément de l'étape 3 (3 usages, `flash.h` : compactage à vérifier à l'étape 5) ; `int64_t` = `long` dans `etypes.h` ; `#if` ISA/cœur hors arch : 51 (19 fichiers) au 2026-10-01 après le module KAL (68 avant ; `audit_isa_ifdef.py` ; 161/34 à l'étape 1, autre méthode).

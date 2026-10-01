@@ -1,7 +1,7 @@
 # Compilation de masse du périmètre actif — tableau de bord
 
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
-Commande : `mass_compile.sh --audit-csv doc/migration/audit-iar.csv --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv -q`
+Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv --audit-csv doc/migration/audit-iar.csv`
 
 Résultat : **246/348 fichiers C OK (70.7 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
@@ -11,7 +11,7 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 
 | Module | OK / total | IAR-ismes (Lepton) | IAR-ismes (tiers) |
 |---|---|---:|---:|
-| kernel/core | 50 / 50 | 7 | 38 |
+| kernel/core | 50 / 50 | 0 | 38 |
 | kernel/dev | 65 / 154 | 15 | 16 |
 | kernel/fs | 23 / 26 | 0 | 4 |
 | kernel/net | 38 / 38 | 0 | 0 |

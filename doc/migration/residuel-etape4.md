@@ -3,7 +3,7 @@
 Généré par `tools/migration/transform_iar.py` — ne pas éditer à la main.  
 Commande : `transform_iar.py --perimetre-actif doc/migration/perimetre.csv --tiers-from-audit doc/migration/audit-iar.csv --report doc/migration/residuel-etape4.md -q`
 
-Résumé : 39 fichier(s) modifié(s), 169 occurrence(s) automatique(s), 26 résiduelle(s).
+Résumé : 38 fichier(s) modifié(s), 142 occurrence(s) automatique(s), 26 résiduelle(s).
 
 ## Résiduels (26)
 
@@ -36,39 +36,12 @@ Résumé : 39 fichier(s) modifié(s), 169 occurrence(s) automatique(s), 26 rési
 | `sys/user/tauon-basic/src/bin/free/free_main.c` | 81 | symbole-iar | symbole IAR __iar_dlmallinfo (bibliothèque DLIB / éditeur de liens) : équivalent newlib, Lepton ou .ld à choisir | `info = __iar_dlmallinfo();` |
 | `sys/user/tauon-basic/src/bin/sdramtest/sdramtest_main.c` | 20 | pragma-iar | section EXT_RAM absente des scripts ld/*.ld (carte, étape 5) | `#define EXT_RAM_REGION      _Pragma("location = \"EXT_RAM\"")` |
 
-## Automatiques (169)
+## Automatiques (142)
 
 | Fichier | Ligne | Règle | Motif | Détail |
 |---|---:|---|---|---|
 | `sys/root/src/bin/test2.c` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/bin/test2.c` |
 | `sys/root/src/bin/test2.c` | 1665 | garde-cible-gelee | branche cible gelée retirée | `defined (__IAR_SYSTEMS_ICC)` |
-| `sys/root/src/kernel/core/kal.h` | 1 | garde-cible-gelee | copie à l'identique (code gelé) | `legacy/sys/root/src/kernel/core/kal.h` |
-| `sys/root/src/kernel/core/kal.h` | 53 | garde-cible-gelee | branche cible gelée retirée | `defined(__KERNEL_UCORE_ECOS) && defined(CPU_GNU32)` |
-| `sys/root/src/kernel/core/kal.h` | 293 | garde-cible-gelee | branche cible gelée retirée | `(defined(__GNUC__)) && (defined(CPU_ARM7) \|\| defined(CPU_ARM9))` |
-| `sys/root/src/kernel/core/kal.h` | 667 | garde-cible-gelee | branche cible gelée retirée | `defined(CPU_WIN32)` |
-| `sys/root/src/kernel/core/kal.h` | 912 | garde-cible-gelee | branche cible gelée retirée | `( defined(__IAR_SYSTEMS_ICC) && defined (__KERNEL_UCORE_EMBOS) && defined(CPU_M16C62))` |
-| `sys/root/src/kernel/core/kal.h` | 1084 | garde-cible-gelee | condition simplifiée | `defined (__KERNEL_UCORE_EMBOS) &&((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)) → defined(__KERNEL_UCORE_EMBOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))` |
-| `sys/root/src/kernel/core/kal.h` | 1452 | garde-cible-gelee | branche cible gelée retirée | `(defined(__GNUC__)) && defined(CPU_CORTEXM) && defined(__KERNEL_UCORE_ECOS)` |
-| `sys/root/src/kernel/core/kal.h` | 1623 | garde-cible-gelee | condition simplifiée | `((__tauon_compiler__ == __compiler_keil_arm__) \|\| (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)) → ((__tauon_compiler__ == __compiler_keil_arm__) \|\| (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))` |
-| `sys/root/src/kernel/core/kal.h` | 1116 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
-| `sys/root/src/kernel/core/kal.h` | 1120 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
-| `sys/root/src/kernel/core/kal.h` | 1124 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
-| `sys/root/src/kernel/core/kal.h` | 1263 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__)` |
-| `sys/root/src/kernel/core/kal.h` | 1289 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
-| `sys/root/src/kernel/core/kal.h` | 1296 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
-| `sys/root/src/kernel/core/kal.h` | 1315 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
-| `sys/root/src/kernel/core/kal.h` | 1331 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)` |
-| `sys/root/src/kernel/core/kal.h` | 1383 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)` |
-| `sys/root/src/kernel/core/kal.h` | 1637 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
-| `sys/root/src/kernel/core/kal.h` | 1641 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
-| `sys/root/src/kernel/core/kal.h` | 1645 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
-| `sys/root/src/kernel/core/kal.h` | 1693 | garde-cible-gelee | branche cible gelée retirée | `( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm7tdmi__) \|\| (__tauon_cpu_core__ ==__tauon_cpu_core_arm_arm926ejs__) )` |
-| `sys/root/src/kernel/core/kal.h` | 1799 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__)` |
-| `sys/root/src/kernel/core/kal.h` | 1806 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91sam7x__)` |
-| `sys/root/src/kernel/core/kal.h` | 1826 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__)` |
-| `sys/root/src/kernel/core/kal.h` | 1842 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm7_at91m55800a__) && defined(KERNEL_PROFILER)` |
-| `sys/root/src/kernel/core/kal.h` | 1894 | garde-cible-gelee | branche cible gelée retirée | `(__tauon_cpu_device__ == __tauon_cpu_device_arm9_at91sam9261__) && defined(KERNEL_PROFILER)` |
-| `sys/root/src/kernel/core/kal.h` | 403 | garde-compilateur | condition simplifiée | `((__tauon_compiler__ == __compiler_keil_arm__) \|\| (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)) → defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) \|\| (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))` |
 | `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | 74 | prototype-static | prototype rendu static (dev_rtc_nxp_pca8565_settime) | `int dev_rtc_nxp_pca8565_settime(desc_t desc,char* buf,int size);` |
 | `sys/root/src/kernel/dev/arch/all/i2c/rtc/dev_rtc_nxp_pca8565.c` | 75 | prototype-static | prototype rendu static (dev_rtc_nxp_pca8565_gettime) | `int dev_rtc_nxp_pca8565_gettime(desc_t desc,char* buf,int size);` |
 | `sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/dev_ppp_uip.c` | 36 | prototype-static | prototype rendu static (dev_ppp_uip_load) | `int dev_ppp_uip_load(void);` |

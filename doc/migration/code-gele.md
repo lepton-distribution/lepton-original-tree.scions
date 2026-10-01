@@ -117,4 +117,6 @@ Ajouté à la main (hors `build_closure.py`). Quand `tools/migration/transform_i
 le fichier d'origine **à l'identique** sous `legacy/<chemin dans le trunk>` (clone :
 `scion/legacy/…`). Ces copies sont gelées : ni compilées, ni modifiées ; `audit_iar.py` les classe
 « gelé » (règle `^legacy/`). Elles sont supprimées à l'étape 6 avec le reste du code gelé.
+Module KAL (2026-10-01) : `tools/migration/kal_split.py` (étape `gel`) y copie de même `kal.h`
+et `kal.c` (Win32 seul) avant d'en retirer les branches gelées.
 Inventaire : `find "$LEPTON_TRUNK/legacy" -type f`.
