@@ -53,8 +53,8 @@ Global Declaration
 =============================================*/
 const char dev_olimex_p407_spi_3_name[]="spi0\0";
 
-int dev_olimex_p407_spi_3_load(void);
-int dev_olimex_p407_spi_3_open(desc_t desc, int o_flag);
+static int dev_olimex_p407_spi_3_load(void);
+static int dev_olimex_p407_spi_3_open(desc_t desc, int o_flag);
 
 extern int dev_stm32f4xx_spi_x_load(board_stm32f4xx_spi_info_t * uart_info);
 extern int dev_stm32f4xx_spi_x_open(desc_t desc, int o_flag, board_stm32f4xx_spi_info_t * uart_info);

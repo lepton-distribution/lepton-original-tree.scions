@@ -33,15 +33,15 @@
 ==============================================*/
 const char dev_ppp_uip_name[]="net/ppp\0";
 
-int dev_ppp_uip_load(void);
-int dev_ppp_uip_open(desc_t desc, int o_flag);
-int dev_ppp_uip_close(desc_t desc);
-int dev_ppp_uip_isset_read(desc_t desc);
-int dev_ppp_uip_isset_write(desc_t desc);
-int dev_ppp_uip_read(desc_t desc, char* buf,int size);
-int dev_ppp_uip_write(desc_t desc, const char* buf,int size);
-int dev_ppp_uip_seek(desc_t desc,int offset,int origin);
-int dev_ppp_uip_ioctl(desc_t desc,int request,va_list ap);
+static int dev_ppp_uip_load(void);
+static int dev_ppp_uip_open(desc_t desc, int o_flag);
+static int dev_ppp_uip_close(desc_t desc);
+static int dev_ppp_uip_isset_read(desc_t desc);
+static int dev_ppp_uip_isset_write(desc_t desc);
+static int dev_ppp_uip_read(desc_t desc, char* buf,int size);
+static int dev_ppp_uip_write(desc_t desc, const char* buf,int size);
+static int dev_ppp_uip_seek(desc_t desc,int offset,int origin);
+static int dev_ppp_uip_ioctl(desc_t desc,int request,va_list ap);
 
 dev_map_t dev_ppp_uip_map={
    dev_ppp_uip_name,

@@ -71,8 +71,8 @@ static int dev_rtc_nxp_pca8565_write(desc_t desc, const char* buf,int cb);
 static int dev_rtc_nxp_pca8565_ioctl(desc_t desc,int request,va_list ap);
 
 //specific rtc device function
-int dev_rtc_nxp_pca8565_settime(desc_t desc,char* buf,int size);
-int dev_rtc_nxp_pca8565_gettime(desc_t desc,char* buf,int size);
+static int dev_rtc_nxp_pca8565_settime(desc_t desc,char* buf,int size);
+static int dev_rtc_nxp_pca8565_gettime(desc_t desc,char* buf,int size);
 
 dev_rtc_t dev_rtc_nxp_pca8565_ext={
    dev_rtc_nxp_pca8565_settime,
