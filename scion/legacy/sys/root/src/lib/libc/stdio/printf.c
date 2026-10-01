@@ -1178,10 +1178,17 @@ fmtnxt:
 
          case 'd':              /* Signed decimal */
          case 'i':
+   #if defined(__GNUC__)
             ptmp = ltostr(buf,32,(long) ((lval)
                                          ? va_arg(ap, long)
                                          : va_arg(ap, int)),
                           10,0);
+   #else
+            ptmp = ltostr(buf,32,(long) ((lval)
+                                         ? va_arg(ap, long)
+                                         : va_arg(ap, short)),
+                          10,0);
+   #endif
             goto printit;
 
          case 'b':              /* Unsigned binary */
@@ -1206,10 +1213,17 @@ fmtnxt:
 
          case 'u':              /* Unsigned decimal */
 usproc:
+   #if defined(__GNUC__)
             ptmp = ultostr(buf,32,(unsigned long) ((lval)
                                                    ? va_arg(ap, unsigned long)
                                                    : va_arg(ap, unsigned int)),
                            radix,0);
+   #else
+            ptmp = ultostr(buf,32,(unsigned long) ((lval)
+                                                   ? va_arg(ap, unsigned long)
+                                                   : va_arg(ap, unsigned short)),
+                           radix,0);
+   #endif
             if( hash && radix == 8 ) { width = strlen(ptmp)+1; pad='0'; }
             goto printit;
 
