@@ -19,7 +19,7 @@ Règles :
                     suivante (__ALIGN_BEGIN/__ALIGN_END, aligned) : branche retirée.
   garde-cible-gelee branches des cibles gelées (décisions D2a et D3a du 2026-10-01) : IAR M16C
                     (__compiler_iar_m16c__, __IAR_SYSTEMS_ICC), Win32, ARM7/ARM9, eCos
-                    (CPU_WIN32, CPU_ARM7, CPU_ARM9, CPU_M16C62, __KERNEL_UCORE_ECOS, valeurs
+                    (CPU_WIN32, WIN32, CPU_ARM7, CPU_ARM9, CPU_M16C62, __KERNEL_UCORE_ECOS, valeurs
                     de __tauon_cpu_core__ et __tauon_cpu_device__ correspondantes) : même
                     évaluation, prédicats faux.
   garde-compilateur gardes de compilateur sous GCC seul (D3a) : __GNUC__ et __compiler_gnuc__
@@ -117,7 +117,7 @@ ARM = Preds("IAR ARM", IAR_ARM_MACROS, faux_val={"__tauon_compiler__": lambda v:
 CIBLES_GELEES_COEURS = ("__tauon_cpu_core_arm_arm7tdmi__", "__tauon_cpu_core_arm_arm926ejs__",
                         "__tauon_cpu_core_win32_simulation__", "__tauon_cpu_core_m16c__")
 GELE = Preds("cible gelée",
-             ("__IAR_SYSTEMS_ICC", "CPU_WIN32", "CPU_ARM7", "CPU_ARM9", "CPU_M16C62",
+             ("__IAR_SYSTEMS_ICC", "CPU_WIN32", "WIN32", "CPU_ARM7", "CPU_ARM9", "CPU_M16C62",
               "__KERNEL_UCORE_ECOS"),
              faux_val={"__tauon_compiler__": lambda v: v == "__compiler_iar_m16c__",
                        "__tauon_cpu_core__": lambda v: v in CIBLES_GELEES_COEURS,

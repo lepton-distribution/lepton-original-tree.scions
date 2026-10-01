@@ -135,6 +135,13 @@ class GardeCibleGeleeEtendue(unittest.TestCase):
         self.assertEqual(new, "#if defined(CPU_CORTEXM)\nB\n#endif\n#if defined(X)\nD\n#endif\nF\n")
         self.assertEqual(resid, [])
 
+    def test_win32_compilateur(self):
+        # macro Win32 du compilateur (module bin, 2026-10-01) ; _WIN32 non visé
+        src = "#ifdef WIN32\nA\n#endif\nB\n#ifndef WIN32\nC\n#endif\n#ifdef _WIN32\nD\n#endif\n"
+        new, auto, resid = t.rule_garde_cible_gelee(src, "t.c")
+        self.assertEqual(new, "B\nC\n#ifdef _WIN32\nD\n#endif\n")
+        self.assertEqual(resid, [])
+
     def test_coeur_actif_inchange(self):
         src = ("#if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\nA\n#endif\n"
                "#if defined(CPU_GNU32)\nB\n#endif\n")
