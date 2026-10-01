@@ -1,7 +1,7 @@
 # Handoff étape 4, module `sbin` → modules suivants
 
-État au 2026-10-01 : module fait sur `migration/etape-4-sbin`, en attente de validation
-utilisateur. Module suivant : `bin`. Procédure générale : `handoff/etape-4-outillage.md`.
+État au 2026-10-01 : module fait sur `migration/etape-4-sbin`, validé par l'utilisateur
+le 2026-10-01 et fusionné. Module suivant : `bin`. Procédure générale : `handoff/etape-4-outillage.md`.
 
 ## Résultat du module
 - Périmètre : 35 fichiers actifs (`sys/root/src/sbin`, dont `net/ifconfig.c`, `net/slipd.c`).
