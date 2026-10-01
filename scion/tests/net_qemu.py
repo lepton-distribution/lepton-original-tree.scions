@@ -155,7 +155,7 @@ def main():
                     summary = ("ping %d/%d, FTP « %s », LIST %d entrée(s), RETR %s %d octets identique"
                                % (received, args.ping_count, welcome.strip(), len(listing),
                                   args.ftp_file, len(data)))
-                except (ftplib.all_errors, OSError) as e:
+                except ftplib.all_errors as e:  # tuple incluant OSError
                     failures.append("FTP : %s" % e)
             if not failures:
                 out = run_command(con, "ps", args.timeout)
