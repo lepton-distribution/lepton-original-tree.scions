@@ -13,12 +13,14 @@ Règles (une par commit, dans cet ordre) :
   gelee      branches de cibles gelées retirées (D3a étendu à la simulation Linux, 2026-10-01),
              copie d'origine sous scion/legacy/ si absente :
                kernel.h      __mk_syscall eCos Cortex-M (CPU_CORTEXM sans micro-noyau),
-                             prototypes simulation Linux / eCos (do_swi, jamais définis) ;
+                             prototypes de la simulation Linux ;
                kernelconf.h  kernel_mkconf.h de la simulation x86 (arch/synthetic, absent) ;
                ethif_core.c  adresse MAC de la simulation Linux (CPU_GNU32) ;
                timer.h       _SC_CLK_TCK 1000 des cibles ni hôte ni Cortex-M (ARM7, M16C).
   inutilise  kernel_pthread.h : KERNEL_STACK (défini, jamais utilisé) ; kernelconf.h :
-             __KERNEL_POSIX_REALTIME_SIGNALS redéfini à l'identique dans le bloc FreeRTOS.
+             __KERNEL_POSIX_REALTIME_SIGNALS redéfini à l'identique dans le bloc FreeRTOS ;
+             kernel.h : prototypes do_swi / _kernel_syscall_handler (eCos), jamais définis.
+             gcc -E : seules ces deux déclarations disparaissent (cibles Cortex-M).
 
 Usage : axes_kernel_core.py <règle> [--clone <racine du clone>] [--dry-run]
 """
@@ -126,6 +128,8 @@ def rule_statique(clone, dry):
 
 # --- règle gelee ----------------------------------------------------------------------------
 
+MK_SYSCALL_GROUP = "defined(__KERNEL_UCORE_EMBOS) || defined(__KERNEL_UCORE_FREERTOS)"
+
 KERNELCONF_MKCONF_OLD = """   #if defined(USE_KERNEL_STATIC)
       //for lepton as bootloader (no scheduler, static)
       //configuration fixe du noyau statique, trouvée par chemin d'inclusion (cmake/kal/static.cmake)
@@ -148,9 +152,14 @@ KERNELCONF_MKCONF_NEW = """   //kernel_mkconf.h, par chemin d'inclusion : config
 
 def rule_gelee(clone, dry):
     def kernel_h(lines):
-        return remove(lines, {"defined(CPU_CORTEXM)",
-                              "defined(CPU_GNU32) && !defined(USE_KERNEL_STATIC)"},
-                      "eCos Cortex-M, simulation Linux")
+        # __mk_syscall eCos Cortex-M : bras CPU_CORTEXM du groupe embOS/FreeRTOS/statique, jamais
+        # actif ; prototypes de la simulation Linux. Les prototypes Cortex-M (do_swi…), actifs
+        # mais jamais définis, relèvent de la règle inutilise (gcc -E différent).
+        def pred(c, g, k):
+            if c == "defined(CPU_GNU32) && !defined(USE_KERNEL_STATIC)":
+                return True
+            return c == "defined(CPU_CORTEXM)" and g.arms[0][3] == MK_SYSCALL_GROUP
+        return ks.remove_all(lines, pred, None, "eCos Cortex-M, simulation Linux")
 
     def kernelconf(lines):
         # fichier Latin-1 dont ce bloc (ajouté à l'étape 2) est en UTF-8 : comparaison sur les
@@ -196,8 +205,14 @@ def rule_inutilise(clone, dry):
                     and g.parent is not None and g.parent.arms[0][3] == "defined(__KERNEL_UCORE_FREERTOS)")
         return ks.remove_all(lines, pred, None, "signaux temps réel redéfinis (FreeRTOS)")
 
+    def kernel_h(lines):
+        # prototypes do_swi / _kernel_syscall_handler (eCos) : jamais définis ni appelés
+        return remove(lines, {"defined(CPU_CORTEXM)"}, "prototypes Cortex-M jamais définis")
+
     print("kernel_pthread.h")
     apply(clone, "kernel_pthread.h", pthread, dry)
+    print("kernel.h")
+    apply(clone, "kernel.h", kernel_h, dry)
     print("kernelconf.h")
     apply(clone, "kernelconf.h", kernelconf, dry)
 
