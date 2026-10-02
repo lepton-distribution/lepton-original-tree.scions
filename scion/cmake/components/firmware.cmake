@@ -85,6 +85,33 @@ add_custom_command(TARGET lepton POST_BUILD
   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:lepton>
   VERBATIM)
 
+# --- carte réelle (étape 5) : flash par OpenOCD, test de fumée sur le port série (label board) --
+if(LEPTON_BOARD_OPENOCD_CFG)
+  find_program(LEPTON_OPENOCD openocd)
+  if(LEPTON_OPENOCD)
+    add_custom_target(flash
+      COMMAND ${LEPTON_OPENOCD} -f ${LEPTON_BOARD_OPENOCD_CFG}
+              -c "program $<TARGET_FILE:lepton> verify reset exit"
+      DEPENDS lepton USES_TERMINAL VERBATIM)
+  endif()
+endif()
+if(LEPTON_BOARD_SERIAL_PORT AND LEPTON_OPENOCD)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  # flash de lepton.elf puis reset par la sonde (écriture flash : étape 5, validation utilisateur),
+  # démarrage observé sur la console ; T0 du banc KAL sur carte (fixture board_t0)
+  add_test(NAME board.smoke_lsh
+           COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/smoke_lsh.py
+                   --transport serial --port ${LEPTON_BOARD_SERIAL_PORT}
+                   --reset-command "${LEPTON_OPENOCD} -f ${LEPTON_BOARD_OPENOCD_CFG} -c \"program $<TARGET_FILE:lepton> verify reset exit\""
+                   --expect-machine ${LEPTON_BOARD_UNAME_MACHINE}
+                   --command ls --command ps
+                   --log ${CMAKE_BINARY_DIR}/smoke_lsh_board.log)
+  set_tests_properties(board.smoke_lsh PROPERTIES
+                       LABELS "board;kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"
+                       TIMEOUT 120 RUN_SERIAL TRUE FIXTURES_SETUP board_t0)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/tests/kal ${CMAKE_BINARY_DIR}/tests/kal)
+endif()
+
 # --- test de fumée canonique (label smoke) : démarrage → lsh → uname -a, ls, ps, second port ------
 if(LEPTON_QEMU_MACHINE)
   find_program(LEPTON_QEMU_ARM qemu-system-arm REQUIRED)

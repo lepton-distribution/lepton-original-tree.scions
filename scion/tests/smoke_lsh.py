@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 """smoke_lsh.py — test de fumée canonique Lepton : démarrage → lsh → uname -a (étape 3).
 
-Lance QEMU (UART0 sur stdin/stdout du processus, UART1 dans un fichier), attend l'invite de lsh,
-exécute « uname -a » et vérifie la machine attendue ; puis, en option, des commandes
-supplémentaires (--command, sortie sans message d'erreur) et l'écriture sur le second port
-(--uart1 : « echo <jeton> > /dev/ttys1 » doit apparaître dans le fichier de UART1).
-Code de retour 0 si tout est conforme (CTest, label smoke).
+Transport QEMU (défaut) : lance QEMU (UART0 sur stdin/stdout du processus, UART1 dans un
+fichier). Transport série (étape 5, carte réelle) : ouvre le port de la console (termios, 8N1,
+sans contrôle de flux), puis lance --reset-command (reset par la sonde) pour observer le démarrage.
+Attend l'invite de lsh, exécute « uname -a » et vérifie la machine attendue ; puis, en option,
+des commandes supplémentaires (--command, sortie sans message d'erreur) et l'écriture sur le
+second port (--uart1, QEMU : « echo <jeton> > /dev/ttys1 » doit apparaître dans le fichier de
+UART1). Code de retour 0 si tout est conforme (CTest, labels smoke et board).
 
-Exemple :
+Exemples :
   smoke_lsh.py --qemu qemu-system-arm --machine mps2-an386 --kernel lepton.elf \
                --expect-machine cortexM4-qemu-mps2-an386 --command ls --command ps --uart1
+  smoke_lsh.py --transport serial --port /dev/ttyACM0 --expect-machine cortexM4-stm32f4 \
+               --reset-command "openocd -f debug/openocd-nucleo-f439zi.cfg -c init -c reset -c exit"
 """
 import argparse
 import os
 import re
 import select
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -71,6 +76,34 @@ class Console:
             time.sleep(0.01)
 
 
+class SerialLink:
+    """Port série présenté comme le processus QEMU attendu par Console (stdin, stdout, poll)."""
+
+    def __init__(self, port, baud):
+        import termios
+        import tty
+        fd = os.open(port, os.O_RDWR | os.O_NOCTTY)
+        tty.setraw(fd)
+        attrs = termios.tcgetattr(fd)
+        attrs[4] = attrs[5] = getattr(termios, "B%d" % baud)
+        attrs[2] |= termios.CLOCAL | termios.CREAD
+        attrs[2] &= ~getattr(termios, "CRTSCTS", 0)
+        termios.tcsetattr(fd, termios.TCSANOW, attrs)
+        termios.tcflush(fd, termios.TCIOFLUSH)
+        self.stdout = os.fdopen(fd, "rb", buffering=0)
+        self.stdin = os.fdopen(os.dup(fd), "wb", buffering=0)
+
+    def poll(self):
+        return None
+
+    def kill(self):
+        self.stdin.close()
+        self.stdout.close()
+
+    def wait(self):
+        return 0
+
+
 def run_command(con, cmd, timeout):
     con.drain()
     con.send(cmd)
@@ -84,9 +117,14 @@ def run_command(con, cmd, timeout):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--transport", choices=("qemu", "serial"), default="qemu")
     ap.add_argument("--qemu", default="qemu-system-arm")
-    ap.add_argument("--machine", required=True)
-    ap.add_argument("--kernel", required=True)
+    ap.add_argument("--machine", help="machine QEMU (transport qemu)")
+    ap.add_argument("--kernel", help="ELF à lancer (transport qemu)")
+    ap.add_argument("--port", help="port série de la console (transport serial)")
+    ap.add_argument("--baud", type=int, default=115200)
+    ap.add_argument("--reset-command",
+                    help="commande de reset de la carte, lancée après l'ouverture du port (serial)")
     ap.add_argument("--expect-machine", required=True)
     ap.add_argument("--command", action="append", default=[])
     ap.add_argument("--uart1", action="store_true", help="vérifier le second port (ttys1)")
@@ -94,6 +132,10 @@ def main():
     ap.add_argument("--timeout", type=float, default=10.0)
     ap.add_argument("--log", help="journal de la console (défaut : fichier temporaire)")
     args = ap.parse_args()
+    if args.transport == "qemu" and not (args.machine and args.kernel):
+        ap.error("transport qemu : --machine et --kernel requis")
+    if args.transport == "serial" and (not args.port or args.uart1):
+        ap.error("transport serial : --port requis, --uart1 non disponible")
 
     workdir = tempfile.mkdtemp(prefix="smoke_lsh_")
     uart1 = os.path.join(workdir, "uart1.log")
@@ -102,12 +144,22 @@ def main():
            "-monitor", "none", "-serial", "stdio", "-serial", "file:" + uart1]
     failures = []
     with open(log_path, "wb") as log:
-        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+        if args.transport == "qemu":
+            proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+        else:
+            proc = SerialLink(args.port, args.baud)
+            if args.reset_command:
+                subprocess.run(shlex.split(args.reset_command), check=True,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         con = Console(proc, log)
         try:
             # l'invite n'apparaît qu'après une touche (initd : « any key to continue »)
             boot = con.read_until(re.compile(rb"any key to continue|lepton#\d+\$ "), args.boot_timeout)
+            if boot is None and args.transport == "serial" and not args.reset_command:
+                # carte déjà démarrée, sans reset : réveiller l'invite
+                con.send("")
+                boot = con.read_until(PROMPT, args.timeout)
             if boot is None:
                 failures.append("démarrage : ni invite initd ni invite lsh")
             else:
@@ -145,7 +197,7 @@ def main():
         print("journal : " + log_path)
         return 1
     print("smoke_lsh : %s, uname -a = %s, %d commande(s)%s ; journal %s"
-          % (args.machine, args.expect_machine, len(args.command),
+          % (args.machine if args.transport == "qemu" else args.port, args.expect_machine, len(args.command),
              ", UART1 vérifiée" if args.uart1 else "", log_path))
     return 0
 

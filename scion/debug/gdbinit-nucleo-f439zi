@@ -1,0 +1,29 @@
+# gdb-multiarch — NUCLEO-F439ZI (étape 5). Procédure : doc/migration/debug-gcc.md.
+#   terminal 1 : openocd -f debug/openocd-nucleo-f439zi.cfg
+#   terminal 2 : gdb-multiarch -x debug/gdbinit-nucleo-f439zi $LEPTON_BUILD/nucleo-f439zi-embos/lepton.elf
+# Commandes ajoutées : lepton-load (flash + reset halt), lepton-fault (registres de faute).
+set pagination off
+set confirm off
+set print pretty on
+target extended-remote localhost:3333
+
+define lepton-load
+  monitor reset halt
+  load
+  monitor reset halt
+end
+document lepton-load
+Écrit l'ELF courant en flash puis arrête le cœur sur le vecteur de reset.
+end
+
+define lepton-fault
+  printf "CFSR  = 0x%08x (MMFSR [7:0], BFSR [15:8], UFSR [31:16])\n", *(unsigned int*)0xE000ED28
+  printf "HFSR  = 0x%08x\n", *(unsigned int*)0xE000ED2C
+  printf "MMFAR = 0x%08x\n", *(unsigned int*)0xE000ED34
+  printf "BFAR  = 0x%08x\n", *(unsigned int*)0xE000ED38
+  printf "SHCSR = 0x%08x\n", *(unsigned int*)0xE000ED24
+  info registers pc lr sp xPSR msp psp
+end
+document lepton-fault
+Affiche les registres de faute du SCB (lire avant toute autre hypothèse, ETAPE-5).
+end
