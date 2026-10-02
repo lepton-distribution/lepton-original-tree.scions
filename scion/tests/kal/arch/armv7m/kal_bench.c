@@ -24,6 +24,8 @@
 #include "kernel/core/types.h"
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/malloc.h"
+#include "kernel/core/time.h"
+#include "kernel/core/systime.h"
 
 #include "lepton_irq.h"
 
@@ -642,6 +644,32 @@ static int test_irq(void){
    return 0;
 }
 
+/* TCLK : fréquence du tick vue par le noyau (_SC_CLK_TCK = HZ = CLOCKS_PER_SEC) égale à celle
+   programmée dans le SysTick par l'intégration du micro-noyau, et temps du noyau
+   (_sys_gettimeofday) au rythme des ticks. Étape 5 : _SC_CLK_TCK valait 100 sur Cortex-M pour un
+   tick embOS de 1 kHz (temps du noyau dix fois trop rapide, STIME de ps). */
+extern uint32_t SystemCoreClock;
+#define SYST_RVR (*(volatile uint32_t*)0xE000E014u)
+static int test_tclk(void){
+   struct __timeval tv0, tv1;
+   uint32_t t0, t1;
+   long long us, expect_us;
+   TEST_ASSERT(SYST_RVR + 1u == SystemCoreClock / _SC_CLK_TCK,
+               "TCLK : SysTick programmé à _SC_CLK_TCK interruptions par seconde");
+   OS_TASK_Delay(1);   /* départ juste après un tick */
+   t0 = OS_TIME_GetTicks32();
+   _sys_gettimeofday(&tv0, 0);
+   OS_TASK_Delay(500);
+   t1 = OS_TIME_GetTicks32();
+   _sys_gettimeofday(&tv1, 0);
+   us = (long long)(tv1.tv_sec - tv0.tv_sec) * 1000000LL + (tv1.tv_usec - tv0.tv_usec);
+   expect_us = (long long)(t1 - t0) * 1000000LL / _SC_CLK_TCK;
+   kal_test_put_u32("TCLK : ticks = ", t1 - t0);
+   kal_test_put_u32("TCLK : temps noyau (us) = ", (uint32_t)us);
+   TEST_ASSERT(us == expect_us, "TCLK : temps du noyau = ticks / _SC_CLK_TCK");
+   return 0;
+}
+
 static int test_harness_fail(void){
    TEST_ASSERT(0, "échec volontaire (le harnais doit rendre un code non nul)");
    return 0;
@@ -654,7 +682,7 @@ static const struct { const char* name; int (*fn)(void); } tests[] = {
 #if (OS_CPU_HAS_VFP == 1)
    { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
 #endif
-   { "TICI", test_tici },
+   { "TICI", test_tici }, { "TCLK", test_tclk },
    { "IRQ", test_irq },
    { "HARNESS_FAIL", test_harness_fail },
 };

@@ -28,7 +28,7 @@ target_include_directories(kal_bench PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 lepton_link_firmware(kal_bench)
 
 set(kal_labels "kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}")
-set(kal_tests T1 T2 T3 T4 T5 T6 T7 T8 ${kal_fpu_tests} TICI IRQ)
+set(kal_tests T1 T2 T3 T4 T5 T6 T7 T8 ${kal_fpu_tests} TICI TCLK IRQ)
 
 if(LEPTON_QEMU_MACHINE)
   set(kal_run ${LEPTON_QEMU_ARM} -M ${LEPTON_QEMU_MACHINE} -kernel $<TARGET_FILE:kal_bench>
