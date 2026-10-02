@@ -8,13 +8,23 @@ Journal : `validation-nucleo-f439zi.md`. À compléter en fin d'étape.
 - Étape 5 close : **non** (paliers 7-9, validation utilisateur de fin d'étape).
 - Liste des cartes de l'étape 6 : décision ouverte au statut (inchangée).
 
-## Reprise (prochaine session)
-1. Vérifier le réseau : `ping 192.168.2.5` depuis la VM après correction du pontage VMware
-   (interface reliée au câble de la Nucleo) ; adapter `sys/user/tauon-basic/etc/nucleo-f439zi/.init`
-   (adresse, passerelle) si l'adressage change. Contrôle sans privilège : `ip neigh` doit montrer
-   `00:bd:3b:33:05:71` (MAC par défaut d'`eth.h`) après une requête ARP de la carte.
-2. Palier 7 : ping et session `ftpd` depuis l'hôte. Pas de test automatique encore : adapter
-   `tests/net_qemu.py` (transport série + adresse réelle, sans tap) en test `board.net`.
+## Reprise (prochaine session, après redémarrage de la VM)
+0. Raccorder la carte à la VM (Fusion : menu USB, « STMicroelectronics STLink » → VM) ; vérifier
+   `lsusb | grep 0483:374b` et `/dev/ttyACM0` ; `source scripts/lepton-env.sh`. La carte contient
+   `lepton.elf` (sinon `cmake --build --preset nucleo-f439zi-embos --target flash`, preset
+   configuré avec `-DLEPTON_BOARD_SERIAL_PORT=/dev/ttyACM0`). `ci/run.sh` pour le socle.
+1. Réseau. Adressage : Mac 192.168.2.10 (port Ethernet relié directement à la Nucleo), carte
+   192.168.2.5 (`.init`, passerelle 192.168.2.20 = VM), VM `ens37` 192.168.2.20/16. Depuis le Mac
+   le ping de la carte fonctionne ; depuis la VM, rien (ARP sans réponse, `ens37` pontée sur le
+   LAN). Contrôle : `ping 192.168.2.10` puis `ping 192.168.2.5` depuis la VM ; `ip neigh` doit
+   montrer `00:bd:3b:33:05:71` (MAC d'`eth.h`) pour .5. Pistes Fusion transmises à l'utilisateur :
+   MAC de l'adaptateur ponté sur « Ethernet » = `00:0c:29:e8:8a:0e` (`ens37`) ; macOS « Réseau
+   local » autorisé pour Fusion ; `vmnet-cli --stop/--start`, reconnecter l'adaptateur 2.
+2. Palier 7 si la VM atteint la carte : ping et session `ftpd` (utilisateur `tauon`, `LIST`,
+   `RETR /usr/etc/.boot` = source) ; test automatique `board.net` à écrire en adaptant
+   `tests/net_qemu.py` (transport série, adresse réelle, sans tap). Sinon (repli accepté par
+   l'utilisateur) : validation manuelle depuis le Mac (ping, `ftp 192.168.2.5`) + compteurs MMC
+   (`mdw 0x40028168` émises, `0x400281C4` reçues unicast, `0x40028194` CRC), `board.net` en dette.
 3. Palier 8 : endurance (plusieurs heures, `lsh` + réseau), remplissage des piles : embOS SP
    remplit les piles (`0xCD`) ; mesurer par `OS_STACK_GetTaskStackUsed` ou lecture gdb des piles
    (`OS_Global.pTask`, `pStackBase`, `StackSize`) ; MSP : `__stack_limit__`.

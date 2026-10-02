@@ -191,12 +191,17 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - Étape 4 (`bin`) : `telnetd.c` : `addrlen` non initialisé avant `accept` ; `httpc.c` : `error()` statique inutilisée ; aucun preset ne lie `httpc`, mongoose, `telnetd`, `test2` (mass_compile seulement).
 - Étape 4 (`sbin`) : `stty.c:476/496` compare le pointeur `check` à `'\0'` (`*check` probable) ; `lib/libc/ctype/ctype.h` ne remappe les fonctions `is*`/`to*` vers Lepton que si la `<ctype.h>` système les définit en macros (`#ifdef`) : avec newlib, l'applicatif utilise les fonctions newlib (pures) ; non corrigés (comportement, hors portage).
 - 3b : pilote LAN9118 écrit d'après le modèle QEMU (aucune fiche SMSC dans l'arbre) : QEMU seulement.
-- **Étape 5, palier 7 (blocage d'environnement, 2026-10-02)** : la carte a un lien 100 Mbit/s FD
-  mais ne reçoit aucune trame ; ses requêtes ARP n'atteignent pas la VM. `ens37`
-  (192.168.2.20/16) est pontée sur le LAN de l'hôte (routeurs IPv6, 192.168.1.7 visibles), pas
-  sur le câble de la carte. Action utilisateur : ponter l'adaptateur de l'hôte relié à la Nucleo
-  sur une interface de la VM (VMware Virtual Network Editor). `.init` de la carte : 192.168.2.5,
-  passerelle 192.168.2.20 (à ajuster à l'adressage retenu).
+- **Étape 5, palier 7 (blocage d'environnement, 2026-10-02)** : hôte macOS, VMware Fusion ; la
+  Nucleo est reliée directement au port Ethernet du Mac (192.168.2.10). **Depuis le Mac, le ping
+  de la carte (192.168.2.5) fonctionne** (utilisateur) ; compteurs MMC de la carte relevés par la
+  sonde : 33 trames émises, 16 reçues en unicast, 0 erreur CRC : chaîne Ethernet de la carte
+  saine. **Depuis la VM, ni la carte ni le Mac (.10) ne répondent à l'ARP**, sur `ens37`
+  (192.168.2.20/16, MAC `00:0c:29:e8:8a:0e`) comme sur `ens33` : les deux adaptateurs de la VM
+  sont pontés sur le LAN 192.168.1.x, pas sur le port Ethernet du Mac, bien que le pontage soit
+  sélectionné sur « Ethernet » dans Fusion. Pistes (utilisateur) : MAC de l'adaptateur ponté,
+  autorisation « Réseau local » de macOS pour Fusion, `vmnet-cli --stop/--start`. Repli accepté
+  si le pontage échoue : palier 7 validé manuellement depuis le Mac (ping, `ftp`), test
+  automatique `board.net` en dette. Procédure : `handoff/etape-5.md`, « Reprise ».
 - Étape 5 : USART6 (`ttys6`, PG14/PG9) non vérifié électriquement (pas d'adaptateur) ; liens du
   trunk `tests/__pycache__/*.pyc` pendants (cible ignorée effacée ; nettoyage `graft-clean` :
   décision) ; `grep` de l'hôte = `ugrep`, qui saute les fichiers Latin-1 (binaires) : `grep -a`.
