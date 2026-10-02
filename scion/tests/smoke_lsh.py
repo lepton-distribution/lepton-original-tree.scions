@@ -149,10 +149,14 @@ def main():
                                     stderr=subprocess.STDOUT)
         else:
             proc = SerialLink(args.port, args.baud)
-            if args.reset_command:
-                subprocess.run(shlex.split(args.reset_command), check=True,
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         con = Console(proc, log)
+        if args.transport == "serial" and args.reset_command:
+            # la sonde ST-LINK livre après l'ouverture du port ce qu'elle a tamponné avant
+            # (invites d'une session précédente) : l'écarter avant le reset, sinon il est pris
+            # pour l'invite de démarrage et « uname -a » part pendant l'attente d'initd
+            con.drain()
+            subprocess.run(shlex.split(args.reset_command), check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
             # l'invite n'apparaît qu'après une touche (initd : « any key to continue »)
             boot = con.read_until(re.compile(rb"any key to continue|lepton#\d+\$ "), args.boot_timeout)
