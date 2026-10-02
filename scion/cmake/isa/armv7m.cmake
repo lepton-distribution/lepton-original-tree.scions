@@ -5,7 +5,8 @@ if(NOT CMAKE_C_COMPILER_ID STREQUAL "GNU" OR NOT CMAKE_SYSTEM_PROCESSOR STREQUAL
 endif()
 
 target_compile_options(lepton_options INTERFACE
-  -mthumb $<$<COMPILE_LANGUAGE:C>:-std=gnu99> -ffunction-sections -fdata-sections)
+  -mthumb $<$<COMPILE_LANGUAGE:C>:-std=gnu99> -ffunction-sections -fdata-sections
+  ${LEPTON_OPT_LEVEL})
 # newlib-nano pour le noyau et le démarrage (décision 2026-09-30) ; appels système newlib
 # minimaux (nosys) : l'API POSIX applicative est celle de Lepton.
 target_link_options(lepton_options INTERFACE

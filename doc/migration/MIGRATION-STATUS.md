@@ -98,6 +98,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-10-02 | Étape 5 — écriture en flash de la carte autorisée par l'utilisateur pour la durée de l'étape 5 (flash interne seulement ; ni option bytes ni protection). |
 | 2026-10-02 | Étape 5 — défaut KAL révélé par la carte (UsageFault INVSTATE au déroutement d'un signal, état ICI/IT du xPSR conservé) corrigé dans l'étape 5 (hors fichiers de l'étape, accord utilisateur) : `__kal_arch_redirect_xpsr` (kal_arch.h armv7m), test TICI. |
 | 2026-10-02 | Étape 5 — `_SC_CLK_TCK` (HZ) fixé par l'intégration du micro-noyau (`__KERNEL_CLK_TCK` = 1000, `cmake/kal/embos.cmake`) au lieu de 100 en dur (temps noyau dix fois trop rapide, déjà sous IAR) ; test TCLK (accord utilisateur). |
+| 2026-10-02 | Étape 5, palier 9 — niveau d'optimisation final **`-Os`** (décision utilisateur), pour **tous les presets Cortex-M** (QEMU et carte, socle `ci/run.sh` compris) : variable de cache `LEPTON_OPT_LEVEL` (`cmake/toolchains/arm-none-eabi.cmake`, appliquée par `cmake/isa/<isa>.cmake`), `-g` conservé. Constat : les presets croisés compilaient jusqu'ici en **`-O0`** (Debug = `-g` seul), et non en `-Og` comme le supposait ETAPE-5 ; paliers 1-8 validés en `-O0`. |
 | 2026-10-02 | Étape 5 — carte : mkconf propre calqué sur QEMU (`mkconf_tauon_basic_nucleo_f439zi.xml`, chaîne minimale) au lieu du mkconf Olimex P407 (cassé, `dev_lm3s_cpu`) ; horloge 168 MHz (HSE bypass, sans over-drive) dans `SystemInit` du BSP ; uname `cortexM4-stm32f4` (valeur existante de `kernelconf.h`, pas de modification du noyau) ; table des vecteurs prolongée par le BSP (IRQ 64-90). |
 | 2026-10-01 | Étape 4, bilan (plan approuvé par l'utilisateur) : `perimetre.csv` complété par script (`perimetre_complement.py`, règles de chemin) plutôt que régénéré ; banc KAL : `kal_bench.c` et `.S` armv7m rangés sous `tests/kal/arch/armv7m/` (contenu inchangé) plutôt qu'exclure `tests/` du critère ISA/cœur ; trois dettes « étape 4 » reportées hors portage : `ARG_LEN_MAX`, `va_list` de `vfs.c` (`-m32`), mise en forme multi-ligne de `transform_iar.py`. |
 | 2026-10-01 | Étape 4, module `tools/mklepton` (plan approuvé par l'utilisateur) : option `cpufs` `-split` de mklepton (modèles IAR M16C62, cible gelée) retirée avec copie d'origine sous `legacy/` (D2a/D3a), plutôt que justifiée comme résiduel ; `CPU_TYPE_M16C62` conservé dans l'énumération (nom de CPU lu dans le XML). |
@@ -118,7 +119,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Étape | Décision |
 |---|---|
-| 5 | Niveau d'optimisation final (palier 9) ; BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` : consulté seulement (horloge 168 MHz), aucun fichier utilisé (intégration écrite pour Lepton, décision 2026-09-30). |
+| 5 | BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` : consulté seulement (horloge 168 MHz), aucun fichier utilisé (intégration écrite pour Lepton, décision 2026-09-30). |
 | 6 | Modèle exact de la Discovery F7 ; cartes M3 et M0+ ; suppression des fichiers IAR (tag `legacy-iar`). |
 | 7 | Devenir du backend embOS. |
 
