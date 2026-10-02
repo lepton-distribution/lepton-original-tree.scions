@@ -41,4 +41,12 @@ either the MPL or the [eCos GPL] License."
    //FPU : M4F, M7). Utilisé par le backend pour la taille et le PC du cadre sauvegardé (écart E3).
    #define __kal_arch_exc_return_fpu_frame(__exc_return__) (((__exc_return__) & 0x10u) == 0u)
 
+   //xPSR d'un cadre sauvegardé dont le PC est redirigé (déroutement vers un gestionnaire de
+   //signal) : état de reprise ICI/IT (EPSR, bits 26:25 et 15:10) effacé, bit T forcé. Une tâche
+   //préemptée au milieu d'un LDM/STM/PUSH/POP ou d'un bloc IT garde cet état dans son cadre ; au
+   //retour d'exception, le cœur le reprendrait sur la nouvelle instruction (UsageFault INVSTATE,
+   //ou exécution conditionnelle du gestionnaire). Constaté sur carte à l'étape 5 (QEMU ne
+   //modélise pas ICI) ; test TICI du banc KAL.
+   #define __kal_arch_redirect_xpsr(__xpsr__) (((__xpsr__) & ~0x0600FC00u) | 0x01000000u)
+
 #endif //_KAL_ARCH_ARMV7M_H

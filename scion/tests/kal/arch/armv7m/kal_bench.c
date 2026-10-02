@@ -380,6 +380,50 @@ static int test_t4(void){
    return t4_run(target_hold, sig_handler1);
 }
 
+/* TICI : déroutement d'une tâche préemptée au milieu d'un LDM/STM (ou d'un bloc IT) : le xPSR
+   sauvegardé porte un état de reprise ICI/IT non nul. Le cadre dérouté doit repartir sans cet
+   état et avec T, sinon le retour d'exception reprend l'instruction interrompue sur le gestionnaire
+   (UsageFault INVSTATE sur carte, étape 5 ; QEMU ne modélise pas ICI, d'où le contrôle du cadre).
+   Ordonnanceur verrouillé pendant le déroutement : la cible (plus prioritaire) ne repart qu'après
+   le contrôle. */
+#define XPSR_T          0x01000000u
+#define XPSR_ICI_IT     0x0600FC00u
+#define XPSR_ICI_LDM15  0x0000F000u   /* ICI : reprise d'un LDM/STM au registre 15 */
+static uint32_t* frame_xpsr(void* frame){
+   return frame_is_fpu(frame) ? &((OS_REGS_BASE_FPU*)frame)->OS_REG_XPSR
+                              : &((OS_REGS_BASE*)frame)->OS_REG_XPSR;
+}
+static int test_tici(void){
+   uint32_t* xpsr;
+   uint32_t orig;
+   regs_ok = 0;
+   handler_count = 0;
+   handler_on_target = 0;
+   target_create(target_hold, 0);
+   xpsr = frame_xpsr(target_task.pStack);
+   orig = *xpsr;
+   TEST_ASSERT((orig & XPSR_T) && !(orig & XPSR_ICI_IT), "TICI : cadre bloqué d'origine sans ICI/IT");
+   *xpsr = orig | XPSR_ICI_LDM15;
+   OS_TASK_EnterRegion();
+   __bckup_context(tp.bckup_context, (&tp));
+   __swap_signal_handler((&tp), sig_handler1);
+   tp.stat |= PTHREAD_STATUS_SIGHANDLER;
+   TEST_ASSERT(!(*xpsr & XPSR_ICI_IT) && (*xpsr & XPSR_T),
+               "TICI : xPSR du cadre dérouté sans ICI/IT, T conservé");
+   OS_TASK_LeaveRegion();
+   TEST_ASSERT(ctrl_wait(EV_H, 200), "TICI : gestionnaire exécuté");
+   TEST_ASSERT(handler_on_target, "TICI : gestionnaire exécuté dans la tâche cible");
+   /* reprise : le contexte sauvegardé est celui préparé par le test (ICI fictif) ; il est rendu
+      cohérent avant la restauration, la cible est bloquée dans embOS et non dans un LDM */
+   *frame_xpsr(&tp.bckup_context.os_regs) = orig;
+   deroute_exit();
+   OS_TASKEVENT_Set(&target_task, EV_GO);
+   finish_target("TICI : reprise au point d'interruption");
+   TEST_ASSERT(handler_count == 1, "TICI : un seul passage dans le gestionnaire");
+   TEST_ASSERT(regs_ok, "TICI : R4-R11 intacts après retour du gestionnaire");
+   return 0;
+}
+
 /* T5 : déroutement pendant une attente temporisée (appel système préemptible) */
 static int test_t5(void){
    regs_ok = 0;
@@ -610,6 +654,7 @@ static const struct { const char* name; int (*fn)(void); } tests[] = {
 #if (OS_CPU_HAS_VFP == 1)
    { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
 #endif
+   { "TICI", test_tici },
    { "IRQ", test_irq },
    { "HARNESS_FAIL", test_harness_fail },
 };
