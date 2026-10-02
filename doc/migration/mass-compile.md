@@ -1,9 +1,9 @@
 # Compilation de masse du périmètre actif — tableau de bord
 
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
-Commande : `mass_compile.sh --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv`
+Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv`
 
-Résultat : **371/371 fichiers C OK (100.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
+Résultat : **373/373 fichiers C OK (100.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
 Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : `mass-compile.csv`.
 
@@ -12,7 +12,7 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 | Module | OK / total |
 |---|---|
 | kernel/core | 58 / 58 |
-| kernel/dev | 160 / 160 |
+| kernel/dev | 162 / 162 |
 | kernel/fs | 26 / 26 |
 | kernel/net | 38 / 38 |
 | lib | 28 / 28 |

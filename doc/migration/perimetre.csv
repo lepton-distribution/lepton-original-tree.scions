@@ -2708,6 +2708,9 @@ src/kernel/dev/bsp/discovery_f4-baseboard-modem/dev_discovery_f4_peripherals/ioc
 src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_board/dev_discovery_f4_board.c,actif,déclaré par bsp_discovery_f4_7.30/Debug (BSP STM32F4),129,1
 src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_board/dev_discovery_f4_board.h,actif,déclaré par bsp_discovery_f4_7.30/Debug (BSP STM32F4),49,1
 src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c,actif,déclaré par bsp_discovery_f4_7.30/Debug (BSP STM32F4),62,1
+src/kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi.h,actif,étape 5 : BSP de la carte de base NUCLEO-F439ZI,47,0
+src/kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_board.c,actif,étape 5 : BSP de la carte de base NUCLEO-F439ZI,201,0
+src/kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_vectors.c,actif,étape 5 : BSP de la carte de base NUCLEO-F439ZI,20,0
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.c,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),131,1
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.h,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),49,1
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),54,1
@@ -3861,6 +3864,7 @@ src/sbin/xmodem.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (
 sys/user/tauon-basic/src/arch/atmel-at91sam9261-ek/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",11,0
 sys/user/tauon-basic/src/arch/atmel-at91samd20-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",14,0
 sys/user/tauon-basic/src/arch/atmel-at91samv71-xplained-ultra/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",16,0
+sys/user/tauon-basic/src/arch/nucleo-f439zi/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 5 : configuration de la carte NUCLEO-F439ZI,14,0
 sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",27,0
 sys/user/tauon-basic/src/arch/qemu-mps2-an386/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 3 : configuration de la carte QEMU mps2-an386,13,0
 sys/user/tauon-basic/src/arch/st-stm32f407-discovery/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",26,0
