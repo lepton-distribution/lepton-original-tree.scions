@@ -13,7 +13,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 3a — Noyau dynamique QEMU, UART | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 : paliers 1-6 verts (4 tracé et archivé), hard-float (preset principal) et soft-float ; E3 corrigé ; banc KAL T0-T8 + T1F/T4F/T6F/T7F verts ; `ci/run.sh` vert ; handoff final `handoff/etape-3a.md`, journal `validation-qemu-mps2-an386.md` |
 | 3b — Noyau dynamique QEMU, Ethernet | TERMINÉ | 2026-09-30 | validé par l'utilisateur le 2026-09-30 ; palier 7 vert (pilote LAN9118, lwIP 2.0.1, ping et `ftpd` depuis l'hôte, `ctest -L net`, hard et soft) ; `ci/run.sh` vert ; complément tâche 1 (`compiler.h`, `lepton_irq.h`, amorce `transform_iar.py`) fait le 2026-09-30 ; **étape 3 validée par l'utilisateur le 2026-09-30**, branche `migration/etape-3` fusionnée ; handoff `handoff/etape-3.md` |
 | 4 — Portage C, KAL | TERMINÉ | 2026-10-01 | **validée par l'utilisateur le 2026-10-01**, branche `migration/etape-4-bilan` fusionnée ; handoff `handoff/etape-4.md` ; par module (tableau ci-dessous) ; session 4.0 (outillage, ligne de base) validée par l'utilisateur le 2026-10-01, branche `migration/etape-4-outillage` fusionnée : `transform_iar.py` (7 règles), `mass_compile.sh` 243/348, `audit_isa_ifdef.py` ; aucun source transformé ; handoff `handoff/etape-4-outillage.md` ; module `kernel/core` (hors KAL) fait le 2026-10-01 sur `migration/etape-4-kernel-core`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kernel-core.md` ; module KAL fait le 2026-10-01 sur `migration/etape-4-kal`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kal.md` ; module KAL-2 (directives ISA/cœur de `kernel/core`) fait le 2026-10-01 sur `migration/etape-4-kal-2`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kal-2.md` ; module `kernel/dev` fait le 2026-10-01 sur `migration/etape-4-kernel-dev`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kernel-dev.md` ; module `kernel/fs` fait le 2026-10-01 sur `migration/etape-4-kernel-fs`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kernel-fs.md` ; module `kernel/net` fait le 2026-10-01 sur `migration/etape-4-kernel-net`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-kernel-net.md` ; module `lib` fait le 2026-10-01 sur `migration/etape-4-lib`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-lib.md` ; module `sbin` fait le 2026-10-01 sur `migration/etape-4-sbin`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-sbin.md` ; module `bin` fait le 2026-10-01 sur `migration/etape-4-bin`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-bin.md` ; module `sys/user/tauon-basic` fait le 2026-10-01 sur `migration/etape-4-tauon-basic`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-tauon-basic.md` ; module `tools/mklepton` fait le 2026-10-01 sur `migration/etape-4-mklepton`, validé par l'utilisateur le 2026-10-01 et fusionné, handoff `handoff/etape-4-mklepton.md` ; **bilan de l'étape 4** fait le 2026-10-01 sur `migration/etape-4-bilan` (plan approuvé) : `perimetre.csv` complété (`perimetre_complement.py`), critères tous verts (Lepton 0 IAR-isme, mass_compile **371/371**, ISA/cœur hors arch 0, `ci/run.sh` vert)  ; handoff `handoff/etape-4.md` |
-| 5 — NUCLEO-F439ZI | À FAIRE | | validée sur NUCLEO-F429ZI (remplaçante, décision 2026-10-01) ; branche `migration/etape-5` ouverte (décision seule) |
+| 5 — NUCLEO-F439ZI | EN COURS | 2026-10-02 | validée sur NUCLEO-F429ZI (remplaçante, décision 2026-10-01) ; branche `migration/etape-5` ; plan approuvé le 2026-10-02 ; tâches 1-3 faites (carte, BSP, flash/débogage, tests `-L board`), `doc/BUILDING.md`, `debug-gcc.md` ; **paliers 1-6 verts** (journal `validation-nucleo-f439zi.md`) ; défauts KAL ICI/IT et tick corrigés (tests TICI, TCLK) ; **palier 7 bloqué (environnement : pontage VMware de la VM sur le câble de la carte)** ; paliers 8-9 à faire ; `ci/run.sh` vert ; mass_compile 373/373 |
 | 6 — Généralisation, CI, retrait IAR | À FAIRE | | par carte |
 | 7 — Backend FreeRTOS | À FAIRE | | |
 | Annexe RISC-V | REPORTÉ | 2026-09-30 | exigences d'architecture vérifiées aux étapes 2, 4, 6 |
@@ -40,7 +40,8 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Cœur | embOS | FreeRTOS |
 |---|---|---|
-| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) ; T0 inclut désormais réseau et `ftpd` lancés par le `.init` ; test `IRQ` (sections critiques `lepton_irq.h`) vert hard et soft | |
+| m4 (`mps2-an386`) | hard-float (preset principal) : T0-T8 et variantes FPU T1F, T4F, T6F, T7F vertes ; soft-float : T0-T8 verts (2026-09-30) ; T0 inclut désormais réseau et `ftpd` lancés par le `.init` ; test `IRQ` (sections critiques `lepton_irq.h`) vert hard et soft ; TICI et TCLK (2026-10-02) verts hard et soft | |
+| m4F (NUCLEO-F429ZI, carte) | hard-float : T0 (`board.smoke_lsh`), T1-T8, T1F/T4F/T6F/T7F, TICI, TCLK, IRQ verts par semihosting OpenOCD (`ctest -L board`, 2026-10-02) | |
 | m7 (`mps2-an500`) | | |
 | m3 (`mps2-an385`) | | |
 | m0 (`microbit`) | | |
@@ -93,6 +94,11 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-10-01 | Étape 4 — D3a : extension de D2a aux branches des cibles gelées Win32, ARM7/ARM9, M16C, eCos (macros CPU_*, valeurs de cœur et de puce) et des compilateurs non GCC (Keil, Visual C) : retirées avec copie d'origine sous `legacy/` ; gardes GCC levées (branches héritées de la simulation Linux non corrigées). |
 | 2026-10-01 | Étape 5 — carte disponible : **NUCLEO-F429ZI** (ST-LINK/V2.1 `0483:374b`, `/dev/ttyACM0`), remplaçante de la NUCLEO-F439ZI pour l'étape 5 : la F439ZI reste la carte de base nominale (noms `nucleo-f439zi`, preset) ; validation sur F429ZI sans CRYP/HASH (seul écart F429/F439), puce déclarée `STM32F429xx` par la configuration de la carte (rien dans le noyau) ; paliers à rejouer sur une F439ZI dès qu'elle sera disponible. |
 | 2026-10-01 | Étape 4 validée par l'utilisateur (fin d'étape) ; branche `migration/etape-4-bilan` fusionnée. Prochaine : étape 5 (NUCLEO-F439ZI), carte à raccorder. |
+| 2026-10-02 | Étape 5 — plan approuvé ; pilote Ethernet STM32F4 (`eth.c`) **paramétré par le BSP** (descripteur `eth_stm32f4x7_bsp` : broches RMII, PHY ; `BOARD_ETH_PHY_*`), valeurs Olimex déplacées dans son BSP, plutôt qu'une copie du pilote. |
+| 2026-10-02 | Étape 5 — écriture en flash de la carte autorisée par l'utilisateur pour la durée de l'étape 5 (flash interne seulement ; ni option bytes ni protection). |
+| 2026-10-02 | Étape 5 — défaut KAL révélé par la carte (UsageFault INVSTATE au déroutement d'un signal, état ICI/IT du xPSR conservé) corrigé dans l'étape 5 (hors fichiers de l'étape, accord utilisateur) : `__kal_arch_redirect_xpsr` (kal_arch.h armv7m), test TICI. |
+| 2026-10-02 | Étape 5 — `_SC_CLK_TCK` (HZ) fixé par l'intégration du micro-noyau (`__KERNEL_CLK_TCK` = 1000, `cmake/kal/embos.cmake`) au lieu de 100 en dur (temps noyau dix fois trop rapide, déjà sous IAR) ; test TCLK (accord utilisateur). |
+| 2026-10-02 | Étape 5 — carte : mkconf propre calqué sur QEMU (`mkconf_tauon_basic_nucleo_f439zi.xml`, chaîne minimale) au lieu du mkconf Olimex P407 (cassé, `dev_lm3s_cpu`) ; horloge 168 MHz (HSE bypass, sans over-drive) dans `SystemInit` du BSP ; uname `cortexM4-stm32f4` (valeur existante de `kernelconf.h`, pas de modification du noyau) ; table des vecteurs prolongée par le BSP (IRQ 64-90). |
 | 2026-10-01 | Étape 4, bilan (plan approuvé par l'utilisateur) : `perimetre.csv` complété par script (`perimetre_complement.py`, règles de chemin) plutôt que régénéré ; banc KAL : `kal_bench.c` et `.S` armv7m rangés sous `tests/kal/arch/armv7m/` (contenu inchangé) plutôt qu'exclure `tests/` du critère ISA/cœur ; trois dettes « étape 4 » reportées hors portage : `ARG_LEN_MAX`, `va_list` de `vfs.c` (`-m32`), mise en forme multi-ligne de `transform_iar.py`. |
 | 2026-10-01 | Étape 4, module `tools/mklepton` (plan approuvé par l'utilisateur) : option `cpufs` `-split` de mklepton (modèles IAR M16C62, cible gelée) retirée avec copie d'origine sous `legacy/` (D2a/D3a), plutôt que justifiée comme résiduel ; `CPU_TYPE_M16C62` conservé dans l'énumération (nom de CPU lu dans le XML). |
 | 2026-10-01 | Étape 4, module `tauon-basic` (plan approuvé par l'utilisateur) : `dlmalloc.c` (variante DLIB IAR entièrement sous `__IAR_SYSTEMS_ICC__`) remplacé par un talon commenté, copie d'origine sous `legacy/` (D2a) ; `free` reste sans effet (pas de statistiques du tas Lepton : pas d'implémentation nouvelle). |
@@ -112,7 +118,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 
 | Étape | Décision |
 |---|---|
-| 5 | Niveau d'optimisation final ; BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` (proposition étape 1 : vecteur CRYP et RAM à adapter). |
+| 5 | Niveau d'optimisation final (palier 9) ; BSP embOS de base `ST/STM32F429_STM32F429ZI_Nucleo` : consulté seulement (horloge 168 MHz), aucun fichier utilisé (intégration écrite pour Lepton, décision 2026-09-30). |
 | 6 | Modèle exact de la Discovery F7 ; cartes M3 et M0+ ; suppression des fichiers IAR (tag `legacy-iar`). |
 | 7 | Devenir du backend embOS. |
 
@@ -185,6 +191,17 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 - Étape 4 (`bin`) : `telnetd.c` : `addrlen` non initialisé avant `accept` ; `httpc.c` : `error()` statique inutilisée ; aucun preset ne lie `httpc`, mongoose, `telnetd`, `test2` (mass_compile seulement).
 - Étape 4 (`sbin`) : `stty.c:476/496` compare le pointeur `check` à `'\0'` (`*check` probable) ; `lib/libc/ctype/ctype.h` ne remappe les fonctions `is*`/`to*` vers Lepton que si la `<ctype.h>` système les définit en macros (`#ifdef`) : avec newlib, l'applicatif utilise les fonctions newlib (pures) ; non corrigés (comportement, hors portage).
 - 3b : pilote LAN9118 écrit d'après le modèle QEMU (aucune fiche SMSC dans l'arbre) : QEMU seulement.
+- **Étape 5, palier 7 (blocage d'environnement, 2026-10-02)** : la carte a un lien 100 Mbit/s FD
+  mais ne reçoit aucune trame ; ses requêtes ARP n'atteignent pas la VM. `ens37`
+  (192.168.2.20/16) est pontée sur le LAN de l'hôte (routeurs IPv6, 192.168.1.7 visibles), pas
+  sur le câble de la carte. Action utilisateur : ponter l'adaptateur de l'hôte relié à la Nucleo
+  sur une interface de la VM (VMware Virtual Network Editor). `.init` de la carte : 192.168.2.5,
+  passerelle 192.168.2.20 (à ajuster à l'adressage retenu).
+- Étape 5 : USART6 (`ttys6`, PG14/PG9) non vérifié électriquement (pas d'adaptateur) ; liens du
+  trunk `tests/__pycache__/*.pyc` pendants (cible ignorée effacée ; nettoyage `graft-clean` :
+  décision) ; `grep` de l'hôte = `ugrep`, qui saute les fichiers Latin-1 (binaires) : `grep -a`.
+- Étape 5 : `ctest -L board` laisse `kal_bench` en flash (reflasher `lepton.elf` par la cible
+  `flash`) ; le banc KAL ne s'exécute que sous OpenOCD (semihosting).
 
 - **Sécurité, à reprendre avec toute évolution utilisant la MPU** (décision 2026-09-30) : le banc de
   registres FPU (S0-S31, FPSCR) est physique et partagé ; embOS ne l'efface ni à la création de tâche
