@@ -109,6 +109,13 @@
       "output": {
         "outputOnFailure": true
       }
+    },
+    {
+      "name": "nucleo-f439zi-embos",
+      "configurePreset": "nucleo-f439zi-embos",
+      "output": {
+        "outputOnFailure": true
+      }
     }
   ]
 }

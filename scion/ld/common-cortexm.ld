@@ -13,6 +13,8 @@ SECTIONS
   {
     . = ALIGN(4);
     KEEP(*(.isr_vector))
+    /* suite de la table propre au MCU (IRQ 64 et au-delà, fournie par le BSP), contiguë */
+    KEEP(*(.isr_vector_ext))
     . = ALIGN(4);
   } > REGION_TEXT
 
