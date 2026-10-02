@@ -99,20 +99,18 @@ static void eth_phy_write (uint8_t PhyAddr, uint8_t Reg, uint16_t Data)
  * Description: get phy address
  *
  *************************************************************************/
-static unsigned int eth_phy_get_addr(void){
-   unsigned int PhyAddr;
-   // read the ID for match
-   for(PhyAddr = 1; 32 >= PhyAddr; PhyAddr++){
-      if((0x0022 == ETH_ReadPHYRegister(PhyAddr,2))
-            && (0x1619 == (ETH_ReadPHYRegister(PhyAddr,3)))) break;
+static int eth_phy_get_addr(void){
+   unsigned int i;
+   // read the ID for match (PHY du BSP ; adresses phy_addr_first..31 puis 0..phy_addr_first-1)
+   for(i = 0; i < 32; i++){
+      uint16_t PhyAddr = (uint16_t)((eth_stm32f4x7_bsp.phy_addr_first + i) % 32);
+      if((eth_stm32f4x7_bsp.phy_id1 == ETH_ReadPHYRegister(PhyAddr,2))
+            && (eth_stm32f4x7_bsp.phy_id2
+                == (ETH_ReadPHYRegister(PhyAddr,3) & eth_stm32f4x7_bsp.phy_id2_mask)))
+         return PhyAddr;
    }
-   //
-   if(32 < PhyAddr){
-      //Ethernet Phy Not Found\n\r
-      return 0;
-   }
-   //
-   return PhyAddr;
+   //Ethernet Phy Not Found
+   return -1;
 }
 
 /*************************************************************************
@@ -312,7 +310,7 @@ static int eth_macdma_it_config(void){
  *************************************************************************/
 static int eth_macdma_config(void)
 {
-   uint16_t PhyAddr=0;
+   int PhyAddr;
    uint32_t  EthInitStatus = 0;
    ETH_InitTypeDef ETH_InitStructure;
    
@@ -371,11 +369,11 @@ static int eth_macdma_config(void)
    ETH_InitStructure.ETH_DMAArbitration = ETH_DMAArbitration_RoundRobin_RxTx_2_1;
    
    //
-   if((PhyAddr=eth_phy_get_addr())==0){
+   if((PhyAddr=eth_phy_get_addr())<0){
       return -1;
    }
    /* Configure Ethernet */
-   if(EthInitStatus = ETH_Init(&ETH_InitStructure, PhyAddr)==0){
+   if(EthInitStatus = ETH_Init(&ETH_InitStructure, (uint16_t)PhyAddr)==0){
       //Ethernet Initialization Failed
       return -1;
    }
@@ -411,6 +409,7 @@ void eth_init(void){
 int eth_bsp_init(void)
 {
    //
+   unsigned int i;
    unsigned int PhyAddr;
    //
    GPIO_InitTypeDef GPIO_InitStructure;
@@ -430,87 +429,25 @@ int eth_bsp_init(void)
    RCC_AHB1Periph_ETH_MAC_Rx | RCC_AHB1Periph_ETH_MAC_PTP, ENABLE);
    
    
-   /* Enable GPIOs clocks */
-   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA |	RCC_AHB1Periph_GPIOB |
-   RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOG, ENABLE);
+   /* Enable GPIOs clocks (ports du BSP) */
+   RCC_AHB1PeriphClockCmd(eth_stm32f4x7_bsp.gpio_clocks, ENABLE);
    
    /* Enable SYSCFG clock */
    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
    /*Select RMII Interface*/
    SYSCFG_ETH_MediaInterfaceConfig(SYSCFG_ETH_MediaInterface_RMII);
    
-   /* ETHERNET pins configuration */
-   /* PA
-   ETH_RMII_REF_CLK: PA1
-   ETH_RMII_MDIO: PA2
-   ETH_RMII_MDINT: PA3
-   ETH_RMII_CRS_DV: PA7
-   */
-   
-   /* Configure PA1, PA2, PA3 and PA7*/
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_7;
+   /* ETHERNET pins configuration : broches RMII de la carte (eth_stm32f4x7_bsp) */
    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_Init(GPIOA, &GPIO_InitStructure);
-   
-   /* Connect PA1, PA2, PA3 and PA7 to ethernet module*/
-   GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_ETH);
-   GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_ETH);
-   GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_ETH);
-   GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_ETH);
-   
-   /* PB
-   ETH_RMII_TX_EN: PB11
-   */
-   
-   /* Configure PB11*/
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_Init(GPIOB, &GPIO_InitStructure);
-   
-   /* Connect PB11 to ethernet module*/
-   GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_ETH);
-   
-   /* PC
-   ETH_RMII_MDC: PC1
-   ETH_RMII_RXD0: PC4
-   ETH_RMII_RXD1: PC5
-   */
-   
-   /* Configure PC1, PC4 and PC5*/
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5;
-   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_Init(GPIOC, &GPIO_InitStructure);
-   
-   /* Connect PC1, PC4 and PC5 to ethernet module*/
-   GPIO_PinAFConfig(GPIOC, GPIO_PinSource1, GPIO_AF_ETH);
-   GPIO_PinAFConfig(GPIOC, GPIO_PinSource4, GPIO_AF_ETH);
-   GPIO_PinAFConfig(GPIOC, GPIO_PinSource5, GPIO_AF_ETH);
-   
-   /* PG
-   ETH_RMII_TXD0: PG13
-   ETH_RMII_TXD1: PG14
-   */
-   
-   /* Configure PG14 and PG15*/
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14;
-   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_Init(GPIOG, &GPIO_InitStructure);
-   
-   /* Connect PG13 and PG15 to ethernet module*/
-   GPIO_PinAFConfig(GPIOG, GPIO_PinSource13, GPIO_AF_ETH);
-   GPIO_PinAFConfig(GPIOG, GPIO_PinSource14, GPIO_AF_ETH);
+   GPIO_InitStructure.GPIO_Speed = eth_stm32f4x7_bsp.gpio_speed;
+   for(i = 0; i < eth_stm32f4x7_bsp.pin_count; i++){
+      const eth_stm32f4x7_bsp_pin_t* pin = &eth_stm32f4x7_bsp.pins[i];
+      GPIO_InitStructure.GPIO_Pin = (uint16_t)(1u << pin->pin_source);
+      GPIO_Init(pin->port, &GPIO_InitStructure);
+      GPIO_PinAFConfig(pin->port, pin->pin_source, GPIO_AF_ETH);
+   }
  
 #if 0
    /* Reset ETHERNET on AHB Bus */

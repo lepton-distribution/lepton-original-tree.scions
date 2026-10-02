@@ -156,13 +156,12 @@ void ETH_IRQHandler(void)
 | See:
 ---------------------------------------------*/
 int dev_stm32f4xx_eth_load(void){
-   int error;
-   //
-   pthread_mutexattr_t mutex_attr=0;
    //configure pinout and the phy device
-   eth_bsp_init();
+   //(étape 5 : renvoyait une variable non initialisée et ignorait l'échec d'eth_bsp_init)
+   if(eth_bsp_init()<0)
+      return -1;
    //
-   return error;
+   return 0;
 }
 
 /*-------------------------------------------

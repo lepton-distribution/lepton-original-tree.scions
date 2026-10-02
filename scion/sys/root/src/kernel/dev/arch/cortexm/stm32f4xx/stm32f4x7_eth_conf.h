@@ -76,6 +76,8 @@ either the MPL or the [eCos GPL] License."
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
+/* configuration de carte (BOARD_ETH_PHY_*, BSP) : user_kernel_mkconf.h */
+#include "kernel/core/kernelconf.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -120,6 +122,18 @@ either the MPL or the [eCos GPL] License."
    to update this value depending on the used external PHY */
 //#define PHY_SR    ((uint16_t)31) /* Value for DP83848 PHY */
    
+#if defined(BOARD_ETH_PHY_SR)
+/* PHY de la carte (BSP, étape 5) : registre d'état et valeurs vitesse/duplex */
+#define PHY_SR                        BOARD_ETH_PHY_SR
+#define PHY_DUPLEX_SPEED_STATUS_MASK  BOARD_ETH_PHY_DUPLEX_SPEED_MASK
+#define PHY_100BTX_FULL               BOARD_ETH_PHY_100BTX_FULL
+#define PHY_100BTX_HALF               BOARD_ETH_PHY_100BTX_HALF
+#define PHY_10M_FULL                  BOARD_ETH_PHY_10M_FULL
+#define PHY_10M_HALF                  BOARD_ETH_PHY_10M_HALF
+#define PHY_Speed_Status              ((u16)0x0002)
+#define PHY_Duplex_Status             ((u16)0x0004)
+#else
+/* défaut : PHY Micrel de l'Olimex STM32-P407 (valeurs d'origine) */
 #define PHY_SR    ((uint16_t)16) /* Value for olimex micrel PHY */  
 
 /* The Speed and Duplex mask values change from a PHY to another, so the user
@@ -137,6 +151,7 @@ either the MPL or the [eCos GPL] License."
 #define PHY_100BTX_HALF		((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX))
 #define PHY_10M_FULL            ((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_SPEED))
 #define PHY_10M_HALF		((uint16_t)(KSZ8873MLL_GLOBAL_CONTROL_4_SPEED|KSZ8873MLL_GLOBAL_CONTROL_4_DUPLEX))
+#endif
    
 
 //#define PHY_100BTX_FULL                      (18)

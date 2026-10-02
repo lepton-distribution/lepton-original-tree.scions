@@ -55,6 +55,26 @@ typedef struct eth_stm32f4x7_info_st {
    eth_stat_t eth_stat;
 } eth_stm32f4x7_info_t;
 
+//configuration de carte (BSP, étape 5) : broches RMII et identification du PHY ; définie par
+//le BSP de la carte (eth_stm32f4x7_bsp), lue par eth_bsp_init et la recherche du PHY
+typedef struct eth_stm32f4x7_bsp_pin_st {
+   GPIO_TypeDef* port;
+   uint16_t pin_source;          //GPIO_PinSourceN
+} eth_stm32f4x7_bsp_pin_t;
+
+typedef struct eth_stm32f4x7_bsp_st {
+   uint32_t gpio_clocks;         //RCC_AHB1Periph_GPIOx des ports utilisés
+   GPIOSpeed_TypeDef gpio_speed;
+   const eth_stm32f4x7_bsp_pin_t* pins;
+   unsigned int pin_count;
+   uint16_t phy_id1;             //registre 2 du PHY
+   uint16_t phy_id2;             //registre 3 du PHY, comparé sous phy_id2_mask
+   uint16_t phy_id2_mask;
+   unsigned int phy_addr_first;  //première adresse explorée, puis les suivantes modulo 32
+} eth_stm32f4x7_bsp_t;
+
+extern const eth_stm32f4x7_bsp_t eth_stm32f4x7_bsp;
+
 //
 int eth_packet_read(unsigned char* p_to_user_buffer, int size);
 int eth_packet_write(const unsigned char* p_from_user_buffer, int size);
