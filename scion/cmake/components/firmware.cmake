@@ -109,6 +109,21 @@ if(LEPTON_BOARD_SERIAL_PORT AND LEPTON_OPENOCD)
   set_tests_properties(board.smoke_lsh PROPERTIES
                        LABELS "board;kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"
                        TIMEOUT 120 RUN_SERIAL TRUE FIXTURES_SETUP board_t0)
+  # palier 7 sur carte : ping, ftpd, errno (flash de lepton.elf : le banc KAL laisse kal_bench)
+  if(LEPTON_NET_STACK AND LEPTON_NET_TEST_HOST_IP)
+    add_test(NAME board.net
+             COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/board_net.py
+                     --port ${LEPTON_BOARD_SERIAL_PORT}
+                     --reset-command "${LEPTON_OPENOCD} -f ${LEPTON_BOARD_OPENOCD_CFG} -c \"program $<TARGET_FILE:lepton> verify reset exit\""
+                     --host-ip ${LEPTON_NET_TEST_HOST_IP} --guest-ip ${LEPTON_NET_TEST_GUEST_IP}
+                     --ftp-file ${LEPTON_NET_TEST_FTP_FILE}
+                     --ftp-reference ${CMAKE_SOURCE_DIR}/${LEPTON_NET_TEST_FTP_REFERENCE}
+                     --errno-header ${LEPTON_SRC}/kernel/core/errno.h
+                     --log ${CMAKE_BINARY_DIR}/board_net.log)
+    set_tests_properties(board.net PROPERTIES
+                         LABELS "board;net;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}"
+                         TIMEOUT 120 RUN_SERIAL TRUE FIXTURES_REQUIRED board_t0)
+  endif()
   add_subdirectory(${CMAKE_SOURCE_DIR}/tests/kal ${CMAKE_BINARY_DIR}/tests/kal)
 endif()
 
