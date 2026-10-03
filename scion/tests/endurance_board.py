@@ -66,7 +66,8 @@ class Pinger(threading.Thread):
 
 
 def probe(args):
-    """Relevé des piles et des registres de faute par OpenOCD + gdb (cœur arrêté puis relancé)."""
+    """Relevé des piles et des registres de faute par OpenOCD + gdb (cœur arrêté le temps du
+    relevé, puis relancé par « monitor resume »)."""
     ocd = subprocess.Popen(["openocd", "-f", args.openocd_cfg],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
@@ -75,7 +76,9 @@ def probe(args):
                             "-ex", "lepton-stacks",
                             "-ex", "printf \"CFSR=0x%08x HFSR=0x%08x\\n\", "
                                    "*(unsigned int*)0xE000ED28, *(unsigned int*)0xE000ED2C",
-                            "-ex", "detach", args.elf],
+                            # l'attachement de gdb arrête le cœur : relance explicite
+                            # (après detach seul, le cœur a été vu resté arrêté)
+                            "-ex", "monitor resume", "-ex", "detach", args.elf],
                            capture_output=True, text=True, timeout=60)
         return r.stdout
     finally:

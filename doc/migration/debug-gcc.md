@@ -25,6 +25,12 @@ gdb-multiarch -x debug/gdbinit-nucleo-f439zi "$LEPTON_BUILD/nucleo-f439zi-embos/
 Six points d'arrêt matériels au plus (le code est en flash). `monitor reset halt` revient au
 vecteur de reset ; `monitor reset run` relance sans débogueur actif.
 
+L'attachement de gdb arrête le cœur. Terminer toute session (et tout `gdb -batch`) par
+`monitor resume` avant `detach` : sans cela, le cœur a été trouvé resté arrêté après l'arrêt
+d'OpenOCD (`DHCSR` `0x00030003`), la carte figée (tick, réseau, console), ce qui imite un défaut
+du firmware. Relance sans gdb : `openocd -f debug/openocd-nucleo-f439zi.cfg -c init -c halt -c
+resume -c exit` (le `halt` met à jour l'état connu d'OpenOCD ; un `resume` seul est refusé).
+
 ## Faute
 
 Lire les registres de faute avant toute autre hypothèse (`lepton-fault` dans gdb) :

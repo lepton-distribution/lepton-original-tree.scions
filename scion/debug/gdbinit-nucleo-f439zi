@@ -34,7 +34,8 @@ end
 # 8 octets laissés au contrôle de pile d'embOS ; la pile descend vers heap_top. Marge = octets
 # 0xCD intacts à partir de heap_top (pStackBase pour une tâche sans thread Lepton). La pile
 # principale (MSP, __stack_limit__ .. __stack_end__) n'est mesurée que si elle est peinte.
-# Lecture mémoire sans arrêt du cœur (accès de débogage AHB du Cortex-M).
+# L'attachement de gdb arrête le cœur : terminer par « monitor resume » avant de quitter, sinon
+# la carte reste figée (tick, réseau, console ; constaté le 2026-10-03).
 python
 import gdb
 
