@@ -114,6 +114,22 @@ static int eth_phy_get_addr(void){
 }
 
 /*************************************************************************
+ * Function Name: eth_packet_available
+ * Parameters:
+ * Return: 1 si le descripteur suivant contient une trame reçue (rendu au CPU), 0 sinon
+ *
+ * Description: test sans effet de bord (étape 5) : ETH_CheckFrameReceived (SPL, mode
+ * scrutation) incrémente DMA_RX_FRAME_infos->Seg_Count à chaque appel ; appelé par select
+ * (isset_read), il faussait la libération des descripteurs dans eth_packet_read, qui rendait
+ * au DMA des descripteurs de trames non lues (trames perdues, ACK TCP compris).
+ *
+ *************************************************************************/
+int eth_packet_available(void)
+{
+   return (DMARxDescToGet->Status & ETH_DMARxDesc_OWN) == (uint32_t)RESET;
+}
+
+/*************************************************************************
  * Function Name: eth_packet_read
  * Parameters:
  * Return:

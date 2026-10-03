@@ -253,7 +253,8 @@ int dev_stm32f4xx_eth_close(desc_t desc){
 | See:
 ---------------------------------------------*/
 int dev_stm32f4xx_eth_isset_read(desc_t desc){
-   if(desc_eth_r!=-1 && ETH_CheckFrameReceived()==1){
+   //étape 5 : sans effet de bord (ETH_CheckFrameReceived faussait Seg_Count, voir eth.c)
+   if(desc_eth_r!=-1 && eth_packet_available()){
       return 0;//packet available
    }  
    return -1;

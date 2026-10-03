@@ -76,6 +76,7 @@ typedef struct eth_stm32f4x7_bsp_st {
 extern const eth_stm32f4x7_bsp_t eth_stm32f4x7_bsp;
 
 //
+int eth_packet_available(void);
 int eth_packet_read(unsigned char* p_to_user_buffer, int size);
 int eth_packet_write(const unsigned char* p_from_user_buffer, int size);
 //
