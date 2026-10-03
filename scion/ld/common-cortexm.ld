@@ -56,6 +56,26 @@ SECTIONS
     PROVIDE_HIDDEN(__fini_array_end = .);
   } > REGION_TEXT
 
+  /* Données du CPU seul, sans accès DMA (étape 5, décision utilisateur 2026-10-03) : en CCM
+   * sur les STM32F4 (REGION_CCM, ld/mem_<carte>.ld), en RAM ailleurs. Liste blanche par nom de
+   * section (-fdata-sections) : pools lwIP sauf PBUF_POOL (73 Ko, plus grand que la CCM ; le
+   * pilote Ethernet copie entre ses tampons DMA Tx_Buff/Rx_Buff, restés en .bss, et lwIP), tables
+   * et piles statiques du noyau. Placée avant .bss : la première règle qui retient une section
+   * l'emporte. Mise à zéro par le démarrage (__ccm_bss_start__ .. __ccm_bss_end__). */
+  .ccm_bss (NOLOAD) :
+  {
+    . = ALIGN(8);
+    __ccm_bss_start__ = .;
+    *(.bss.memp_memory_[A-O]*)
+    *(.bss.memp_memory_PBUF_base)
+    *(.bss.memp_memory_[Q-Z]*)
+    *(.bss.opipe_lst .bss.ofile_lst .bss.flock_lst)
+    *(.bss.rtfsinode_lst .bss.rtfsblk_lst .bss.rtfs_superblk)
+    *(.bss.kernel_stack .bss.kernel_thread .bss.lwip_core_stack .bss.lwip_core_thread)
+    . = ALIGN(8);
+    __ccm_bss_end__ = .;
+  } > REGION_CCM
+
   __data_load__ = LOADADDR(.data);
   .data :
   {

@@ -2,8 +2,8 @@
  * Lepton — démarrage ARMv7-M (Cortex-M3/M4/M7), GCC. Licence : voir LICENSE (MPL 1.1).
  *
  * Écrit pour la migration GCC/Linux (étape 3) : table des vecteurs, copie de .data, mise à zéro
- * de .bss, activation de la FPU si le code l'utilise, constructeurs, main(). Commun à toutes les
- * cartes ARMv7-M : les numéros d'interruption externes sont associés à leurs pilotes par le BSP de
+ * de .bss et de .ccm_bss (étape 5), activation de la FPU si le code l'utilise, constructeurs,
+ * main(). Commun à toutes les cartes ARMv7-M : les numéros d'interruption externes sont associés à leurs pilotes par le BSP de
  * la carte, qui définit les IRQ<n>_Handler dont il a besoin (les autres restent sur
  * Default_Handler). PendSV_Handler vient du micro-noyau (bibliothèque embOS), SysTick_Handler de
  * son intégration (core-<backend>/arch/armv7m).
@@ -14,6 +14,8 @@
 extern uint32_t __stack_top__;
 extern uint32_t __data_load__, __data_start__, __data_end__;
 extern uint32_t __bss_start__, __bss_end__;
+/* seconde zone de .bss (données du CPU seul : CCM du STM32F4, sinon RAM ou vide), ld/common-cortexm.ld */
+extern uint32_t __ccm_bss_start__, __ccm_bss_end__;
 
 extern void SystemInit(void);
 extern void __libc_init_array(void);
@@ -92,6 +94,8 @@ void Reset_Handler(void){
    while(dst < &__data_end__)
       *dst++ = *src++;
    for(dst = &__bss_start__; dst < &__bss_end__; dst++)
+      *dst = 0;
+   for(dst = &__ccm_bss_start__; dst < &__ccm_bss_end__; dst++)
       *dst = 0;
 
 #if defined(__ARM_FP)
