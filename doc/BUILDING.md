@@ -72,6 +72,16 @@ ctest --preset nucleo-f439zi-embos -L board
 ```
 
 Réseau : la carte prend l'adresse du `.init` de sa configuration
-(`sys/user/tauon-basic/etc/nucleo-f439zi/.init`) ; `ftpd` écoute sur le port 21.
+(`sys/user/tauon-basic/etc/nucleo-f439zi/.init`, 192.168.2.5) ; `ftpd` écoute sur le port 21. Le
+test réseau sur carte (`board.net` : ping, session FTP, errno) est créé si l'adresse de l'hôte sur
+le câble de la carte est fournie, puis lancé avec les autres tests `board` :
+
+```bash
+cmake --preset nucleo-f439zi-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/ttyACM0 -DLEPTON_NET_TEST_HOST_IP=192.168.2.20
+ctest --preset nucleo-f439zi-embos -R board.net
+```
+
+Optimisation : `-Os` pour toutes les cibles Cortex-M (`LEPTON_OPT_LEVEL`, `-g` conservé) ;
+`-DLEPTON_OPT_LEVEL=-O0` pour un débogage pas à pas fidèle au source.
 
 Débogage (gdb, OpenOCD, registres de faute) : `doc/migration/debug-gcc.md`.

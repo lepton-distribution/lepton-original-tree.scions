@@ -1,63 +1,60 @@
-# Handoff étape 5 → 6 (EN COURS : reprise au palier 7)
+# Handoff étape 5 → 6
 
-État au 2026-10-02 : branche `migration/etape-5`, plan approuvé ; paliers 1-6 verts sur
-NUCLEO-F429ZI ; palier 7 bloqué par l'environnement (pontage réseau de la VM) ; 8-9 à faire.
-Journal : `validation-nucleo-f439zi.md`. À compléter en fin d'étape.
+État au 2026-10-03 : branche `migration/etape-5`, **paliers 1-9 verts** sur NUCLEO-F429ZI
+(remplaçante de la F439ZI), en attente de la validation utilisateur de fin d'étape.
+Journal : `validation-nucleo-f439zi.md`.
 
 ## Réponses aux prérequis de 6
-- Étape 5 close : **non** (paliers 7-9, validation utilisateur de fin d'étape).
-- Liste des cartes de l'étape 6 : décision ouverte au statut (inchangée).
-
-## Reprise (prochaine session, après redémarrage de la VM)
-0. Raccorder la carte à la VM (Fusion : menu USB, « STMicroelectronics STLink » → VM) ; vérifier
-   `lsusb | grep 0483:374b` et `/dev/ttyACM0` ; `source scripts/lepton-env.sh`. La carte contient
-   `lepton.elf` (sinon `cmake --build --preset nucleo-f439zi-embos --target flash`, preset
-   configuré avec `-DLEPTON_BOARD_SERIAL_PORT=/dev/ttyACM0`). `ci/run.sh` pour le socle.
-1. Réseau. Adressage : Mac 192.168.2.10 (port Ethernet relié directement à la Nucleo), carte
-   192.168.2.5 (`.init`, passerelle 192.168.2.20 = VM), VM `ens37` 192.168.2.20/16. Depuis le Mac
-   le ping de la carte fonctionne ; depuis la VM, rien (ARP sans réponse, `ens37` pontée sur le
-   LAN). Contrôle : `ping 192.168.2.10` puis `ping 192.168.2.5` depuis la VM ; `ip neigh` doit
-   montrer `00:bd:3b:33:05:71` (MAC d'`eth.h`) pour .5. Pistes Fusion transmises à l'utilisateur :
-   MAC de l'adaptateur ponté sur « Ethernet » = `00:0c:29:e8:8a:0e` (`ens37`) ; macOS « Réseau
-   local » autorisé pour Fusion ; `vmnet-cli --stop/--start`, reconnecter l'adaptateur 2.
-2. Palier 7 si la VM atteint la carte : ping et session `ftpd` (utilisateur `tauon`, `LIST`,
-   `RETR /usr/etc/.boot` = source) ; test automatique `board.net` à écrire en adaptant
-   `tests/net_qemu.py` (transport série, adresse réelle, sans tap). Sinon (repli accepté par
-   l'utilisateur) : validation manuelle depuis le Mac (ping, `ftp 192.168.2.5`) + compteurs MMC
-   (`mdw 0x40028168` émises, `0x400281C4` reçues unicast, `0x40028194` CRC), `board.net` en dette.
-3. Palier 8 : endurance (plusieurs heures, `lsh` + réseau), remplissage des piles : embOS SP
-   remplit les piles (`0xCD`) ; mesurer par `OS_STACK_GetTaskStackUsed` ou lecture gdb des piles
-   (`OS_Global.pTask`, `pStackBase`, `StackSize`) ; MSP : `__stack_limit__`.
-4. Palier 9 : décision utilisateur `-Os`/`-O2` (§4), puis paliers 6-8 rejoués.
+- Étape 5 close : paliers 1-9 verts, `ci/run.sh` vert ; **validation utilisateur à obtenir**.
+- Liste des cartes de l'étape 6 : décision ouverte au statut (inchangée) — point d'arrêt en début
+  d'étape 6.
+- Base de départ : options finales `-Os -g` (`LEPTON_OPT_LEVEL`, tous presets Cortex-M), hard-float,
+  embOS `libosT7VHLSP.a` ; mkconf de carte calqué sur QEMU ; 168 MHz (HSE 8 MHz bypass).
 
 ## Décisions actées pendant 5
 - `eth.c` paramétré par le BSP (descripteur `eth_stm32f4x7_bsp`, `BOARD_ETH_PHY_*`).
-- Flash autorisée pour l'étape 5 (flash interne seulement).
-- Corrections hors fichiers de l'étape, accord utilisateur : KAL ICI/IT (`__kal_arch_redirect_xpsr`,
-  test TICI) ; `_SC_CLK_TCK` = `__KERNEL_CLK_TCK` (1000, embOS), test TCLK.
-- mkconf propre de la carte (calqué sur QEMU) ; 168 MHz ; uname `cortexM4-stm32f4`.
+- Flash interne autorisée pour l'étape 5 (ni option bytes ni protection).
+- Corrections génériques révélées par la carte, hors fichiers de la carte, accord utilisateur :
+  KAL ICI/IT (`__kal_arch_redirect_xpsr`, TICI) ; `_SC_CLK_TCK` = `__KERNEL_CLK_TCK` (TCLK) ;
+  `_sbrk` borné à `__stack_limit__` (`sbrk_cortexm.c`, TSBRK) ; `.ccm_bss` (données du CPU seul en
+  CCM, liste blanche par nom de section, zone RAM sur QEMU) ; pilote Ethernet STM32F4 :
+  `eth_packet_available` au lieu de `ETH_CheckFrameReceived` dans `select` (trames perdues).
+- `-Os` pour tous les presets Cortex-M (les presets compilaient en `-O0`, non en `-Og`).
+- Critère « aucune modification du noyau ou du KAL pour cette carte » : aucun code propre à la
+  carte hors `cmake/boards/`, `ld/mem_*`, BSP ; les corrections ci-dessus sont génériques (à
+  confirmer par l'utilisateur à la validation).
 
 ## Artefacts produits (manifeste, pas copie)
 | Fichier | Contenu, quand le lire |
 |---|---|
-| `cmake/boards/nucleo-f439zi.cmake` | sources du BSP, puce, HSE, `LEPTON_BOARD_SERIAL_PORT`, OpenOCD |
+| `cmake/boards/nucleo-f439zi.cmake` | BSP, puce, HSE, `LEPTON_BOARD_SERIAL_PORT`, `LEPTON_NET_TEST_HOST_IP`, OpenOCD |
 | `kernel/dev/bsp/nucleo_f439zi/` | `SystemInit` (horloges), GPIO, ttys3/ttys6, ETH, vecteurs IRQ 64-90 |
-| `sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_f439zi.xml`, `etc/nucleo-f439zi/` | configuration et rootfs (`.init` : adresse IP) |
-| `debug/openocd-nucleo-f439zi.cfg`, `debug/gdbinit-nucleo-f439zi` | flash, gdb (`lepton-load`, `lepton-fault`) ; `debug/` ignoré par `.gitignore` (`git add -f`) |
+| `ld/mem_nucleo-f439zi.ld`, `ld/common-cortexm.ld` | régions (dont `REGION_CCM`), `.ccm_bss`, tas, MSP |
+| `kernel/core/arch/cortexm/sbrk_cortexm.c` | tas newlib borné (lié comme objet) ; à ajouter au démarrage armv6m (étape 6) |
+| `cmake/toolchains/arm-none-eabi.cmake` | `LEPTON_OPT_LEVEL` (défaut `-Os`) |
+| `tests/board_net.py`, `tests/endurance_board.py` | palier 7 (`ctest -R board.net`), palier 8 (manuel, 4 h) |
 | `tests/kal_openocd.py`, `tests/smoke_lsh.py --transport serial` | banc KAL et fumée sur carte (`ctest -L board`) |
-| `doc/migration/debug-gcc.md`, `doc/BUILDING.md` | procédure flash/débogage ; build de zéro (critère de l'étape) |
+| `debug/gdbinit-nucleo-f439zi` | `lepton-load`, `lepton-fault`, `lepton-stacks` (piles depuis `heap_top`) |
+| `doc/migration/debug-gcc.md`, `doc/BUILDING.md` | procédure flash/débogage ; build de zéro |
 | `doc/migration/traces/palier4-appel-systeme-carte.{gdb,txt}` | trace du palier 4 sur carte |
 
 ## Écarts au plan et pièges découverts
-- QEMU ne modélise pas l'état ICI (LDM/STM interruptibles) : défaut KAL invisible à l'étape 3.
-- Table des vecteurs générique limitée aux IRQ 0-63 : prolongée par section `.isr_vector_ext`
-  (BSP) ; fichier de vecteurs lié comme objet (dans une bibliothèque, il n'est pas tiré).
-- OpenOCD : `verify_image` utilise une zone de travail à `0x20000000` (fausses différences) :
-  comparer par `dump_image`. Un seul client de la sonde à la fois.
-- Hook `lepton_guard.py` : `>`, `->`, `<n>`, `$VAR` dans une commande lancée du trunk sont lus
-  comme redirections ; passer par un script du scratchpad.
-- `grep` = `ugrep` (fichiers Latin-1 ignorés) : `grep -a`.
+- QEMU ne modélise pas l'état ICI (défaut KAL invisible à l'étape 3), ni une RAM de 192 Ko (tas sans
+  limite invisible), et utilise un autre pilote Ethernet (LAN9118) : la carte révèle des défauts
+  génériques ; rejouer `ctest -L board` et `board.net` sur chaque nouvelle carte.
+- Presets croisés en `-O0` jusqu'au palier 9 (Debug = `-g` seul) ; paliers 1-8 rejoués en `-Os`.
+- Lepton range un tas de thread (588 octets, données des bibliothèques) en bas des piles de processus,
+  après 8 octets laissés au contrôle de pile d'embOS : mesurer la marge depuis `heap_top`.
+- `.bss` 143 Ko, dont pool lwIP PBUF 73,7 Ko (plus grand que la CCM) : tas 88 Ko après `.ccm_bss`.
+- L'attachement de gdb arrête le cœur : `monitor resume` avant `detach`, sinon carte figée (faux
+  défaut réseau). OpenOCD : `verify_image` faussé (zone de travail) ; un seul client de la sonde.
+- Table des vecteurs générique limitée aux IRQ 0-63 : `.isr_vector_ext` (BSP), lié comme objet.
+- Hook `lepton_guard.py` : `>`, `->`, `$VAR` dans une commande sont lus comme redirections vers le
+  trunk ; passer par un script du scratchpad. `grep` = `ugrep` (Latin-1 ignoré) : `grep -a`.
+- `pgrep -f motif` dans une boucle d'attente se trouve lui-même : attendre sur `/proc/<pid>`.
 
 ## Non transmis volontairement
-- Diagnostic détaillé du défaut ICI et du réseau : `validation-nucleo-f439zi.md`, messages des
-  commits `8fa5ff6`, `236ebae`.
+- Diagnostics détaillés (ICI, réseau, tas, pilote Ethernet) : `validation-nucleo-f439zi.md`, messages
+  des commits `8fa5ff6`, `236ebae`, `8c4262a`, `9b99404`, `bf9a4b4`, `be9b4da`.
+- USART6 (`ttys6`) non vérifié électriquement (pas d'adaptateur) ; F439ZI réelle (CRYP/HASH) non
+  disponible : paliers à rejouer dès qu'elle le sera.
