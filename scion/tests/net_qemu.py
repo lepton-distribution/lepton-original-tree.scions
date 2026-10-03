@@ -24,6 +24,7 @@ import ftplib
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -221,7 +222,9 @@ def main():
             print("ÉCHEC : " + f)
         print("journal : " + log_path)
         return 1
-    print("net_qemu : %s ; journal %s" % (summary, log_path))
+    # succès : répertoire temporaire supprimé (conservé en cas d'échec, pour le journal)
+    shutil.rmtree(workdir, ignore_errors=True)
+    print("net_qemu : %s ; journal %s" % (summary, args.log or "temporaire supprimé"))
     return 0
 
 

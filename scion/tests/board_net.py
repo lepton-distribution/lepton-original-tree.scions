@@ -25,6 +25,7 @@ import ftplib
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -60,7 +61,8 @@ def main():
                     help="trace du protocole FTP (ftplib, mot de passe masqué) ; 0 : aucune")
     args = ap.parse_args()
 
-    log_path = args.log or os.path.join(tempfile.mkdtemp(prefix="board_net_"), "console.log")
+    workdir = None if args.log else tempfile.mkdtemp(prefix="board_net_")
+    log_path = args.log or os.path.join(workdir, "console.log")
     failures = []
     summary = ""
     with open(log_path, "wb") as log:
@@ -115,7 +117,10 @@ def main():
             print("ÉCHEC : " + f)
         print("journal : " + log_path)
         return 1
-    print("board_net : %s ; journal %s" % (summary, log_path))
+    # succès : répertoire temporaire supprimé (conservé en cas d'échec, pour le journal)
+    if workdir:
+        shutil.rmtree(workdir, ignore_errors=True)
+    print("board_net : %s ; journal %s" % (summary, args.log or "temporaire supprimé"))
     return 0
 
 

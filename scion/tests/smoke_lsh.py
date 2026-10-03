@@ -20,6 +20,7 @@ import os
 import re
 import select
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -200,9 +201,11 @@ def main():
             print("ÉCHEC : " + f)
         print("journal : " + log_path)
         return 1
+    # succès : répertoire temporaire supprimé (conservé en cas d'échec, pour le journal)
+    shutil.rmtree(workdir, ignore_errors=True)
     print("smoke_lsh : %s, uname -a = %s, %d commande(s)%s ; journal %s"
           % (args.machine if args.transport == "qemu" else args.port, args.expect_machine, len(args.command),
-             ", UART1 vérifiée" if args.uart1 else "", log_path))
+             ", UART1 vérifiée" if args.uart1 else "", args.log or "temporaire supprimé"))
     return 0
 
 
