@@ -5,7 +5,8 @@ if(NOT CMAKE_C_COMPILER_ID STREQUAL "GNU" OR NOT CMAKE_SYSTEM_PROCESSOR STREQUAL
 endif()
 
 target_compile_options(lepton_options INTERFACE
-  -mthumb $<$<COMPILE_LANGUAGE:C>:-std=gnu99> -ffunction-sections -fdata-sections)
+  -mthumb $<$<COMPILE_LANGUAGE:C>:-std=gnu99> -ffunction-sections -fdata-sections
+  ${LEPTON_OPT_LEVEL})
 # newlib-nano pour le noyau et le démarrage (décision 2026-09-30) ; appels système newlib
 # minimaux (nosys) : l'API POSIX applicative est celle de Lepton.
 target_link_options(lepton_options INTERFACE
@@ -21,5 +22,7 @@ target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_A
 # KAL, axe ISA : kal_arch.h (inclus par kernel/core/kal.h, dispatcher).
 set(LEPTON_KAL_ARCH_DIR kernel/core/kal/arch/armv7m)
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_ARCH_DIR})
-set(LEPTON_ISA_STARTUP_SOURCES kernel/core/arch/cortexm/startup_armv7m.c)
+# _sbrk borné à __stack_limit__ (remplace celui de libnosys : lié comme objet, comme le démarrage)
+set(LEPTON_ISA_STARTUP_SOURCES kernel/core/arch/cortexm/startup_armv7m.c
+  kernel/core/arch/cortexm/sbrk_cortexm.c)
 set(LEPTON_FIRMWARE_SOURCES ${LEPTON_ISA_STARTUP_SOURCES})

@@ -156,13 +156,12 @@ void ETH_IRQHandler(void)
 | See:
 ---------------------------------------------*/
 int dev_stm32f4xx_eth_load(void){
-   int error;
-   //
-   pthread_mutexattr_t mutex_attr=0;
    //configure pinout and the phy device
-   eth_bsp_init();
+   //(étape 5 : renvoyait une variable non initialisée et ignorait l'échec d'eth_bsp_init)
+   if(eth_bsp_init()<0)
+      return -1;
    //
-   return error;
+   return 0;
 }
 
 /*-------------------------------------------
@@ -254,7 +253,8 @@ int dev_stm32f4xx_eth_close(desc_t desc){
 | See:
 ---------------------------------------------*/
 int dev_stm32f4xx_eth_isset_read(desc_t desc){
-   if(desc_eth_r!=-1 && ETH_CheckFrameReceived()==1){
+   //étape 5 : sans effet de bord (ETH_CheckFrameReceived faussait Seg_Count, voir eth.c)
+   if(desc_eth_r!=-1 && eth_packet_available()){
       return 0;//packet available
    }  
    return -1;

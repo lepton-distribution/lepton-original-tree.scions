@@ -24,6 +24,7 @@ import ftplib
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -72,19 +73,31 @@ def ping(guest_ip, count, deadline_s):
     return received, r.stdout.strip().splitlines()[-2:] if r.stdout else [r.stderr.strip()]
 
 
-def ftp_session(args):
+def ftp_session(args, debug=0):
+    """Session FTP ; une erreur est rapportée avec l'étape en cours (connexion, login, …).
+    debug > 0 : trace du protocole par ftplib sur la sortie standard (mot de passe masqué)."""
     with open(args.ftp_reference, "rb") as f:
         reference = f.read()
     ftp = ftplib.FTP()
-    ftp.connect(args.guest_ip, 21, timeout=args.timeout)
-    welcome = ftp.getwelcome()
-    ftp.login(args.ftp_user, args.ftp_password)
+    ftp.set_debuglevel(debug)
     listing = []
-    # ftpd de Lepton : LIST sans argument seulement (« LIST with arguments unimplemented »)
-    ftp.cwd(args.ftp_list)
-    ftp.retrlines("LIST", listing.append)
     data = io.BytesIO()
-    ftp.retrbinary("RETR " + args.ftp_file, data.write)
+    step = "connexion"
+    try:
+        ftp.connect(args.guest_ip, 21, timeout=args.timeout)
+        welcome = ftp.getwelcome()
+        step = "login"
+        ftp.login(args.ftp_user, args.ftp_password)
+        # ftpd de Lepton : LIST sans argument seulement (« LIST with arguments unimplemented »)
+        step = "CWD " + args.ftp_list
+        ftp.cwd(args.ftp_list)
+        step = "LIST"
+        ftp.retrlines("LIST", listing.append)
+        step = "RETR " + args.ftp_file
+        ftp.retrbinary("RETR " + args.ftp_file, data.write)
+    except ftplib.all_errors as e:
+        ftp.close()
+        raise ftplib.Error("%s : %s" % (step, e)) from e
     try:
         ftp.quit()
     except ftplib.all_errors:
@@ -209,7 +222,9 @@ def main():
             print("ÉCHEC : " + f)
         print("journal : " + log_path)
         return 1
-    print("net_qemu : %s ; journal %s" % (summary, log_path))
+    # succès : répertoire temporaire supprimé (conservé en cas d'échec, pour le journal)
+    shutil.rmtree(workdir, ignore_errors=True)
+    print("net_qemu : %s ; journal %s" % (summary, args.log or "temporaire supprimé"))
     return 0
 
 

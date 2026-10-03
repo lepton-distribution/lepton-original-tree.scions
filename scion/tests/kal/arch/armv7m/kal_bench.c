@@ -24,6 +24,8 @@
 #include "kernel/core/types.h"
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/malloc.h"
+#include "kernel/core/time.h"
+#include "kernel/core/systime.h"
 
 #include "lepton_irq.h"
 
@@ -380,6 +382,50 @@ static int test_t4(void){
    return t4_run(target_hold, sig_handler1);
 }
 
+/* TICI : déroutement d'une tâche préemptée au milieu d'un LDM/STM (ou d'un bloc IT) : le xPSR
+   sauvegardé porte un état de reprise ICI/IT non nul. Le cadre dérouté doit repartir sans cet
+   état et avec T, sinon le retour d'exception reprend l'instruction interrompue sur le gestionnaire
+   (UsageFault INVSTATE sur carte, étape 5 ; QEMU ne modélise pas ICI, d'où le contrôle du cadre).
+   Ordonnanceur verrouillé pendant le déroutement : la cible (plus prioritaire) ne repart qu'après
+   le contrôle. */
+#define XPSR_T          0x01000000u
+#define XPSR_ICI_IT     0x0600FC00u
+#define XPSR_ICI_LDM15  0x0000F000u   /* ICI : reprise d'un LDM/STM au registre 15 */
+static uint32_t* frame_xpsr(void* frame){
+   return frame_is_fpu(frame) ? &((OS_REGS_BASE_FPU*)frame)->OS_REG_XPSR
+                              : &((OS_REGS_BASE*)frame)->OS_REG_XPSR;
+}
+static int test_tici(void){
+   uint32_t* xpsr;
+   uint32_t orig;
+   regs_ok = 0;
+   handler_count = 0;
+   handler_on_target = 0;
+   target_create(target_hold, 0);
+   xpsr = frame_xpsr(target_task.pStack);
+   orig = *xpsr;
+   TEST_ASSERT((orig & XPSR_T) && !(orig & XPSR_ICI_IT), "TICI : cadre bloqué d'origine sans ICI/IT");
+   *xpsr = orig | XPSR_ICI_LDM15;
+   OS_TASK_EnterRegion();
+   __bckup_context(tp.bckup_context, (&tp));
+   __swap_signal_handler((&tp), sig_handler1);
+   tp.stat |= PTHREAD_STATUS_SIGHANDLER;
+   TEST_ASSERT(!(*xpsr & XPSR_ICI_IT) && (*xpsr & XPSR_T),
+               "TICI : xPSR du cadre dérouté sans ICI/IT, T conservé");
+   OS_TASK_LeaveRegion();
+   TEST_ASSERT(ctrl_wait(EV_H, 200), "TICI : gestionnaire exécuté");
+   TEST_ASSERT(handler_on_target, "TICI : gestionnaire exécuté dans la tâche cible");
+   /* reprise : le contexte sauvegardé est celui préparé par le test (ICI fictif) ; il est rendu
+      cohérent avant la restauration, la cible est bloquée dans embOS et non dans un LDM */
+   *frame_xpsr(&tp.bckup_context.os_regs) = orig;
+   deroute_exit();
+   OS_TASKEVENT_Set(&target_task, EV_GO);
+   finish_target("TICI : reprise au point d'interruption");
+   TEST_ASSERT(handler_count == 1, "TICI : un seul passage dans le gestionnaire");
+   TEST_ASSERT(regs_ok, "TICI : R4-R11 intacts après retour du gestionnaire");
+   return 0;
+}
+
 /* T5 : déroutement pendant une attente temporisée (appel système préemptible) */
 static int test_t5(void){
    regs_ok = 0;
@@ -598,6 +644,61 @@ static int test_irq(void){
    return 0;
 }
 
+/* TCLK : fréquence du tick vue par le noyau (_SC_CLK_TCK = HZ = CLOCKS_PER_SEC) égale à celle
+   programmée dans le SysTick par l'intégration du micro-noyau, et temps du noyau
+   (_sys_gettimeofday) au rythme des ticks. Étape 5 : _SC_CLK_TCK valait 100 sur Cortex-M pour un
+   tick embOS de 1 kHz (temps du noyau dix fois trop rapide, STIME de ps). */
+extern uint32_t SystemCoreClock;
+#define SYST_RVR (*(volatile uint32_t*)0xE000E014u)
+static int test_tclk(void){
+   struct __timeval tv0, tv1;
+   uint32_t t0, t1;
+   long long us, expect_us;
+   TEST_ASSERT(SYST_RVR + 1u == SystemCoreClock / _SC_CLK_TCK,
+               "TCLK : SysTick programmé à _SC_CLK_TCK interruptions par seconde");
+   OS_TASK_Delay(1);   /* départ juste après un tick */
+   t0 = OS_TIME_GetTicks32();
+   _sys_gettimeofday(&tv0, 0);
+   OS_TASK_Delay(500);
+   t1 = OS_TIME_GetTicks32();
+   _sys_gettimeofday(&tv1, 0);
+   us = (long long)(tv1.tv_sec - tv0.tv_sec) * 1000000LL + (tv1.tv_usec - tv0.tv_usec);
+   expect_us = (long long)(t1 - t0) * 1000000LL / _SC_CLK_TCK;
+   kal_test_put_u32("TCLK : ticks = ", t1 - t0);
+   kal_test_put_u32("TCLK : temps noyau (us) = ", (uint32_t)us);
+   TEST_ASSERT(us == expect_us, "TCLK : temps du noyau = ticks / _SC_CLK_TCK");
+   return 0;
+}
+
+/* TSBRK : tas newlib borné par la pile principale (kernel/core/arch/cortexm/sbrk_cortexm.c).
+   Étape 5 : le _sbrk de libnosys n'avait aucune limite ; sur la carte, une session de ftpd
+   débordait sur la MSP puis hors SRAM (BusFault). Le tas est épuisé par blocs : _sys_malloc doit
+   finir par rendre NULL, aucun bloc ne doit dépasser __stack_limit__, et tout est rendu ensuite. */
+extern char __heap_start__, __stack_limit__;
+#define TSBRK_BLOCK  (16u * 1024u)
+#define TSBRK_SLOTS  512   /* 8 Mo : au-delà de la RAM des cibles (QEMU 4 Mo, carte 192 Ko) */
+static void* tsbrk_blocks[TSBRK_SLOTS];
+static int test_tsbrk(void){
+   int n, i, hors_tas = 0;
+   for(n = 0; n < TSBRK_SLOTS; n++){
+      char* p = _sys_malloc(TSBRK_BLOCK);
+      if(!p)
+         break;
+      tsbrk_blocks[n] = p;
+      if(p < &__heap_start__ || p + TSBRK_BLOCK > &__stack_limit__)
+         hors_tas++;
+   }
+   kal_test_put_u32("TSBRK : blocs de 16 Ko alloués = ", (uint32_t)n);
+   for(i = 0; i < n; i++)
+      _sys_free(tsbrk_blocks[i]);
+   TEST_ASSERT(n < TSBRK_SLOTS, "TSBRK : _sys_malloc rend NULL une fois le tas épuisé");
+   TEST_ASSERT(hors_tas == 0, "TSBRK : aucun bloc hors de [__heap_start__, __stack_limit__)");
+   tsbrk_blocks[0] = _sys_malloc(TSBRK_BLOCK);
+   TEST_ASSERT(tsbrk_blocks[0] != 0, "TSBRK : allocation possible après libération");
+   _sys_free(tsbrk_blocks[0]);
+   return 0;
+}
+
 static int test_harness_fail(void){
    TEST_ASSERT(0, "échec volontaire (le harnais doit rendre un code non nul)");
    return 0;
@@ -610,6 +711,7 @@ static const struct { const char* name; int (*fn)(void); } tests[] = {
 #if (OS_CPU_HAS_VFP == 1)
    { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
 #endif
+   { "TICI", test_tici }, { "TCLK", test_tclk }, { "TSBRK", test_tsbrk },
    { "IRQ", test_irq },
    { "HARNESS_FAIL", test_harness_fail },
 };

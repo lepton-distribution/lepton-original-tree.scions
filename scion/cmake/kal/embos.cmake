@@ -29,8 +29,11 @@ target_include_directories(lepton_options INTERFACE ${LEPTON_EMBOS_ROOT}/Start/I
 # KAL, axe micro-noyau : kal_backend.h (inclus par kernel/core/kal.h, dispatcher).
 set(LEPTON_KAL_BACKEND_DIR kernel/core/kal/backend/embos)
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_BACKEND_DIR})
+# __KERNEL_CLK_TCK : tick embOS (SysTick, embos_init_hw.c) à 1 kHz, et _SC_CLK_TCK du noyau
+# (timer.h : HZ, CLOCKS_PER_SEC) ; une seule valeur pour les deux (étape 5).
 target_compile_definitions(lepton_options INTERFACE
   __KERNEL_UCORE_EMBOS
+  __KERNEL_CLK_TCK=1000
   $<IF:$<CONFIG:Debug>,OS_LIBMODE_SP,OS_LIBMODE_R>)
 
 # Backend (existant) : kernel/core/core-segger.

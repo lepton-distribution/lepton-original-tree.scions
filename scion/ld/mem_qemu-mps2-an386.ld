@@ -8,3 +8,5 @@ MEMORY
 }
 REGION_ALIAS("REGION_TEXT", CODE);
 REGION_ALIAS("REGION_DATA", RAM);
+/* pas de CCM : .ccm_bss (ld/common-cortexm.ld) en RAM */
+REGION_ALIAS("REGION_CCM", RAM);

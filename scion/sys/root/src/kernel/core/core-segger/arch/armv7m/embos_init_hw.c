@@ -15,7 +15,8 @@
 
 extern uint32_t SystemCoreClock;
 
-#define LEPTON_EMBOS_TICK_FREQ   1000u   /* 1 ms */
+/* fréquence du tick = _SC_CLK_TCK du noyau (timer.h) : __KERNEL_CLK_TCK, cmake/kal/embos.cmake */
+#define LEPTON_EMBOS_TICK_FREQ   ((unsigned int)__KERNEL_CLK_TCK)
 
 /* SysTick (ARMv7-M ARM, B3.3) */
 #define SYST_CSR   (*(volatile uint32_t*)0xE000E010u)

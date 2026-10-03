@@ -210,6 +210,8 @@ sys/root/src/kernel/dev/arch/host/dev_host_fileflash/dev_host_fileflash.c,kernel
 sys/root/src/kernel/dev/arch/host/dev_host_rtc/dev_host_rtc.c,kernel/dev,OK,preset host,0,
 sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_board/dev_discovery_f4_board.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
+sys/root/src/kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_board.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,1,
+sys/root/src/kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_vectors.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,0,
 sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,
 sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,kernel/dev,OK,gabarit qemu-mps2-an386-embos,2,

@@ -39,7 +39,14 @@ either the MPL or the [eCos GPL] License."
 | Declaration
 ==============================================*/
 
+//fréquence du tick du micro-noyau (ticks par seconde ; HZ, CLOCKS_PER_SEC) : posée par son
+//intégration (cmake/kal/<backend>.cmake, __KERNEL_CLK_TCK), qui programme le tick à cette valeur.
+//Étape 5 : la valeur fixe de 100 contredisait le tick embOS de 1 kHz (temps dix fois trop rapide).
+#if defined(__KERNEL_CLK_TCK)
+   #define _SC_CLK_TCK     __KERNEL_CLK_TCK
+#else
    #define _SC_CLK_TCK     100 //100 ticks/s 1ticks/ 10ms
+#endif
 
 #define CLOCK_REALTIME     0x01
 #define CLOCK_VITRUAL      0x02

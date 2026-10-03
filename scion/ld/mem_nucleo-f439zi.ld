@@ -10,3 +10,5 @@ MEMORY
 }
 REGION_ALIAS("REGION_TEXT", FLASH);
 REGION_ALIAS("REGION_DATA", RAM);
+/* données du CPU seul (.ccm_bss, ld/common-cortexm.ld) : CCM, inaccessible au DMA */
+REGION_ALIAS("REGION_CCM", CCM);

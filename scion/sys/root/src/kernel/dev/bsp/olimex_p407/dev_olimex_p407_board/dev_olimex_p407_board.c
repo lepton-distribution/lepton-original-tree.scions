@@ -54,6 +54,8 @@ Includes
 
 #include "kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_uart_x.h"
 #include "kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx/dev_stm32f4xx_spi_x.h"
+#include "kernel/core/ioctl_eth.h"
+#include "kernel/dev/arch/cortexm/stm32f4xx/eth.h"
 
 /*===========================================
 Global Declaration
@@ -122,6 +124,23 @@ board_stm32f4xx_spi_info_t olimex_p407_spi_3=
    .spi_descriptor={SPI3,  RCC_APB1PeriphClockCmd, RCC_APB1Periph_SPI3,  GPIO_MISO,  GPIO_MOSI,  GPIO_SCK, GPIO_AF_SPI3, 3,  20000000} // SPI_FLASH   // SPI1
 };
 
+
+// ethernet RMII (eth.c) : broches et PHY Micrel de la carte (valeurs d'origine d'eth.c,
+// déplacées dans le BSP à l'étape 5)
+static const eth_stm32f4x7_bsp_pin_t olimex_p407_eth_pins[] = {
+   {GPIOA, GPIO_PinSource1},  {GPIOA, GPIO_PinSource2},  {GPIOA, GPIO_PinSource3},  // REF_CLK, MDIO, MDINT
+   {GPIOA, GPIO_PinSource7},                                                         // CRS_DV
+   {GPIOB, GPIO_PinSource11},                                                        // TX_EN
+   {GPIOC, GPIO_PinSource1},  {GPIOC, GPIO_PinSource4},  {GPIOC, GPIO_PinSource5},  // MDC, RXD0, RXD1
+   {GPIOG, GPIO_PinSource13}, {GPIOG, GPIO_PinSource14}                             // TXD0, TXD1
+};
+const eth_stm32f4x7_bsp_t eth_stm32f4x7_bsp = {
+   RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOG,
+   GPIO_Speed_50MHz,
+   olimex_p407_eth_pins, sizeof(olimex_p407_eth_pins)/sizeof(olimex_p407_eth_pins[0]),
+   0x0022, 0x1619, 0xFFFF,
+   1   // adresses 1..31 puis 0 (ordre d'origine)
+};
 
 /*===========================================
 Implementation

@@ -94,10 +94,15 @@ typedef int thr_id_t;
          (*(__os_regs_is_fpu(__regs__) \
             ? &((OS_REGS OS_STACKPTR *)(__regs__))->Base_FPU.OS_REG_PC \
             : &((OS_REGS OS_STACKPTR *)(__regs__))->Base.OS_REG_PC))
+      #define __os_regs_xpsr(__regs__) \
+         (*(__os_regs_is_fpu(__regs__) \
+            ? &((OS_REGS OS_STACKPTR *)(__regs__))->Base_FPU.OS_REG_XPSR \
+            : &((OS_REGS OS_STACKPTR *)(__regs__))->Base.OS_REG_XPSR))
    #else
       #define OS_REGS_CONTEXT    OS_REGS_GENERIC
       #define __os_regs_size(__regs__) sizeof(OS_REGS_GENERIC)
       #define __os_regs_pc(__regs__) (((OS_REGS_GENERIC OS_STACKPTR *)(__regs__))->OS_REG_PC)
+      #define __os_regs_xpsr(__regs__) (((OS_REGS_GENERIC OS_STACKPTR *)(__regs__))->OS_REG_XPSR)
    #endif
 typedef struct {
    OS_TASK os_task;
@@ -160,6 +165,9 @@ typedef struct {
          /* GD - modif for 3.84, "PC" from OS_REGS_BASE struct changed to "OS_REG_PC" since embOS 3.84. for cotrex M3/M4 core */\
          /* E3 : PC du cadre effectif (etendu si FPU) ; OS_Global_Counters en tete des deux cadres */\
          __os_regs_pc(__pthread_ptr__->tcb->pStack)= (OS_U32)(__sig_handler__);\
+         /* etape 5 : etat de reprise ICI/IT du xPSR efface (kal_arch.h, test TICI) */\
+         __os_regs_xpsr(__pthread_ptr__->tcb->pStack)= \
+            __kal_arch_redirect_xpsr(__os_regs_xpsr(__pthread_ptr__->tcb->pStack));\
          ((OS_REGS_GENERIC OS_STACKPTR *)__pthread_ptr__->tcb->pStack)->OS_Global_Counters= 0;\
          __pthread_ptr__->tcb->Timeout=0; \
          __pthread_ptr__->tcb->Stat=0; \

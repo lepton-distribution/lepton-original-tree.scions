@@ -9,6 +9,11 @@ set(CMAKE_AR arm-none-eabi-ar)
 set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
 set(CMAKE_SIZE arm-none-eabi-size)
 
+# Niveau d'optimisation des cibles Cortex-M (décision 2026-10-02, étape 5 palier 9 : -Os pour
+# tous les presets croisés, QEMU et carte), appliqué par cmake/isa/<isa>.cmake ; -g conservé
+# (CMAKE_BUILD_TYPE Debug). Surchargeable (ex. -DLEPTON_OPT_LEVEL=-O0 pour le débogage).
+set(LEPTON_OPT_LEVEL -Os CACHE STRING "Niveau d'optimisation des cibles Cortex-M (-Os, -O0, -Og, -O2)")
+
 # $<LINK_GROUP:RESCAN,…> (cycle des bibliothèques du noyau) : prédéfini par CMake pour Linux,
 # pas pour CMAKE_SYSTEM_NAME Generic ; GNU ld.
 set(CMAKE_C_LINK_GROUP_USING_RESCAN "LINKER:--start-group" "LINKER:--end-group")

@@ -87,6 +87,12 @@ PROFILS = {
     "sys/root/src/kernel/dev/bsp/discovery_f4/": dict(
         STM32F4, mkconf="sys/user/tauon-basic/etc/mkconf_tauon_basic_stm32f4-discovery.xml"),
     "sys/root/src/kernel/dev/bsp/olimex_p407/": STM32F4,
+    # carte de base (étape 5) : mkconf de la carte ; puce, HSE et en-têtes posés par
+    # cmake/boards/nucleo-f439zi.cmake (repris ici)
+    "sys/root/src/kernel/dev/bsp/nucleo_f439zi/": dict(
+        STM32F4, mkconf="sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_f439zi.xml",
+        ajoute=STM32F4["ajoute"] + ["-DHSE_VALUE=8000000",
+                                    "-I@/sys/root/src/kernel/dev/bsp/nucleo_f439zi"]),
     "sys/root/src/kernel/dev/bsp/stm32f469i-eval/": dict(
         STM32F4, mkconf="sys/user/tauon-basic/etc/mkconf_tauon_basic_stm32f469i-eval.xml",
         ajoute=[o.replace("STM32F429xx", "STM32F469xx") for o in STM32F4["ajoute"]]),

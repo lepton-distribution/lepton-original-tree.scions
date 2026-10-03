@@ -1,0 +1,86 @@
+# gdb-multiarch — NUCLEO-F439ZI (étape 5). Procédure : doc/migration/debug-gcc.md.
+#   terminal 1 : openocd -f debug/openocd-nucleo-f439zi.cfg
+#   terminal 2 : gdb-multiarch -x debug/gdbinit-nucleo-f439zi $LEPTON_BUILD/nucleo-f439zi-embos/lepton.elf
+# Commandes ajoutées : lepton-load (flash + reset halt), lepton-fault (registres de faute).
+set pagination off
+set confirm off
+set print pretty on
+target extended-remote localhost:3333
+
+define lepton-load
+  monitor reset halt
+  load
+  monitor reset halt
+end
+document lepton-load
+Écrit l'ELF courant en flash puis arrête le cœur sur le vecteur de reset.
+end
+
+define lepton-fault
+  printf "CFSR  = 0x%08x (MMFSR [7:0], BFSR [15:8], UFSR [31:16])\n", *(unsigned int*)0xE000ED28
+  printf "HFSR  = 0x%08x\n", *(unsigned int*)0xE000ED2C
+  printf "MMFAR = 0x%08x\n", *(unsigned int*)0xE000ED34
+  printf "BFAR  = 0x%08x\n", *(unsigned int*)0xE000ED38
+  printf "SHCSR = 0x%08x\n", *(unsigned int*)0xE000ED24
+  info registers pc lr sp xPSR msp psp
+end
+document lepton-fault
+Affiche les registres de faute du SCB (lire avant toute autre hypothèse, ETAPE-5).
+end
+
+# lepton-stacks : remplissage des piles (palier 8). embOS (mode SP) peint les piles de tâche
+# en 0xCD à leur création. Lepton range en bas de pile d'un thread un tas de thread
+# (heap_floor .. heap_top, kernel_pthread_alloca : données des bibliothèques), précédé de
+# 8 octets laissés au contrôle de pile d'embOS ; la pile descend vers heap_top. Marge = octets
+# 0xCD intacts à partir de heap_top (pStackBase pour une tâche sans thread Lepton). La pile
+# principale (MSP, __stack_limit__ .. __stack_end__) n'est mesurée que si elle est peinte.
+# L'attachement de gdb arrête le cœur : terminer par « monitor resume » avant de quitter, sinon
+# la carte reste figée (tick, réseau, console ; constaté le 2026-10-03).
+python
+import gdb
+
+def _lepton_cd_run(addr, size):
+    data = bytes(gdb.selected_inferior().read_memory(addr, size)) if size > 0 else b""
+    n = 0
+    while n < len(data) and data[n] == 0xCD:
+        n += 1
+    return n
+
+class LeptonStacks(gdb.Command):
+    """Par tâche embOS : taille de pile, tas de thread Lepton, usage maximal de pile, marge."""
+    def __init__(self):
+        super().__init__("lepton-stacks", gdb.COMMAND_USER)
+
+    def invoke(self, arg, from_tty):
+        heap_top = {}
+        p = gdb.parse_and_eval("g_pthread_lst")
+        seen = 0
+        while int(p) != 0 and seen < 256:
+            heap_top[int(p["tcb"])] = int(p["heap_top"])
+            p = p["gnext"]
+            seen += 1
+        print("%-10s %-24s %7s %6s %7s %7s %5s"
+              % ("tcb", "nom", "taille", "tas", "pile", "marge", "%"))
+        t = gdb.parse_and_eval("OS_Global.pTask")
+        seen = 0
+        while int(t) != 0 and seen < 256:
+            size = int(t["StackSize"])
+            base = int(t["pStackBase"])
+            name = t["sName"].string() if int(t["sName"]) != 0 else "?"
+            floor = heap_top.get(int(t), base)
+            heap = floor - base
+            free = _lepton_cd_run(floor, base + size - floor)
+            used = size - heap - free
+            print("0x%08x %-24s %7d %6d %7d %7d %5.1f"
+                  % (int(t), name[:24], size, heap, used, free, 100.0 * (size - free) / size))
+            t = t["pNext"]
+            seen += 1
+        lo = int(gdb.parse_and_eval("(unsigned)&__stack_limit__"))
+        hi = int(gdb.parse_and_eval("(unsigned)&__stack_end__"))
+        free = _lepton_cd_run(lo, hi - lo)
+        print("%-10s %-24s %7d %6d %7d %7d %5.1f"
+              % ("MSP", "pile principale", hi - lo, 0, hi - lo - free, free,
+                 100.0 * (hi - lo - free) / (hi - lo)))
+
+LeptonStacks()
+end
