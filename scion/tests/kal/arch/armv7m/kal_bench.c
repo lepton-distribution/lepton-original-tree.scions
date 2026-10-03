@@ -670,6 +670,35 @@ static int test_tclk(void){
    return 0;
 }
 
+/* TSBRK : tas newlib borné par la pile principale (kernel/core/arch/cortexm/sbrk_cortexm.c).
+   Étape 5 : le _sbrk de libnosys n'avait aucune limite ; sur la carte, une session de ftpd
+   débordait sur la MSP puis hors SRAM (BusFault). Le tas est épuisé par blocs : _sys_malloc doit
+   finir par rendre NULL, aucun bloc ne doit dépasser __stack_limit__, et tout est rendu ensuite. */
+extern char __heap_start__, __stack_limit__;
+#define TSBRK_BLOCK  (16u * 1024u)
+#define TSBRK_SLOTS  512   /* 8 Mo : au-delà de la RAM des cibles (QEMU 4 Mo, carte 192 Ko) */
+static void* tsbrk_blocks[TSBRK_SLOTS];
+static int test_tsbrk(void){
+   int n, i, hors_tas = 0;
+   for(n = 0; n < TSBRK_SLOTS; n++){
+      char* p = _sys_malloc(TSBRK_BLOCK);
+      if(!p)
+         break;
+      tsbrk_blocks[n] = p;
+      if(p < &__heap_start__ || p + TSBRK_BLOCK > &__stack_limit__)
+         hors_tas++;
+   }
+   kal_test_put_u32("TSBRK : blocs de 16 Ko alloués = ", (uint32_t)n);
+   for(i = 0; i < n; i++)
+      _sys_free(tsbrk_blocks[i]);
+   TEST_ASSERT(n < TSBRK_SLOTS, "TSBRK : _sys_malloc rend NULL une fois le tas épuisé");
+   TEST_ASSERT(hors_tas == 0, "TSBRK : aucun bloc hors de [__heap_start__, __stack_limit__)");
+   tsbrk_blocks[0] = _sys_malloc(TSBRK_BLOCK);
+   TEST_ASSERT(tsbrk_blocks[0] != 0, "TSBRK : allocation possible après libération");
+   _sys_free(tsbrk_blocks[0]);
+   return 0;
+}
+
 static int test_harness_fail(void){
    TEST_ASSERT(0, "échec volontaire (le harnais doit rendre un code non nul)");
    return 0;
@@ -682,7 +711,7 @@ static const struct { const char* name; int (*fn)(void); } tests[] = {
 #if (OS_CPU_HAS_VFP == 1)
    { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
 #endif
-   { "TICI", test_tici }, { "TCLK", test_tclk },
+   { "TICI", test_tici }, { "TCLK", test_tclk }, { "TSBRK", test_tsbrk },
    { "IRQ", test_irq },
    { "HARNESS_FAIL", test_harness_fail },
 };
