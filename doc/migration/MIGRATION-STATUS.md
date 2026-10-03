@@ -203,6 +203,11 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
   autorisation « Réseau local » de macOS pour Fusion, `vmnet-cli --stop/--start`. Repli accepté
   si le pontage échoue : palier 7 validé manuellement depuis le Mac (ping, `ftp`), test
   automatique `board.net` en dette. Procédure : `handoff/etape-5.md`, « Reprise ».
+- **Étape 5, palier 7 (2026-10-03)** : HardFault de `ftpd` (tas sans limite) **corrigé** (`_sbrk`
+  borné, TSBRK ; `.ccm_bss` en CCM, tas 88 Ko). **Ouverts** : `LIST` de `ftpd` sans données sur carte
+  (session bouclant dans `select`, QEMU vert) ; réseau et `lsh` perdus après un arrêt du cœur par le
+  débogueur. Détail : `validation-nucleo-f439zi.md`. Le relevé « MSP » d'avant la correction lisait la
+  pile de `ftpd` (chevauchement) ; MSP réelle 12,6 % (2026-10-03, `-O0`).
 - Étape 5 : USART6 (`ttys6`, PG14/PG9) non vérifié électriquement (pas d'adaptateur) ; liens du
   trunk `tests/__pycache__/*.pyc` pendants (cible ignorée effacée ; nettoyage `graft-clean` :
   décision) ; `grep` de l'hôte = `ugrep`, qui saute les fichiers Latin-1 (binaires) : `grep -a`.
