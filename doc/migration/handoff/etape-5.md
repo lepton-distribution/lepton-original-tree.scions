@@ -1,11 +1,11 @@
 # Handoff étape 5 → 6
 
 État au 2026-10-03 : branche `migration/etape-5`, **paliers 1-9 verts** sur NUCLEO-F429ZI
-(remplaçante de la F439ZI), en attente de la validation utilisateur de fin d'étape.
+(remplaçante de la F439ZI) ; **étape validée par l'utilisateur le 2026-10-03**.
 Journal : `validation-nucleo-f439zi.md`.
 
 ## Réponses aux prérequis de 6
-- Étape 5 close : paliers 1-9 verts, `ci/run.sh` vert ; **validation utilisateur à obtenir**.
+- Étape 5 close : paliers 1-9 verts, `ci/run.sh` vert, validée par l'utilisateur le 2026-10-03.
 - Liste des cartes de l'étape 6 : décision ouverte au statut (inchangée) — point d'arrêt en début
   d'étape 6.
 - Base de départ : options finales `-Os -g` (`LEPTON_OPT_LEVEL`, tous presets Cortex-M), hard-float,
@@ -21,8 +21,8 @@ Journal : `validation-nucleo-f439zi.md`.
   `eth_packet_available` au lieu de `ETH_CheckFrameReceived` dans `select` (trames perdues).
 - `-Os` pour tous les presets Cortex-M (les presets compilaient en `-O0`, non en `-Og`).
 - Critère « aucune modification du noyau ou du KAL pour cette carte » : aucun code propre à la
-  carte hors `cmake/boards/`, `ld/mem_*`, BSP ; les corrections ci-dessus sont génériques (à
-  confirmer par l'utilisateur à la validation).
+  carte hors `cmake/boards/`, `ld/mem_*`, BSP ; les corrections ci-dessus sont génériques
+  (acceptées par l'utilisateur à la validation, 2026-10-03).
 
 ## Artefacts produits (manifeste, pas copie)
 | Fichier | Contenu, quand le lire |
