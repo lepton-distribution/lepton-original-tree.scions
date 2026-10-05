@@ -1,0 +1,77 @@
+<?xml version='1.0'?>
+<!-- Carte NUCLEO-WL55JC1 (STM32WL55JC, Cortex-M4 du CPU1 sans FPU, 256 Ko de flash, 64 Ko de
+     RAM), etape 6 de la migration GCC/Linux : chaine minimale sans reseau ; console lsh sur
+     USART2 (ttys2, port serie virtuel du STLINK-V3). Limites reprises du portage IAR
+     (mkconf_tauon_basic_stm32wl55jci_nucleo.xml) ; frequence corrigee (MSI 48 MHz, l'IAR
+     declarait 80 MHz) ; piles a mesurer au palier 8 (lepton-stacks).
+     Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
+
+<mklepton>
+<target name="cortexm_lepton">
+      <arch dest_path="generated" />
+</target>
+
+<kernel>
+      <target name="cortexm_lepton">
+         <arch include_absolute_path="sys/user/tauon-basic/src/arch/nucleo-wl55jc1/kernel_mkconf/include/user_kernel_mkconf.h" />
+      </target>
+
+      <!-- cpu frequency in Hz (MSI range 11, BSP stm32wl55jci_nucleo) -->
+      <target name="cortexm_lepton">
+         <cpu freq="48000000"/>
+      </target>
+
+      <heap size="10000" />
+      <process max="8" />
+      <openfiles max="16" />
+      <descriptors max="8" />
+
+      <!-- rootfs en flash (filecpu_memory, const) -->
+      <target name="cortexm_lepton">
+         <cpufs size="8000" node="128" blocksz="64"/>
+      </target>
+
+      <env path="/usr;/usr/sbin;/usr/bin" />
+
+      <network use="off" />
+</kernel>
+
+<devices>
+   <!-- /dev/null -->
+   <dev name="dev_null_map"     use="on"/>
+   <!-- /dev/proc -->
+   <dev name="dev_proc_map"     use="on"/>
+   <!-- /dev/hd/hda -->
+   <dev name="dev_cpufs_map"    use="on"/>
+   <!-- /dev/head -->
+   <dev name="dev_head_map"     use="on"/>
+   <!-- /dev/pipe -->
+   <dev name="dev_pipe_map"     use="on"/>
+</devices>
+
+<target name="cortexm_lepton">
+   <devices>
+      <!-- /dev/ttys2 : USART2, console lsh -->
+      <dev name="dev_stm32wl55jci_nucleo_usart_2_map"  use="on"/>
+   </devices>
+</target>
+
+<!-- /usr/sbin -->
+<binaries src_path="sbin" dest_path="sbin">
+   <bin name="initd"    stack="2048"    priority="100" timeslice="1" />
+   <bin name="lsh"      stack="2048"    priority="100" timeslice="1" />
+   <bin name="ls"       stack="2048"    priority="100" timeslice="1" />
+   <bin name="ps"       stack="2048"    priority="100" timeslice="1" />
+   <bin name="kill"     stack="1536"    priority="100" timeslice="1" />
+   <bin name="cat"      stack="1536"    priority="100" timeslice="1" />
+   <bin name="uname"    stack="1536"    priority="100" timeslice="1" />
+   <bin name="pwd"      stack="1536"    priority="100" timeslice="1" />
+   <bin name="echo"     stack="1536"    priority="100" timeslice="1" />
+</binaries>
+
+<files>
+   <file name=".boot"   src_file="sys/user/tauon-basic/etc/nucleo-wl55jc1/.boot"   dest_path="etc" />
+   <file name=".init"   src_file="sys/user/tauon-basic/etc/nucleo-wl55jc1/.init"   dest_path="etc" />
+</files>
+
+</mklepton>

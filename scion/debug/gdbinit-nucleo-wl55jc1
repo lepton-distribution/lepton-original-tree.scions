@@ -1,0 +1,7 @@
+# gdb-multiarch — NUCLEO-WL55JC1, Cortex-M4 du CPU1 (étape 6). Procédure : doc/migration/debug-gcc.md.
+#   terminal 1 : openocd -f $LEPTON_BUILD/nucleo-wl55jc1-embos/openocd-nucleo-wl55jc1.cfg
+#                (cfg générée par cmake/boards/nucleo-wl55jc1.cmake : sonde par numéro de série)
+#   terminal 2 : gdb-multiarch -x debug/gdbinit-nucleo-wl55jc1 $LEPTON_BUILD/nucleo-wl55jc1-embos/lepton.elf
+# Commandes Cortex-M communes (lepton-load, lepton-fault, lepton-stacks) : celles de la NUCLEO,
+# sans rien de propre à la carte. État des horloges : stm32wl55jci_nucleo_clock_error (0 : correct).
+source debug/gdbinit-nucleo-f439zi
