@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 """retrait_gele.py — suppression du code gelé (étape 6, tâche 4 ; décision 2026-10-05).
 
-Sélectionne les fichiers de l'ensemble « gelé » de doc/migration/perimetre.csv (inventaire de
-code-gele.md, copies d'origine legacy/ de l'étape 4) encore versionnés sous scion/. --apply les
-supprime par `git rm` (sans commit) et retire leurs lignes de perimetre.csv. État précédent :
-tag local `legacy`. Rejouable : un fichier déjà retiré n'est plus sélectionné.
+Sélectionne, parmi les fichiers encore versionnés sous scion/ :
+  - inventaire : l'ensemble « gelé » de doc/migration/perimetre.csv (code-gele.md, copies
+    d'origine legacy/ de l'étape 4) ;
+  - annexe : les fichiers hors inventaire (non-code : .xcl, .mac, docs, projets vc/scons, paquets
+    eCos…) classés « gelé » par l'heuristique de chemin d'audit_iar.py ;
+  - embOS IAR : le reste des paquets embOS IAR (ucore/embOS*/ : bibliothèques IAR, licences),
+    remplacés par le port GCC Segger (annexe et embOS IAR : décision utilisateur 2026-10-05).
+--apply les supprime par `git rm` (sans commit) et retire leurs lignes de perimetre.csv.
+État précédent : tag local `legacy`. Rejouable : un fichier déjà retiré n'est plus sélectionné.
 
 Usage (racine du clone) :
   python3 tools/migration/retrait_gele.py            # simulation : totaux par répertoire
@@ -23,6 +28,7 @@ import audit_iar  # noqa: E402
 import retrait_iar  # noqa: E402
 
 CLONE_ROOT = audit_iar.CLONE_ROOT
+EMBOS_IAR = "sys/root/src/kernel/core/ucore/embOS"
 
 
 def geles():
@@ -43,11 +49,24 @@ def main():
     ap = argparse.ArgumentParser(description="Suppression du code gelé (étape 6).")
     ap.add_argument("--apply", action="store_true", help="git rm des fichiers gelés")
     a = ap.parse_args()
-    presents = set(retrait_iar.fichiers_scion())
-    inventaire = geles()
-    retirer = sorted(p for p in inventaire if p in presents)
-    print("retrait_gele : %d fichier(s) gelé(s) dans perimetre.csv, %d encore versionné(s)"
-          % (len(inventaire), len(retirer)))
+    inventaire = set(geles())
+    vent = audit_iar.Ventilateur("auto", audit_iar.DEFAULT_PERIMETRE)
+    motifs = collections.Counter()
+    retirer = []
+    for p in retrait_iar.fichiers_scion():
+        if p in inventaire:
+            motif = "inventaire"
+        elif p.startswith(EMBOS_IAR):
+            motif = "embOS IAR"
+        elif vent.classer(p)[0] == "gele":
+            motif = "annexe"
+        else:
+            continue
+        motifs[motif] += 1
+        retirer.append(p)
+    retirer.sort()
+    print("retrait_gele : %d fichier(s) à retirer (%s)"
+          % (len(retirer), ", ".join("%s %d" % m for m in sorted(motifs.items()))))
     par_rep = collections.Counter("/".join(p.split("/")[:5]) for p in retirer)
     for rep, n in sorted(par_rep.items()):
         print("  %-70s %d" % (rep, n))
