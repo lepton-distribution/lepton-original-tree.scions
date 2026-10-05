@@ -51,6 +51,14 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    répertoire : configuration du noyau dépendant de l'ISA (`__KERNEL_COMPILER_SUPPORT_TYPE`,
    `__KERNEL_CPU_ARCH`, signaux temps réel, verrous de fichiers), incluse par `kernelconf.h`.
 5. `cmake/cpu/<cœur>.cmake` pour chaque cœur (§2).
+6. Intégration matérielle du micro-noyau propre à l'ISA (tick, priorités) :
+   `src/kernel/core/core-<backend>/arch/<isa>/` (embOS : `embos_init_hw.c`, choisi par
+   `LEPTON_ISA` dans `cmake/kal/embos.cmake` ; `embos_main.c` commun Cortex-M sous `arch/armv7m`).
+   Étape 6 (ARMv6-M) : priorité de SysTick selon les bits de priorité implémentés.
+7. Banc KAL : registres sauvegardés en assembleur de l'ISA sous `tests/kal/arch/<isa>/`
+   (branche de `tests/kal/CMakeLists.txt`) ; `kal_bench.c` (C commun Cortex-M) reste sous
+   `tests/kal/arch/armv7m/`. Démarrage de la famille : `src/kernel/core/arch/<famille>/startup_<isa>.c`
+   (`LEPTON_ISA_STARTUP_SOURCES`), une table de vecteurs par profil (ARMv6-M : 32 IRQ au plus).
 
 ## 4. Ajouter une carte
 
@@ -62,6 +70,12 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    `__tauon_cpu_device__` de `kernelconf.h` (cartes antérieures seulement, étape 6).
    Machines voisines : un BSP commun et un en-tête d'adresses par machine (ex.
    `bsp/qemu_mps2/<machine>/qemu_mps2_machine.h`, choisi par le chemin d'inclusion).
+   Paquet de périphériques qui exige un CMSIS-Core plus récent que celui de l'ISA (ex. DFP
+   Microchip SAMD21 : CMSIS-Core 5) : chemin `ucore/cmsis-5/CMSIS/Core/Include` ajouté par le
+   fichier de carte en tête (`BEFORE`). Petite RAM : pile principale réduite dans
+   `ld/mem_<carte>.ld` (`__main_stack_size__`), tables du noyau par le mkconf et le
+   `user_kernel_mkconf.h` de la carte (profil `minimal`, `__KERNEL_RTFS_*`,
+   `__KERNEL_STDIO_PRINTF_BUFSIZ`) ; `openfiles` ≥ 12 (8 ne suffisent pas à `initd`).
    Variante de bibliothèque du micro-noyau propre à la puce : `LEPTON_EMBOS_LIB_VARIANT`
    (ex. `_837070`, Cortex-M7 r0p1, avec `USE_ERRATUM_837070=1`). Paquet constructeur (HAL,
    CMSIS Device) : code tiers non modifié, configuration (`*_hal_conf.h`) dans le BSP.
