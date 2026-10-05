@@ -1,9 +1,9 @@
 <?xml version='1.0'?>
 <!-- Carte NUCLEO-WL55JC1 (STM32WL55JC, Cortex-M4 du CPU1 sans FPU, 256 Ko de flash, 64 Ko de
-     RAM), etape 6 de la migration GCC/Linux : chaine minimale sans reseau ; console lsh sur
-     USART2 (ttys2, port serie virtuel du STLINK-V3). Limites reprises du portage IAR
-     (mkconf_tauon_basic_stm32wl55jci_nucleo.xml) ; frequence corrigee (MSI 48 MHz, l'IAR
-     declarait 80 MHz) ; piles a mesurer au palier 8 (lepton-stacks).
+     RAM), etape 6 de la migration GCC/Linux : chaine minimale sans reseau ; radio Sub-GHz FSK
+     868 MHz (/dev/radio) ; console lsh sur USART2 (ttys2, port serie virtuel du STLINK-V3).
+     Limites reprises du portage IAR (mkconf_tauon_basic_stm32wl55jci_nucleo.xml) ; frequence
+     corrigee (MSI 48 MHz, l'IAR declarait 80 MHz) ; piles mesurees (lepton-stacks).
      Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
 
 <mklepton>
@@ -53,6 +53,8 @@
    <devices>
       <!-- /dev/ttys2 : USART2, console lsh -->
       <dev name="dev_stm32wl55jci_nucleo_usart_2_map"  use="on"/>
+      <!-- /dev/radio : radio Sub-GHz, FSK 868 MHz (pilote du portage IAR) -->
+      <dev name="dev_stm32wl55jci_nucleo_radio_map"    use="on"/>
    </devices>
 </target>
 
@@ -67,6 +69,12 @@
    <bin name="uname"    stack="1536"    priority="100" timeslice="1" />
    <bin name="pwd"      stack="1536"    priority="100" timeslice="1" />
    <bin name="echo"     stack="1536"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/bin -->
+<binaries src_path="bin" dest_path="bin">
+   <!-- test radio : emission, reception, ping-pong de chaines sur /dev/radio -->
+   <bin name="radiotst" stack="2048"    priority="100" timeslice="1" />
 </binaries>
 
 <files>

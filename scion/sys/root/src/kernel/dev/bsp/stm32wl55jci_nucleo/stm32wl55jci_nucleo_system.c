@@ -6,11 +6,12 @@
  * l'initialisation de .data et .bss) : avant le micro-noyau, qui calcule son tick sur
  * SystemCoreClock (le portage IAR changeait l'horloge au chargement du pilote cpu0, après
  * OS_InitHW, et réarmait le SysTick par HAL_Init : pilote non repris).
- * Interruptions : IRQ<n>_Handler de la table générique, reliés aux gestionnaires du pilote USART2
- * du portage IAR (dev_stm32wl55jci_nucleo_usart_2.c) ; DMA1_Channel1_IRQn = 11,
- * DMA1_Channel2_IRQn = 12, USART2_IRQn = 37 (stm32wl55xx.h, CORE_CM4). Le pilote active ces
- * interruptions sans régler leur priorité (0 : hors de la plage d'embOS, alors qu'il appelle le
- * noyau) : priorités posées ici. Le CPU2 (Cortex-M0+) n'est jamais démarré (PWR_CR4.C2BOOT à 0).
+ * Interruptions : IRQ<n>_Handler de la table générique, reliés aux gestionnaires nommés des
+ * pilotes du portage IAR : USART2 (dev_stm32wl55jci_nucleo_usart_2.c ; DMA1_Channel1_IRQn = 11,
+ * DMA1_Channel2_IRQn = 12, USART2_IRQn = 37) et radio (SUBGHZ_Radio_IRQn = 50) (stm32wl55xx.h,
+ * CORE_CM4). Le pilote USART2 active ses interruptions sans régler leur priorité (0 : hors de la
+ * plage d'embOS, alors qu'il appelle le noyau) : priorités posées ici ; le pilote radio règle la
+ * sienne (HAL_SUBGHZ_MspInit, 0xC0). Le CPU2 (Cortex-M0+) n'est jamais démarré (PWR_CR4.C2BOOT à 0).
  * Valeurs : stm32wl55jci_nucleo.h.
  */
 #include <stdint.h>
@@ -77,11 +78,13 @@ void SystemCoreClockUpdate(void){
    SystemCoreClock = MSIRangeTable[(RCC->CR & RCC_CR_MSIRANGE) >> RCC_CR_MSIRANGE_Pos];
 }
 
-/* --- interruptions : gestionnaires nommés du pilote USART2 (portage IAR) ----------------------- */
+/* --- interruptions : gestionnaires nommés des pilotes USART2 et radio (portage IAR) ----------- */
 extern void DMA1_Channel1_IRQHandler(void);
 extern void DMA1_Channel2_IRQHandler(void);
 extern void USART2_IRQHandler(void);
+extern void SUBGHZ_Radio_IRQHandler(void);
 
 void IRQ11_Handler(void) { DMA1_Channel1_IRQHandler(); }
 void IRQ12_Handler(void) { DMA1_Channel2_IRQHandler(); }
 void IRQ37_Handler(void) { USART2_IRQHandler(); }
+void IRQ50_Handler(void) { SUBGHZ_Radio_IRQHandler(); }
