@@ -10,7 +10,7 @@ Critère d'ETAPE-4 : aucune directive d'**ISA** ou de **cœur** dans le code Lep
 | Code Lepton, ISA/cœur hors arch (fichiers) | **0** |
 | Code Lepton, puce seule hors arch/BSP (directives) | 12 |
 | Code Lepton, emplacements autorisés | 12 |
-| Code tiers (non modifié, D1a) | 40 |
+| Code tiers (non modifié, D1a) | 67 |
 
 ## Code Lepton hors arch, par fichier
 

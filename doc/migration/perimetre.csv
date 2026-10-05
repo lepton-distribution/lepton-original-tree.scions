@@ -96,6 +96,7 @@ src/bin/udpsrvd.c,différé,déclaré par tauon-basic_lm3s_6.21/Debug (candidat 
 src/bin/wrapr.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",366,0
 src/bin/xlcdd.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",168,0
 src/kernel/core/arch/cortexm/lepton_irq.h,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),20,0
+src/kernel/core/arch/cortexm/sbrk_cortexm.c,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),12,0
 src/kernel/core/arch/cortexm/startup_armv7m.c,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),83,0
 src/kernel/core/arch/host/libc_host.c,actif,étape 2 : noyau statique hôte (mklepton),13,0
 src/kernel/core/arch/host/static/bin_mkconf.c,actif,étape 2 : noyau statique hôte (mklepton),5,0
@@ -287,6 +288,12 @@ src/kernel/core/timer.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-d
 src/kernel/core/timer.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",27,44
 src/kernel/core/truncate.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",25,7
 src/kernel/core/types.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",80,44
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cachel1_armv7.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",244,0
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_compiler.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",206,0
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",1202,0
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_version.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",12,0
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",1346,0
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/mpu_armv7.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",125,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM0/Include/ARMCM0.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",169,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM0/Include/system_ARMCM0.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",12,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM0/Source/ARM/startup_ARMCM0.s,hors-projet,"non déclaré par un projet, non inclus, sans règle",163,0
@@ -337,9 +344,9 @@ src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM4/Source/GCC/startup_ARMCM4.c,hors
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM4/Source/IAR/startup_ARMCM4.s,hors-projet,"non déclaré par un projet, non inclus, sans règle",201,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM4/Source/system_ARMCM4.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",31,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/ARMCM7.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",178,0
-src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/ARMCM7_DP.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",178,0
+src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/ARMCM7_DP.h,actif,"étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)",178,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/ARMCM7_SP.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",178,0
-src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/system_ARMCM7.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",12,0
+src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/system_ARMCM7.h,actif,"étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)",12,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Source/ARM/startup_ARMCM7.s,hors-projet,"non déclaré par un projet, non inclus, sans règle",183,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Source/GCC/startup_ARMCM7.S,hors-projet,"non déclaré par un projet, non inclus, sans règle",184,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Source/GCC/startup_ARMCM7.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",158,0
@@ -2715,8 +2722,9 @@ src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.c,act
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_board/dev_olimex_p407_board.h,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),49,1
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),54,1
 src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,actif,déclaré par bsp_olimex_p407_7.30/Debug (BSP STM32F4),62,1
-src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386.h,actif,étape 3 : BSP du socle QEMU mps2-an386,15,0
-src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386_board.c,actif,étape 3 : BSP du socle QEMU mps2-an386,111,0
+src/kernel/dev/bsp/qemu_mps2/an386/qemu_mps2_machine.h,actif,"étape 6 : BSP commun des machines QEMU MPS2 (an386, an500)",15,0
+src/kernel/dev/bsp/qemu_mps2/an500/qemu_mps2_machine.h,actif,"étape 6 : BSP commun des machines QEMU MPS2 (an386, an500)",15,0
+src/kernel/dev/bsp/qemu_mps2/qemu_mps2_board.c,actif,"étape 6 : BSP commun des machines QEMU MPS2 (an386, an500)",111,0
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/dev_samd20xplained_pro_board.c,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),98,1
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/dev_samd20xplained_pro_board.h,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),319,1
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/samd20_xplained_pro_board_clock.c,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),462,1
@@ -3866,7 +3874,7 @@ sys/user/tauon-basic/src/arch/atmel-at91samd20-xplained-pro/kernel_mkconf/includ
 sys/user/tauon-basic/src/arch/atmel-at91samv71-xplained-ultra/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",16,0
 sys/user/tauon-basic/src/arch/nucleo-f439zi/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 5 : configuration de la carte NUCLEO-F439ZI,14,0
 sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",27,0
-sys/user/tauon-basic/src/arch/qemu-mps2-an386/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 3 : configuration de la carte QEMU mps2-an386,13,0
+sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration commune des machines QEMU MPS2,13,0
 sys/user/tauon-basic/src/arch/st-stm32f407-discovery/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",26,0
 sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",309,0
 sys/user/tauon-basic/src/arch/st-stm32wl55jci-nucleo/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",29,0

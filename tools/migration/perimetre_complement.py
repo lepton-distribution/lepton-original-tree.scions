@@ -68,6 +68,12 @@ REGLES = [
      "étape 3 : BSP du socle QEMU mps2-an386"),
     (r"^sys/user/tauon-basic/src/arch/qemu-mps2-an386/", "actif",
      "étape 3 : configuration de la carte QEMU mps2-an386"),
+    (r"^src/kernel/dev/bsp/qemu_mps2/", "actif",
+     "étape 6 : BSP commun des machines QEMU MPS2 (an386, an500)"),
+    (r"^sys/user/tauon-basic/src/arch/qemu-mps2/", "actif",
+     "étape 6 : configuration commune des machines QEMU MPS2"),
+    (r"^src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/", "actif",
+     "étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)"),
     (r"^src/kernel/dev/bsp/nucleo_f439zi/", "actif",
      "étape 5 : BSP de la carte de base NUCLEO-F439ZI"),
     (r"^sys/user/tauon-basic/src/arch/nucleo-f439zi/", "actif",
@@ -80,6 +86,15 @@ REGLES = [
      "étapes 2-3 : bancs de test (ctest host, banc KAL)"),
 ]
 REGLES = [(re.compile(rx), e, j) for rx, e, j in REGLES]
+
+# lignes existantes à reclasser (fichier → ensemble, justification) : fichiers déjà inventoriés
+# devenus utilisés par la migration
+RECLASSEMENTS = {
+    "src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/ARMCM7_DP.h":
+        ("actif", "étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)"),
+    "src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/system_ARMCM7.h":
+        ("actif", "étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)"),
+}
 
 DEBUT_MD = "<!-- perimetre_complement.py : début -->"
 FIN_MD = "<!-- perimetre_complement.py : fin -->"
@@ -144,12 +159,15 @@ def main():
 
     rows = list(csv.DictReader(open(a.perimetre, encoding="utf-8")))
     present = scan(trunk)
-    garde, retires, renommes = [], [], 0
+    garde, retires, renommes, reclasses = [], [], 0, 0
     for row in rows:
         p = renomme(row["fichier"])
         if p != row["fichier"]:
             renommes += 1
             row["fichier"] = p
+        if p in RECLASSEMENTS and (row["ensemble"], row["justification"]) != RECLASSEMENTS[p]:
+            row["ensemble"], row["justification"] = RECLASSEMENTS[p]
+            reclasses += 1
         (garde if p in present else retires).append(row)
     connus = {r["fichier"] for r in garde}
     nouveaux = sorted(present - connus)
@@ -170,7 +188,8 @@ def main():
                       "lignes_code": str(loc[p]), "nb_projets": "0"})
     garde.sort(key=lambda r: r["fichier"])
 
-    print("renommés %d, retirés %d, ajoutés %d" % (renommes, len(retires), len(ajout)))
+    print("renommés %d, reclassés %d, retirés %d, ajoutés %d"
+          % (renommes, reclasses, len(retires), len(ajout)))
     for r in retires:
         print("  retiré  %s (%s)" % (r["fichier"], r["ensemble"]))
     par_ens = collections.Counter(e for _, e, _ in ajout)
