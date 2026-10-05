@@ -1,7 +1,6 @@
 /*
  * Configuration applicative de la carte STM32F746G-DISCO (étape 6). Les axes (micro-noyau, cœur,
  * puce STM32F746xx, nom uname) sont posés par CMake (cmake/kal, cmake/cpu, cmake/boards), pas ici.
- * Réseau : session suivante du module (pilote Ethernet STM32F7).
  */
 #ifndef _USER_KERNEL_MKCONF_H_
 #define _USER_KERNEL_MKCONF_H_
@@ -19,6 +18,10 @@
 
 //kernel console for initd and printk dev output on /dev/console stream (USART1, ST-LINK)
 #define __KERNEL_DEV_TTY "/dev/ttys1"
+
+//ip stack : lwIP sur Ethernet (eth0 : MAC STM32F7, PHY LAN8742A)
+#define USE_LWIP
+#define USE_IF_ETHERNET
 
 //configuration de la carte (fréquences, priorités)
 #include "kernel/dev/bsp/stm32f746g_disco/stm32f746g_disco.h"

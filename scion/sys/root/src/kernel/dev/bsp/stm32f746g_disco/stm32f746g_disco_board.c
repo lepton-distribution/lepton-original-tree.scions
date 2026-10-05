@@ -4,8 +4,10 @@
  *
  * Horloges et caches (SystemInit, appelée par le démarrage générique kernel/core/arch/cortexm
  * après l'initialisation de .data et .bss), console /dev/ttys1 (USART1, port série virtuel du
- * ST-LINK) sur le pilote USART STM32F7 de Lepton. Valeurs : stm32f746g_disco.h.
- * Interruptions : IRQ<n>_Handler (n < 64) de la table générique ; USART1_IRQn = 37 (RM0385).
+ * ST-LINK) sur le pilote USART STM32F7 de Lepton, /dev/eth0 (Ethernet RMII, PHY LAN8742A) sur le
+ * pilote Ethernet STM32F7. Valeurs : stm32f746g_disco.h.
+ * Interruptions : IRQ<n>_Handler (n < 64) de la table générique ; USART1_IRQn = 37,
+ * ETH_IRQn = 61 (RM0385).
  */
 #include <stdint.h>
 #include <stdarg.h>
@@ -20,7 +22,9 @@
 #include "kernel/fs/vfs/vfstypes.h"
 
 #include "stm32f7xx_hal.h"
+#include "kernel/core/ioctl_eth.h"
 #include "dev_stm32f7xx_uart_x.h"
+#include "dev_stm32f7xx_eth_x.h"
 #include "stm32f746g_disco.h"
 
 /* --- horloges et caches ----------------------------------------------------------------------- */
@@ -142,4 +146,69 @@ dev_map_t dev_stm32f746g_disco_uart_1_map = {
    dev_stm32f7xx_uart_x_write,
    dev_stm32f7xx_uart_x_seek,
    dev_stm32f7xx_uart_x_ioctl
+};
+
+/* --- Ethernet : eth0 (RMII, PHY LAN8742A) ------------------------------------------------------ */
+/* Broches RMII (exemple LwIP STM32CubeF7 v1.17.4 de la carte, AF11) : PA1 REF_CLK, PA2 MDIO,
+   PA7 CRS_DV, PC1 MDC, PC4 RXD0, PC5 RXD1, PG2 RXER, PG11 TX_EN, PG13 TXD0, PG14 TXD1 */
+void HAL_ETH_MspInit(ETH_HandleTypeDef* heth){
+   GPIO_InitTypeDef gpio;
+   (void)heth;
+   __HAL_RCC_GPIOA_CLK_ENABLE();
+   __HAL_RCC_GPIOC_CLK_ENABLE();
+   __HAL_RCC_GPIOG_CLK_ENABLE();
+   gpio.Mode = GPIO_MODE_AF_PP;
+   gpio.Pull = GPIO_NOPULL;
+   gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+   gpio.Alternate = GPIO_AF11_ETH;
+   gpio.Pin = GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_7;
+   HAL_GPIO_Init(GPIOA, &gpio);
+   gpio.Pin = GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5;
+   HAL_GPIO_Init(GPIOC, &gpio);
+   gpio.Pin = GPIO_PIN_2 | GPIO_PIN_11 | GPIO_PIN_13 | GPIO_PIN_14;
+   HAL_GPIO_Init(GPIOG, &gpio);
+   __HAL_RCC_ETHMAC_CLK_ENABLE();
+   __HAL_RCC_ETHMACTX_CLK_ENABLE();
+   __HAL_RCC_ETHMACRX_CLK_ENABLE();
+}
+
+static void stm32f746g_disco_eth_irq_enable(dev_stm32f7xx_eth_info_t* info, int enable){
+   (void)info;
+   if(enable) {
+      NVIC_SetPriority(ETH_IRQn, STM32F746G_DISCO_IRQ_PRIO);
+      NVIC_ClearPendingIRQ(ETH_IRQn);
+      NVIC_EnableIRQ(ETH_IRQn);
+   } else {
+      NVIC_DisableIRQ(ETH_IRQn);
+   }
+}
+
+static dev_stm32f7xx_eth_info_t stm32f746g_disco_eth = {
+   BOARD_ETH_PHY_ADDR, BOARD_ETH_PHY_SR, BOARD_ETH_PHY_DUPLEX_SPEED_MASK,
+   BOARD_ETH_PHY_100BTX_FULL, BOARD_ETH_PHY_100BTX_HALF, BOARD_ETH_PHY_10M_FULL,
+   BOARD_ETH_PHY_10M_HALF, stm32f746g_disco_eth_irq_enable
+};
+
+void IRQ61_Handler(void) { dev_stm32f7xx_eth_x_interrupt(&stm32f746g_disco_eth); }
+
+static int dev_stm32f746g_disco_eth_0_load(void){
+   return dev_stm32f7xx_eth_x_load(&stm32f746g_disco_eth);
+}
+
+static int dev_stm32f746g_disco_eth_0_open(desc_t desc, int o_flag){
+   return dev_stm32f7xx_eth_x_open(desc, o_flag, &stm32f746g_disco_eth);
+}
+
+dev_map_t dev_stm32f746g_disco_eth_0_map = {
+   "eth0\0",
+   S_IFCHR,
+   dev_stm32f746g_disco_eth_0_load,
+   dev_stm32f746g_disco_eth_0_open,
+   dev_stm32f7xx_eth_x_close,
+   dev_stm32f7xx_eth_x_isset_read,
+   dev_stm32f7xx_eth_x_isset_write,
+   dev_stm32f7xx_eth_x_read,
+   dev_stm32f7xx_eth_x_write,
+   dev_stm32f7xx_eth_x_seek,
+   dev_stm32f7xx_eth_x_ioctl
 };

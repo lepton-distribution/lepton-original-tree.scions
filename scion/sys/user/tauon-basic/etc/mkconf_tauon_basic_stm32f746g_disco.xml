@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <!-- Carte STM32F746G-DISCO (Cortex-M7 r0p1, STM32F746NG), etape 6 de la migration GCC/Linux :
      meme chaine minimale que le socle QEMU ; console lsh sur USART1 (ttys1, port serie virtuel
-     du ST-LINK). Reseau : session suivante (pilote Ethernet STM32F7).
+     du ST-LINK), Ethernet RMII + LAN8742A (eth0) avec la pile lwIP.
      Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
 
 <mklepton>
@@ -31,7 +31,8 @@
 
       <env path="/usr;/usr/sbin;/usr/bin" />
 
-      <network use="off" />
+      <!-- pile IP (__KERNEL_NET_IPSTACK) : lwIP (USE_LWIP, user_kernel_mkconf.h) -->
+      <network use="on" />
 </kernel>
 
 <devices>
@@ -45,12 +46,18 @@
    <dev name="dev_head_map"     use="on"/>
    <!-- /dev/pipe -->
    <dev name="dev_pipe_map"     use="on"/>
+   <!-- /dev/net/socket lwip -->
+   <dev name="dev_lwip_core_socket_map"    use="on"/>
+   <!-- /dev/net/ip lwip ip stack -->
+   <dev name="dev_lwip_stack_map"   use="on"/>
 </devices>
 
 <target name="cortexm_lepton">
    <devices>
       <!-- /dev/ttys1 : USART1, console lsh -->
       <dev name="dev_stm32f746g_disco_uart_1_map"  use="on"/>
+      <!-- /dev/eth0 : Ethernet RMII, PHY LAN8742A -->
+      <dev name="dev_stm32f746g_disco_eth_0_map"   use="on"/>
    </devices>
 </target>
 
@@ -67,6 +74,18 @@
    <bin name="uname"    stack="2048"    priority="100" timeslice="1" />
    <bin name="pwd"      stack="2048"    priority="100" timeslice="1" />
    <bin name="echo"     stack="2048"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/sbin/net ; tsterrno : test du palier reseau (errno d'un connect() refuse) ; place ici
+     et non dans /usr/bin/net, repertoire cree sans /usr/bin (defaut du rootfs, MIGRATION-STATUS) -->
+<binaries src_path="sbin/net" dest_path="sbin/net">
+   <bin name="ifconfig" stack="4096"    priority="100" timeslice="1" />
+   <bin name="tsterrno" stack="2048"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/bin/net -->
+<binaries src_path="bin/net" dest_path="bin/net">
+   <bin name="ftpd"     stack="8192"    priority="100" timeslice="1" />
 </binaries>
 
 <files>

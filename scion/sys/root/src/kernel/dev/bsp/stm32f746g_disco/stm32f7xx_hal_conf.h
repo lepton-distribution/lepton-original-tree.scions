@@ -1,6 +1,6 @@
 /* Lepton : généré par tools/migration/hal_conf_stm32f7.py depuis
  * hal_driver/Inc/stm32f7xx_hal_conf_template.h (STM32CubeF7 v1.17.4, HAL V1.3.3) ;
- * modules : CORTEX, FLASH, GPIO, PWR, RCC ; HSE_VALUE 25000000. Ne pas éditer : rejouer le script. */
+ * modules : CORTEX, ETH, FLASH, GPIO, PWR, RCC ; HSE_VALUE 25000000. Ne pas éditer : rejouer le script. */
 /**
   ******************************************************************************
   * @file    stm32f7xx_hal_conf_template.h
@@ -47,7 +47,7 @@
 /* #define HAL_DCMI_MODULE_ENABLED */
 /* #define HAL_DMA_MODULE_ENABLED */
 /* #define HAL_DMA2D_MODULE_ENABLED */
-/* #define HAL_ETH_MODULE_ENABLED */
+#define HAL_ETH_MODULE_ENABLED
 /* #define HAL_ETH_LEGACY_MODULE_ENABLED */
 /* #define HAL_EXTI_MODULE_ENABLED */
 #define HAL_FLASH_MODULE_ENABLED 

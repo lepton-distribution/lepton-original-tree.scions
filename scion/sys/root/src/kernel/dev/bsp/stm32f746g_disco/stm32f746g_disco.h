@@ -28,4 +28,15 @@
 /* priorité NVIC des périphériques : dans la plage gérée par embOS (>= 0x80) */
 #define STM32F746G_DISCO_IRQ_PRIO      ((1u << __NVIC_PRIO_BITS) - 4u)
 
+/* --- Ethernet RMII + PHY LAN8742A, adresse 0 (STM32CubeF7 v1.17.4 : exemple LwIP de la carte,
+ *     stm32f7xx_hal_conf.h du modèle) ; broches : stm32f746g_disco_board.c (HAL_ETH_MspInit) --- */
+#define BOARD_ETH_PHY_ADDR                0u
+/* registre spécial d'état (31), champ « speed indication » (bits 4:2), comme la NUCLEO-F439ZI */
+#define BOARD_ETH_PHY_SR                  ((uint16_t)31)
+#define BOARD_ETH_PHY_DUPLEX_SPEED_MASK   ((uint16_t)0x001C)
+#define BOARD_ETH_PHY_100BTX_FULL         ((uint16_t)0x0018)
+#define BOARD_ETH_PHY_100BTX_HALF         ((uint16_t)0x0008)
+#define BOARD_ETH_PHY_10M_FULL            ((uint16_t)0x0014)
+#define BOARD_ETH_PHY_10M_HALF            ((uint16_t)0x0004)
+
 #endif
