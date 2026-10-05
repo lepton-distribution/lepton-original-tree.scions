@@ -43,8 +43,6 @@ either the MPL or the [eCos GPL] License."
 #include "kernel/fs/vfs/vfstypes.h"
 #include "kernel/fs/vfs/vfstypes.h"
 
-#include "kernel/dev/arch/gnu32/common/linux_hdwr_ops.h"
-
 #include "dev_fb.h"
 #include "kernel/core/ioctl_fb.h"
 

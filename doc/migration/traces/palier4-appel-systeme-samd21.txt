@@ -1,0 +1,74 @@
+OS_Idle () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/arch/armv6m/embos_init_hw.c:72
+72	   for(;;) {
+xPSR: 0x01000000 pc: 0x0000015c msp: 0x20008000
+
+### 0. palier 3 : warmup du noyau
+Note: automatically using hardware breakpoints for read-only addresses.
+
+Breakpoint 1, _kernel_warmup_boot () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:914
+914	   if((desc=_vfs_open("/usr/etc/.boot",O_RDONLY,0))>=0) {
+#0  _kernel_warmup_boot () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:914
+#1  0x00000d1e in _start_kernel (arg=arg@entry=0x0 <lepton_vector_table>) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:1220
+#2  0x00000200 in main () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/arch/armv7m/embos_main.c:16
+
+### 1. appelant : entree dans le verrou des appels systeme (__mk_syscall)
+
+Breakpoint 2, kernel_syscall_lock () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel_syscall_lock.c:30
+30	   if(__kernel_is_in_static_mode())
+tache courante embOS : initd
+#0  kernel_syscall_lock () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel_syscall_lock.c:30
+#1  0x0000ee90 in _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/system.c:520
+#2  0x0000b35a in initd_main (argc=5, argv=0x20003aa8) at /home/lepton-user/lepton/trunk/sys/root/src/sbin/initd.c:129
+#3  0x000015d0 in process_routine (arg=<optimized out>) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/process.c:819
+0x0000ee90 in _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/system.c:520
+520	   __mk_syscall(_SYSCALL_SETPGID,setpgid_dt);
+Value returned is $1 = 0
+retour dans l'appelant, tache : initd
+Line 520 of "/home/lepton-user/lepton/trunk/sys/root/src/kernel/core/system.c" starts at address 0xee86 <_system_setpgid+26> and ends at 0xeeca <_system_setpgid+94>.
+pthread appelant (variable locale de __mk_syscall) : 0x20004188
+
+### 2. tache noyau : reveil par evenement embOS, _kernel_syscall
+
+Breakpoint 4, _kernel_syscall () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:226
+226	   kernel_pthread_t* pthread_ptr = g_pthread_lst;
+tache courante embOS : kernel_thread
+#0  _kernel_syscall () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:226
+#1  0x00000c58 in kernel_routine (arg=<optimized out>) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:1073
+#2  0x0000134e in pthread_routine () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel_pthread.c:290
+pthread appelant : 0x20004188, pid=1, irq_nb=0x80, syscall=49, reg.data=0x200040cc
+_syscall_setpgid + 1 in section .text
+
+### 3. gestionnaire de l'appel systeme (tache noyau)
+warning: Breakpoint address adjusted from 0x00003571 to 0x00003570.
+warning: Breakpoint 5 address previously adjusted from 0x00003571 to 0x00003570.
+
+Breakpoint 5, _syscall_setpgid (pthread_ptr=0x20004188, pid=1, data=0x200040cc) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/syscall.c:916
+916	   setpgid_dt->id_grp = _sys_setpgid(setpgid_dt->pid,setpgid_dt->id_grp);
+tache courante embOS : kernel_thread
+#0  _syscall_setpgid (pthread_ptr=0x20004188, pid=1, data=0x200040cc) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/syscall.c:916
+#1  0x00000402 in _kernel_syscall () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:259
+#2  0x00000c58 in kernel_routine (arg=<optimized out>) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:1073
+0x00000402 in _kernel_syscall () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:259
+259	         if(kernel_syscall.p_syscall(pthread_ptr,pthread_ptr->pid,pthread_ptr->reg.data)<0) {
+Value returned is $2 = 0
+
+### 4. fin : liberation du verrou par la tache noyau
+
+Breakpoint 6, kernel_syscall_unlock () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel_syscall_lock.c:47
+47	   if(__kernel_is_in_static_mode())
+tache courante embOS : kernel_thread
+#0  kernel_syscall_unlock () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel_syscall_lock.c:47
+#1  0x000003da in _kernel_syscall () at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:268
+#2  0x00000c58 in kernel_routine (arg=<optimized out>) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/kernel.c:1073
+etat de la trace noyau : 2 (KERNEL_SYSCALL_STATUS_END = 2, kernel.h)
+
+### 5. appelant : reprise apres __wait_ret_int
+
+Temporary breakpoint 3, _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/system.c:522
+522	   return setpgid_dt.id_grp;
+tache courante embOS : initd
+Line 522 of "/home/lepton-user/lepton/trunk/sys/root/src/kernel/core/system.c" starts at address 0xeeca <_system_setpgid+94> and ends at 0xeece <_system_setpgid+98>.
+errno de l'appelant : 0
+#0  _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/system.c:522
+#1  0x0000b35a in initd_main (argc=5, argv=0x20003aa8) at /home/lepton-user/lepton/trunk/sys/root/src/sbin/initd.c:129
+#2  0x000015d0 in process_routine (arg=<optimized out>) at /home/lepton-user/lepton/trunk/sys/root/src/kernel/core/core-segger/process.c:819

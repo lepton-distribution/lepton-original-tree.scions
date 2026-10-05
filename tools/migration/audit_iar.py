@@ -10,6 +10,7 @@ relativement à la racine du clone (répertoire parent de tools/).
 Usage (depuis la racine du clone) :
   python3 tools/migration/audit_iar.py                 # audit complet + fichiers
   python3 tools/migration/audit_iar.py --summary       # totaux seulement, rien n'est écrit
+  python3 tools/migration/audit_iar.py --garde         # CI : --summary, échec si code Lepton > 0
   python3 tools/migration/audit_iar.py --perimetre heuristique
 Options :
   --trunk DIR        racine du trunk (défaut : $LEPTON_TRUNK, sinon ~/lepton/trunk)
@@ -165,9 +166,12 @@ REGLES_HEURISTIQUES = [
 REGLES_COMPILEES = [(re.compile(p, re.I), e, j) for p, e, j in REGLES_HEURISTIQUES]
 
 ORIGINE_TIERS = re.compile(
-    r"(^|/)(ucore|cubemx_hal_driver|cmsis|cmsis-5|CMSIS|driverlib|at91lib|asf|softpack-lib|"
+    r"(^|/)(ucore|cubemx_hal_driver|hal_driver|cmsis|cmsis-5|CMSIS|driverlib|at91lib|asf|softpack-lib|"
     r"lwip|uip|uip2\.5|fatfs/core|yaffs|mongoose|stm32f4-usb-core|lib-nxpnfc|WpdPack\w*|ecos|"
-    r"install|nanox)(/|$)", re.I)
+    r"install|nanox|"
+    # pile radio ST SubGHz_Phy et utilitaires STM32CubeWL (décision 2026-10-05) ; la couche
+    # d'adaptation stm32_radio_target/ (liaison au pilote Lepton) reste du code Lepton
+    r"radio_subghz_phy(?!/stm32_radio_target/)|stm32wlxx/Utilities)(/|$)", re.I)
 RE_GENERE = re.compile(r"(^|/)((bin|dev|kernel|fs)_mkconf\.[ch]|dev_dskimg\.[ch])$")
 
 
@@ -586,11 +590,16 @@ def totaux(lignes):
     return t
 
 
+def iar_lepton_actif(lignes):
+    """IAR-ismes de sévérité iar du code Lepton du périmètre actif (garde de la CI)."""
+    return sum(1 for r in lignes if r["severite"] == "iar" and r["ensemble"] == "actif"
+               and r["origine"] == "lepton")
+
+
 def texte_summary(lignes, vent):
     t = totaux(lignes)
     actif_iar = t[("iar", "actif")]
-    lep = sum(1 for r in lignes if r["severite"] == "iar" and r["ensemble"] == "actif"
-              and r["origine"] == "lepton")
+    lep = iar_lepton_actif(lignes)
     out = ["audit_iar — ventilation : " + vent.libelle,
            "TOTAL IAR-ISMES PÉRIMÈTRE ACTIF : %d  (code Lepton : %d, tiers : %d)"
            % (actif_iar, lep, actif_iar - lep)]
@@ -797,6 +806,9 @@ def main():
     ap.add_argument("--out-dir", default=DEFAULT_OUT)
     ap.add_argument("--summary", action="store_true",
                     help="affiche seulement les totaux, n'écrit aucun fichier")
+    ap.add_argument("--garde", action="store_true",
+                    help="garde de la CI (étape 6) : --summary, code de retour 1 s'il reste un "
+                         "IAR-isme dans le code Lepton du périmètre actif")
     a = ap.parse_args()
     trunk = os.path.abspath(a.trunk)
     if not os.path.isdir(trunk):
@@ -807,6 +819,11 @@ def main():
     vent = Ventilateur(a.perimetre, a.perimetre_file)
     lignes, asm, nb = auditer(trunk, vent)
     print(texte_summary(lignes, vent))
+    if a.garde:
+        n = iar_lepton_actif(lignes)
+        if n:
+            sys.exit("audit_iar: garde en échec : %d IAR-isme(s) dans le code Lepton actif" % n)
+        return
     if a.summary:
         return
     argv = [x for x in sys.argv[1:]]

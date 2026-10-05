@@ -1,17 +1,46 @@
 fichier,ligne,axes,origine,emplacement,condition
-sys/root/src/kernel/core/arch/cortexm/startup_armv7m.c,97,coeur,lepton,autorisé,defined(__ARM_FP)
+sys/root/src/kernel/core/arch/cortexm/startup_armv7m.c,101,coeur,lepton,autorisé,defined(__ARM_FP)
 sys/root/src/kernel/core/kal/backend/embos/kal_backend.h,87,coeur,lepton,autorisé,defined(OS_CPU_HAS_VFP) && (OS_CPU_HAS_VFP == 1)
 sys/root/src/kernel/core/kernelconf.h,85,puce,lepton,hors arch,!defined(__tauon_cpu_device__)
-sys/root/src/kernel/core/kernelconf.h,93,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
-sys/root/src/kernel/core/kernelconf.h,97,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
-sys/root/src/kernel/core/kernelconf.h,101,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM3_trifecta__
-sys/root/src/kernel/core/kernelconf.h,105,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM3_LM3S__
-sys/root/src/kernel/core/kernelconf.h,109,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM3_stm32f1__
-sys/root/src/kernel/core/kernelconf.h,113,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexm_k60n512__
-sys/root/src/kernel/core/kernelconf.h,117,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32f4__
-sys/root/src/kernel/core/kernelconf.h,121,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_qemu_mps2_an386__
-sys/root/src/kernel/core/kernelconf.h,125,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32wlxx__
-sys/root/src/kernel/core/kernelconf.h,129,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM7_at91samv71__
+sys/root/src/kernel/core/kernelconf.h,98,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
+sys/root/src/kernel/core/kernelconf.h,102,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM0_at91samd20__
+sys/root/src/kernel/core/kernelconf.h,106,puce,lepton,hors arch,__tauon_cpu_device__==__tauon_cpu_device_cortexM3_trifecta__
+sys/root/src/kernel/core/kernelconf.h,110,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM3_LM3S__
+sys/root/src/kernel/core/kernelconf.h,114,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM3_stm32f1__
+sys/root/src/kernel/core/kernelconf.h,118,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexm_k60n512__
+sys/root/src/kernel/core/kernelconf.h,122,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32f4__
+sys/root/src/kernel/core/kernelconf.h,126,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_qemu_mps2_an386__
+sys/root/src/kernel/core/kernelconf.h,130,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM4_stm32wlxx__
+sys/root/src/kernel/core/kernelconf.h,134,puce,lepton,hors arch,__tauon_cpu_device__ == __tauon_cpu_device_cortexM7_at91samv71__
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,214,isa,tiers,hors arch,defined (__thumb__) && !defined (__thumb2__)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,377,isa,tiers,hors arch,((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__ == 1)) || (defined (__ARM_ARCH_7EM__ ) && (__ARM_ARCH_7EM__ == 1)) || (defined (__ARM_ARCH_8M_MAIN__ ) && (__AR
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,422,isa,tiers,hors arch,((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__ == 1)) || (defined (__ARM_ARCH_7EM__ ) && (__ARM_ARCH_7EM__ == 1)) || (defined (__ARM_ARCH_8M_MAIN__ ) && (__AR
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,551,isa,tiers,hors arch,((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__ == 1)) || (defined (__ARM_ARCH_7EM__ ) && (__ARM_ARCH_7EM__ == 1)) || (defined (__ARM_ARCH_8M_MAIN__ ) && (__AR
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,754,isa,tiers,hors arch,((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1)) )
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1253,isa,tiers,hors arch,((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__ == 1)) || (defined (__ARM_ARCH_7EM__ ) && (__ARM_ARCH_7EM__ == 1)) || (defined (__ARM_ARCH_8M_MAIN__ ) && (__AR
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1402,isa,tiers,hors arch,((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1)) )
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1416,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1438,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1461,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1482,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1503,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1526,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1549,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1570,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1590,coeur,tiers,hors arch,((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && (defined (__FPU_USED ) && (__FPU_USED == 1U)) )
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1616,coeur,tiers,hors arch,((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && (defined (__FPU_USED ) && (__FPU_USED == 1U)) )
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm0plus.h,84,coeur,tiers,hors arch,defined __ARM_FP
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm0plus.h,89,coeur,tiers,hors arch,defined (__VFP_FP__) && !defined(__SOFTFP__)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,78,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,89,coeur,tiers,hors arch,defined __ARM_FP
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,90,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,101,coeur,tiers,hors arch,defined (__VFP_FP__) && !defined(__SOFTFP__)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,102,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,114,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,126,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,138,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,150,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,187,coeur,tiers,hors arch,__FPU_PRESENT
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/arm_math.h,5918,coeur,tiers,hors arch,(__FPU_USED == 1) && defined ( __CC_ARM )
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_cm0.h,121,coeur,tiers,hors arch,defined (__VFP_FP__) && !defined(__SOFTFP__)
 sys/root/src/kernel/core/ucore/cmsis/CMSIS/Include/core_cm0.h,219,coeur,tiers,hors arch,(__CORTEX_M != 0x04)
@@ -62,4 +91,4 @@ tests/kal/arch/armv7m/kal_bench.c,273,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 
 tests/kal/arch/armv7m/kal_bench.c,515,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
 tests/kal/arch/armv7m/kal_bench.c,527,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
 tests/kal/arch/armv7m/kal_bench.c,544,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
-tests/kal/arch/armv7m/kal_bench.c,682,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,714,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)

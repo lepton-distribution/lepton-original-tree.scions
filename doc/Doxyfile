@@ -1,0 +1,24 @@
+# doc/Doxyfile — documentation Lepton (étape 6) : procédure de build et table cœurs × cartes ×
+# statut (doc/BUILDING.md, page principale), contrat de la KAL.
+# Usage, depuis la racine du clone, après `source scripts/lepton-env.sh` :
+#   doxygen doc/Doxyfile          → $LEPTON_BUILD/doc/html/index.html
+# Seuls les réglages différents des valeurs par défaut de Doxygen sont donnés.
+
+PROJECT_NAME           = Lepton
+PROJECT_BRIEF          = "RTOS embarqué POSIX — build GCC/CMake sous Linux"
+OUTPUT_DIRECTORY       = $(LEPTON_BUILD)/doc
+OUTPUT_LANGUAGE        = French
+INPUT                  = doc/BUILDING.md \
+                         $(LEPTON_TRUNK)/sys/root/src/kernel/core/kal.h \
+                         $(LEPTON_TRUNK)/sys/root/src/kernel/core/kal/contrat.h
+USE_MDFILE_AS_MAINPAGE = doc/BUILDING.md
+INPUT_ENCODING         = UTF-8
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+FULL_PATH_NAMES        = NO
+GENERATE_LATEX         = NO
+GENERATE_TREEVIEW      = YES
+HAVE_DOT               = NO
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO

@@ -21,3 +21,5 @@ target_link_options(lepton_options INTERFACE ${cpu_flags})
 target_compile_definitions(lepton_options INTERFACE __KERNEL_CPU_NAME="cortexm4")
 # Pile du thread noyau (core-segger/kernel.c, valeur IAR du cœur).
 target_compile_definitions(lepton_options INTERFACE __KERNEL_STACK_SIZE=4096)
+# Cœur pour le code qui en dépend (__tauon_cpu_core__ de kernelconf.h, backend FreeRTOS).
+target_compile_definitions(lepton_options INTERFACE __tauon_cpu_core__=__tauon_cpu_core_arm_cortexM4__)

@@ -1,0 +1,99 @@
+<?xml version='1.0'?>
+<!-- Machines QEMU MPS2 : socle mps2-an386 (Cortex-M4, étape 3 de la migration GCC/Linux) et
+     mps2-an500 (Cortex-M7, étape 6), même configuration : chaîne minimale,
+     console lsh sur UART CMSDK 0 (ttys0), second port UART1 (ttys1), Ethernet LAN9118 (eth0)
+     avec la pile lwIP (étape 3b).
+     Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
+
+<mklepton>
+<target name="cortexm_lepton">
+      <arch dest_path="generated" />
+</target>
+
+<kernel>
+      <target name="cortexm_lepton">
+         <arch include_absolute_path="sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h" />
+      </target>
+
+      <!-- cpu frequency in Hz (MPS2 : 25 MHz) -->
+      <target name="cortexm_lepton">
+         <cpu freq="25000000"/>
+      </target>
+
+      <heap size="10000" />
+      <process max="16" />
+      <openfiles max="32" />
+      <descriptors max="16" />
+
+      <target name="cortexm_lepton">
+         <cpufs size="128000" node="256" blocksz="256"/>
+      </target>
+
+      <env path="/usr;/usr/sbin;/usr/bin" />
+
+      <!-- pile IP (__KERNEL_NET_IPSTACK) : lwIP (USE_LWIP, user_kernel_mkconf.h) -->
+      <network use="on" />
+</kernel>
+
+<devices>
+   <!-- /dev/null -->
+   <dev name="dev_null_map"     use="on"/>
+   <!-- /dev/proc -->
+   <dev name="dev_proc_map"     use="on"/>
+   <!-- /dev/hd/hda -->
+   <dev name="dev_cpufs_map"    use="on"/>
+   <!-- /dev/head -->
+   <dev name="dev_head_map"     use="on"/>
+   <!-- /dev/pipe -->
+   <dev name="dev_pipe_map"     use="on"/>
+   <!-- /dev/net/socket lwip -->
+   <dev name="dev_lwip_core_socket_map"    use="on"/>
+   <!-- /dev/net/ip lwip ip stack -->
+   <dev name="dev_lwip_stack_map"   use="on"/>
+</devices>
+
+<target name="cortexm_lepton">
+   <devices>
+      <!-- /dev/ttys0 : UART CMSDK 0, console lsh -->
+      <dev name="dev_cmsdk_uart_0_map"    use="on"/>
+      <!-- /dev/ttys1 : UART CMSDK 1 -->
+      <dev name="dev_cmsdk_uart_1_map"    use="on"/>
+      <!-- /dev/eth0 : Ethernet LAN9118 -->
+      <dev name="dev_eth_lan9118_0_map"   use="on"/>
+   </devices>
+</target>
+
+<!-- /usr/sbin -->
+<binaries src_path="sbin" dest_path="sbin">
+   <bin name="initd"    stack="2048"    priority="100" timeslice="1" />
+   <bin name="lsh"      stack="2048"    priority="100" timeslice="1" />
+   <bin name="mount"    stack="2048"    priority="100" timeslice="1" />
+   <bin name="umount"   stack="2048"    priority="100" timeslice="1" />
+   <bin name="ls"       stack="2048"    priority="100" timeslice="1" />
+   <bin name="ps"       stack="2048"    priority="100" timeslice="1" />
+   <bin name="kill"     stack="2048"    priority="100" timeslice="1" />
+   <bin name="cat"      stack="2048"    priority="100" timeslice="1" />
+   <bin name="uname"    stack="2048"    priority="100" timeslice="1" />
+   <bin name="pwd"      stack="2048"    priority="100" timeslice="1" />
+   <bin name="echo"     stack="2048"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/sbin/net ; tsterrno : test du palier reseau, errno d'un connect() refuse
+     (tests/net_qemu.py) ; place ici et non dans /usr/bin/net, repertoire cree sans /usr/bin
+     (defaut du rootfs, MIGRATION-STATUS) -->
+<binaries src_path="sbin/net" dest_path="sbin/net">
+   <bin name="ifconfig" stack="4096"    priority="100" timeslice="1" />
+   <bin name="tsterrno" stack="2048"    priority="100" timeslice="1" />
+</binaries>
+
+<!-- /usr/bin/net -->
+<binaries src_path="bin/net" dest_path="bin/net">
+   <bin name="ftpd"     stack="8192"    priority="100" timeslice="1" />
+</binaries>
+
+<files>
+   <file name=".boot"   src_file="sys/user/tauon-basic/etc/qemu-mps2/.boot"   dest_path="etc" />
+   <file name=".init"   src_file="sys/user/tauon-basic/etc/qemu-mps2/.init"   dest_path="etc" />
+</files>
+
+</mklepton>

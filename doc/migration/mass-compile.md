@@ -1,26 +1,26 @@
 # Compilation de masse du périmètre actif — tableau de bord
 
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
-Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv`
+Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv --audit-csv doc/migration/audit-iar.csv`
 
-Résultat : **373/373 fichiers C OK (100.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
+Résultat : **386/386 fichiers C OK (100.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
 Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : `mass-compile.csv`.
 
 ## Par module
 
-| Module | OK / total |
-|---|---|
-| kernel/core | 58 / 58 |
-| kernel/dev | 162 / 162 |
-| kernel/fs | 26 / 26 |
-| kernel/net | 38 / 38 |
-| lib | 28 / 28 |
-| sbin | 36 / 36 |
-| bin | 8 / 8 |
-| tauon-basic | 9 / 9 |
-| tools/mklepton | 1 / 1 |
-| tests | 7 / 7 |
+| Module | OK / total | IAR-ismes (Lepton) | IAR-ismes (tiers) |
+|---|---|---:|---:|
+| kernel/core | 61 / 61 | 0 | 85 |
+| kernel/dev | 172 / 172 | 0 | 37 |
+| kernel/fs | 26 / 26 | 0 | 2 |
+| kernel/net | 38 / 38 | 0 | 0 |
+| lib | 28 / 28 | 0 | 0 |
+| sbin | 36 / 36 | 0 | 0 |
+| bin | 8 / 8 | 0 | 0 |
+| tauon-basic | 9 / 9 | 0 | 0 |
+| tools/mklepton | 1 / 1 | 0 | 0 |
+| tests | 7 / 7 | 0 | 0 |
 
 ## Histogramme des erreurs (première erreur de chaque fichier)
 

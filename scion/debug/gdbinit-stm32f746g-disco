@@ -1,0 +1,6 @@
+# gdb-multiarch — STM32F746G-DISCO (étape 6). Procédure : doc/migration/debug-gcc.md.
+#   terminal 1 : openocd -f debug/openocd-stm32f746g-disco.cfg
+#   terminal 2 : gdb-multiarch -x debug/gdbinit-stm32f746g-disco $LEPTON_BUILD/stm32f746g-disco-embos/lepton.elf
+# Commandes Cortex-M communes (lepton-load, lepton-fault, lepton-stacks) : celles de la NUCLEO,
+# sans rien de propre à la carte. État des horloges : stm32f746g_disco_clock_error (0 : correct).
+source debug/gdbinit-nucleo-f439zi

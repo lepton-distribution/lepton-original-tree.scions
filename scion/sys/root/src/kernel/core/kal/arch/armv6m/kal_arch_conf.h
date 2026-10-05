@@ -26,8 +26,8 @@ either the MPL or the [eCos GPL] License."
 //Configuration du noyau dépendant de l'ISA : ARMv6-M (Cortex-M0/M0+).
 //Inclus par kernel/core/kernelconf.h (chemin d'inclusion LEPTON_KAL_ARCH_DIR) ; valeurs reprises
 //des branches __tauon_cpu_core__ de kernelconf.h (KAL-2, 2026-10-01).
-//HYPOTHÈSE À VALIDER : valeurs M0 de la configuration IAR, jamais compilées sous GCC ; non
-//compilé avant l'étape 6 (kal/arch/armv6m/kal_arch.h à créer, aucun preset armv6m).
+//Valeurs M0 de la configuration IAR, validées sous GCC à l'étape 6 (SAMD21 Xplained Pro : fumée,
+//banc KAL) ; BUFSIZ réduit par la carte (user_kernel_mkconf.h).
 #ifndef _KAL_ARCH_ARMV6M_CONF_H
 #define _KAL_ARCH_ARMV6M_CONF_H
 

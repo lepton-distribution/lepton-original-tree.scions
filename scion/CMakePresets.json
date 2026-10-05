@@ -68,6 +68,52 @@
         "LEPTON_BOARD": "nucleo-f439zi",
         "LEPTON_KAL_BACKEND": "embos"
       }
+    },
+    {
+      "name": "qemu-mps2-an500-embos",
+      "displayName": "QEMU mps2-an500 (Cortex-M7, hard-float double précision), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m7",
+        "LEPTON_BOARD": "qemu-mps2-an500",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "stm32f746g-disco-embos",
+      "displayName": "STM32F746G-DISCO (Cortex-M7 r0p1, FPU simple précision), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m7",
+        "LEPTON_M7_FPU": "sp",
+        "LEPTON_BOARD": "stm32f746g-disco",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "samd21-xplained-pro-embos",
+      "displayName": "SAMD21 Xplained Pro (Cortex-M0+, ATSAMD21J18A), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv6m",
+        "LEPTON_CPU": "cortex-m0plus",
+        "LEPTON_BOARD": "samd21-xplained-pro",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "nucleo-wl55jc1-embos",
+      "displayName": "NUCLEO-WL55JC1 (Cortex-M4 sans FPU, STM32WL55JC), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m4f",
+        "LEPTON_FLOAT_ABI": "soft",
+        "LEPTON_BOARD": "nucleo-wl55jc1",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
     }
   ],
   "buildPresets": [
@@ -86,6 +132,22 @@
     {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos"
+    },
+    {
+      "name": "qemu-mps2-an500-embos",
+      "configurePreset": "qemu-mps2-an500-embos"
+    },
+    {
+      "name": "stm32f746g-disco-embos",
+      "configurePreset": "stm32f746g-disco-embos"
+    },
+    {
+      "name": "samd21-xplained-pro-embos",
+      "configurePreset": "samd21-xplained-pro-embos"
+    },
+    {
+      "name": "nucleo-wl55jc1-embos",
+      "configurePreset": "nucleo-wl55jc1-embos"
     }
   ],
   "testPresets": [
@@ -113,6 +175,34 @@
     {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "qemu-mps2-an500-embos",
+      "configurePreset": "qemu-mps2-an500-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "stm32f746g-disco-embos",
+      "configurePreset": "stm32f746g-disco-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "samd21-xplained-pro-embos",
+      "configurePreset": "samd21-xplained-pro-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "nucleo-wl55jc1-embos",
+      "configurePreset": "nucleo-wl55jc1-embos",
       "output": {
         "outputOnFailure": true
       }

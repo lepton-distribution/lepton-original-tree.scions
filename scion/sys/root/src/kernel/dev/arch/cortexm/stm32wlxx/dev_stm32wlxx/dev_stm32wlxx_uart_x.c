@@ -124,9 +124,12 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
       }
    }
   
-   //
-   p_board_stm32wlxx_uart_info->rx_index_w=Size;
-   
+   // Size = position de fin des données dans le tampon circulaire ; Size == taille (fin de
+   // transfert DMA) : retour au début (étape 6 : index laissé à la taille, le lecteur revenu à 0
+   // relisait tout le tampon)
+   p_board_stm32wlxx_uart_info->rx_index_w =
+      (Size >= p_board_stm32wlxx_uart_info->rx_buffer_sz) ? 0 : Size;
+
    //
    __hw_leave_interrupt();
 }
@@ -499,7 +502,8 @@ int dev_stm32wlxx_uart_x_read(desc_t desc, char* buf,int size){
       r = ((r+size)==sz)? 0 : r+size;
    }else{
       memcpy(buf,p_ring_buffer+r,sz-r);
-      memcpy(buf+(sz-r),p_ring_buffer+(sz-r),size-(sz-r));
+      // suite au début du tampon (étape 6 : copiée depuis p_ring_buffer+(sz-r))
+      memcpy(buf+(sz-r),p_ring_buffer,size-(sz-r));
       r=size-(sz-r);
    }
    //
