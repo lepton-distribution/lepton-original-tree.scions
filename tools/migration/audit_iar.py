@@ -165,7 +165,7 @@ REGLES_HEURISTIQUES = [
 REGLES_COMPILEES = [(re.compile(p, re.I), e, j) for p, e, j in REGLES_HEURISTIQUES]
 
 ORIGINE_TIERS = re.compile(
-    r"(^|/)(ucore|cubemx_hal_driver|cmsis|cmsis-5|CMSIS|driverlib|at91lib|asf|softpack-lib|"
+    r"(^|/)(ucore|cubemx_hal_driver|hal_driver|cmsis|cmsis-5|CMSIS|driverlib|at91lib|asf|softpack-lib|"
     r"lwip|uip|uip2\.5|fatfs/core|yaffs|mongoose|stm32f4-usb-core|lib-nxpnfc|WpdPack\w*|ecos|"
     r"install|nanox)(/|$)", re.I)
 RE_GENERE = re.compile(r"(^|/)((bin|dev|kernel|fs)_mkconf\.[ch]|dev_dskimg\.[ch])$")

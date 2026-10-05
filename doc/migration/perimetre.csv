@@ -559,6 +559,9 @@ src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/iar/startup_sam.c,hors-
 src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/iar/startup_samv71.c,différé,"déclaré par tauon-basic_at91samv71_7.80/Debug (Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30))",287,1
 src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/system_sam.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",148,0
 src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/system_samv71.c,différé,"déclaré par tauon-basic_at91samv71_7.80/Debug (Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30))",163,1
+src/kernel/core/ucore/cmsis-5/Device/ST/STM32F7xx/Include/stm32f746xx.h,actif,"étape 6 : CMSIS Device STM32F7 (tiers, STM32CubeF7 v1.17.4)",15727,0
+src/kernel/core/ucore/cmsis-5/Device/ST/STM32F7xx/Include/stm32f7xx.h,actif,"étape 6 : CMSIS Device STM32F7 (tiers, STM32CubeF7 v1.17.4)",127,0
+src/kernel/core/ucore/cmsis-5/Device/ST/STM32F7xx/Include/system_stm32f7xx.h,actif,"étape 6 : CMSIS Device STM32F7 (tiers, STM32CubeF7 v1.17.4)",14,0
 src/kernel/core/ucore/cmsis/CMSIS/Include/arm_common_tables.h,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),50,8
 src/kernel/core/ucore/cmsis/CMSIS/Include/arm_const_structs.h,actif,rattaché par répertoire (src/kernel/core/ucore/cmsis/CMSIS/Include),14,0
 src/kernel/core/ucore/cmsis/CMSIS/Include/arm_math.h,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),2864,8
@@ -2390,6 +2393,202 @@ src/kernel/dev/arch/cortexm/stm32f4xx/stm32f4x7_eth_conf.h,actif,déclaré par d
 src/kernel/dev/arch/cortexm/stm32f4xx/types.h,actif,déclaré par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),27,7
 src/kernel/dev/arch/cortexm/stm32f4xx/uart.c,actif,déclaré par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),312,3
 src/kernel/dev/arch/cortexm/stm32f4xx/uart.h,actif,déclaré par dev_stm32f4xx_7.20/Debug (pilotes STM32F4 (config. liée par les applications F4)),56,7
+src/kernel/dev/arch/cortexm/stm32f7xx/dev_stm32f7xx/dev_stm32f7xx_uart_x.c,actif,étape 6 : pilotes STM32F7 de Lepton,126,0
+src/kernel/dev/arch/cortexm/stm32f7xx/dev_stm32f7xx/dev_stm32f7xx_uart_x.h,actif,étape 6 : pilotes STM32F7 de Lepton,26,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/Legacy/stm32_hal_legacy.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",3349,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/Legacy/stm32f7xx_hal_can_legacy.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",253,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/Legacy/stm32f7xx_hal_eth_legacy.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",835,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32_assert_template.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",15,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",115,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_adc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",387,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_adc_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",122,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_can.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",356,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_cec.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",222,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_conf_template.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",315,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_cortex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",184,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_crc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",78,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_crc_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",28,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_cryp.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",254,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_cryp_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",18,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dac.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",154,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dac_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",82,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dcmi.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",225,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dcmi_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",3,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_def.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",115,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dfsdm.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",405,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dma.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",272,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dma2d.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",239,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dma_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",67,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_dsi.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",583,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_eth.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",807,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_exti.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",135,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_flash.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",112,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_flash_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",320,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_gpio.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",110,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_gpio_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",408,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_hash.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",227,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_hash_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",64,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_hcd.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",134,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_i2c.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",326,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_i2c_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",87,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_i2s.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",207,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_irda.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",264,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_irda_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",231,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_iwdg.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",48,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_jpeg.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",199,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_lptim.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",272,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_ltdc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",255,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_ltdc_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",15,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_mdios.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",188,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_mmc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",244,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_nand.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",147,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_nor.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",122,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_pcd.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",223,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_pcd_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",20,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_pwr.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",100,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_pwr_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",82,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_qspi.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",304,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_rcc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",407,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_rcc_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",2204,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_rng.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",107,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_rtc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",339,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_rtc_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",301,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_sai.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",337,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_sai_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",3,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_sd.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",254,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_sdram.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",98,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_smartcard.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",391,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_smartcard_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",102,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_smbus.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",299,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_spdifrx.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",211,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_spi.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",302,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_spi_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",11,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_sram.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",90,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_tim.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",1109,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_tim_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",121,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_uart.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",517,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_uart_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",265,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_usart.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",340,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_usart_ex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",56,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_hal_wwdg.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",72,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_adc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",1070,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_bus.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",323,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_cortex.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",191,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_crc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",111,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_dac.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",325,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_dma.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",748,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_dma2d.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",606,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_exti.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",166,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_fmc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",369,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_gpio.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",189,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_i2c.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",666,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_iwdg.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",84,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_lptim.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",384,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_pwr.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",322,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_rcc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",1234,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_rng.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",79,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_rtc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",1095,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_sdmmc.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",401,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_spi.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",669,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_system.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",295,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_tim.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",1372,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_usart.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",1145,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_usb.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",286,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_utils.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",70,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Inc/stm32f7xx_ll_wwdg.h,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",67,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/Legacy/stm32f7xx_hal_can.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",939,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/Legacy/stm32f7xx_hal_eth.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1018,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",191,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_adc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",866,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_adc_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",459,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_can.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1149,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_cec.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",409,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_cortex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",134,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_crc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",184,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_crc_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",67,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_cryp.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",4252,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_cryp_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",387,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dac.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",515,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dac_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",149,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dcmi.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",522,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dcmi_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dfsdm.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1790,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dma.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",632,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dma2d.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",912,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dma_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",94,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_dsi.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1577,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_eth.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1627,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_exti.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",210,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_flash.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",323,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_flash_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",456,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_gpio.c,actif,"étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)",186,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_hash.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1501,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_hash_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",183,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_hcd.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1206,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_i2c.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",4074,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_i2c_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",62,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_i2s.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",884,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_irda.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1316,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_iwdg.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",47,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_jpeg.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",2285,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_lptim.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1022,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_ltdc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",807,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_ltdc_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",39,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_mdios.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",320,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_mmc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1837,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_msp_template.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",13,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_nand.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1295,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_nor.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",961,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_pcd.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1269,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_pcd_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",59,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_pwr.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",145,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_pwr_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",187,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_qspi.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1464,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_rcc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",596,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_rcc_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",905,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_rng.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",339,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_rtc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",872,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_rtc_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",861,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_sai.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1373,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_sai_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_sd.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1887,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_sdram.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",600,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_smartcard.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1365,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_smartcard_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",44,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_smbus.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1379,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_spdifrx.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",745,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_spi.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",2640,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_spi_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",20,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_sram.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",465,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_tim.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",4082,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_tim_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1193,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_timebase_rtc_alarm_template.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",141,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_timebase_rtc_wakeup_template.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",112,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_timebase_tim_template.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",64,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_uart.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1997,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_uart_ex.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",273,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_usart.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1589,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_wwdg.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",103,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_adc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",478,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_crc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",26,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_dac.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",130,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_dma.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",222,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_dma2d.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",366,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_exti.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",94,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_fmc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",447,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_gpio.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",171,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_i2c.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",88,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_lptim.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",135,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_pwr.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",13,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_rcc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",985,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_rng.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",26,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_rtc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",472,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_sdmmc.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",720,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_spi.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",260,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_tim.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",717,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_usart.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",209,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_usb.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",1507,0
+src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_ll_utils.c,hors-projet,"étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)",401,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/Fonts/font12.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",1149,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/Fonts/font16.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",1529,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/Fonts/font20.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",1909,0
@@ -2745,6 +2944,9 @@ src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469
 src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_spi_1.c,différé,déclaré par bsp-stm32f469i-eval/Release (génération ancienne ou configuration Release (squelette)),52,1
 src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_spi_2.c,différé,déclaré par bsp-stm32f469i-eval/Release (génération ancienne ou configuration Release (squelette)),52,1
 src/kernel/dev/bsp/stm32f469i-eval/dev_stm32f469i_eval_peripherals/dev_stm32f469i_eval_usart_1.c,actif,déclaré par bsp-stm32f469i-eval/Debug (BSP STM32F4),63,1
+src/kernel/dev/bsp/stm32f746g_disco/stm32f746g_disco.h,actif,étape 6 : BSP de la carte STM32F746G-DISCO,15,0
+src/kernel/dev/bsp/stm32f746g_disco/stm32f746g_disco_board.c,actif,étape 6 : BSP de la carte STM32F746G-DISCO,106,0
+src/kernel/dev/bsp/stm32f746g_disco/stm32f7xx_hal_conf.h,actif,étape 6 : BSP de la carte STM32F746G-DISCO,273,0
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_board/dev_stm32wl55jci_nucleo_board.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",135,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_board/dev_stm32wl55jci_nucleo_board.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",18,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_peripherals/dev_stm32wl55jci_nucleo_usart_2.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",93,2
@@ -3878,6 +4080,7 @@ sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf
 sys/user/tauon-basic/src/arch/st-stm32f407-discovery/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",26,0
 sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",309,0
 sys/user/tauon-basic/src/arch/st-stm32wl55jci-nucleo/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",29,0
+sys/user/tauon-basic/src/arch/stm32f746g-disco/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration de la carte STM32F746G-DISCO,12,0
 sys/user/tauon-basic/src/arch/win32/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",7,0
 sys/user/tauon-basic/src/bin/dhrystone/dhry.h,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),47,4
 sys/user/tauon-basic/src/bin/dhrystone/dhry21a.c,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),255,4

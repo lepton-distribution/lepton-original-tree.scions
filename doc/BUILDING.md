@@ -1,4 +1,4 @@
-# Construire Lepton (GCC, Linux) et flasher la NUCLEO-F439ZI
+# Construire Lepton (GCC, Linux) et flasher les cartes (NUCLEO-F439ZI, STM32F746G-DISCO)
 
 Procédure de bout en bout sur un hôte Debian 13 x86_64 : arbre des sources, build, tests sous
 QEMU, flash et test sur la carte de base. Versions épinglées : `doc/migration/MIGRATION-STATUS.md`.
@@ -48,8 +48,10 @@ cmake --preset qemu-mps2-an386-embos && cmake --build --preset qemu-mps2-an386-e
 ctest --preset qemu-mps2-an386-embos -L smoke     # démarrage → lsh → uname -a
 ```
 
-Non-régression complète (hôte, QEMU hard et soft-float, réseau, banc KAL) : `ci/run.sh` depuis
-le clone.
+Cortex-M7 sous QEMU : preset `qemu-mps2-an500-embos` (mêmes commandes).
+
+Non-régression complète (hôte, QEMU M4F hard et soft-float, QEMU M7, réseau, banc KAL) :
+`ci/run.sh` depuis le clone.
 
 ## 4. Carte NUCLEO-F439ZI (validée sur NUCLEO-F429ZI)
 
@@ -85,3 +87,20 @@ Optimisation : `-Os` pour toutes les cibles Cortex-M (`LEPTON_OPT_LEVEL`, `-g` c
 `-DLEPTON_OPT_LEVEL=-O0` pour un débogage pas à pas fidèle au source.
 
 Débogage (gdb, OpenOCD, registres de faute) : `doc/migration/debug-gcc.md`.
+
+## 5. Carte STM32F746G-DISCO (étape 6)
+
+Brancher la carte par le connecteur USB du ST-LINK (CN14). Console de Lepton : USART1,
+115200 8N1, sur le port série virtuel (`/dev/ttyACM0`). Mêmes commandes que la NUCLEO avec le
+preset `stm32f746g-disco-embos` (Cortex-M7 r0p1, FPU simple précision, embOS `_837070`) :
+
+```bash
+cd "$LEPTON_TRUNK"
+cmake --preset stm32f746g-disco-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/ttyACM0
+cmake --build --preset stm32f746g-disco-embos
+cmake --build --preset stm32f746g-disco-embos --target flash
+ctest --preset stm32f746g-disco-embos -L board      # fumée + banc KAL ; reflasher ensuite
+```
+
+Débogage : `debug/openocd-stm32f746g-disco.cfg`, `debug/gdbinit-stm32f746g-disco`. Réseau :
+pas encore (session suivante de l'étape 6).

@@ -65,7 +65,7 @@ MKCONF_P407 = "sys/user/tauon-basic/etc/mkconf_tauon_basic_lwip_stm32f4-olimex-p
 STM32F4 = {
     "base": "qemu-mps2-an386-embos",
     "mkconf": MKCONF_P407,
-    "retire": [r"-D__tauon_cpu_device__=\S+", r"-I\S*/bsp/qemu_mps2_an386",
+    "retire": [r"-D__tauon_cpu_device__=\S+", r"-I\S*/bsp/qemu_mps2(_an386|/an386)",
                r"-I\S*/generated/board"],
     "ajoute": ["-D__tauon_cpu_device__=__tauon_cpu_device_cortexM4_stm32f4__",
                "-DUSE_STDPERIPH_DRIVER", "-DSTM32F429xx",
@@ -75,6 +75,7 @@ STM32F4 = {
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/driverlib",
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx"],
 }
+STM32F746G_DISCO = {"base": "stm32f746g-disco-embos", "retire": [], "ajoute": []}
 UIP = {"base": "qemu-mps2-an386-embos", "retire": [],
        "ajoute": ["-I@/sys/root/src/kernel/net/uip/core"]}
 PROFILS = {
@@ -99,6 +100,10 @@ PROFILS = {
     # pile uIP (contiki) : chemins d'inclusion de uip/core (projets IAR : uip/core et uip2.5)
     "sys/root/src/kernel/core/net/uip_core/": UIP,
     "sys/root/src/kernel/dev/arch/all/ppp/dev_ppp_uip/": UIP,
+    # famille STM32F7 et carte STM32F746G-DISCO (étape 6) : commandes exactes du preset de la carte
+    # (puce, HAL, FPU simple précision, erratum 837070) ; pas de gabarit corrigé
+    "sys/root/src/kernel/dev/arch/cortexm/stm32f7xx/": STM32F746G_DISCO,
+    "sys/root/src/kernel/dev/bsp/stm32f746g_disco/": STM32F746G_DISCO,
     "tools/": {"base": "host", "retire": [], "ajoute": []},
     "sys/root/src/kernel/core/arch/host/": {"base": "host", "retire": [], "ajoute": []},
     # noyau statique hôte et ses tests (étape 2) : preset host, jamais le gabarit ARM
@@ -208,8 +213,8 @@ def commande(rel, dbs, trunk, objdir, mkconfs=None):
     obj = os.path.join(objdir, rel + ".o")
     if rel in dbs["qemu-mps2-an386-embos"] and prof is PROFILS[""]:
         ent, origine = dbs["qemu-mps2-an386-embos"][rel], "preset qemu"
-    elif rel in dbs["host"] and prof["base"] == "host":
-        ent, origine = dbs["host"][rel], "preset host"
+    elif rel in dbs[prof["base"]] and not prof["retire"] and not prof["ajoute"]:
+        ent, origine = dbs[prof["base"]][rel], "preset " + prof["base"]
     else:
         db = dbs[prof["base"]]
         ent, origine = db[plus_proche(rel, db)], "gabarit " + prof["base"]
@@ -279,7 +284,8 @@ def main():
     trunk = env("LEPTON_TRUNK", os.path.join(CLONE, "../../../../trunk"))
     build = env("LEPTON_BUILD", os.path.join(trunk, "../build"))
     objdir = os.path.join(build, "mass-compile")
-    dbs = {p: charger_db(build, p, trunk) for p in ("qemu-mps2-an386-embos", "host")}
+    presets = sorted({"qemu-mps2-an386-embos", "host"} | {p["base"] for p in PROFILS.values()})
+    dbs = {p: charger_db(build, p, trunk) for p in presets}
 
     files = actifs(a.perimetre)
     if a.only:
