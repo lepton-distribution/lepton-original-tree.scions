@@ -74,11 +74,7 @@ extern "C" {
 /**
   * @brief Memory placement macro
   */
-#if defined(__CC_ARM)
-#define UTIL_PLACE_IN_SECTION( __x__ )  __attribute__((section (__x__), zero_init))
-#else  /* __GNUC__ */
 #define UTIL_PLACE_IN_SECTION( __x__ )  __attribute__((section (__x__)))
-#endif /* __CC_ARM | __ICCARM__ | __GNUC__ */
 
 /**
   * @brief Memory alignment macro
