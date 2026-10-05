@@ -86,7 +86,11 @@ extern "C" {
   * @brief Memory alignment macro
   */
 #undef ALIGN
+#ifdef WIN32
+#define ALIGN(n)
+#else
 #define ALIGN(n)             __attribute__((aligned(n)))
+#endif /* WIN32 */
 
 /**
   * @brief macro used to initialize the critical section
