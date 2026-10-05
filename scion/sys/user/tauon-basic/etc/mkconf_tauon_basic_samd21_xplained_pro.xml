@@ -1,0 +1,77 @@
+<?xml version='1.0'?>
+<!-- Carte SAMD21 Xplained Pro (Cortex-M0+, ATSAMD21J18A, 256 Ko de flash, 32 Ko de RAM), etape 6
+     de la migration GCC/Linux : chaine minimale sans reseau (decision 2026-10-05) ; console lsh
+     sur SERCOM3 (ttys3, port serie virtuel de l'EDBG). Limites reprises de l'ancienne
+     configuration SAMD20 (tauon_sampleapp/etc/mkconf_tauon_sampleapp_at91samd20.xml) ; piles
+     mesurees au palier 8 (lepton-stacks).
+     Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
+
+<mklepton>
+<target name="cortexm_lepton">
+      <arch dest_path="generated" />
+</target>
+
+<kernel>
+      <target name="cortexm_lepton">
+         <arch include_absolute_path="sys/user/tauon-basic/src/arch/samd21-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h" />
+      </target>
+
+      <!-- cpu frequency in Hz (DFLL48M, BSP samd21_xplained_pro) -->
+      <target name="cortexm_lepton">
+         <cpu freq="48000000"/>
+      </target>
+
+      <heap size="4000" />
+      <process max="4" />
+      <openfiles max="12" />
+      <descriptors max="8" />
+
+      <!-- rootfs en flash (filecpu_memory, const) -->
+      <target name="cortexm_lepton">
+         <cpufs size="3072" node="64" blocksz="64"/>
+      </target>
+
+      <env path="/usr;/usr/sbin;/usr/bin" />
+
+      <network use="off" />
+</kernel>
+
+<devices>
+   <!-- /dev/null -->
+   <dev name="dev_null_map"     use="on"/>
+   <!-- /dev/proc -->
+   <dev name="dev_proc_map"     use="on"/>
+   <!-- /dev/hd/hda -->
+   <dev name="dev_cpufs_map"    use="on"/>
+   <!-- /dev/head -->
+   <dev name="dev_head_map"     use="on"/>
+   <!-- /dev/pipe -->
+   <dev name="dev_pipe_map"     use="on"/>
+</devices>
+
+<target name="cortexm_lepton">
+   <devices>
+      <!-- /dev/ttys3 : SERCOM3, console lsh -->
+      <dev name="dev_samd21_xplained_pro_uart_3_map"  use="on"/>
+   </devices>
+</target>
+
+<!-- /usr/sbin -->
+<binaries src_path="sbin" dest_path="sbin">
+   <bin name="initd"    stack="1536"    priority="100" timeslice="1" />
+   <bin name="lsh"      stack="1536"    priority="100" timeslice="1" />
+   <bin name="ls"       stack="1536"    priority="100" timeslice="1" />
+   <bin name="ps"       stack="1536"    priority="100" timeslice="1" />
+   <bin name="kill"     stack="1280"    priority="100" timeslice="1" />
+   <bin name="cat"      stack="1280"    priority="100" timeslice="1" />
+   <bin name="uname"    stack="1280"    priority="100" timeslice="1" />
+   <bin name="pwd"      stack="1280"    priority="100" timeslice="1" />
+   <bin name="echo"     stack="1280"    priority="100" timeslice="1" />
+</binaries>
+
+<files>
+   <file name=".boot"   src_file="sys/user/tauon-basic/etc/samd21-xplained-pro/.boot"   dest_path="etc" />
+   <file name=".init"   src_file="sys/user/tauon-basic/etc/samd21-xplained-pro/.init"   dest_path="etc" />
+</files>
+
+</mklepton>

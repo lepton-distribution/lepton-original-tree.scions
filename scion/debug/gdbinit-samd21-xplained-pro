@@ -1,0 +1,15 @@
+# gdb-multiarch — SAMD21 Xplained Pro (étape 6). Procédure : doc/migration/debug-gcc.md.
+#   terminal 1 : openocd -f debug/openocd-samd21-xplained-pro.cfg
+#   terminal 2 : gdb-multiarch -x debug/gdbinit-samd21-xplained-pro $LEPTON_BUILD/samd21-xplained-pro-embos/lepton.elf
+# Commandes Cortex-M communes (lepton-load, lepton-stacks) : celles de la NUCLEO. lepton-fault y
+# lit les registres de faute ARMv7-M, absents en ARMv6-M : utiliser lepton-fault-v6m. État des
+# horloges : samd21_xplained_pro_clock_error (0 : correct).
+source debug/gdbinit-nucleo-f439zi
+
+define lepton-fault-v6m
+  printf "ICSR  = 0x%08x (VECTACTIVE [8:0])\n", *(unsigned int*)0xE000ED04
+  info registers pc lr sp xPSR msp psp
+end
+document lepton-fault-v6m
+ARMv6-M : pas de CFSR/HFSR ; exception active (ICSR) et registres, cadre à lire sur la pile.
+end

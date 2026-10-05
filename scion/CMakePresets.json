@@ -91,6 +91,17 @@
         "LEPTON_BOARD": "stm32f746g-disco",
         "LEPTON_KAL_BACKEND": "embos"
       }
+    },
+    {
+      "name": "samd21-xplained-pro-embos",
+      "displayName": "SAMD21 Xplained Pro (Cortex-M0+, ATSAMD21J18A), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv6m",
+        "LEPTON_CPU": "cortex-m0plus",
+        "LEPTON_BOARD": "samd21-xplained-pro",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
     }
   ],
   "buildPresets": [
@@ -117,6 +128,10 @@
     {
       "name": "stm32f746g-disco-embos",
       "configurePreset": "stm32f746g-disco-embos"
+    },
+    {
+      "name": "samd21-xplained-pro-embos",
+      "configurePreset": "samd21-xplained-pro-embos"
     }
   ],
   "testPresets": [
@@ -158,6 +173,13 @@
     {
       "name": "stm32f746g-disco-embos",
       "configurePreset": "stm32f746g-disco-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "samd21-xplained-pro-embos",
+      "configurePreset": "samd21-xplained-pro-embos",
       "output": {
         "outputOnFailure": true
       }
