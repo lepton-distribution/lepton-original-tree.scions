@@ -127,6 +127,27 @@ for _src in ("eth", "rcc", "cortex"):
     RECLASSEMENTS["src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_%s.c" % _src] = (
         "actif", "étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)")
 
+# NUCLEO-WL55JC1 (étape 6, session 1) : fichiers du portage IAR (différés) désormais compilés, et
+# fichiers nouveaux de la carte ; radio (SubGHz_Phy, Utilities), pilote cpu0 et reste de la HAL :
+# différés inchangés. Règles par chemin : reclassement des lignes existantes et ajout des nouvelles.
+_WL = "src/kernel/dev/arch/cortexm/stm32wlxx/"
+WL55 = [
+    (r"^%scubemx_hal_driver/(inc/|src/stm32wlxx_hal(_(cortex|gpio|rcc|rcc_ex|pwr|pwr_ex|dma|"
+     r"dma_ex|uart|uart_ex))?\.c$)" % _WL, "actif",
+     "étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)"),
+    (r"^%sdev_stm32wlxx/(dev_stm32wlxx_(uart_x\.[ch]|definitions\.h|hal_tick\.c)|"
+     r"stm32wlxx_hal_conf\.h)$" % _WL, "actif", "étape 6 : pilotes STM32WL de Lepton"),
+    (r"^src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/(stm32wl55xx|stm32wlxx|system_stm32wlxx)\.h$",
+     "actif", "étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)"),
+    (r"^src/kernel/dev/bsp/stm32wl55jci_nucleo/(stm32wl55jci_nucleo(_system\.c|\.h)|"
+     r"dev_stm32wl55jci_nucleo_peripherals/)", "actif",
+     "étape 6 : BSP de la carte NUCLEO-WL55JC1"),
+    (r"^sys/user/tauon-basic/src/arch/nucleo-wl55jc1/", "actif",
+     "étape 6 : configuration de la carte NUCLEO-WL55JC1"),
+]
+WL55 = [(re.compile(rx), e, j) for rx, e, j in WL55]
+REGLES = WL55 + REGLES
+
 DEBUT_MD = "<!-- perimetre_complement.py : début -->"
 FIN_MD = "<!-- perimetre_complement.py : fin -->"
 
@@ -199,6 +220,10 @@ def main():
         if p in RECLASSEMENTS and (row["ensemble"], row["justification"]) != RECLASSEMENTS[p]:
             row["ensemble"], row["justification"] = RECLASSEMENTS[p]
             reclasses += 1
+        for rx, e, j in WL55:
+            if rx.search(p) and (row["ensemble"], row["justification"]) != (e, j):
+                row["ensemble"], row["justification"] = e, j
+                reclasses += 1
         (garde if p in present else retires).append(row)
     connus = {r["fichier"] for r in garde}
     nouveaux = sorted(present - connus)

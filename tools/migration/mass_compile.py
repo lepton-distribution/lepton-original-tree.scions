@@ -77,6 +77,7 @@ STM32F4 = {
 }
 STM32F746G_DISCO = {"base": "stm32f746g-disco-embos", "retire": [], "ajoute": []}
 SAMD21_XPLAINED_PRO = {"base": "samd21-xplained-pro-embos", "retire": [], "ajoute": []}
+NUCLEO_WL55JC1 = {"base": "nucleo-wl55jc1-embos", "retire": [], "ajoute": []}
 UIP = {"base": "qemu-mps2-an386-embos", "retire": [],
        "ajoute": ["-I@/sys/root/src/kernel/net/uip/core"]}
 PROFILS = {
@@ -113,6 +114,10 @@ PROFILS = {
     "sys/root/src/kernel/core/core-segger/arch/armv6m/": SAMD21_XPLAINED_PRO,
     "sys/root/src/kernel/core/kal/arch/armv6m/": SAMD21_XPLAINED_PRO,
     "tests/kal/arch/armv6m/": SAMD21_XPLAINED_PRO,
+    # famille STM32WL et carte NUCLEO-WL55JC1 (étape 6) : commandes exactes du preset de la carte
+    # (puce STM32WL55xx, CORE_CM4, HAL STM32CubeWL, Cortex-M4 sans FPU)
+    "sys/root/src/kernel/dev/arch/cortexm/stm32wlxx/": NUCLEO_WL55JC1,
+    "sys/root/src/kernel/dev/bsp/stm32wl55jci_nucleo/": NUCLEO_WL55JC1,
     "tools/": {"base": "host", "retire": [], "ajoute": []},
     "sys/root/src/kernel/core/arch/host/": {"base": "host", "retire": [], "ajoute": []},
     # noyau statique hôte et ses tests (étape 2) : preset host, jamais le gabarit ARM

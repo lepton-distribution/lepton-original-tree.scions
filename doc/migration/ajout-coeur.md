@@ -79,6 +79,16 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    Variante de bibliothèque du micro-noyau propre à la puce : `LEPTON_EMBOS_LIB_VARIANT`
    (ex. `_837070`, Cortex-M7 r0p1, avec `USE_ERRATUM_837070=1`). Paquet constructeur (HAL,
    CMSIS Device) : code tiers non modifié, configuration (`*_hal_conf.h`) dans le BSP.
+   Puce dont le cœur n'a pas de FPU alors que l'axe cœur en prévoit une (Cortex-M4 du
+   STM32WL55) : pas de fichier cœur nouveau, la carte impose l'ABI sans FPU
+   (`LEPTON_CPU=cortex-m4f` et `LEPTON_FLOAT_ABI=soft`, posés par le preset, contrôlés par
+   `cmake/boards/<carte>.cmake`). Plusieurs cartes identiques sur le banc (ex. radio entre deux
+   NUCLEO-WL55JC1) : la carte génère sa cfg OpenOCD dans le répertoire de build, avec
+   `adapter serial` tiré d'une variable de cache (`LEPTON_BOARD_STLINK_SERIAL`), puis source
+   `debug/openocd-<carte>.cfg` ; `LEPTON_BOARD_OPENOCD_CFG` désigne la cfg générée.
+   Gestionnaires d'interruption nommés à la CMSIS dans un pilote repris (ex.
+   `USART2_IRQHandler`) : reliés par le BSP aux `IRQ<n>_Handler` de la table générique, et
+   priorités NVIC posées par le BSP (`SystemInit`) si le pilote ne les règle pas.
 2. `ld/mem_<carte>.ld` : bloc `MEMORY` seul.
 3. mkconf de l'application : chemins relatifs au trunk (`tools/migration/mkconf_relpaths.py`) ;
    généré par `lepton_generate()` (`cmake/mklepton.cmake`) dans `$LEPTON_BUILD/<preset>/generated/`.

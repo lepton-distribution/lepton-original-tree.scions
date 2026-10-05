@@ -29,6 +29,7 @@ legacy/sys/root/src/kernel/core/timer.h,gelé,"étape 4 (D2a/D3a) : copie d'orig
 legacy/sys/root/src/kernel/core/types.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",71,0
 legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",117,0
 legacy/sys/root/src/kernel/dev/arch/cortexm/stellaris/drivers/dev_lm3s_cpu/dev_lm3s_cpu.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",15,0
+legacy/sys/root/src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/utilities_conf.h,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",54,0
 legacy/sys/root/src/kernel/dev/bsp/discovery_f4/dev_discovery_f4_peripherals/dev_discovery_f4_uart_6.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",62,0
 legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_spi_3.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",54,0
 legacy/sys/root/src/kernel/dev/bsp/olimex_p407/dev_olimex_p407_peripherals/dev_olimex_p407_uart_3.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",62,0
@@ -771,10 +772,10 @@ src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/stm32f4xx.h,actif,déclaré par 
 src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/system_stm32f4xx.c,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),340,5
 src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/system_stm32f4xx.h,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),12,5
 src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/startup/iar/startup_stm32wl55xx_cm4.s,différé,"déclaré par tauon-basic_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",379,2
-src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/stm32wl55xx.h,différé,"déclaré par tauon-basic_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",9648,6
-src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/stm32wlxx.h,différé,"déclaré par tauon-basic_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",134,6
+src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/stm32wl55xx.h,actif,"étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)",9648,6
+src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/stm32wlxx.h,actif,"étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)",134,6
 src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/system_stm32wlxx.c,différé,"déclaré par tauon-basic_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",102,2
-src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/system_stm32wlxx.h,différé,"déclaré par tauon-basic_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",16,6
+src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/system_stm32wlxx.h,actif,"étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)",16,6
 src/kernel/core/ucore/embOSARM7-9_388/arch/cpu_at91sam9261/AT91SAM9261_Startup.s,gelé,règle : embOS IAR ARM7/ARM9/Win32,60,2
 src/kernel/core/ucore/embOSARM7-9_388/arch/cpu_at91sam9261/BSP.c,gelé,règle : embOS IAR ARM7/ARM9/Win32,65,2
 src/kernel/core/ucore/embOSARM7-9_388/arch/cpu_at91sam9261/BootLoaderDF_AT91SAM9261.c,gelé,règle : embOS IAR ARM7/ARM9/Win32,274,2
@@ -2696,105 +2697,105 @@ src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace.
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",56,2
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace_if_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",25,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace_if_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace),14,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/Legacy/stm32_hal_legacy.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",3030,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32_assert_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),15,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",421,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_adc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",486,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_adc_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",40,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_comp.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",234,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),191,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_cortex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",227,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_crc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",78,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_crc_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",28,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_cryp.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",226,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_cryp_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",14,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dac.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",158,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dac_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",84,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_def.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",106,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dma.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",296,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dma_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",102,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_exti.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",138,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_flash.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",399,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_flash_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",33,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_gpio.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",117,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_gpio_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",48,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_gtzc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",95,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_hsem.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",62,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_i2c.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",328,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_i2c_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",35,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_i2s.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",202,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_ipcc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",100,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_irda.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",276,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_irda_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",105,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_iwdg.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",48,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_lptim.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",320,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_pka.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",291,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_pwr.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",143,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_pwr_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",255,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rcc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1048,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rcc_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",204,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rng.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",114,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rng_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",65,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rtc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",360,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rtc_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",392,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smartcard.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",357,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smartcard_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",122,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smbus.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",302,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smbus_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",28,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_spi.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",298,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_spi_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",11,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_subghz.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",211,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_tim.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1088,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_tim_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",126,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_uart.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",545,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_uart_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",179,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_usart.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",352,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_usart_ex.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",101,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_wwdg.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",82,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_adc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1133,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_bus.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",587,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_comp.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),148,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_cortex.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),198,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_crc.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),111,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_dac.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),393,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_dma.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",733,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_dmamux.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",491,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_exti.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",302,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_gpio.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),238,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_hsem.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),150,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_i2c.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),674,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_ipcc.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),152,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_iwdg.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),84,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_lptim.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),468,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_lpuart.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),831,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_pka.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),145,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_pwr.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",689,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_rcc.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1020,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_rng.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),193,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_rtc.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),1383,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_spi.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",669,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_system.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",638,5
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_tim.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),1414,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_usart.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),1272,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_utils.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),78,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_wwdg.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc),71,0
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",392,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/Legacy/stm32_hal_legacy.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",3030,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32_assert_template.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",15,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",421,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_adc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",486,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_adc_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",40,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_comp.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",234,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_conf_template.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",191,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_cortex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",227,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_crc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",78,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_crc_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",28,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_cryp.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",226,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_cryp_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",14,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dac.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",158,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dac_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",84,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_def.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",106,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dma.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",296,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_dma_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",102,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_exti.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",138,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_flash.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",399,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_flash_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",33,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_gpio.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",117,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_gpio_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",48,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_gtzc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",95,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_hsem.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",62,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_i2c.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",328,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_i2c_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",35,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_i2s.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",202,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_ipcc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",100,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_irda.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",276,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_irda_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",105,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_iwdg.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",48,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_lptim.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",320,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_pka.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",291,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_pwr.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",143,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_pwr_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",255,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rcc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1048,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rcc_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",204,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rng.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",114,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rng_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",65,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rtc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",360,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_rtc_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",392,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smartcard.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",357,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smartcard_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",122,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smbus.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",302,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_smbus_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",28,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_spi.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",298,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_spi_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",11,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_subghz.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",211,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_tim.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1088,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_tim_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",126,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_uart.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",545,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_uart_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",179,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_usart.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",352,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_usart_ex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",101,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_hal_wwdg.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",82,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_adc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1133,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_bus.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",587,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_comp.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",148,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_cortex.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",198,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_crc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",111,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_dac.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",393,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_dma.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",733,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_dmamux.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",491,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_exti.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",302,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_gpio.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",238,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_hsem.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",150,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_i2c.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",674,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_ipcc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",152,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_iwdg.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",84,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_lptim.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",468,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_lpuart.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",831,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_pka.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",145,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_pwr.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",689,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_rcc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1020,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_rng.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",193,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_rtc.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1383,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_spi.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",669,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_system.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",638,5
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_tim.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1414,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_usart.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",1272,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_utils.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",78,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/stm32wlxx_ll_wwdg.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",71,0
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",392,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_adc.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1266,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_adc_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",129,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_comp.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",420,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_cortex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",141,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_cortex.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",141,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_crc.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",181,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_crc_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",67,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_cryp.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",3256,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_cryp_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",160,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_dac.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",428,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_dac_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",124,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_dma.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",571,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_dma_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",109,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_dma.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",571,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_dma_ex.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",109,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_exti.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",288,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_flash.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",274,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_flash_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",530,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_gpio.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",215,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_gpio.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",215,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_gtzc.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",333,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_hsem.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",79,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_i2c.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",3789,2
@@ -2806,10 +2807,10 @@ src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_iwdg.c
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_lptim.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1146,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_msp_template.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",13,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_pka.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1004,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_pwr.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",193,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_pwr_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",468,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rcc.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",827,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rcc_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",659,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_pwr.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",193,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_pwr_ex.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",468,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rcc.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",827,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rcc_ex.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",659,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rng.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",461,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rng_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",130,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_rtc.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",979,2
@@ -2826,8 +2827,8 @@ src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_tim_ex
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_timebase_rtc_alarm_template.c,différé,"déclaré par dev_stm32wlxx_8.40/Release (STM32WL55 Nucleo, carte non listée (à décider))",193,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_timebase_rtc_wakeup_template.c,différé,"déclaré par dev_stm32wlxx_8.40/Release (STM32WL55 Nucleo, carte non listée (à décider))",150,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_timebase_tim_template.c,différé,"déclaré par dev_stm32wlxx_8.40/Release (STM32WL55 Nucleo, carte non listée (à décider))",78,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_uart.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",2437,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_uart_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",381,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_uart.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",2437,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_uart_ex.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",381,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_usart.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",2054,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_usart_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",148,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_wwdg.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",105,2
@@ -2853,10 +2854,11 @@ src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_ll_utils.c
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",199,2
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",20,4
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_cpu_x.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",180,2
-src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_definitions.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",11,4
-src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_uart_x.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",319,2
-src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_uart_x.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",23,4
-src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/stm32wlxx_hal_conf.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",170,5
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_definitions.h,actif,étape 6 : pilotes STM32WL de Lepton,11,4
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_hal_tick.c,actif,étape 6 : pilotes STM32WL de Lepton,15,0
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_uart_x.c,actif,étape 6 : pilotes STM32WL de Lepton,319,2
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_uart_x.h,actif,étape 6 : pilotes STM32WL de Lepton,23,4
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/stm32wlxx_hal_conf.h,actif,étape 6 : pilotes STM32WL de Lepton,170,5
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/mw_log_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy),16,0
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/radio_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy),35,0
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/subghz_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",21,0
@@ -3025,13 +3027,15 @@ src/kernel/dev/bsp/stm32f746g_disco/stm32f746g_disco_board.c,actif,étape 6 : BS
 src/kernel/dev/bsp/stm32f746g_disco/stm32f7xx_hal_conf.h,actif,étape 6 : BSP de la carte STM32F746G-DISCO,273,0
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_board/dev_stm32wl55jci_nucleo_board.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",135,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_board/dev_stm32wl55jci_nucleo_board.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",18,2
-src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_peripherals/dev_stm32wl55jci_nucleo_usart_2.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",93,2
+src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_peripherals/dev_stm32wl55jci_nucleo_usart_2.c,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,93,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/dev_stm32wl55jci_nucleo_radio.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",50,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_conf.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",13,4
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio),13,0
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_errno.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",21,4
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",92,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",60,4
+src/kernel/dev/bsp/stm32wl55jci_nucleo/stm32wl55jci_nucleo.h,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,7,0
+src/kernel/dev/bsp/stm32wl55jci_nucleo/stm32wl55jci_nucleo_system.c,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,48,0
 src/kernel/dev/dev_cpufs/dev_cpufs.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",97,7
 src/kernel/dev/dev_cpufs/dev_cpufs.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",4,7
 src/kernel/dev/dev_fb/dev_fb.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",252,5
@@ -4151,6 +4155,7 @@ sys/user/tauon-basic/src/arch/atmel-at91sam9261-ek/kernel_mkconf/include/user_ke
 sys/user/tauon-basic/src/arch/atmel-at91samd20-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",14,0
 sys/user/tauon-basic/src/arch/atmel-at91samv71-xplained-ultra/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",16,0
 sys/user/tauon-basic/src/arch/nucleo-f439zi/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 5 : configuration de la carte NUCLEO-F439ZI,14,0
+sys/user/tauon-basic/src/arch/nucleo-wl55jc1/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration de la carte NUCLEO-WL55JC1,15,0
 sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",27,0
 sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration commune des machines QEMU MPS2,13,0
 sys/user/tauon-basic/src/arch/samd21-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration de la carte SAMD21 Xplained Pro,13,0
