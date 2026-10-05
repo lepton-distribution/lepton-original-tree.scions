@@ -1,5 +1,13 @@
 # Code gelé — décidé le 2026-09-30
 
+> **Supprimé à l'étape 6 (2026-10-05, décision utilisateur)** par `tools/migration/retrait_gele.py`
+> (inventaire ci-dessous et 56 copies `legacy/` de l'étape 4 : 820 fichiers ; le fichier gelé de
+> `prj/vc-2010` est parti avec le retrait IAR), plus 356 fichiers hors inventaire : annexes non-code
+> des cibles gelées (heuristique d'`audit_iar.py`) et restes des paquets embOS IAR `ucore/embOS*`
+> (1176 au total). État précédent : tag local `legacy`
+> (`git checkout legacy -- <chemin>` pour retrouver un fichier). Ce document reste l'inventaire de
+> ce qui a été retiré.
+
 Généré par `tools/migration/build_closure.py` le 2026-09-30. Rien n'est supprimé ni déplacé (suppression : décision de l'étape 6). Le code gelé n'est ni modifié, ni compilé, ni audité au-delà de l'inventaire. Volumétrie : cloc 2.04 (--by-file --skip-uniqueness, colonne « code ») ; 3 fichier(s) non reconnu(s) par cloc comptés par le repli interne.
 
 Total gelé : **765 fichiers, 158061 lignes de code**.
