@@ -1,12 +1,12 @@
 # Handoff étape 6 → étape 7 (backend FreeRTOS)
 
 État au 2026-10-05 : branche `migration/etape-6`, tous les modules faits (M7 QEMU,
-STM32F746G-DISCO, SAMD21 Xplained Pro, NUCLEO-WL55JC1, puis CI, retrait IAR, code gelé). Clôture
-de l'étape **soumise à la validation de l'utilisateur**. Handoffs des cartes :
+STM32F746G-DISCO, SAMD21 Xplained Pro, NUCLEO-WL55JC1, puis CI, retrait IAR, code gelé). Étape
+**validée par l'utilisateur le 2026-10-05**, branche fusionnée dans `master`. Handoffs des cartes :
 `etape-6-m7-qemu.md`, `etape-6-f746.md`, `etape-6-samd21.md`, `etape-6-wl55.md`.
 
 ## Réponses aux prérequis de l'étape 7
-- Étape 6 close sous réserve de validation ; socle QEMU (an386 hard/soft, an500) et cartes verts
+- Étape 6 close (validée le 2026-10-05) ; socle QEMU (an386 hard/soft, an500) et cartes verts
   sous embOS ; `ci/run.sh` vert (8 presets, garde IAR, mémoire), mass_compile 414/414.
 - FreeRTOS vendored dans l'arbre : `ucore/freeRTOS_8-0-0` et `ucore/freeRTOS_9-0-0` (paquets
   tiers, non LTS) ; `core-freertos` et `kal/backend/freertos` présents. **Version LTS à épingler :
