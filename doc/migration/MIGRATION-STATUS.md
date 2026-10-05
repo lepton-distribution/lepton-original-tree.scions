@@ -121,6 +121,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-10-05 | Étape 6 — M0/M0+ : pas de QEMU (`microbit` : 16 Ko de RAM) ; carte physique **Atmel SAMD21 Xplained Pro** (Cortex-M0+), statut « validé sur carte » visé (décision utilisateur). |
 | 2026-10-05 | Étape 6, module M7 QEMU (plan approuvé) : BSP `qemu_mps2_an386` refondu en BSP commun `qemu_mps2` (adresses par en-tête de carte), plutôt qu'une copie pour `mps2-an500`. |
 | 2026-10-05 | Étape 6, module M7 QEMU : CMSIS-Core 5 (`core_cm7.h`, V5.6, Apache-2.0) absent de l'arbre : copié sans modification du paquet embOS (CoreSupport STM32F769I-Discovery) dans `ucore/cmsis-5/CMSIS/Core/Include` (décision utilisateur, plutôt qu'un téléchargement ARM ou STM32CubeF7). |
+| 2026-10-05 | Étape 6, module M7 QEMU validé par l'utilisateur. Ajout de **STM32CubeF7** au dépôt (décision utilisateur) pour la carte STM32F746G-DISCO ; carte raccordée (ST-LINK/V2.1, `/dev/ttyACM0`) : DEV_ID 0x449 rév. Z, CPUID `0x410FC271` (Cortex-M7 **r0p1** : erratum 837070), flash 1 Mo. |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
