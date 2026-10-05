@@ -37,7 +37,7 @@ extern "C" {
 /* USER CODE BEGIN include */
 // lepton added
 #if defined(USE_BSP_DRIVER)
-   #include  "kernel\dev\bsp\stm32wl55jci_nucleo\dev_stm32wl55jci_nucleo_radio\stm32wlxx_nucleo_radio.h"
+   #include  "kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.h"
 #endif
   
 /* USER CODE END include */

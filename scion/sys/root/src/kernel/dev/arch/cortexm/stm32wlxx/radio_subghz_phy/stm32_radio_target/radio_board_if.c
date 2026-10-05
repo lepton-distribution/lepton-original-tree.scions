@@ -24,7 +24,7 @@
 /* USER CODE BEGIN Includes */
     
 #if defined(USE_DEV_BSP_RADIO_DRIVER_IF)
-    #include "kernel\dev\arch\cortexm\stm32wlxx\dev_stm32wlxx\dev_stm32wlxx_bsp_radio_if.h"
+    #include "kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.h"
 #endif
 
 
