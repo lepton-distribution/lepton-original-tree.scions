@@ -673,27 +673,30 @@ static int test_tclk(void){
 /* TSBRK : tas newlib borné par la pile principale (kernel/core/arch/cortexm/sbrk_cortexm.c).
    Étape 5 : le _sbrk de libnosys n'avait aucune limite ; sur la carte, une session de ftpd
    débordait sur la MSP puis hors SRAM (BusFault). Le tas est épuisé par blocs : _sys_malloc doit
-   finir par rendre NULL, aucun bloc ne doit dépasser __stack_limit__, et tout est rendu ensuite. */
+   finir par rendre NULL, aucun bloc ne doit dépasser __stack_limit__, et tout est rendu ensuite.
+   Étape 6 (décision utilisateur 2026-10-05) : bloc = huitième de l'étendue du tas, et non plus
+   16 Ko fixes (plus grand que tout le tas sur la SAMD21, 32 Ko de RAM) ; assertions inchangées. */
 extern char __heap_start__, __stack_limit__;
-#define TSBRK_BLOCK  (16u * 1024u)
-#define TSBRK_SLOTS  512   /* 8 Mo : au-delà de la RAM des cibles (QEMU 4 Mo, carte 192 Ko) */
+#define TSBRK_SLOTS  64    /* au moins 8 blocs alloués avant l'épuisement */
 static void* tsbrk_blocks[TSBRK_SLOTS];
 static int test_tsbrk(void){
    int n, i, hors_tas = 0;
+   uint32_t block = ((uint32_t)(&__stack_limit__ - &__heap_start__) / 8u) & ~7u;
+   kal_test_put_u32("TSBRK : taille des blocs = ", block);
    for(n = 0; n < TSBRK_SLOTS; n++){
-      char* p = _sys_malloc(TSBRK_BLOCK);
+      char* p = _sys_malloc(block);
       if(!p)
          break;
       tsbrk_blocks[n] = p;
-      if(p < &__heap_start__ || p + TSBRK_BLOCK > &__stack_limit__)
+      if(p < &__heap_start__ || p + block > &__stack_limit__)
          hors_tas++;
    }
-   kal_test_put_u32("TSBRK : blocs de 16 Ko alloués = ", (uint32_t)n);
+   kal_test_put_u32("TSBRK : blocs alloués = ", (uint32_t)n);
    for(i = 0; i < n; i++)
       _sys_free(tsbrk_blocks[i]);
    TEST_ASSERT(n < TSBRK_SLOTS, "TSBRK : _sys_malloc rend NULL une fois le tas épuisé");
    TEST_ASSERT(hors_tas == 0, "TSBRK : aucun bloc hors de [__heap_start__, __stack_limit__)");
-   tsbrk_blocks[0] = _sys_malloc(TSBRK_BLOCK);
+   tsbrk_blocks[0] = _sys_malloc(block);
    TEST_ASSERT(tsbrk_blocks[0] != 0, "TSBRK : allocation possible après libération");
    _sys_free(tsbrk_blocks[0]);
    return 0;
