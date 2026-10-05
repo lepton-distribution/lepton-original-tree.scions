@@ -275,5 +275,17 @@ class Signalements(unittest.TestCase):
         self.assertFalse(t.est_tiers("sys/root/src/kernel/fs/ufs/ufscore.c"))
 
 
+
+class IncludeBackslash(unittest.TestCase):
+    def test_chemin_windows(self):
+        src = '#include "kernel\\dev\\x.h"\n  #  include <a\\b.h>\nchar *s = "a\\\\b";\n'
+        new, auto, resid = t.rule_include_backslash(src, "t.c")
+        self.assertEqual(new, '#include "kernel/dev/x.h"\n  #  include <a/b.h>\nchar *s = "a\\\\b";\n')
+        self.assertEqual((len(auto), len(resid)), (2, 0))
+
+    def test_chemin_posix_inchange(self):
+        src = '#include "kernel/core/kernel.h"\n'
+        self.assertEqual(t.rule_include_backslash(src, "t.c"), (src, [], []))
+
 if __name__ == "__main__":
     unittest.main()

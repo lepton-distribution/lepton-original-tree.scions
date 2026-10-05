@@ -46,6 +46,9 @@ Règles :
                     prototype non static du même fichier : « static » ajouté au prototype (erreur
                     GCC « static declaration follows non-static declaration », tolérée par IAR).
                     Prototype dans un en-tête : hors règle (correction manuelle).
+  include-backslash (portabilité, pas un IAR-isme) séparateurs Windows dans les chemins
+                    d'#include (« kernel\\dev\\… ») → « / » (étape 6, NUCLEO-WL55JC1) ; seuls les
+                    chemins entre guillemets ou chevrons d'une directive #include sont modifiés.
   symbole-iar       symboles de la bibliothèque IAR DLIB (__iar_*) et de l'éditeur de liens
                     (__ICFEDIT_*) : signalés, toujours résiduels.
 
@@ -883,15 +886,33 @@ def rule_prototype_static(text, path):
     return text, sorted(auto), []
 
 
+RE_INCLUDE_CHEMIN = re.compile(r'^([ \t]*#[ \t]*include[ \t]*)(["<])([^">\r\n]*)([">])', re.M)
+
+
+def rule_include_backslash(text, path):
+    """Remplace « \\ » par « / » dans le chemin des directives #include."""
+    auto = []
+
+    def sub(m):
+        if "\\" not in m.group(3):
+            return m.group(0)
+        auto.append((num_ligne(text, m.start()), "include : « \\ » → « / »", m.group(0).strip()))
+        return m.group(1) + m.group(2) + m.group(3).replace("\\", "/") + m.group(4)
+
+    return RE_INCLUDE_CHEMIN.sub(sub, text), auto, []
+
+
 RULES = {"garde-iar-arm": rule_garde_iar_arm, "garde-cible-gelee": rule_garde_cible_gelee,
          "garde-compilateur": rule_garde_compilateur,
          "header-iar": rule_header_iar, "intrinsics-cmsis": rule_intrinsics_cmsis,
          "mot-cle-iar": rule_mot_cle_iar, "pragma-iar": rule_pragma_iar,
          "prototype-static": rule_prototype_static,
+         "include-backslash": rule_include_backslash,
          "symbole-iar": rule_symbole_iar}
 # ordre d'application : gardes d'abord (une branche IAR retirée n'a plus de mots-clés à traiter)
 ORDRE = ["garde-cible-gelee", "garde-iar-arm", "garde-compilateur", "intrinsics-cmsis", "mot-cle-iar", "pragma-iar",
-         "header-iar", "symbole-iar", "prototype-static"]
+         "header-iar", "symbole-iar", "prototype-static",
+         "include-backslash"]
 
 # ---------------------------------------------------------------------------------------------
 # fichiers, vérification gcc -E, rapport
