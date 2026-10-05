@@ -79,6 +79,18 @@
         "LEPTON_BOARD": "qemu-mps2-an500",
         "LEPTON_KAL_BACKEND": "embos"
       }
+    },
+    {
+      "name": "stm32f746g-disco-embos",
+      "displayName": "STM32F746G-DISCO (Cortex-M7 r0p1, FPU simple précision), embOS",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m7",
+        "LEPTON_M7_FPU": "sp",
+        "LEPTON_BOARD": "stm32f746g-disco",
+        "LEPTON_KAL_BACKEND": "embos"
+      }
     }
   ],
   "buildPresets": [
@@ -101,6 +113,10 @@
     {
       "name": "qemu-mps2-an500-embos",
       "configurePreset": "qemu-mps2-an500-embos"
+    },
+    {
+      "name": "stm32f746g-disco-embos",
+      "configurePreset": "stm32f746g-disco-embos"
     }
   ],
   "testPresets": [
@@ -135,6 +151,13 @@
     {
       "name": "qemu-mps2-an500-embos",
       "configurePreset": "qemu-mps2-an500-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "stm32f746g-disco-embos",
+      "configurePreset": "stm32f746g-disco-embos",
       "output": {
         "outputOnFailure": true
       }
