@@ -20,7 +20,11 @@
   `cmsis-5/Device/Atmel` ne contient que `samv71` (pas de SAMD21 : paquet Microchip à décider) ;
   `kal/arch/armv6m/` : `kal_arch_conf.h` seul (HYPOTHÈSE À VALIDER), `kal_arch.h` à écrire ;
   démarrage armv6m et `_sbrk` borné (`sbrk_cortexm.c`) à ajouter ; banc KAL : sources armv7m seules.
-- RAM 32 Ko contre `.bss` 128-155 Ko avec réseau : configuration minimale (sans lwIP) ;
+- RAM 32 Ko contre `.bss` 128-155 Ko avec réseau. **Décision utilisateur (2026-10-05) : pas de
+  réseau** (ni lwIP, ni `ifconfig`/`ftpd`) ; **réduire les piles des pseudo-binaires en diminuant
+  les tampons stdio** : `__KERNEL_STDIO_PRINTF_BUFSIZ` dans le `user_kernel_mkconf.h` de la carte
+  (`BUFSIZ`, 3 tampons stdin/stdout/stderr par processus, `lib/libc/stdio/stdio.h` ; défaut
+  armv6m 128), puis les `stack=` du mkconf de la carte, mesurés (`lepton-stacks`) ;
   `rootfscore.h` réduit le rootfs pour la SAMD20 par `__tauon_cpu_device__` (à reporter dans la
   configuration de la carte, mécanisme `__KERNEL_CPU_DEVICE_NAME` sans table).
 
