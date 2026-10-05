@@ -122,6 +122,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-10-05 | Étape 6, module M7 QEMU (plan approuvé) : BSP `qemu_mps2_an386` refondu en BSP commun `qemu_mps2` (adresses par en-tête de carte), plutôt qu'une copie pour `mps2-an500`. |
 | 2026-10-05 | Étape 6, module M7 QEMU : CMSIS-Core 5 (`core_cm7.h`, V5.6, Apache-2.0) absent de l'arbre : copié sans modification du paquet embOS (CoreSupport STM32F769I-Discovery) dans `ucore/cmsis-5/CMSIS/Core/Include` (décision utilisateur, plutôt qu'un téléchargement ARM ou STM32CubeF7). |
 | 2026-10-05 | Étape 6, module M7 QEMU validé par l'utilisateur. Ajout de **STM32CubeF7** au dépôt (décision utilisateur) pour la carte STM32F746G-DISCO ; carte raccordée (ST-LINK/V2.1, `/dev/ttyACM0`) : DEV_ID 0x449 rév. Z, CPUID `0x410FC271` (Cortex-M7 **r0p1** : erratum 837070), flash 1 Mo. |
+| 2026-10-05 | Étape 6, module STM32F746G-DISCO : plan approuvé, en deux sessions (paliers 1-6 et banc KAL ; puis réseau, endurance, `-Os`) ; FPU simple précision par `LEPTON_M7_FPU=sp` (preset), bibliothèque embOS `_837070` + `USE_ERRATUM_837070=1` par la carte ; écriture de la **flash interne** de la carte autorisée pour la durée du module (ni option bytes, ni protection, ni QSPI). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
