@@ -3,7 +3,7 @@
 Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  
 Commande : `mass_compile.sh -q --report doc/migration/mass-compile.md --csv doc/migration/mass-compile.csv --audit-csv doc/migration/audit-iar.csv`
 
-Résultat : **382/382 fichiers C OK (100.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
+Résultat : **386/386 fichiers C OK (100.0 %)** ; `arm-none-eabi-gcc -c` (outils hôte : `cc -m32`).
 
 Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : `mass-compile.csv`.
 
@@ -11,8 +11,8 @@ Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du 
 
 | Module | OK / total | IAR-ismes (Lepton) | IAR-ismes (tiers) |
 |---|---|---:|---:|
-| kernel/core | 59 / 59 | 0 | 52 |
-| kernel/dev | 170 / 170 | 0 | 24 |
+| kernel/core | 61 / 61 | 0 | 85 |
+| kernel/dev | 172 / 172 | 0 | 37 |
 | kernel/fs | 26 / 26 | 0 | 2 |
 | kernel/net | 38 / 38 | 0 | 0 |
 | lib | 28 / 28 | 0 | 0 |

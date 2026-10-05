@@ -8,7 +8,7 @@ Détail ligne à ligne : `doc/migration/audit-iar.csv`.
 
 ## Métrique
 
-> **Total IAR-ismes périmètre actif (sévérité `iar`) : 91** — code Lepton : 0, code tiers vendored dans l'arbre (CMSIS, HAL ST, embOS IAR, lwIP…) : 91.
+> **Total IAR-ismes périmètre actif (sévérité `iar`) : 124** — code Lepton : 0, code tiers vendored dans l'arbre (CMSIS, HAL ST, embOS IAR, lwIP…) : 124.
 
 Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sévérités : `iar` = à traiter (comptée) ; `autre` = Keil/MSVC, à retirer ; `a_verifier` = portable ou toléré par GCC (CMSIS, `#pragma pack/weak`, garde `__GNUC__`, définition de compatibilité) ; `info` = inventaire (projets IAR, asm GNU). Ensemble `hors_projet` (perimetre.csv) : fichier déclaré par aucun projet ni inclus, hors métrique.
 
@@ -16,19 +16,19 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 
 | sévérité | actif | differe | gele | hors_projet | total |
 |---|---:|---:|---:|---:|---:|
-| iar | 91 | 935 | 627 | 542 | 2195 |
-| autre | 154 | 65 | 680 | 398 | 1297 |
-| a_verifier | 1452 | 683 | 763 | 484 | 3382 |
-| info | 46 | 74 | 51 | 14 | 185 |
+| iar | 124 | 935 | 627 | 542 | 2228 |
+| autre | 161 | 65 | 680 | 398 | 1304 |
+| a_verifier | 1460 | 683 | 763 | 484 | 3390 |
+| info | 48 | 74 | 51 | 14 | 187 |
 
 ## Catégorie × ensemble (sévérité `iar`)
 
 | catégorie | actif | differe | gele | hors_projet | total |
 |---|---:|---:|---:|---:|---:|
-| garde_iar | 46 | 706 | 117 | 161 | 1030 |
+| garde_iar | 78 | 706 | 117 | 161 | 1062 |
 | mot_cle | 18 | 86 | 52 | 321 | 477 |
 | symbole_iar | 0 | 14 | 223 | 5 | 242 |
-| pragma | 22 | 71 | 56 | 26 | 175 |
+| pragma | 23 | 71 | 56 | 26 | 176 |
 | intrinsic | 0 | 26 | 87 | 2 | 115 |
 | header | 3 | 14 | 75 | 1 | 93 |
 | asm_iar | 1 | 15 | 12 | 25 | 53 |
@@ -43,25 +43,26 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | asm_inconnu | a_verifier | 0 | 0 | 3 | 0 |
 | asm_multi | a_verifier | 0 | 0 | 4 | 0 |
 | garde_compilateur | a_verifier | 7 | 1 | 29 | 0 |
-| garde_gcc | a_verifier | 60 | 52 | 118 | 49 |
-| intrinsic_cmsis | a_verifier | 1019 | 242 | 470 | 323 |
+| garde_gcc | a_verifier | 63 | 52 | 118 | 49 |
+| intrinsic_cmsis | a_verifier | 1024 | 242 | 470 | 323 |
 | mot_cle | a_verifier | 290 | 265 | 0 | 32 |
 | pragma | a_verifier | 72 | 121 | 99 | 80 |
 | symbole_dlib_io | a_verifier | 0 | 2 | 6 | 0 |
 | xml_mklepton | a_verifier | 1 | 0 | 34 | 0 |
 | asm_armcc | autre | 0 | 2 | 1 | 16 |
-| garde_autre | autre | 132 | 59 | 224 | 179 |
-| pragma_autre | autre | 22 | 4 | 455 | 203 |
-| asm_gnu | info | 3 | 2 | 3 | 14 |
+| garde_autre | autre | 138 | 59 | 224 | 179 |
+| pragma_autre | autre | 23 | 4 | 455 | 203 |
+| asm_gnu | info | 5 | 2 | 3 | 14 |
 | fichier_iar | info | 43 | 72 | 48 | 0 |
 
 ## Motifs du périmètre actif (sévérité `iar`, top 40)
 
 | catégorie | motif | occurrences |
 |---|---|---:|
-| garde_iar | `__ICCARM__` | 45 |
+| garde_iar | `__ICCARM__` | 47 |
+| garde_iar | `__IAR_SYSTEMS_ASM__` | 30 |
 | mot_cle | `__weak` | 15 |
-| pragma | `#pragma system_include` | 11 |
+| pragma | `#pragma system_include` | 12 |
 | pragma | `_Pragma optimize` | 5 |
 | pragma | `#pragma data_alignment` | 4 |
 | header | `cmsis_iar.h` | 3 |
@@ -77,10 +78,10 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | répertoire | origine | occurrences |
 |---|---|---:|
 | `sys/root/src/kernel/core/ucore/cmsis/CMSIS` | tiers | 37 |
+| `sys/root/src/kernel/core/ucore/cmsis-5/Device` | tiers | 33 |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f7xx` | tiers | 21 |
 | `sys/root/src/kernel/dev/arch/cortexm/stm32f4xx` | tiers | 15 |
-| `sys/root/src/kernel/core/ucore/cmsis-5/CMSIS` | tiers | 11 |
-| `sys/root/src/kernel/core/ucore/cmsis-5/Device` | tiers | 3 |
+| `sys/root/src/kernel/core/ucore/cmsis-5/CMSIS` | tiers | 14 |
 | `sys/root/src/kernel/core/ucore/cmsis/Device` | tiers | 1 |
 | `sys/root/src/kernel/dev/arch/cmsis/dev_cmsis_itm` | tiers | 1 |
 | `sys/root/src/kernel/fs/fatfs/core` | tiers | 1 |
@@ -128,14 +129,14 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | `sys/root/src/kernel/core/ucore/embOSCXM4_518/inc` | 19 |
 | `legacy/sys/root/src/kernel/core` | 17 |
 
-## Fichiers assembleur (101)
+## Fichiers assembleur (103)
 
 Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`PUBWEAK` ; ARMASM : `AREA`/`PRESERVE8`/`DCD` ; GNU : `.section`/`.global`/…) ; rôle déduit du nom et des symboles.
 
 | syntaxe | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
 | ARMASM (Keil) | 0 | 2 | 1 | 16 |
-| GNU | 3 | 2 | 3 | 14 |
+| GNU | 5 | 2 | 3 | 14 |
 | IAR | 1 | 15 | 12 | 25 |
 | indéterminée | 0 | 0 | 3 | 0 |
 | multi-assembleur (gardes) | 0 | 0 | 4 | 0 |
@@ -143,6 +144,8 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 | fichier | syntaxe | rôle | ensemble | origine |
 |---|---|---|---|---|
 | `sys/root/src/kernel/core/ucore/cmsis/Device/st/stm32f4xx/startup/iar/startup_stm32f4xx.s` | IAR | démarrage, vecteurs | actif | tiers |
+| `tests/kal/arch/armv6m/kal_regs_armv6m.S` | GNU | indéterminé | actif | lepton |
+| `tests/kal/arch/armv6m/kal_regs_read_armv6m.S` | GNU | indéterminé | actif | lepton |
 | `tests/kal/arch/armv7m/kal_fpu_armv7m.S` | GNU | indéterminé | actif | lepton |
 | `tests/kal/arch/armv7m/kal_regs_armv7m.S` | GNU | indéterminé | actif | lepton |
 | `tests/kal/arch/armv7m/kal_regs_read_armv7m.S` | GNU | indéterminé | actif | lepton |
@@ -257,11 +260,11 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 ## Points notables
 
 - `__compiler_directive__packed` (abstraction Lepton, `kernel/core/kernelconf.h`) : vaut `__packed` sous IAR/Keil et **rien sous GCC** — les structures concernées perdent l'attribut packed : 3 usages (catégorie `abstraction_lepton`, dont 3 actifs). Point à traiter à l'étape 4 (`compiler.h`).
-- Sélection du compilateur par `__tauon_compiler__` (`kernelconf.h`, valeurs `__compiler_iar_arm__`, `__compiler_gnuc__`, `__compiler_keil_arm__`…) : 16 gardes `garde_iar` sur `__compiler_iar_*`, 1014 sur `__ICCARM__`/`__IAR_SYSTEMS_*` (tous ensembles).
+- Sélection du compilateur par `__tauon_compiler__` (`kernelconf.h`, valeurs `__compiler_iar_arm__`, `__compiler_gnuc__`, `__compiler_keil_arm__`…) : 16 gardes `garde_iar` sur `__compiler_iar_*`, 1046 sur `__ICCARM__`/`__IAR_SYSTEMS_*` (tous ensembles).
 - `_Pragma` dans des macros (ex. `CORTEXM4_CCM_RAM` : `section`/`location` pour la CCM du STM32F4) : 25 occurrences détectées via `_Pragma("…")`.
 - Modèles émis par mklepton (`tools/mklepton/src`) : 4 IAR-ismes dans les chaînes générées (catégorie `modele_mklepton`, `#pragma memory=constseg` M16C) ; XML `mkconf*` : 35 chemins Windows absolus (`c:/tauon/…`, sévérité `a_verifier`), 0 références IAR.
 - Fichiers générés par mklepton présents dans l'arbre (colonne `genere`) : 9 fichiers (`sys/root/src/kernel/core/arch/host/static/bin_mkconf.c`, `sys/root/src/kernel/core/arch/host/static/dev_dskimg.h`, `sys/root/src/kernel/core/arch/host/static/dev_mkconf.c`, `sys/root/src/kernel/core/arch/host/static/kernel_mkconf.h`, `sys/root/src/kernel/core/arch/win32/bin_mkconf.c`, `sys/root/src/kernel/core/arch/win32/dev_dskimg.c`, `sys/root/src/kernel/core/arch/win32/dev_dskimg.h`, `sys/root/src/kernel/core/arch/win32/dev_mkconf.c`, `sys/root/src/kernel/core/arch/win32/kernel_mkconf.h`) ; 0 occurrences toutes sévérités, dont 0 `iar`.
-- Code tiers : 91 des 91 IAR-ismes actifs sont dans du code vendored (CMSIS/HAL fournissent déjà des branches GCC ; les copies embOS IAR de `ucore/` sont remplacées par le port GCC Segger, non traduites).
+- Code tiers : 124 des 124 IAR-ismes actifs sont dans du code vendored (CMSIS/HAL fournissent déjà des branches GCC ; les copies embOS IAR de `ucore/` sont remplacées par le port GCC Segger, non traduites).
 
 ## Limites et faux positifs connus
 
@@ -277,7 +280,7 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1250 | 1495 | 905 | 793 |
-| asm | 4 | 19 | 23 | 55 |
+| c | 1325 | 1494 | 905 | 793 |
+| asm | 6 | 19 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
-| xml | 18 | 9 | 2 | 0 |
+| xml | 19 | 9 | 2 | 0 |

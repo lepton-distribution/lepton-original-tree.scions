@@ -46,6 +46,8 @@ RENOMMAGES = {
 REGLES = [
     (r"^legacy/", "gelé",
      "étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6"),
+    (r"^src/kernel/core/kal/arch/armv6m/kal_arch\.h$", "actif",
+     "étape 6 : KAL, axe ISA ARMv6-M (SAMD21 Xplained Pro)"),
     (r"^src/kernel/core/kal/arch/armv6m/", "différé",
      "étape 4 (KAL-2) : réglages d'ISA M0/M0+ (HYPOTHÈSE À VALIDER), cœurs de l'étape 6"),
     (r"^src/kernel/core/kal/backend/freertos/", "différé",
@@ -72,6 +74,8 @@ REGLES = [
      "étape 6 : BSP commun des machines QEMU MPS2 (an386, an500)"),
     (r"^sys/user/tauon-basic/src/arch/qemu-mps2/", "actif",
      "étape 6 : configuration commune des machines QEMU MPS2"),
+    (r"^src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm0plus\.h$", "actif",
+     "étape 6 : CMSIS-Core 5 du Cortex-M0+ (tiers, copie du paquet embOS)"),
     (r"^src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/", "actif",
      "étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)"),
     (r"^src/kernel/dev/bsp/nucleo_f439zi/", "actif",
@@ -91,6 +95,14 @@ REGLES = [
      "étape 6 : BSP de la carte STM32F746G-DISCO"),
     (r"^sys/user/tauon-basic/src/arch/stm32f746g-disco/", "actif",
      "étape 6 : configuration de la carte STM32F746G-DISCO"),
+    (r"^src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/", "actif",
+     "étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)"),
+    (r"^src/kernel/dev/arch/cortexm/samd21/dev_samd21/", "actif",
+     "étape 6 : pilotes SAMD21 de Lepton"),
+    (r"^src/kernel/dev/bsp/samd21_xplained_pro/", "actif",
+     "étape 6 : BSP de la carte SAMD21 Xplained Pro"),
+    (r"^sys/user/tauon-basic/src/arch/samd21-xplained-pro/", "actif",
+     "étape 6 : configuration de la carte SAMD21 Xplained Pro"),
     (r"^src/lib/libc/string/strerror\.c$", "actif",
      "étape 3b : frontière libc (strerror, numérotation errno Lepton)"),
     (r"^src/sbin/net/tsterrno\.c$", "actif",
@@ -107,6 +119,8 @@ RECLASSEMENTS = {
         ("actif", "étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)"),
     "src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/system_ARMCM7.h":
         ("actif", "étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)"),
+    "src/kernel/core/kal/arch/armv6m/kal_arch_conf.h":
+        ("actif", "étape 6 : réglages d'ISA ARMv6-M validés sur la SAMD21 Xplained Pro"),
 }
 # HAL STM32F7 liée par la session réseau de la STM32F746G-DISCO (inventoriée hors-projet avant)
 for _src in ("eth", "rcc", "cortex"):

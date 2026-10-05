@@ -476,10 +476,10 @@ Lignes retirées : `src/kernel/core/kal.c`, `tests/kal/kal_bench.c`, `tests/kal/
 
 | Ensemble | Fichiers ajoutés | Lignes ajoutées | Fichiers (total) | Lignes (total) |
 |---|---|---|---|---|
-| actif | 178 | 60037 | 1254 | 375000 |
-| différé | 2 | 140 | 1513 | 409221 |
+| actif | 254 | 73810 | 1331 | 388782 |
+| différé | 1 | 131 | 1512 | 409212 |
 | gelé | 55 | 19636 | 820 | 177697 |
 | hors-projet | 89 | 68595 | 848 | 260972 |
-| **total** | 324 | 148408 | 4435 | 1222890 |
+| **total** | 399 | 162172 | 4511 | 1236663 |
 
 <!-- perimetre_complement.py : fin -->

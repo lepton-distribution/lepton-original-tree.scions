@@ -76,6 +76,7 @@ STM32F4 = {
                "-I@/sys/root/src/kernel/dev/arch/cortexm/stm32f4xx/dev_stm32f4xx"],
 }
 STM32F746G_DISCO = {"base": "stm32f746g-disco-embos", "retire": [], "ajoute": []}
+SAMD21_XPLAINED_PRO = {"base": "samd21-xplained-pro-embos", "retire": [], "ajoute": []}
 UIP = {"base": "qemu-mps2-an386-embos", "retire": [],
        "ajoute": ["-I@/sys/root/src/kernel/net/uip/core"]}
 PROFILS = {
@@ -104,6 +105,14 @@ PROFILS = {
     # (puce, HAL, FPU simple précision, erratum 837070) ; pas de gabarit corrigé
     "sys/root/src/kernel/dev/arch/cortexm/stm32f7xx/": STM32F746G_DISCO,
     "sys/root/src/kernel/dev/bsp/stm32f746g_disco/": STM32F746G_DISCO,
+    # famille SAMD21, carte SAMD21 Xplained Pro et fichiers propres à l'ISA armv6m (étape 6) :
+    # commandes exactes du preset de la carte (Thumb-1, DFP Microchip)
+    "sys/root/src/kernel/dev/arch/cortexm/samd21/": SAMD21_XPLAINED_PRO,
+    "sys/root/src/kernel/dev/bsp/samd21_xplained_pro/": SAMD21_XPLAINED_PRO,
+    "sys/root/src/kernel/core/arch/cortexm/startup_armv6m.c": SAMD21_XPLAINED_PRO,
+    "sys/root/src/kernel/core/core-segger/arch/armv6m/": SAMD21_XPLAINED_PRO,
+    "sys/root/src/kernel/core/kal/arch/armv6m/": SAMD21_XPLAINED_PRO,
+    "tests/kal/arch/armv6m/": SAMD21_XPLAINED_PRO,
     "tools/": {"base": "host", "retire": [], "ajoute": []},
     "sys/root/src/kernel/core/arch/host/": {"base": "host", "retire": [], "ajoute": []},
     # noyau statique hôte et ses tests (étape 2) : preset host, jamais le gabarit ARM

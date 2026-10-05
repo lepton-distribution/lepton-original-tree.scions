@@ -29,6 +29,8 @@ sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1549,isa,t
 sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1570,isa,tiers,hors arch,(!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
 sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1590,coeur,tiers,hors arch,((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && (defined (__FPU_USED ) && (__FPU_USED == 1U)) )
 sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,1616,coeur,tiers,hors arch,((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && (defined (__FPU_USED ) && (__FPU_USED == 1U)) )
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm0plus.h,84,coeur,tiers,hors arch,defined __ARM_FP
+sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm0plus.h,89,coeur,tiers,hors arch,defined (__VFP_FP__) && !defined(__SOFTFP__)
 sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,78,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
 sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,89,coeur,tiers,hors arch,defined __ARM_FP
 sys/root/src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,90,coeur,tiers,hors arch,defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
@@ -89,4 +91,4 @@ tests/kal/arch/armv7m/kal_bench.c,273,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 
 tests/kal/arch/armv7m/kal_bench.c,515,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
 tests/kal/arch/armv7m/kal_bench.c,527,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
 tests/kal/arch/armv7m/kal_bench.c,544,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
-tests/kal/arch/armv7m/kal_bench.c,711,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)
+tests/kal/arch/armv7m/kal_bench.c,714,coeur,lepton,autorisé,(OS_CPU_HAS_VFP == 1)

@@ -97,6 +97,7 @@ src/bin/wrapr.c,hors-projet,"non déclaré par un projet, non inclus, sans règl
 src/bin/xlcdd.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",168,0
 src/kernel/core/arch/cortexm/lepton_irq.h,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),20,0
 src/kernel/core/arch/cortexm/sbrk_cortexm.c,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),12,0
+src/kernel/core/arch/cortexm/startup_armv6m.c,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),66,0
 src/kernel/core/arch/cortexm/startup_armv7m.c,actif,étape 3 : démarrage et sections critiques Cortex-M (GCC),83,0
 src/kernel/core/arch/host/libc_host.c,actif,étape 2 : noyau statique hôte (mklepton),13,0
 src/kernel/core/arch/host/static/bin_mkconf.c,actif,étape 2 : noyau statique hôte (mklepton),5,0
@@ -129,6 +130,7 @@ src/kernel/core/core-freertos/process.c,différé,règle : backend FreeRTOS (ét
 src/kernel/core/core-freertos/signal.c,différé,règle : backend FreeRTOS (étape 7),219,5
 src/kernel/core/core-freertos/syscall.c,différé,règle : backend FreeRTOS (étape 7),645,5
 src/kernel/core/core-generic/kernel_pthread_tsd.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",113,3
+src/kernel/core/core-segger/arch/armv6m/embos_init_hw.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",53,0
 src/kernel/core/core-segger/arch/armv7m/embos_init_hw.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",53,0
 src/kernel/core/core-segger/arch/armv7m/embos_main.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",11,0
 src/kernel/core/core-segger/core_rttimer.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",43,7
@@ -190,7 +192,8 @@ src/kernel/core/ioctl_pwr.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-
 src/kernel/core/ioctl_spi.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",5,6
 src/kernel/core/ioctl_usb.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",9,3
 src/kernel/core/kal.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",1288,44
-src/kernel/core/kal/arch/armv6m/kal_arch_conf.h,différé,"étape 4 (KAL-2) : réglages d'ISA M0/M0+ (HYPOTHÈSE À VALIDER), cœurs de l'étape 6",9,0
+src/kernel/core/kal/arch/armv6m/kal_arch.h,actif,"étape 6 : KAL, axe ISA ARMv6-M (SAMD21 Xplained Pro)",10,0
+src/kernel/core/kal/arch/armv6m/kal_arch_conf.h,actif,étape 6 : réglages d'ISA ARMv6-M validés sur la SAMD21 Xplained Pro,9,0
 src/kernel/core/kal/arch/armv7m/kal_arch.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",9,0
 src/kernel/core/kal/arch/armv7m/kal_arch_conf.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",10,0
 src/kernel/core/kal/arch/host/kal_arch.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",4,0
@@ -292,6 +295,7 @@ src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cachel1_armv7.h,actif,"étape 6
 src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_compiler.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",206,0
 src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_gcc.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",1202,0
 src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/cmsis_version.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",12,0
+src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm0plus.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M0+ (tiers, copie du paquet embOS)",529,0
 src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/core_cm7.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",1346,0
 src/kernel/core/ucore/cmsis-5/CMSIS/Core/Include/mpu_armv7.h,actif,"étape 6 : CMSIS-Core 5 du Cortex-M7 (tiers, copie du paquet embOS)",125,0
 src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM0/Include/ARMCM0.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",169,0
@@ -559,6 +563,71 @@ src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/iar/startup_sam.c,hors-
 src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/iar/startup_samv71.c,différé,"déclaré par tauon-basic_at91samv71_7.80/Debug (Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30))",287,1
 src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/system_sam.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",148,0
 src/kernel/core/ucore/cmsis-5/Device/Atmel/samv71/source/system_samv71.c,différé,"déclaré par tauon-basic_at91samv71_7.80/Debug (Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30))",163,1
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component-version.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/ac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",301,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/adc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",384,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/dac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",122,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/dmac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",635,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/dsu.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",234,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/eic.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",480,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/evsys.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",370,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/fuses.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",238,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/gclk.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",189,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/hmatrixb.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",47,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/i2s.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",422,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/mtb.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",126,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/nvmctrl.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",180,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/pac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",23,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/pm.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",331,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/port.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",223,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/ptc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",7,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/rtc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",603,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/sercom.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",2088,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/sysctrl.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",666,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/tc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",365,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/tcc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",1263,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/usb.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",1056,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/component/wdt.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",149,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/ac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/adc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/dac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",6,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/dmac.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",12,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/dsu.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",4,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/eic.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",7,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/evsys.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",24,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/fuses.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",3,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/gclk.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",19,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/i2s.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/mtb.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",4,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/nvmctrl.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",22,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/pac0.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",5,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/pac1.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",5,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/pac2.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",5,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/pm.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/port.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/ptc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",5,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/rtc.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",11,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sbmatrix.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",16,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sercom0.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sercom1.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sercom2.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sercom3.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sercom4.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sercom5.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",9,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/sysctrl.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",31,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tc3.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",16,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tc4.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",16,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tc5.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",16,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tc6.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",16,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tc7.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",16,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tcc0.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",20,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tcc1.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",18,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/tcc2.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",18,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/usb.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",8,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/instance/wdt.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",5,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/pio/samd21j18a.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",1302,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/samd21j18a.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",493,0
+src/kernel/core/ucore/cmsis-5/Device/Microchip/SAMD21/include/system_samd21j18a.h,actif,"étape 6 : en-têtes de la SAMD21J18A (tiers, Microchip SAMD21_DFP 3.8.270)",13,0
 src/kernel/core/ucore/cmsis-5/Device/ST/STM32F7xx/Include/stm32f746xx.h,actif,"étape 6 : CMSIS Device STM32F7 (tiers, STM32CubeF7 v1.17.4)",15727,0
 src/kernel/core/ucore/cmsis-5/Device/ST/STM32F7xx/Include/stm32f7xx.h,actif,"étape 6 : CMSIS Device STM32F7 (tiers, STM32CubeF7 v1.17.4)",127,0
 src/kernel/core/ucore/cmsis-5/Device/ST/STM32F7xx/Include/system_stm32f7xx.h,actif,"étape 6 : CMSIS Device STM32F7 (tiers, STM32CubeF7 v1.17.4)",14,0
@@ -1923,6 +1992,8 @@ src/kernel/dev/arch/cortexm/k60n512/dev_k60n512_uart_x/dev_k60n512_uart_3.c,gel�
 src/kernel/dev/arch/cortexm/k60n512/dev_k60n512_uart_x/dev_k60n512_uart_4.c,gelé,"règle : Freescale K60 (TWR-K60N512), carte abandonnée, sans projet IAR (proposition)",71,0
 src/kernel/dev/arch/cortexm/k60n512/dev_k60n512_uart_x/dev_k60n512_uart_x.c,gelé,"règle : Freescale K60 (TWR-K60N512), carte abandonnée, sans projet IAR (proposition)",178,0
 src/kernel/dev/arch/cortexm/k60n512/dev_k60n512_uart_x/dev_k60n512_uart_x.h,gelé,"règle : Freescale K60 (TWR-K60N512), carte abandonnée, sans projet IAR (proposition)",97,0
+src/kernel/dev/arch/cortexm/samd21/dev_samd21/dev_samd21_uart_x.c,actif,étape 6 : pilotes SAMD21 de Lepton,138,0
+src/kernel/dev/arch/cortexm/samd21/dev_samd21/dev_samd21_uart_x.h,actif,étape 6 : pilotes SAMD21 de Lepton,28,0
 src/kernel/dev/arch/cortexm/stellaris/driverlib/adc.c,différé,déclaré par dev_lm3s_6.21/Debug (candidat M3 (étape 6)),408,2
 src/kernel/dev/arch/cortexm/stellaris/driverlib/adc.h,différé,inclus par dev_lm3s_6.21/Debug (candidat M3 (étape 6)),182,2
 src/kernel/dev/arch/cortexm/stellaris/driverlib/can.c,différé,déclaré par dev_lm3s_6.21/Debug (candidat M3 (étape 6)),706,2
@@ -2933,6 +3004,8 @@ src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/samd20_xplain
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/samd20_xplained_pro_board_conf_clocks.h,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),88,1
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_board/samd20_xplained_pro_board_init.c,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),43,1
 src/kernel/dev/bsp/samd20xplained_pro/dev_samd20xplained_pro_peripherals/dev_samd20xplained_pro_uart_3.c,différé,déclaré par bsp_samd20xplained_pro_7.30/Debug (candidat M0+ (étape 6)),59,1
+src/kernel/dev/bsp/samd21_xplained_pro/samd21_xplained_pro.h,actif,étape 6 : BSP de la carte SAMD21 Xplained Pro,9,0
+src/kernel/dev/bsp/samd21_xplained_pro/samd21_xplained_pro_board.c,actif,étape 6 : BSP de la carte SAMD21 Xplained Pro,113,0
 src/kernel/dev/bsp/same70xplained/dev_same70xplained_board/dev_same70xplained_board.c,différé,"règle : Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30)",103,1
 src/kernel/dev/bsp/same70xplained/dev_same70xplained_board/dev_same70xplained_board.h,différé,"règle : Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30)",319,1
 src/kernel/dev/bsp/same70xplained/dev_same70xplained_peripherals/dev_same70xplained_i2c_0.c,différé,"règle : Cortex-M7 Atmel SAMV71/SAME70, référence M7 (décision 2026-09-30)",53,1
@@ -4080,6 +4153,7 @@ sys/user/tauon-basic/src/arch/atmel-at91samv71-xplained-ultra/kernel_mkconf/incl
 sys/user/tauon-basic/src/arch/nucleo-f439zi/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 5 : configuration de la carte NUCLEO-F439ZI,14,0
 sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",27,0
 sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration commune des machines QEMU MPS2,13,0
+sys/user/tauon-basic/src/arch/samd21-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h,actif,étape 6 : configuration de la carte SAMD21 Xplained Pro,13,0
 sys/user/tauon-basic/src/arch/st-stm32f407-discovery/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",26,0
 sys/user/tauon-basic/src/arch/st-stm32f469i-eval/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",309,0
 sys/user/tauon-basic/src/arch/st-stm32wl55jci-nucleo/kernel_mkconf/include/user_kernel_mkconf.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",29,0
@@ -4355,6 +4429,8 @@ tests/host/stub_check_main.c,actif,"étapes 2-3 : bancs de test (ctest host, ban
 tests/host/ufs_check.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",45,0
 tests/host/ufs_format.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",26,0
 tests/host/vfs_ufs.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",55,0
+tests/kal/arch/armv6m/kal_regs_armv6m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",43,0
+tests/kal/arch/armv6m/kal_regs_read_armv6m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",25,0
 tests/kal/arch/armv7m/kal_bench.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",527,0
 tests/kal/arch/armv7m/kal_fpu_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",93,0
 tests/kal/arch/armv7m/kal_regs_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",18,0
