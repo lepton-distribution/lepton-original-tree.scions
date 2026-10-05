@@ -17,7 +17,6 @@ set(LEPTON_BSP_SOURCES
   ${wlbsp}/dev_stm32wl55jci_nucleo_peripherals/dev_stm32wl55jci_nucleo_usart_2.c
   # couche STM32WL de Lepton
   ${stm32wl}/dev_stm32wlxx/dev_stm32wlxx_uart_x.c
-  ${stm32wl}/dev_stm32wlxx/dev_stm32wlxx_hal_tick.c
   # HAL ST (tiers, STM32CubeWL, HAL V1.3.0)
   ${stm32wl}/cubemx_hal_driver/src/stm32wlxx_hal.c
   ${stm32wl}/cubemx_hal_driver/src/stm32wlxx_hal_cortex.c
@@ -30,6 +29,9 @@ set(LEPTON_BSP_SOURCES
   ${stm32wl}/cubemx_hal_driver/src/stm32wlxx_hal_dma_ex.c
   ${stm32wl}/cubemx_hal_driver/src/stm32wlxx_hal_uart.c
   ${stm32wl}/cubemx_hal_driver/src/stm32wlxx_hal_uart_ex.c)
+# base de temps de la HAL : objet de l'exécutable (dans une bibliothèque, les HAL_GetTick et
+# HAL_Delay faibles de stm32wlxx_hal.c suffiraient à l'éditeur de liens)
+list(APPEND LEPTON_FIRMWARE_SOURCES ${stm32wl}/dev_stm32wlxx/dev_stm32wlxx_hal_tick.c)
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_wl55jc1.xml)
 set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM4-stm32wlxx)
