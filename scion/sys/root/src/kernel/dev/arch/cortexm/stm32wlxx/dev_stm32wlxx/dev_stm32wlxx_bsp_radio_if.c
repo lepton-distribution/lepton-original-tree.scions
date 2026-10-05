@@ -36,10 +36,10 @@ Includes
 
 #include "stm32wlxx_hal.h"
 
-#include "kernel\dev\arch\cortexm\stm32wlxx\radio_subghz_phy\stm32_radio_target\radio_board_if.h"
-#include "kernel\dev\arch\cortexm\stm32wlxx\dev_stm32wlxx\dev_stm32wlxx_bsp_radio_if.h"
+#include "kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_board_if.h"
+#include "kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.h"
 
-#include "kernel\dev\arch\cortexm\stm32wlxx\radio_subghz_phy\radio.h"
+#include "kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio.h"
 
 /*===========================================
 Global Declaration
