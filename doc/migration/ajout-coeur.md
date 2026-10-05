@@ -31,7 +31,9 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    définitions propres au cœur : `__KERNEL_CPU_NAME` (nom vu par `uname`),
    `__KERNEL_STACK_SIZE` (pile du thread noyau, `core-segger/kernel.c`) et
    `__tauon_cpu_core__` ; le CMSIS-Core du cœur s'il manque au CMSIS 3.20 de l'ISA (M7 :
-   `ucore/cmsis-5/CMSIS/Core/Include`).
+   `ucore/cmsis-5/CMSIS/Core/Include`). Propriétés de la puce qui varient pour un même cœur :
+   variable de cache réglée par le preset de la carte (ex. `LEPTON_M7_FPU` = `dp` ou `sp`), que
+   le fichier de carte contrôle.
 2. Preset dans `CMakePresets.json` (ligne d'enregistrement).
 3. Si le cœur change le contexte sauvegardé (FPU, trame étendue) : code sous `src/kernel/core/arch/<famille>/`
    ou `src/kernel/core/kal/arch/<isa>/`, jamais de `#if` de cœur dans le code commun.
@@ -60,6 +62,9 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    `__tauon_cpu_device__` de `kernelconf.h` (cartes antérieures seulement, étape 6).
    Machines voisines : un BSP commun et un en-tête d'adresses par machine (ex.
    `bsp/qemu_mps2/<machine>/qemu_mps2_machine.h`, choisi par le chemin d'inclusion).
+   Variante de bibliothèque du micro-noyau propre à la puce : `LEPTON_EMBOS_LIB_VARIANT`
+   (ex. `_837070`, Cortex-M7 r0p1, avec `USE_ERRATUM_837070=1`). Paquet constructeur (HAL,
+   CMSIS Device) : code tiers non modifié, configuration (`*_hal_conf.h`) dans le BSP.
 2. `ld/mem_<carte>.ld` : bloc `MEMORY` seul.
 3. mkconf de l'application : chemins relatifs au trunk (`tools/migration/mkconf_relpaths.py`) ;
    généré par `lepton_generate()` (`cmake/mklepton.cmake`) dans `$LEPTON_BUILD/<preset>/generated/`.

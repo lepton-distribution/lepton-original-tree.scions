@@ -15,8 +15,10 @@ if(NOT EXISTS ${LEPTON_EMBOS_ROOT}/Start/Inc/RTOS.h)
   message(FATAL_ERROR "embOS introuvable : LEPTON_EMBOS_ROOT=${LEPTON_EMBOS_ROOT} (source scripts/lepton-env.sh)")
 endif()
 
+# Variante de la bibliothèque propre à la puce (LEPTON_EMBOS_LIB_VARIANT, cmake/boards : ex.
+# _837070 pour un Cortex-M7 r0p1, avec USE_ERRATUM_837070=1).
 set(LEPTON_EMBOS_LIB
-    ${LEPTON_EMBOS_ROOT}/Start/Lib/libos${LEPTON_EMBOS_LIB_FAMILY}$<IF:$<CONFIG:Debug>,SP,R>.a)
+    ${LEPTON_EMBOS_ROOT}/Start/Lib/libos${LEPTON_EMBOS_LIB_FAMILY}$<IF:$<CONFIG:Debug>,SP,R>${LEPTON_EMBOS_LIB_VARIANT}.a)
 set(LEPTON_KAL_LINK_LIBS ${LEPTON_EMBOS_LIB})
 
 # Intégration embOS écrite pour Lepton (décision 2026-09-30 : aucun fichier d'exemple Segger) :
