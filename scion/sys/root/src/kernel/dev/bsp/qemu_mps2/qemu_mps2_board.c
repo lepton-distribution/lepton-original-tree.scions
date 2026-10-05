@@ -1,5 +1,7 @@
 /*
- * Lepton — BSP de la carte QEMU mps2-an386 (Cortex-M4). Licence : voir LICENSE (MPL 1.1).
+ * Lepton — BSP commun des machines QEMU MPS2 (mps2-an386 Cortex-M4, mps2-an500 Cortex-M7).
+ * Licence : voir LICENSE (MPL 1.1). Adresses et interruptions : <machine>/qemu_mps2_machine.h,
+ * choisi par le chemin d'inclusion que pose cmake/boards/qemu-mps2-<machine>.cmake.
  * Horloge système (pas de PLL : QEMU), instances UART CMSDK ttys0 (console lsh) et ttys1,
  * Ethernet LAN9118 eth0, routage de leurs interruptions.
  */
@@ -17,25 +19,25 @@
 
 #include "kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.h"
 #include "kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.h"
-#include "qemu_mps2_an386.h"
+#include "qemu_mps2_machine.h"   /* en-tête de la machine : bsp/qemu_mps2/<machine>/ */
 
 /* --- horloge (CMSIS system_ARMCM4.h) ------------------------------------------------------ */
-uint32_t SystemCoreClock = QEMU_MPS2_AN386_SYSCLK_HZ;
+uint32_t SystemCoreClock = QEMU_MPS2_SYSCLK_HZ;
 
 void SystemInit(void){
 }
 
 void SystemCoreClockUpdate(void){
-   SystemCoreClock = QEMU_MPS2_AN386_SYSCLK_HZ;
+   SystemCoreClock = QEMU_MPS2_SYSCLK_HZ;
 }
 
 /* --- UART CMSDK ------------------------------------------------------------------------- */
 static void qemu_mps2_uart_irq_enable(dev_cmsdk_uart_info_t* info, int enable);
 
 static dev_cmsdk_uart_info_t qemu_mps2_uart[2] = {
-   { QEMU_MPS2_AN386_UART0_BASE, QEMU_MPS2_AN386_SYSCLK_HZ, QEMU_MPS2_AN386_UART_BAUDRATE,
+   { QEMU_MPS2_UART0_BASE, QEMU_MPS2_SYSCLK_HZ, QEMU_MPS2_UART_BAUDRATE,
      qemu_mps2_uart_irq_enable },
-   { QEMU_MPS2_AN386_UART1_BASE, QEMU_MPS2_AN386_SYSCLK_HZ, QEMU_MPS2_AN386_UART_BAUDRATE,
+   { QEMU_MPS2_UART1_BASE, QEMU_MPS2_SYSCLK_HZ, QEMU_MPS2_UART_BAUDRATE,
      qemu_mps2_uart_irq_enable },
 };
 static int qemu_mps2_uart_irq_users = 0;
@@ -50,11 +52,11 @@ static void qemu_mps2_uart_irq_enable(dev_cmsdk_uart_info_t* info, int enable){
       if(--qemu_mps2_uart_irq_users > 0)
          return;
    }
-   for(irq = QEMU_MPS2_AN386_UART_IRQ_FIRST; irq <= QEMU_MPS2_AN386_UART_IRQ_LAST + 1; irq++) {
-      IRQn_Type n = (irq <= QEMU_MPS2_AN386_UART_IRQ_LAST) ? (IRQn_Type)irq
-                                                           : (IRQn_Type)QEMU_MPS2_AN386_UART_IRQ_OVF;
+   for(irq = QEMU_MPS2_UART_IRQ_FIRST; irq <= QEMU_MPS2_UART_IRQ_LAST + 1; irq++) {
+      IRQn_Type n = (irq <= QEMU_MPS2_UART_IRQ_LAST) ? (IRQn_Type)irq
+                                                           : (IRQn_Type)QEMU_MPS2_UART_IRQ_OVF;
       if(enable) {
-         NVIC_SetPriority(n, QEMU_MPS2_AN386_UART_IRQ_PRIO);
+         NVIC_SetPriority(n, QEMU_MPS2_UART_IRQ_PRIO);
          NVIC_ClearPendingIRQ(n);
          NVIC_EnableIRQ(n);
       } else {
@@ -100,10 +102,10 @@ QEMU_MPS2_UART_INSTANCE(1)
 
 /* --- Ethernet LAN9118 : eth0 ------------------------------------------------------------ */
 static void qemu_mps2_eth_irq_enable(dev_eth_lan9118_info_t* info, int enable){
-   IRQn_Type n = (IRQn_Type)QEMU_MPS2_AN386_ETH_IRQ;
+   IRQn_Type n = (IRQn_Type)QEMU_MPS2_ETH_IRQ;
    (void)info;
    if(enable) {
-      NVIC_SetPriority(n, QEMU_MPS2_AN386_ETH_IRQ_PRIO);
+      NVIC_SetPriority(n, QEMU_MPS2_ETH_IRQ_PRIO);
       NVIC_ClearPendingIRQ(n);
       NVIC_EnableIRQ(n);
    } else {
@@ -112,7 +114,7 @@ static void qemu_mps2_eth_irq_enable(dev_eth_lan9118_info_t* info, int enable){
 }
 
 static dev_eth_lan9118_info_t qemu_mps2_eth = {
-   QEMU_MPS2_AN386_ETH_BASE, qemu_mps2_eth_irq_enable
+   QEMU_MPS2_ETH_BASE, qemu_mps2_eth_irq_enable
 };
 
 void IRQ13_Handler(void) { dev_eth_lan9118_x_interrupt(&qemu_mps2_eth); }

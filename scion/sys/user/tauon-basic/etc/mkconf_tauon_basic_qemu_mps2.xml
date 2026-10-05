@@ -1,5 +1,6 @@
 <?xml version='1.0'?>
-<!-- Socle QEMU mps2-an386 (Cortex-M4, étape 3 de la migration GCC/Linux) : chaîne minimale,
+<!-- Machines QEMU MPS2 : socle mps2-an386 (Cortex-M4, étape 3 de la migration GCC/Linux) et
+     mps2-an500 (Cortex-M7, étape 6), même configuration : chaîne minimale,
      console lsh sur UART CMSDK 0 (ttys0), second port UART1 (ttys1), Ethernet LAN9118 (eth0)
      avec la pile lwIP (étape 3b).
      Chemins relatifs au trunk (mklepton -s <trunk> -o <build>). -->
@@ -11,7 +12,7 @@
 
 <kernel>
       <target name="cortexm_lepton">
-         <arch include_absolute_path="sys/user/tauon-basic/src/arch/qemu-mps2-an386/kernel_mkconf/include/user_kernel_mkconf.h" />
+         <arch include_absolute_path="sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h" />
       </target>
 
       <!-- cpu frequency in Hz (MPS2 : 25 MHz) -->
@@ -91,8 +92,8 @@
 </binaries>
 
 <files>
-   <file name=".boot"   src_file="sys/user/tauon-basic/etc/qemu-mps2-an386/.boot"   dest_path="etc" />
-   <file name=".init"   src_file="sys/user/tauon-basic/etc/qemu-mps2-an386/.init"   dest_path="etc" />
+   <file name=".boot"   src_file="sys/user/tauon-basic/etc/qemu-mps2/.boot"   dest_path="etc" />
+   <file name=".init"   src_file="sys/user/tauon-basic/etc/qemu-mps2/.init"   dest_path="etc" />
 </files>
 
 </mklepton>

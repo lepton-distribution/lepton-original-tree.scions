@@ -1,5 +1,5 @@
 /*
- * Configuration applicative du socle QEMU mps2-an386 (étape 3). Les axes (micro-noyau, cœur,
+ * Configuration applicative des machines QEMU MPS2 (mps2-an386, étape 3 ; mps2-an500, étape 6). Les axes (micro-noyau, cœur,
  * périphérique __tauon_cpu_device__) sont posés par CMake (cmake/kal, cmake/boards), pas ici.
  */
 #ifndef _USER_KERNEL_MKCONF_H_
