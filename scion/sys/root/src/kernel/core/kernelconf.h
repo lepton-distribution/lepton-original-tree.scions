@@ -90,7 +90,12 @@ Includes
    #endif
 #endif
 
-#if __tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
+//carte decrite par CMake (etape 6) : nom vu par uname pose par cmake/boards/<carte>.cmake,
+//coeur (__tauon_cpu_core__) par cmake/cpu/<coeur>.cmake ; la table ci-dessous ne sert qu'aux
+//cartes anterieures (une carte nouvelle n'y ajoute rien, doc/migration/ajout-coeur.md)
+#if defined(__KERNEL_CPU_DEVICE_NAME)
+
+#elif __tauon_cpu_device__==__tauon_cpu_device_gnu_synthetic__
    #define __KERNEL_CPU_DEVICE_NAME "x86-gnu-synth"
    #define __tauon_cpu_core__ __tauon_cpu_core_gnu_syntetic__
 

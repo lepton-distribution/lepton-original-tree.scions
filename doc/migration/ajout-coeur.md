@@ -26,9 +26,12 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 ## 2. Ajouter un cœur (même famille)
 
 1. `cmake/cpu/<cœur>.cmake` : `cpu_flags` (compilation **et** édition de liens),
-   `LEPTON_EMBOS_LIB_FAMILY` (table variante ↔ flags : `embos-inventaire.md` §3), et les
-   définitions propres au cœur : `__KERNEL_CPU_NAME` (nom vu par `uname`) et
-   `__KERNEL_STACK_SIZE` (pile du thread noyau, `core-segger/kernel.c`).
+   `LEPTON_EMBOS_LIB_FAMILY` (table variante ↔ flags : `embos-inventaire.md` §3),
+   `LEPTON_FLOAT_ABI` (`hard` ou `soft` : variantes FPU du banc KAL), et les
+   définitions propres au cœur : `__KERNEL_CPU_NAME` (nom vu par `uname`),
+   `__KERNEL_STACK_SIZE` (pile du thread noyau, `core-segger/kernel.c`) et
+   `__tauon_cpu_core__` ; le CMSIS-Core du cœur s'il manque au CMSIS 3.20 de l'ISA (M7 :
+   `ucore/cmsis-5/CMSIS/Core/Include`).
 2. Preset dans `CMakePresets.json` (ligne d'enregistrement).
 3. Si le cœur change le contexte sauvegardé (FPU, trame étendue) : code sous `src/kernel/core/arch/<famille>/`
    ou `src/kernel/core/kal/arch/<isa>/`, jamais de `#if` de cœur dans le code commun.
@@ -51,7 +54,12 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
 
 1. `cmake/boards/<carte>.cmake` : contrôle de `LEPTON_CPU`, `LEPTON_BOARD_MEMORY_LD`,
    `LEPTON_BSP_NAME`, `LEPTON_BSP_SOURCES` (bibliothèque `lepton_bsp_<carte>`, jamais dans
-   `lepton_dev`), `LEPTON_BOARD_MKCONF` (+ `LEPTON_BOARD_MKCONF_TARGET`).
+   `lepton_dev`), `LEPTON_BOARD_MKCONF` (+ `LEPTON_BOARD_MKCONF_TARGET`),
+   `LEPTON_BOARD_UNAME_MACHINE` et la définition `__KERNEL_CPU_DEVICE_NAME` qui en découle
+   (nom vu par `uname`) : une carte nouvelle n'ajoute **rien** à la table
+   `__tauon_cpu_device__` de `kernelconf.h` (cartes antérieures seulement, étape 6).
+   Machines voisines : un BSP commun et un en-tête d'adresses par machine (ex.
+   `bsp/qemu_mps2/<machine>/qemu_mps2_machine.h`, choisi par le chemin d'inclusion).
 2. `ld/mem_<carte>.ld` : bloc `MEMORY` seul.
 3. mkconf de l'application : chemins relatifs au trunk (`tools/migration/mkconf_relpaths.py`) ;
    généré par `lepton_generate()` (`cmake/mklepton.cmake`) dans `$LEPTON_BUILD/<preset>/generated/`.
