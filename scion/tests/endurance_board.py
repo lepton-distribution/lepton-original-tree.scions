@@ -11,9 +11,12 @@ sonde), attend l'invite de lsh, puis pendant --duration secondes :
     une coupure de plus de --max-ping-gap secondes est une faute ;
   - toute réapparition de la bannière de démarrage (« lepton start! ») est une faute
     (redémarrage, chien de garde).
+Sans --ping-ip (carte sans réseau, étape 6 : SAMD21 Xplained Pro), seuls les cycles lsh sont faits.
 À la fin : nombre de processus de « ps » identique au premier cycle (pas d'accumulation), puis
-relevé des piles (commande gdb lepton-stacks) et des registres de faute (CFSR, HFSR nuls) par
-OpenOCD + gdb (--openocd-cfg, --gdbinit, --elf). Journal de la console : --log ; rapport
+relevé des piles (commande gdb lepton-stacks) et des registres de faute par OpenOCD + gdb
+(--openocd-cfg, --gdbinit, --elf) : --fault-check v7m (défaut) : CFSR, HFSR nuls ; v6m (ARMv6-M,
+sans CFSR/HFSR) : exception active (ICSR.VECTACTIVE) autre que HardFault (3) et
+lepton_embos_last_error nul. Journal de la console : --log ; rapport
 résumé sur la sortie standard ; code de retour 0 si aucune faute.
 
 Exemple :
@@ -65,6 +68,14 @@ class Pinger(threading.Thread):
             self.stop.wait(max(0.0, self.interval - (now - t0)))
 
 
+FAULT_EXPR = {
+    "v7m": "printf \"CFSR=0x%08x HFSR=0x%08x\\n\", "
+           "*(unsigned int*)0xE000ED28, *(unsigned int*)0xE000ED2C",
+    "v6m": "printf \"ICSR=0x%08x EMBOS=%d\\n\", "
+           "*(unsigned int*)0xE000ED04, (int)lepton_embos_last_error",
+}
+
+
 def probe(args):
     """Relevé des piles et des registres de faute par OpenOCD + gdb (cœur arrêté le temps du
     relevé, puis relancé par « monitor resume »)."""
@@ -74,8 +85,7 @@ def probe(args):
         time.sleep(2)
         r = subprocess.run(["gdb-multiarch", "-batch", "-x", args.gdbinit,
                             "-ex", "lepton-stacks",
-                            "-ex", "printf \"CFSR=0x%08x HFSR=0x%08x\\n\", "
-                                   "*(unsigned int*)0xE000ED28, *(unsigned int*)0xE000ED2C",
+                            "-ex", FAULT_EXPR[args.fault_check],
                             # l'attachement de gdb arrête le cœur : relance explicite
                             # (après detach seul, le cœur a été vu resté arrêté)
                             "-ex", "monitor resume", "-ex", "detach", args.elf],
@@ -91,7 +101,7 @@ def main():
     ap.add_argument("--port", required=True)
     ap.add_argument("--baud", type=int, default=115200)
     ap.add_argument("--reset-command", required=True)
-    ap.add_argument("--ping-ip", required=True)
+    ap.add_argument("--ping-ip", help="adresse de la carte ; absente : carte sans réseau")
     ap.add_argument("--ping-interval", type=float, default=1.0)
     ap.add_argument("--max-ping-gap", type=float, default=10.0)
     ap.add_argument("--duration", type=float, default=3 * 3600)
@@ -103,6 +113,7 @@ def main():
     ap.add_argument("--gdbinit", required=True)
     ap.add_argument("--elf", required=True)
     ap.add_argument("--log", required=True)
+    ap.add_argument("--fault-check", choices=sorted(FAULT_EXPR), default="v7m")
     args = ap.parse_args()
     commands = args.command or ["uname -a", "ps", "ls /usr/sbin", "cat /usr/etc/.boot", "pwd"]
 
@@ -121,7 +132,7 @@ def main():
             con.send("")
             if con.read_until(PROMPT, args.timeout) is None:
                 failures.append("invite lsh absente")
-        if not failures:
+        if not failures and args.ping_ip:
             deadline = time.monotonic() + args.boot_timeout
             while subprocess.run(["ping", "-c", "1", "-W", "1", args.ping_ip],
                                  stdout=subprocess.DEVNULL).returncode != 0:
@@ -132,8 +143,9 @@ def main():
             link.kill()
         else:
             print("début : %s" % time.strftime("%Y-%m-%d %H:%M:%S"), flush=True)
-            pinger = Pinger(args.ping_ip, args.ping_interval)
-            pinger.start()
+            pinger = Pinger(args.ping_ip, args.ping_interval) if args.ping_ip else None
+            if pinger:
+                pinger.start()
             start = time.monotonic()
             try:
                 while time.monotonic() - start < args.duration and not failures:
@@ -156,31 +168,42 @@ def main():
                             elif n != ps_count0:
                                 failures.append("cycle %d : ps %d processus (%d au premier cycle)"
                                                 % (cycles, n, ps_count0))
-                    if pinger.max_gap > args.max_ping_gap:
+                    if pinger and pinger.max_gap > args.max_ping_gap:
                         failures.append("ping : coupure de %.1f s" % pinger.max_gap)
                     cycles += 1
                     if cycles % 120 == 0:
-                        print("%s : %d cycles, ping %d/%d" % (time.strftime("%H:%M:%S"), cycles,
-                              pinger.received, pinger.sent), flush=True)
+                        print("%s : %d cycles%s" % (time.strftime("%H:%M:%S"), cycles,
+                              ", ping %d/%d" % (pinger.received, pinger.sent) if pinger else ""),
+                              flush=True)
                     time.sleep(max(0.0, args.period - (time.monotonic() - t0)))
             finally:
-                pinger.stop.set()
-                pinger.join()
+                if pinger:
+                    pinger.stop.set()
+                    pinger.join()
                 link.kill()
             elapsed = time.monotonic() - start
-            print("fin : %s ; %.0f s, %d cycles de %d commandes, ping %d/%d (perte %.3f %%), "
-                  "plus longue coupure %.1f s"
-                  % (time.strftime("%Y-%m-%d %H:%M:%S"), elapsed, cycles, len(commands),
-                     pinger.received, pinger.sent,
-                     100.0 * (pinger.sent - pinger.received) / max(1, pinger.sent),
-                     pinger.max_gap), flush=True)
+            ping = ("ping %d/%d (perte %.3f %%), plus longue coupure %.1f s"
+                    % (pinger.received, pinger.sent,
+                       100.0 * (pinger.sent - pinger.received) / max(1, pinger.sent),
+                       pinger.max_gap)) if pinger else "sans réseau"
+            print("fin : %s ; %.0f s, %d cycles de %d commandes, %s"
+                  % (time.strftime("%Y-%m-%d %H:%M:%S"), elapsed, cycles, len(commands), ping),
+                  flush=True)
     report = probe(args)
     print(report)
-    m = re.search(r"CFSR=0x([0-9a-f]+) HFSR=0x([0-9a-f]+)", report)
-    if not m:
-        failures.append("relevé sonde : registres de faute non lus")
-    elif int(m.group(1), 16) or int(m.group(2), 16):
-        failures.append("registres de faute non nuls : CFSR=0x%s HFSR=0x%s" % m.groups())
+    if args.fault_check == "v7m":
+        m = re.search(r"CFSR=0x([0-9a-f]+) HFSR=0x([0-9a-f]+)", report)
+        if not m:
+            failures.append("relevé sonde : registres de faute non lus")
+        elif int(m.group(1), 16) or int(m.group(2), 16):
+            failures.append("registres de faute non nuls : CFSR=0x%s HFSR=0x%s" % m.groups())
+    else:
+        m = re.search(r"ICSR=0x([0-9a-f]+) EMBOS=(-?\d+)", report)
+        if not m:
+            failures.append("relevé sonde : ICSR / erreur embOS non lus")
+        elif (int(m.group(1), 16) & 0x1FF) == 3 or int(m.group(2)):
+            failures.append("faute : ICSR=0x%s (VECTACTIVE 3 = HardFault), erreur embOS %s"
+                            % m.groups())
     for f in failures:
         print("ÉCHEC : " + f)
     print("journal : " + args.log)
