@@ -18,7 +18,7 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 |---|---:|---:|---:|---:|---:|
 | iar | 129 | 929 | 628 | 542 | 2228 |
 | autre | 170 | 54 | 682 | 398 | 1304 |
-| a_verifier | 1545 | 598 | 766 | 484 | 3393 |
+| a_verifier | 1562 | 581 | 766 | 484 | 3393 |
 | info | 48 | 74 | 51 | 14 | 187 |
 
 ## Catégorie × ensemble (sévérité `iar`)
@@ -43,9 +43,9 @@ Métrique décroissante des étapes 3-4 (`--summary` pour la seule relever). Sé
 | asm_inconnu | a_verifier | 0 | 0 | 3 | 0 |
 | asm_multi | a_verifier | 0 | 0 | 4 | 0 |
 | garde_compilateur | a_verifier | 7 | 1 | 29 | 0 |
-| garde_gcc | a_verifier | 69 | 46 | 118 | 49 |
-| intrinsic_cmsis | a_verifier | 1071 | 195 | 473 | 323 |
-| mot_cle | a_verifier | 322 | 233 | 0 | 32 |
+| garde_gcc | a_verifier | 71 | 44 | 118 | 49 |
+| intrinsic_cmsis | a_verifier | 1074 | 192 | 473 | 323 |
+| mot_cle | a_verifier | 334 | 221 | 0 | 32 |
 | pragma | a_verifier | 72 | 121 | 99 | 80 |
 | symbole_dlib_io | a_verifier | 0 | 2 | 6 | 0 |
 | xml_mklepton | a_verifier | 1 | 0 | 34 | 0 |
@@ -280,7 +280,7 @@ Syntaxe déduite des directives (IAR : `MODULE`/`RSEG`/`SECTION x:CODE`/`DC32`/`
 
 | genre | actif | differe | gele | hors_projet |
 |---|---:|---:|---:|---:|
-| c | 1430 | 1393 | 906 | 793 |
+| c | 1467 | 1358 | 906 | 793 |
 | asm | 6 | 19 | 23 | 55 |
 | projet | 43 | 72 | 48 | 0 |
 | xml | 20 | 9 | 2 | 0 |

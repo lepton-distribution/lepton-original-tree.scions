@@ -89,6 +89,15 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    Gestionnaires d'interruption nommés à la CMSIS dans un pilote repris (ex.
    `USART2_IRQHandler`) : reliés par le BSP aux `IRQ<n>_Handler` de la table générique, et
    priorités NVIC posées par le BSP (`SystemInit`) si le pilote ne les règle pas.
+   Paquet constructeur dont un fichier compilé définit des fonctions faibles (ex. `HAL_GetTick`,
+   `HAL_Delay` de `stm32wlxx_hal.c`) : leur remplaçant fort va dans `LEPTON_FIRMWARE_SOURCES`
+   (objet de l'exécutable), sinon l'éditeur de liens garde la version faible et ne tire pas le
+   membre de bibliothèque. Pilote qui attend (`HAL_Delay`) à son chargement : les pilotes se
+   chargent avant `OS_Start`, interruptions masquées, tick figé ; attente sur un compteur
+   matériel (DWT du Cortex-M3/M4/M7), pas sur le tick.
+   Test entre deux cartes identiques (radio) : enregistré par le fichier de carte
+   (`add_test`, label `board;radio`), même image flashée sur la carte paire désignée par des
+   variables de cache (sonde, console) ; aucun ajout au CMake commun.
 2. `ld/mem_<carte>.ld` : bloc `MEMORY` seul.
 3. mkconf de l'application : chemins relatifs au trunk (`tools/migration/mkconf_relpaths.py`) ;
    généré par `lepton_generate()` (`cmake/mklepton.cmake`) dans `$LEPTON_BUILD/<preset>/generated/`.

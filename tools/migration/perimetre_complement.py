@@ -127,20 +127,30 @@ for _src in ("eth", "rcc", "cortex"):
     RECLASSEMENTS["src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_%s.c" % _src] = (
         "actif", "étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)")
 
-# NUCLEO-WL55JC1 (étape 6, session 1) : fichiers du portage IAR (différés) désormais compilés, et
-# fichiers nouveaux de la carte ; radio (SubGHz_Phy, Utilities), pilote cpu0 et reste de la HAL :
-# différés inchangés. Règles par chemin : reclassement des lignes existantes et ajout des nouvelles.
+# NUCLEO-WL55JC1 (étape 6) : fichiers du portage IAR (différés) désormais compilés, et fichiers
+# nouveaux de la carte ; session 2 : radio (SubGHz_Phy, utilitaires liés). Pilote cpu0, gabarits,
+# reste de la HAL et des utilitaires : différés inchangés. Règles par chemin : reclassement des lignes existantes et ajout des nouvelles.
 _WL = "src/kernel/dev/arch/cortexm/stm32wlxx/"
 WL55 = [
     (r"^%scubemx_hal_driver/(inc/|src/stm32wlxx_hal(_(cortex|gpio|rcc|rcc_ex|pwr|pwr_ex|dma|"
-     r"dma_ex|uart|uart_ex))?\.c$)" % _WL, "actif",
+     r"dma_ex|uart|uart_ex|subghz))?\.c$)" % _WL, "actif",
      "étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)"),
-    (r"^%sdev_stm32wlxx/(dev_stm32wlxx_(uart_x\.[ch]|definitions\.h|hal_tick\.c)|"
-     r"stm32wlxx_hal_conf\.h)$" % _WL, "actif", "étape 6 : pilotes STM32WL de Lepton"),
+    (r"^%sdev_stm32wlxx/(dev_stm32wlxx_(uart_x\.[ch]|definitions\.h|hal_tick\.c|"
+     r"bsp_radio_if\.[ch]|util_timer\.c)|stm32wlxx_hal_conf\.h)$" % _WL, "actif",
+     "étape 6 : pilotes STM32WL de Lepton"),
+    # session 2 : pile radio SubGHz_Phy liée (tiers) et sa couche d'adaptation (Lepton)
+    (r"^%sradio_subghz_phy/(radio(_def|_ex)?\.h|lr_fhss_v1_base_types\.h|stm32_radio_driver/|"
+     r"stm32_radio_core_inc/)" % _WL, "actif",
+     "étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)"),
+    (r"^%sradio_subghz_phy/stm32_radio_target/" % _WL, "actif",
+     "étape 6 : adaptation de la pile radio au pilote /dev/radio (Lepton)"),
+    (r"^%sUtilities/(misc/stm32_mem\.[ch]|timer/stm32_timer\.h|trace/adv_trace/stm32_adv_trace\.h)$"
+     % _WL, "actif", "étape 6 : utilitaires STM32CubeWL liés (tiers)"),
+    (r"^src/bin/radiotst\.c$", "actif", "étape 6 : test radio /dev/radio (NUCLEO-WL55JC1)"),
     (r"^src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/(stm32wl55xx|stm32wlxx|system_stm32wlxx)\.h$",
      "actif", "étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)"),
     (r"^src/kernel/dev/bsp/stm32wl55jci_nucleo/(stm32wl55jci_nucleo(_system\.c|\.h)|"
-     r"dev_stm32wl55jci_nucleo_peripherals/)", "actif",
+     r"dev_stm32wl55jci_nucleo_peripherals/|dev_stm32wl55jci_nucleo_radio/(?!.*template))", "actif",
      "étape 6 : BSP de la carte NUCLEO-WL55JC1"),
     (r"^sys/user/tauon-basic/src/arch/nucleo-wl55jc1/", "actif",
      "étape 6 : configuration de la carte NUCLEO-WL55JC1"),

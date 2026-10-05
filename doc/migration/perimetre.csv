@@ -75,6 +75,7 @@ src/bin/net/mongoose/mongoose.h,actif,déclaré par tauon-basic_stm32f4-olimex_p
 src/bin/net/mongoose/mongoosed.c,actif,déclaré par tauon-basic_stm32f4-olimex_p407_7.20/Debug (application STM32F4 embOS),312,4
 src/bin/net/telnetd.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",64,7
 src/bin/net/tstip.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",135,0
+src/bin/radiotst.c,actif,étape 6 : test radio /dev/radio (NUCLEO-WL55JC1),168,0
 src/bin/test1.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",300,0
 src/bin/test2.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",771,9
 src/bin/tst/readspi.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",59,0
@@ -2677,8 +2678,8 @@ src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/lpm/tiny_lpm/stm32_lpm.c,différ
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/lpm/tiny_lpm/stm32_lpm.h,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",38,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/lpm/tiny_lpm/stm32_lpm_if_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",29,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/lpm/tiny_lpm/stm32_lpm_if_template.h,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",15,0
-src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_mem.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",29,2
-src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_mem.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",17,2
+src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_mem.c,actif,étape 6 : utilitaires STM32CubeWL liés (tiers),29,2
+src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_mem.h,actif,étape 6 : utilitaires STM32CubeWL liés (tiers),17,2
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_systime.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",249,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_systime.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc),62,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_systime_if_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",28,0
@@ -2690,11 +2691,11 @@ src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/misc/stm32_tiny_vsnprintf.h,diff
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/sequencer/stm32_seq.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",246,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/sequencer/stm32_seq.h,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",38,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/timer/stm32_timer.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",348,0
-src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/timer/stm32_timer.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",65,2
+src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/timer/stm32_timer.h,actif,étape 6 : utilitaires STM32CubeWL liés (tiers),65,2
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/timer/stm32_timer_if_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",63,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/timer/stm32_timer_if_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/timer),22,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",560,0
-src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",56,2
+src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace.h,actif,étape 6 : utilitaires STM32CubeWL liés (tiers),56,2
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace_if_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",25,0
 src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace/stm32_adv_trace_if_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/Utilities/trace/adv_trace),14,0
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/inc/Legacy/stm32_hal_legacy.h,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",3030,5
@@ -2821,7 +2822,7 @@ src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_smbus.
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_smbus_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",51,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_spi.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",2584,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_spi_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",20,2
-src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_subghz.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",863,2
+src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_subghz.c,actif,"étape 6 : HAL STM32WL liée (tiers, STM32CubeWL, HAL V1.3.0)",863,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_tim.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",4087,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_tim_ex.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1302,2
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_hal_timebase_rtc_alarm_template.c,différé,"déclaré par dev_stm32wlxx_8.40/Release (STM32WL55 Nucleo, carte non listée (à décider))",193,2
@@ -2851,41 +2852,42 @@ src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_ll_spi.c,d
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_ll_tim.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",657,0
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_ll_usart.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",162,0
 src/kernel/dev/arch/cortexm/stm32wlxx/cubemx_hal_driver/src/stm32wlxx_ll_utils.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",404,0
-src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",199,2
-src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",20,4
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.c,actif,étape 6 : pilotes STM32WL de Lepton,199,2
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_bsp_radio_if.h,actif,étape 6 : pilotes STM32WL de Lepton,20,4
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_cpu_x.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",180,2
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_definitions.h,actif,étape 6 : pilotes STM32WL de Lepton,11,4
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_hal_tick.c,actif,étape 6 : pilotes STM32WL de Lepton,15,0
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_uart_x.c,actif,étape 6 : pilotes STM32WL de Lepton,319,2
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_uart_x.h,actif,étape 6 : pilotes STM32WL de Lepton,23,4
+src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/dev_stm32wlxx_util_timer.c,actif,étape 6 : pilotes STM32WL de Lepton,13,0
 src/kernel/dev/arch/cortexm/stm32wlxx/dev_stm32wlxx/stm32wlxx_hal_conf.h,actif,étape 6 : pilotes STM32WL de Lepton,170,5
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/mw_log_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy),16,0
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/radio_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy),35,0
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/subghz_template.c,différé,"règle de répertoire : STM32WL55 Nucleo, carte non listée (à décider)",21,0
 src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/Conf/subghz_template.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy),12,0
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/lr_fhss_v1_base_types.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",55,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",91,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio_def.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",38,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio_ex.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",203,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/platform.h,différé,rattaché par répertoire (src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc),15,0
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/subghz.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",12,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/utilities_conf.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",54,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/utilities_def.h,différé,"inclus par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",25,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/lr_fhss_mac.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",540,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/lr_fhss_mac.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",42,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",1587,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_driver.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",908,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_driver.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",525,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_fw.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",770,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_fw.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",34,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/subghz_phy_version.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",17,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/wl_lr_fhss.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",248,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/wl_lr_fhss.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",55,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/mw_log_conf.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",15,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_board_if.c,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",118,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_board_if.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",67,4
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_conf.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",35,2
-src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/timer.h,différé,"déclaré par dev_stm32wlxx_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",33,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/lr_fhss_v1_base_types.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",55,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",91,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio_def.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",38,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/radio_ex.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",203,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/platform.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",15,0
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/subghz.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",12,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/utilities_conf.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",54,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_core_inc/utilities_def.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",25,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/lr_fhss_mac.c,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",540,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/lr_fhss_mac.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",42,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio.c,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",1587,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_driver.c,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",908,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_driver.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",525,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_fw.c,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",770,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/radio_fw.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",34,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/subghz_phy_version.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",17,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/wl_lr_fhss.c,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",248,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_driver/wl_lr_fhss.h,actif,"étape 6 : pile radio SubGHz_Phy 1.3.0 liée (tiers, STM32CubeWL)",55,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/mw_log_conf.h,actif,étape 6 : adaptation de la pile radio au pilote /dev/radio (Lepton),15,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_board_if.c,actif,étape 6 : adaptation de la pile radio au pilote /dev/radio (Lepton),118,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_board_if.h,actif,étape 6 : adaptation de la pile radio au pilote /dev/radio (Lepton),67,4
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/radio_conf.h,actif,étape 6 : adaptation de la pile radio au pilote /dev/radio (Lepton),35,2
+src/kernel/dev/arch/cortexm/stm32wlxx/radio_subghz_phy/stm32_radio_target/timer.h,actif,étape 6 : adaptation de la pile radio au pilote /dev/radio (Lepton),33,2
 src/kernel/dev/arch/gnu32/common/dev_linux_stub.h,gelé,règle : simulation Linux/Windows,23,0
 src/kernel/dev/arch/gnu32/common/dev_linux_virtual_cpu.c,gelé,règle : simulation Linux/Windows,39,0
 src/kernel/dev/arch/gnu32/common/linux_hdwr_ops.h,gelé,"règle : simulation Linux/Windows [prime sur : inclus par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))]",84,5
@@ -3028,12 +3030,12 @@ src/kernel/dev/bsp/stm32f746g_disco/stm32f7xx_hal_conf.h,actif,étape 6 : BSP de
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_board/dev_stm32wl55jci_nucleo_board.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",135,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_board/dev_stm32wl55jci_nucleo_board.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",18,2
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_peripherals/dev_stm32wl55jci_nucleo_usart_2.c,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,93,2
-src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/dev_stm32wl55jci_nucleo_radio.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",50,2
-src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_conf.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",13,4
+src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/dev_stm32wl55jci_nucleo_radio.c,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,50,2
+src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_conf.h,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,13,4
 src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_conf_template.h,différé,rattaché par répertoire (src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio),13,0
-src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_errno.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",21,4
-src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.c,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",92,2
-src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.h,différé,"déclaré par bsp_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",60,4
+src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_errno.h,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,21,4
+src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.c,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,92,2
+src/kernel/dev/bsp/stm32wl55jci_nucleo/dev_stm32wl55jci_nucleo_radio/stm32wlxx_nucleo_radio.h,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,60,4
 src/kernel/dev/bsp/stm32wl55jci_nucleo/stm32wl55jci_nucleo.h,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,7,0
 src/kernel/dev/bsp/stm32wl55jci_nucleo/stm32wl55jci_nucleo_system.c,actif,étape 6 : BSP de la carte NUCLEO-WL55JC1,48,0
 src/kernel/dev/dev_cpufs/dev_cpufs.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",97,7
