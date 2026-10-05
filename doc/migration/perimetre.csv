@@ -55,7 +55,6 @@ legacy/sys/user/tauon-basic/src/bin/dhrystone/timers.c,gelé,"étape 4 (D2a/D3a)
 legacy/sys/user/tauon-basic/src/bin/free/dlmalloc.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",3320,0
 legacy/sys/user/tauon-basic/src/bin/free/free_main.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",29,0
 legacy/tools/mklepton/src/mklepton.c,gelé,"étape 4 (D2a/D3a) : copie d'origine des branches gelées, supprimée à l'étape 6",1543,0
-prj/vc-2010/windows/build/genhdr/mpversion.h,gelé,règle : projet Visual Studio de la simulation,7,0
 src/bin/bmp.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",169,0
 src/bin/boot.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",277,0
 src/bin/lcd.c,hors-projet,"non déclaré par un projet, non inclus, sans règle",78,0
