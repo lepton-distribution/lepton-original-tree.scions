@@ -11,6 +11,19 @@
   (`ci/Dockerfile`, tous presets, mémoire archivée), retrait IAR (tag `legacy-iar`), code gelé
   (tag `legacy`), table cœurs × cartes × statut.
 
+## Relevés pour la session SAMD21 (non vérifiés sur carte)
+- Carte décidée le 2026-10-05 (pas de QEMU M0) ; non raccordée au 2026-10-05 (seule la ST-LINK
+  de la F746 est branchée : débrancher ou choisir la sonde par numéro de série).
+- OpenOCD : `board/atmel_samd21_xplained_pro.cfg` présent (sonde EDBG) ; embOS : bibliothèques
+  ARMv6-M `libosT6L*` ; BSP embOS le plus proche : `Microchip/SAMD20J18_SAMD20_XPlainedPro`.
+- Arbre : `kernel/dev/arch/cortexm/at91samd20/at91samd20_uart`, BSP `samd20xplained_pro` (différé),
+  `cmsis-5/Device/Atmel` ne contient que `samv71` (pas de SAMD21 : paquet Microchip à décider) ;
+  `kal/arch/armv6m/` : `kal_arch_conf.h` seul (HYPOTHÈSE À VALIDER), `kal_arch.h` à écrire ;
+  démarrage armv6m et `_sbrk` borné (`sbrk_cortexm.c`) à ajouter ; banc KAL : sources armv7m seules.
+- RAM 32 Ko contre `.bss` 128-155 Ko avec réseau : configuration minimale (sans lwIP) ;
+  `rootfscore.h` réduit le rootfs pour la SAMD20 par `__tauon_cpu_device__` (à reporter dans la
+  configuration de la carte, mécanisme `__KERNEL_CPU_DEVICE_NAME` sans table).
+
 ## Décisions actées pendant la session 2
 - Pilote Ethernet STM32F7 sur la HAL ETH V1.3.3 ; mémoire DMA (descripteurs, 8 tampons RX, 1 TX)
   dans un bloc de 16 Ko aligné, région MPU 0 non cachable (TEX 1, C 0, B 0) ; aucune
