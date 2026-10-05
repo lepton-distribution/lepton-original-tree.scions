@@ -78,8 +78,8 @@ REGLES = [
      "étape 5 : BSP de la carte de base NUCLEO-F439ZI"),
     (r"^sys/user/tauon-basic/src/arch/nucleo-f439zi/", "actif",
      "étape 5 : configuration de la carte NUCLEO-F439ZI"),
-    (r"^src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/(Inc/|Src/stm32f7xx_hal_gpio\.c$|"
-     r"LEPTON-PROVENANCE)", "actif",
+    (r"^src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/(Inc/|"
+     r"Src/stm32f7xx_hal_(gpio|eth|rcc|cortex)\.c$|LEPTON-PROVENANCE)", "actif",
      "étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)"),
     (r"^src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/", "hors-projet",
      "étape 6 : HAL STM32F7 non liée à ce jour (tiers, STM32CubeF7 v1.17.4)"),
@@ -108,6 +108,10 @@ RECLASSEMENTS = {
     "src/kernel/core/ucore/cmsis-5/Device/ARM/ARMCM7/Include/system_ARMCM7.h":
         ("actif", "étape 6 : modèle de périphériques Cortex-M7 de mps2-an500 (tiers, CMSIS 5)"),
 }
+# HAL STM32F7 liée par la session réseau de la STM32F746G-DISCO (inventoriée hors-projet avant)
+for _src in ("eth", "rcc", "cortex"):
+    RECLASSEMENTS["src/kernel/dev/arch/cortexm/stm32f7xx/hal_driver/Src/stm32f7xx_hal_%s.c" % _src] = (
+        "actif", "étape 6 : HAL STM32F7 liée (tiers, STM32CubeF7 v1.17.4)")
 
 DEBUT_MD = "<!-- perimetre_complement.py : début -->"
 FIN_MD = "<!-- perimetre_complement.py : fin -->"

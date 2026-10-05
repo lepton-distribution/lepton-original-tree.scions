@@ -5,12 +5,12 @@ CPUID `0x410FC271` : Cortex-M7 **r0p1** ; flash 1024 Ko, `0x1FF0F442`), ST-LINK/
 (`0483:374b`), console `/dev/ttyACM0`. embOS-Classic V5.20.0.0 `libosT7VHLSP_837070.a`
 (`USE_ERRATUM_837070=1`), `-mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard` (newlib
 `v7e-m+fp`), `arm-none-eabi-gcc` 14.2.1, `-Os -g`, OpenOCD 0.12.0 (`board/stm32f746g-disco.cfg`),
-`gdb-multiarch` 16.3. STM32CubeF7 v1.17.4 (HAL V1.3.3 : GPIO seulement ; CMSIS Device V1.2.10).
+`gdb-multiarch` 16.3. STM32CubeF7 v1.17.4 (HAL V1.3.3 : GPIO en session 1, plus ETH, RCC et CORTEX en session 2 ; CMSIS Device V1.2.10).
 Preset `stm32f746g-disco-embos` : `lepton.elf` text 215 596 / data 1 112 / bss 30 592 octets
-(flash 21 %, RAM 10 % de 320 Ko ; sans réseau). Horloge : HSE 25 MHz (quartz), PLL 216 MHz,
+(flash 21 %, RAM 10 % de 320 Ko ; session 1, sans réseau) ; session 2, avec réseau : text 285 944 / data 1 180 / bss 155 640. Horloge : HSE 25 MHz (quartz), PLL 216 MHz,
 over-drive ; caches I et D actifs.
 
-## Paliers (ordre ETAPE-5, arrêt au premier échec) — session 1 du module (2026-10-05)
+## Paliers (ordre ETAPE-5, arrêt au premier échec) — sessions 1 (paliers 1-6) et 2 (7-9), 2026-10-05
 
 | Palier | Statut | Date | Preuve |
 |---|---|---|---|
@@ -20,8 +20,15 @@ over-drive ; caches I et D actifs.
 | 4. Premier appel système tracé | VERT | 2026-10-05 | `traces/palier4-appel-systeme-carte.gdb` (script de l'étape 5, inchangé) → `traces/palier4-appel-systeme-f746.txt` : `initd` → `_system_setpgid` → `kernel_syscall_lock` ; `kernel_thread` → `_kernel_syscall` (pid 1, syscall 49) → `_syscall_setpgid` → `kernel_syscall_unlock` — identique à QEMU et à la F439 |
 | 5. Multitâche et signaux | VERT | 2026-10-05 | banc KAL sur carte (semihosting OpenOCD) : T1-T8, T1F/T4F/T6F/T7F (FPU simple précision, cadre étendu), TICI, TCLK, TSBRK, IRQ verts ; `HARNESS_FAIL` rend 1 ; caches actifs |
 | 6. Fumée canonique | VERT | 2026-10-05 | `ctest --preset stm32f746g-disco-embos -L board` **19/19** : `board.smoke_lsh` (flash, reset, `uname -a` = `lepton-cortexm7-32 4.10.0.2 … cortexM7-stm32f7`, `ls`, `ps`) puis banc KAL |
-| 7. Réseau | À FAIRE | | session 2 du module : pilote Ethernet STM32F7 (HAL ETH V1.3.x), descripteurs DMA en zone non cachée (MPU) ; broches RMII relevées (exemple ST LwIP) : PA1, PA2, PA7, PC1, PC4, PC5, PG2, PG11, PG13, PG14 |
-| 8. Endurance | À FAIRE | | session 2 |
-| 9. Optimisation | À FAIRE | | `-Os` déjà appliqué (décision 2026-10-02) ; paliers 6-8 en `-Os` à constater en session 2 |
+| 7. Réseau | **VERT** | 2026-10-05 | session 2 : pilote `dev_stm32f7xx_eth_x.c` (HAL ETH V1.3.3, bloc DMA de 16 Ko non cachable par la MPU, `0x20010000`), PHY LAN8742A négocié à 100 Mb/s en duplex intégral, MAC `02:44:00:15:37:3b` (dérivée de l'UID) ; hôte 192.168.2.20 (`ens37`) : ping 5/5 (0,35-1,6 ms) ; `ctest -L board` **20/20** dont `board.net` (ping, session FTP `tauon`, `RETR /usr/etc/.boot` identique à la source, errno de `tsterrno`) ; `board.net` **5/5** d'affilée (environ 22 s chacun). Un défaut traité (ci-dessous) |
+| 8. Endurance | VERT | 2026-10-05 | `tests/endurance_board.py`, **4 h en `-Os`** (10:51-14:51), cycles `lsh` (uname, ps, ls, cat, pwd) toutes les 30 s et ping continu depuis 192.168.2.20 : **480 cycles, ping 14 396/14 396** (perte 0 %, plus longue coupure 0 s), aucun redémarrage, CFSR/HFSR nuls. Piles (`lepton-stacks`, marge depuis `heap_top`) : `lsh` 67 % (676 octets libres sur 2 048), `initd` 54 %, `lwip_core` 45 %, `kernel_thread` 21 %, `ftpd` 14 %, `tcpip_thread` 3,5 %, MSP 11,6 % — comparables à la F439 en `-Os` ; carte relancée après le détachement de gdb (ping vérifié) |
+| 9. Optimisation | VERT | 2026-10-05 | `-Os -g` (décision 2026-10-02, `LEPTON_OPT_LEVEL`) dès la session 1 : paliers 1-8 tous validés en `-Os` (aucun passage par `-O0`) |
 
 Aucun défaut rencontré pendant la session 1 (paliers 1-6 verts du premier coup).
+
+## Défauts trouvés et corrigés (session 2)
+
+| Symptôme | Cause | Correction |
+|---|---|---|
+| ARP résolu, ping sans réponse ; carte : 3 requêtes reçues et 3 trames émises (compteurs MMC), réponse ICMP correcte dans le tampon d'émission ; hôte : 3 paquets reçus, `IcmpInCsumErrors` +3 | la HAL initialise chaque descripteur d'émission en insertion matérielle complète des sommes (`ETH_DMATXDESC_CHECKSUMTCPUDPICMPFULL`) et n'applique `ChecksumCtrl` qu'avec l'attribut `ETH_TX_PACKETS_FEATURES_CSUM` ; le MAC recalculait la somme ICMP par-dessus celle de lwIP | attribut `CSUM` + `ETH_CHECKSUM_DISABLE` (lwIP seule source des sommes, options par défaut) |
+

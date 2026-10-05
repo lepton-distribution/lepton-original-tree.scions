@@ -103,4 +103,5 @@ ctest --preset stm32f746g-disco-embos -L board      # fumée + banc KAL ; reflas
 ```
 
 Débogage : `debug/openocd-stm32f746g-disco.cfg`, `debug/gdbinit-stm32f746g-disco`. Réseau :
-pas encore (session suivante de l'étape 6).
+comme la NUCLEO (adresse 192.168.2.5 du `.init`, `ftpd`) ; test sur carte avec
+`-DLEPTON_NET_TEST_HOST_IP=<adresse de l'hôte sur le câble>` puis `ctest … -R board.net`.
