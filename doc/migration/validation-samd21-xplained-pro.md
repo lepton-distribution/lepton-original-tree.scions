@@ -12,7 +12,7 @@ Preset `samd21-xplained-pro-embos` : `lepton.elf` text 97 056 / data 924 / bss 1
 octets ; MSP 1 536 octets). Horloge : DFLL48M en boucle fermée sur XOSC32K (quartz 32,768 kHz),
 48 MHz, 1 état d'attente flash.
 
-## Paliers (ordre ETAPE-5, arrêt au premier échec) — session 1 (paliers 1-6), 2026-10-05
+## Paliers (ordre ETAPE-5, arrêt au premier échec) — sessions 1 (paliers 1-6) et 2 (8), 2026-10-05
 
 | Palier | Statut | Date | Preuve |
 |---|---|---|---|
@@ -23,13 +23,13 @@ octets ; MSP 1 536 octets). Horloge : DFLL48M en boucle fermée sur XOSC32K (qua
 | 5. Multitâche et signaux | VERT | 2026-10-05 | banc KAL sur carte (semihosting OpenOCD) : T1-T8, TICI, TCLK, TSBRK, IRQ verts (pas de variante FPU en ARMv6-M) ; `HARNESS_FAIL` rend 1 |
 | 6. Fumée canonique | VERT | 2026-10-05 | `ctest --preset samd21-xplained-pro-embos -L board` **15/15** : `board.smoke_lsh` (flash, reset, `uname -a` = `lepton-cortexm0-32 4.10.0.2 … cortexM0p-samd21`, `ls`, `ps`) puis banc KAL |
 | 7. Réseau | sans objet | — | pas de réseau sur cette carte (décision utilisateur 2026-10-05) |
-| 8. Endurance | À FAIRE | | session 2 ; relevé préliminaire des piles ci-dessous |
+| 8. Endurance | VERT | 2026-10-05 | session 2 : `tests/endurance_board.py` (sans réseau, `--fault-check v6m`), **1 h en `-Os`** (15:51-16:51, durée fixée par l'utilisateur), cycles `lsh` (uname -a, ps, ls /usr/sbin, cat /usr/etc/.boot, pwd) toutes les 30 s : **120 cycles**, aucun redémarrage, nombre de processus constant, `ICSR` 0 (aucune exception active), `lepton_embos_last_error` 0. Piles (`lepton-stacks`, marge depuis `heap_top`) : `lsh` 73,2 % (412 octets libres sur 1 536), `initd` 65,4 %, `kernel_thread` 43,6 %, MSP 62,8 % (572 octets libres) ; `stack=` du mkconf conservés |
 | 9. Optimisation | VERT (de fait) | 2026-10-05 | `-Os -g` dès la session 1 (décision 2026-10-02) : paliers 1-6 en `-Os` |
 
-Piles après fumée et `ls`, `ps`, `cat`, `pwd`, `ls /dev` (`lepton-stacks`, marge depuis
+Session 1, piles après fumée et `ls`, `ps`, `cat`, `pwd`, `ls /dev` (`lepton-stacks`, marge depuis
 `heap_top`) : `lsh` 72,7 % (420 octets libres sur 1 536), `initd` 65,4 %, `kernel_thread`
 41,6 %, MSP 62,8 % (572 octets libres) ; tas de thread 396 octets par processus (3 tampons stdio
-de 64 octets). Les commandes terminées ne sont pas mesurées (endurance : session 2).
+de 64 octets). Les commandes terminées (`ls`, `ps`…) ne sont pas mesurables après coup (pile rendue au tas) : leurs 1 280-1 536 octets n'ont pas fait défaut en 600 exécutions (endurance).
 
 ## Défauts trouvés et corrigés (session 1)
 
