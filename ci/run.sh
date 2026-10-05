@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ci/run.sh — non-régression Lepton (étape 3 ; ORCHESTRATION §5 : vert avant chaque commit).
-# Configure et construit les presets hôte et QEMU (hard-float, soft-float), puis ctest -L host,
+# Configure et construit les presets hôte et QEMU (mps2-an386 hard-float et soft-float, mps2-an500
+# Cortex-M7 : étape 6), puis ctest -L host,
 # -L smoke, -L net, -L kal.
 # Code de retour non nul au premier échec. Lancer depuis n'importe où dans le rootstock.
 #   ci/run.sh            tous les presets
@@ -35,8 +36,8 @@ cmake --preset host >/dev/null
 cmake --build --preset host
 ctest --preset host -L host --no-tests=error
 
-# hard-float (cible) puis soft-float (chemin sans FPU, jusqu'aux cœurs M3/M0 de l'étape 6)
-for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft; do
+# M4F hard-float (cible) puis soft-float (chemin sans FPU), M7 (étape 6)
+for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft qemu-mps2-an500-embos; do
   step "preset $preset : configuration, build, ctest -L smoke"
   cmake --preset "$preset" >/dev/null
   cmake --build --preset "$preset"
