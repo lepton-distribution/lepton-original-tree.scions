@@ -295,12 +295,12 @@ typedef unsigned char kernel_intr_t;
 
    #define __kernel_usleep(useconds){ \
       ldiv_t lr =ldiv(useconds,1000); \
-      if(lr.quot) vTaskDelay((lr.quot)/portTICK_RATE_MS); \
+      if(lr.quot) __kal_frt_block(vTaskDelay(pdMS_TO_TICKS(lr.quot))); \
    }
    
    //syscall mechanism
    //
-   #define __kernel_wait_int() xEventGroupWaitBits(kernel_pthread_self()->event_group_handle,KERNEL_INTERRUPT,pdTRUE,pdTRUE,portMAX_DELAY)
+   #define __kernel_wait_int() __kal_frt_block(xEventGroupWaitBits(kernel_pthread_self()->event_group_handle,KERNEL_INTERRUPT,pdTRUE,pdTRUE,portMAX_DELAY))
 
    #define __kernel_begin_syscall(__pthread_ptr__) \
    __pthread_ptr__->stat|=PTHREAD_STATUS_KERNEL;
@@ -315,24 +315,29 @@ typedef unsigned char kernel_intr_t;
       } \
    }
 
+   //etape 7 : comme OS_ClearEvents(appelant) d'embOS, retour d'appel precedent efface avant
+   //de solliciter la tache noyau.
    #define __make_interrupt(__pthread_ptr__,irq_nb){ \
       if(irq_nb==KERNEL_INTERRUPT_NB) { \
+         xEventGroupClearBits((__pthread_ptr__)->event_group_handle,KERNEL_RET_INTERRUPT );\
          xEventGroupSetBits(kernel_thread.event_group_handle,KERNEL_INTERRUPT );\
       } \
    }
 
    //
-   #define __wait_ret_int()\
-      xEventGroupWaitBits(kernel_pthread_self()->event_group_handle,KERNEL_RET_INTERRUPT,pdFALSE,pdTRUE,portMAX_DELAY);\
-      xEventGroupClearBits(kernel_pthread_self()->event_group_handle,KERNEL_RET_INTERRUPT);
+   //etape 7 : comme OS_WaitEvent d'embOS, ne revient qu'avec l'evenement : une tache reveillee
+   //sans lui (xTaskAbortDelay, signal, puis contexte restaure par sigexit) se remet en attente.
+   #define __wait_ret_int(){\
+      __kal_frt_block(while(!(xEventGroupWaitBits(kernel_pthread_self()->event_group_handle,KERNEL_RET_INTERRUPT,pdFALSE,pdTRUE,portMAX_DELAY)&KERNEL_RET_INTERRUPT)));\
+      xEventGroupClearBits(kernel_pthread_self()->event_group_handle,KERNEL_RET_INTERRUPT);\
+   }
   
    //
    #if defined(__KERNEL_IO_SEM)
       #define __fire_io_int(__pthread_ptr__){ \
          if(__pthread_ptr__!=((kernel_pthread_t*)0)){\
+            /*demande de commutation cumulee par kernel_sem_post (etape 7)*/\
             kernel_sem_post(&__pthread_ptr__->io_sem);\
-               if(kernel_in_interrupt>0)\
-                  kernel_in_interrupt_higher_priority_task_woken = __pthread_ptr__->io_sem.xHigherPriorityTaskWoken;\
          }\
       }
 

@@ -84,7 +84,6 @@ kernel_pthread_t* _syscall_owner_pthread_ptr;
 
 
 volatile int _kernel_in_static_mode=1;
-volatile int kernel_in_interrupt=0;
 
 kernel_pthread_mutex_t kernel_mutex;
 kernel_pthread_t kernel_thread;
@@ -98,10 +97,13 @@ tmr_t kernel_tmr;
 #endif
 #define KERNEL_STACK_SIZE  __KERNEL_STACK_SIZE
 
-#define KERNEL_PRIORITY    (configMAX_PRIORITIES-1)
+#define KERNEL_PRIORITY    150
+//
+__KERNEL_SRAM_LOCATION
 _macro_stack_addr char kernel_stack[KERNEL_STACK_SIZE];
 
-volatile int kernel_in_interrupt;
+//FreeRTOS : profondeur d'interruption et demande de commutation (interrupt.h, __hw_*_interrupt)
+volatile int kernel_in_interrupt=0;
 signed long kernel_in_interrupt_higher_priority_task_woken;
 
 #ifdef KERNEL_PROFILER

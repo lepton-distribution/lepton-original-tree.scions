@@ -76,8 +76,10 @@ Global Declaration
 =============================================*/
 #define __KERNEL_PTHREAD_ID_LIMIT 1024
 
-/*lint !e971 Unqualified char types are allowed for strings and single characters only. */
-extern  BaseType_t xTaskGenericCreate( TaskFunction_t pxTaskCode, const char * const pcName, const uint16_t usStackDepth, void * const pvParameters, UBaseType_t uxPriority, TaskHandle_t * const pxCreatedTask, StackType_t * const puxStackBuffer, const MemoryRegion_t * const xRegions ); 
+//etape 7 : octets reserves en bas de pile pour le controle de debordement FreeRTOS
+//(16 octets en methode 2 sur pile descendante ; 20 comme l'ancienne lignee FreeRTOS).
+#define KERNEL_PTHREAD_STACK_GUARD  20
+
 
 kernel_pthread_t* g_pthread_lst=(kernel_pthread_t*)0;
 int g_pthread_id=0;
@@ -339,9 +341,7 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
    //
    memcpy(thread->sigaction_lst,sigaction_dfl_lst,sizeof(sigaction_dfl_lst));
 
-   //alloc tcb
-   if( !(thread->tcb=_sys_malloc(sizeof(tcb_t))) )
-      return -EAGAIN;
+   //tcb : StaticTask_t integre a kernel_pthread_t (task_static), xTaskCreateStatic ci-dessous.
    //add to kernel pthread list
    if( kernel_get_pthread_id(thread)==-EAGAIN)
       return -EAGAIN;
@@ -349,58 +349,37 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
 #ifdef __KERNEL_UCORE_FREERTOS
    {
       char* name = (char*)thread->attr.name;
-      pid_t pid = thread->pid;
-      
-      xTaskHandle freertos_task_handle;
-        
-      //only for debug with embos view
-      if(name)
-         name = thread->attr.name;
-      else
+      TaskHandle_t freertos_task_handle;
+
+      //only for debug (task name)
+      if(!name)
          name = "daemon_kernel_thread";
-      //
-#if (configSUPPORT_STATIC_ALLOCATION==1)
       //event group for each pthread used for syscall signalisation
       thread->event_group_handle = xEventGroupCreateStatic(&thread->event_group_static);
-      //
-      thread->tcb =(tcb_t*)xTaskCreateStatic( pthread_routine, 
-                   name, 
-                   (thread->attr.stacksize/sizeof( StackType_t )), 
-                   (void *)0, 
-                   tskIDLE_PRIORITY + thread->attr.priority, 
-                   (portSTACK_TYPE*)thread->attr.stackaddr,
-                   &thread->task_static
-                 );  
-#else
-      //event group for each pthread used for syscall signalisation
-      thread->event_group_handle =  xEventGroupCreate();
-      //
-      xTaskGenericCreate( pthread_routine, 
-                   name, 
-                   (thread->attr.stacksize/sizeof( StackType_t )), 
-                   (void *)0, 
-                   tskIDLE_PRIORITY + thread->attr.priority, 
-                   &freertos_task_handle,
-                   (portSTACK_TYPE*)thread->attr.stackaddr,
-                   (void*)0
-                 );
-      // 
-      thread->tcb =(tcb_t*)freertos_task_handle;
-#endif
-      
-      //
-   #if configCHECK_FOR_STACK_OVERFLOW
-      //check bottom stack with OS_STACKFILL_CHAR.
-      //don't use the last byte at the bottom of thread stack.
+      //etape 7 : TCB et pile fournis par Lepton ; priorite Lepton (0-255, plus grand = plus
+      //prioritaire, comme embOS) projetee sur les priorites FreeRTOS (__kal_priority, KAL) ;
+      //pas de timeslice par tache (configUSE_TIME_SLICING global, ecart documente).
+      freertos_task_handle = xTaskCreateStatic((TaskFunction_t)pthread_routine,
+                                               name,
+                                               (thread->attr.stacksize/sizeof(StackType_t)),
+                                               (void *)0,
+                                               __kal_priority(thread->attr.priority),
+                                               (StackType_t*)thread->attr.stackaddr,
+                                               &thread->task_static);
+      thread->tcb = (tcb_t*)freertos_task_handle;
+      if(!freertos_task_handle)
+         return -EAGAIN;
+
+      //le bas de pile sert de tas (kernel_pthread_alloca) : reserver la zone de controle de
+      //debordement de FreeRTOS (configCHECK_FOR_STACK_OVERFLOW=2 : 16 octets a pxStack,
+      //tskSTACK_FILL_BYTE), plus l'alignement, comme OS_CHECKSTACK pour embOS.
       {
          uint32_t _stack_addr = (uint32_t)thread->attr.stackaddr;
-         uint8_t _align = (4-(_stack_addr%4))+4; ///to remove: just debug test
+         uint8_t _align = (4-(_stack_addr%4))+4+KERNEL_PTHREAD_STACK_GUARD;
 
          thread->heap_floor = (uint8_t*)(thread->attr.stackaddr)+_align*sizeof(uint8_t); //data alignement 4 bytes
          thread->heap_top   = thread->heap_floor;
-
       }
-   #endif
    }
 #endif
 
@@ -469,40 +448,15 @@ int kernel_pthread_cancel(kernel_pthread_t* thread){
 
 #ifdef __KERNEL_UCORE_FREERTOS
    {
-<<<<<<< core-segger
       //verrou des appels systeme : semaphore rendu par la tache noyau en fin d'appel, meme si
       //ce thread est termine entre-temps (kernel_syscall_lock.c) ; plus de transfert de propriete.
       if(kernel_syscall_lock_owner == thread)
          kernel_syscall_lock_owner = &kernel_thread;
-      //terminate thread in scheduler
-      OS_Terminate(thread->tcb);
-      //free tcb
-      if(thread->tcb) {
-         _sys_free(thread->tcb);
-         thread->tcb = (tcb_t*)0;
-      }
-=======
-      xTaskHandle whois_lock_kernel_mutex = xSemaphoreGetMutexHolder(&kernel_mutex.mutex);
-      xTaskHandle this_task = (xTaskHandle)thread->tcb;
-
-      //free kernel mutex. it was taken by this pthread.
-      if(this_task == whois_lock_kernel_mutex) {
-         __syscall_unlock();
-      }
-      
+      //terminate thread in scheduler (TCB et pile statiques : rien a liberer cote FreeRTOS)
+      vTaskDelete((TaskHandle_t)thread->tcb);
       //destroy event group
       vEventGroupDelete(thread->event_group_handle);
- 
-      //terminate thread in scheduler
-      vTaskDelete((xTaskHandle)thread->tcb); //if define OS_SUPPORT_CLEANUP_ON_TERMINATE implicit cleanup ressource
-
-      //
-      if(this_task == whois_lock_kernel_mutex) {
-         //patch free ressource semaphore without proprietary. this pthread owner was terminated.
-         __syscall_lock(); //kernel is proprietary now. the next _syscall_unlock() it's safe now.
-      }
-   #endif
->>>>>>> core-freertos
+      thread->tcb = (tcb_t*)0;
       //
    }
 #endif

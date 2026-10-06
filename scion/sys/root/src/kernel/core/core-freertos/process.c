@@ -907,9 +907,7 @@ pid_t _sys_krnl_exec(const char* path,
    if(_nextpid(&_pid)==-EAGAIN)
       return -ENOMEM;
 
-   //freeRTOS temporary patch
-   //attr.priority  = bin_lst[exec_file.index].priority;
-   attr.priority=4;
+   attr.priority  = bin_lst[exec_file.index].priority;
    
    //alloc process_t control block for the new process
    p = _sys_malloc(sizeof(process_t));
@@ -1197,9 +1195,7 @@ pid_t _sys_exec(const char* path,
       __atomic_out();
       return -ENOMEM;
    }
-   //freeRTOS temporary patch
-   //attr.priority  = bin_lst[exec_file.index].priority;
-   attr.priority=4;
+   attr.priority  = bin_lst[exec_file.index].priority;
    attr.stacksize = bin_lst[exec_file.index].stacksize;
    attr.timeslice = bin_lst[exec_file.index].timeslice;
 
