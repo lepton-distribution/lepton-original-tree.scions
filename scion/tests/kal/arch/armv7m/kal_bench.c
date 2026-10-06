@@ -1,6 +1,8 @@
 /*
  * Banc KAL (BANC-TEST-KAL-QEMU.md, T1-T8) — tests unitaires des macros de contexte du KAL
- * (kernel/core/kal.h, branche embOS) sous QEMU. Licence : voir LICENSE (MPL 1.1).
+ * (kernel/core/kal.h) sous QEMU et sur carte. Licence : voir LICENSE (MPL 1.1).
+ * Étape 7 : commun aux backends embOS et FreeRTOS ; services du micro-noyau et oracle de trame
+ * dans arch/armv7m/backend/<backend>/kal_bench_os.h (bench_*).
  *
  * Schéma de Lepton reproduit : le noyau ne manipule jamais un thread en cours d'exécution ; la
  * cible est bloquée (attente d'événement, comme l'attente du retour d'un appel système) pendant
@@ -11,8 +13,9 @@
  * Les séquences sont celles du noyau : core-segger/process.c (_sys_kill, _sys_kill_exit),
  * core-segger/fork.c (_sys_vfork, _sys_vfork_exit), core-segger/process.c (exec : contexte
  * de départ). Test choisi par l'argument semihosting ; code de sortie = nombre d'échecs.
- * Variantes FPU (T1F, T4F, T6F, T7F ; ABI hard, OS_CPU_HAS_VFP) : la cible se bloque avec un
- * contexte FPU actif, embOS sauvegarde alors un cadre étendu OS_REGS_BASE_FPU (écart E3).
+ * Variantes FPU (T1F, T4F, T6F, T7F ; ABI hard, BENCH_HAS_VFP) : la cible se bloque avec un
+ * contexte FPU actif, le micro-noyau sauvegarde alors un cadre étendu (embOS : OS_REGS_BASE_FPU,
+ * écart E3 ; FreeRTOS : S16-S31 et S0-S15 autour du cadre de base).
  */
 #include <stdint.h>
 #include <stdarg.h>
@@ -30,6 +33,7 @@
 #include "lepton_irq.h"
 
 #include "kal_test.h"
+#include "kal_bench_os.h"
 
 void kal_regs_hold(const uint32_t pattern[8], uint32_t out[8], void (*wait)(void));
 void kal_regs_read(uint32_t out[8]);
@@ -44,10 +48,10 @@ uint32_t kal_cpu_primask(void);
 #define PRIO_TARGET  200
 #define STACK_WORDS  1024
 
-static OS_TASK ctrl_task;
-static OS_TASK target_task;
-static OS_STACKPTR uint32_t ctrl_stack[STACK_WORDS];
-static OS_STACKPTR uint32_t target_stack[STACK_WORDS];
+static bench_task_t ctrl_task;
+static bench_task_t target_task;
+static BENCH_STACKPTR uint32_t ctrl_stack[STACK_WORDS];
+static BENCH_STACKPTR uint32_t target_stack[STACK_WORDS];
 static kernel_pthread_t tp;
 
 static const uint32_t pattern[8] = {
@@ -66,23 +70,19 @@ static volatile int child_ran;
 static volatile uint32_t exec_sp;
 static uint32_t exec_regs[8];
 
-/* Cadre sauvegardé par embOS (RTOS.h) : étendu (FPU) si le bit 4 d'EXC_RETURN est à 0. Calcul
-   indépendant de kal.h (oracle du banc). */
-static int frame_is_fpu(const void* frame){
-   return (((const OS_REGS_BASE*)frame)->OS_REG_EXC_RETURN & 0x10u) == 0;
-}
-static uint32_t frame_size(const void* frame){
-   return frame_is_fpu(frame) ? sizeof(OS_REGS_BASE_FPU) : sizeof(OS_REGS_BASE);
-}
+/* Cadre sauvegardé par le micro-noyau : étendu (FPU) si le bit 4 d'EXC_RETURN est à 0. Calcul
+   indépendant de kal.h (oracle du banc, kal_bench_os.h). */
+#define frame_is_fpu(__frame__)  bench_frame_is_fpu(__frame__)
+#define frame_size(__frame__)    bench_frame_size(__frame__)
 
 /* variantes FPU : la cible doit être bloquée avec un cadre étendu */
 static int expect_fpu_frame;
 static void check_frame(void){
    if(expect_fpu_frame)
-      TEST_ASSERT(frame_is_fpu(target_task.pStack), "cadre étendu (FPU) de la cible bloquée");
+      TEST_ASSERT(frame_is_fpu((void*)bench_task_sp(&target_task)), "cadre étendu (FPU) de la cible bloquée");
 }
 
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
 void kal_fpu_hold(const uint32_t pattern[16], uint32_t out[16], void (*wait)(void));
 void kal_fpu_fill(uint32_t value);
 void kal_fpu_read(uint32_t out[16]);
@@ -119,7 +119,7 @@ static int regs_match(void){
 }
 
 static unsigned ctrl_wait(unsigned ev, unsigned timeout_ms){
-   return (unsigned)OS_TASKEVENT_GetTimed((OS_TASKEVENT)ev, (OS_TIME)timeout_ms) & ev;
+   return bench_event_get_timed(ev, timeout_ms) & ev;
 }
 
 static int target_exists;
@@ -128,33 +128,33 @@ static uint32_t created_pstack;
 static void target_create(void (*routine)(void), int with_start_context){
    /* une tâche embOS ne peut être recréée tant qu'elle existe (liste des tâches) */
    if(target_exists)
-      OS_TASK_Terminate(&target_task);
+      bench_task_terminate(&target_task);
    target_exists = 1;
    memset(&tp, 0, sizeof(tp));
-   OS_TASK_EnterRegion();
-   OS_TASK_Create(&target_task, "target", PRIO_TARGET, routine,
-                  target_stack, sizeof(target_stack), 2);
-   tp.tcb = &target_task;
-   created_pstack = (uint32_t)target_task.pStack;
+   bench_region_enter();
+   bench_task_create(&target_task, "target", PRIO_TARGET, routine,
+                     target_stack, sizeof(target_stack));
+   tp.tcb = (tcb_t*)&target_task;
+   created_pstack = bench_task_sp(&target_task);
    if(with_start_context)
       __bckup_thread_start_context(tp.start_context, (&tp));
-   OS_TASK_LeaveRegion();   /* la cible s'exécute jusqu'à se bloquer */
+   bench_region_leave();    /* la cible s'exécute jusqu'à se bloquer */
 }
 
 static void target_end(void){
-   OS_TASKEVENT_Set(&ctrl_task, EV_DONE);
+   bench_event_set(&ctrl_task, EV_DONE);
    for(;;)
-      OS_TASKEVENT_GetBlocked(EV_HX);
+      bench_event_get_blocked(EV_HX);
 }
 
 /* --- routines de la cible ----------------------------------------------------------------- */
 static void wait_go(void){
-   while(!(OS_TASKEVENT_GetBlocked(EV_GO) & EV_GO)) {
+   while(!(bench_event_get_blocked(EV_GO) & EV_GO)) {
    }
 }
 
 static void wait_timed(void){
-   (void)OS_TASKEVENT_GetTimed(EV_GO, 50);
+   (void)bench_event_get_timed(EV_GO, 50);
 }
 
 static void target_hold(void){
@@ -163,7 +163,7 @@ static void target_hold(void){
    target_end();
 }
 
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
 /* R4-R11 (kal_regs_hold) puis S16-S31 (kal_fpu_hold) maintenus pendant l'attente */
 static void wait_fpu(void){
    kal_fpu_hold(fpu_pattern, fpu_out, wait_go);
@@ -195,8 +195,8 @@ static void target_count_entry(void){
 }
 
 static void target_identity(void){
-   self_ok  = __is_thread_self((&target_task)) ? 1 : 0;
-   other_ok = __is_thread_self((&ctrl_task)) ? 0 : 1;
+   self_ok  = __is_thread_self(((tcb_t*)&target_task)) ? 1 : 0;
+   other_ok = __is_thread_self(((tcb_t*)&ctrl_task)) ? 0 : 1;
    target_end();
 }
 
@@ -219,7 +219,7 @@ static void target_vfork_parent(void){
    target_end();
 }
 
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
 static void target_vfork_parent_fpu(void){
    vfork_parent(wait_fpu);
    fpu_ok = memcmp(fpu_out, fpu_pattern, sizeof(fpu_pattern)) == 0;
@@ -229,7 +229,7 @@ static void target_vfork_parent_fpu(void){
 
 static void exec_new_image(void){
    uint32_t sp;
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
    /* avant toute instruction flottante : CONTROL.FPCA dit si un contexte FPU est hérité */
    exec_control = kal_cpu_control();
    exec_fpscr = kal_fpu_fpscr();
@@ -245,14 +245,14 @@ static void exec_new_image(void){
    restauration vient du contrôleur (comme la sortie de gestionnaire par appel système) */
 static void sig_handler_common(int id){
    handler_order[handler_count++] = id;
-   handler_on_target = (OS_pCurrentTask == &target_task);
-   OS_TASKEVENT_Set(&ctrl_task, EV_H);
+   handler_on_target = bench_is_current(&target_task);
+   bench_event_set(&ctrl_task, EV_H);
    for(;;)
-      OS_TASKEVENT_GetBlocked(EV_HX);
+      bench_event_get_blocked(EV_HX);
 }
 static void sig_handler1(void){ sig_handler_common(1); }
 static void sig_handler2(void){ sig_handler_common(2); }
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
 /* gestionnaires utilisant la FPU : écrasent S0-S31 de la cible */
 static void sig_handler_fpu1(void){ kal_fpu_fill(0x77777777u); sig_handler_common(1); }
 static void sig_handler_fpu2(void){ kal_fpu_fill(0x66666666u); sig_handler_common(2); }
@@ -260,17 +260,17 @@ static void sig_handler_fpu2(void){ kal_fpu_fill(0x66666666u); sig_handler_commo
 
 /* fils de vfork : même tâche, même pile ; écrase la pile vive du parent au-dessus de son SP */
 static void vfork_child(void){
-   uint32_t* p = (uint32_t*)((uint8_t*)tp.bckup_context.os_task.pStack
-                             + frame_size(&tp.bckup_context.os_regs));
-   uint32_t* end = (uint32_t*)tp.start_context.os_task.pStack;
+   uint32_t* p = (uint32_t*)((uint8_t*)BENCH_CTX_SP(tp.bckup_context)
+                             + frame_size(BENCH_CTX_REGS(tp.bckup_context)));
+   uint32_t* end = (uint32_t*)BENCH_CTX_SP(tp.start_context);
    child_ran = 1;
    while(p < end)
       *p++ = 0x5A5A5A5Au;
-   OS_TASKEVENT_Set(&ctrl_task, EV_H);
+   bench_event_set(&ctrl_task, EV_H);
    for(;;)
-      OS_TASKEVENT_GetBlocked(EV_HX);
+      bench_event_get_blocked(EV_HX);
 }
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
 static void vfork_child_fpu(void){
    kal_fpu_fill(0x55555555u);
    vfork_child();
@@ -284,18 +284,15 @@ static void finish_target(const char* t){
 
 /* T1 : sauvegarde / restitution de contexte ; contrôle négatif du comparateur.
    (Corrompre R4-R11 sans les restaurer n'est pas un contrôle valable : à l'instant du blocage ils
-   appartiennent au code d'attente d'embOS, qui fait alors une faute au lieu de rendre un écart.) */
+   appartiennent au code d'attente du micro-noyau, qui fait alors une faute au lieu de rendre un
+   écart.) */
 static int test_t1(void){
-   OS_REGS_BASE* f;
-
    regs_ok = 0;
    target_create(target_hold, 0);
    __bckup_context(tp.bckup_context, (&tp));
-   f = (OS_REGS_BASE*)target_task.pStack;
-   f->OS_REG_R4 = f->OS_REG_R5 = f->OS_REG_R6 = f->OS_REG_R7 = 0xDEAD0000u;
-   f->OS_REG_R8 = f->OS_REG_R9 = f->OS_REG_R10 = f->OS_REG_R11 = 0xDEAD0001u;
+   bench_frame_corrupt_r4_r11((void*)bench_task_sp(&target_task));
    __rstr_context(tp.bckup_context, (&tp));
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("T1 : fin de la cible");
    TEST_ASSERT(regs_ok, "T1 : R4-R11 restaurés après corruption du contexte sauvegardé");
 
@@ -303,7 +300,7 @@ static int test_t1(void){
    regs_ok = 1;
    expected = wrong_pattern;
    target_create(target_hold, 0);
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("T1 (négatif) : fin de la cible");
    expected = pattern;
    TEST_ASSERT(!regs_ok, "T1 (négatif) : écart de motif non détecté — harnais inopérant");
@@ -312,25 +309,23 @@ static int test_t1(void){
 
 /* T2 : contexte de démarrage sauvegardé à la création (décision 2026-09-30 : aligné sur Lepton,
    qui ne redémarre jamais un thread depuis ce contexte ; il sert de référence de pile au vfork,
-   T7). Sous embOS 5.20 le PC de départ est le trampoline OS_StartTask (symbole exporté par la
-   bibliothèque), la routine étant rangée sur la pile au-dessus du cadre OS_REGS_BASE. */
-extern void OS_StartTask(void);
-
+   T7). PC de départ attendu : bench_start_pc (embOS 5.20 : trampoline OS_StartTask ; FreeRTOS :
+   point d'entrée de la tâche). */
 static int test_t2(void){
-   OS_REGS_BASE* f;
+   void* f;
    uint32_t sp;
 
    entry_count = 0;
    target_create(target_count_entry, 1);
-   f = (OS_REGS_BASE*)&tp.start_context.os_regs;
-   sp = (uint32_t)tp.start_context.os_task.pStack;
-   kal_test_put_u32("T2 : PC de départ = ", f->OS_REG_PC);
-   TEST_ASSERT(f->OS_REG_XPSR & 0x01000000u, "T2 : bit T d'xPSR du contexte de départ");
+   f = (void*)BENCH_CTX_REGS(tp.start_context);
+   sp = (uint32_t)BENCH_CTX_SP(tp.start_context);
+   kal_test_put_u32("T2 : PC de départ = ", bench_frame_pc(f));
+   TEST_ASSERT(*bench_frame_xpsr(f) & 0x01000000u, "T2 : bit T d'xPSR du contexte de départ");
    TEST_ASSERT(sp >= (uint32_t)target_stack && sp < (uint32_t)target_stack + sizeof(target_stack),
                "T2 : pile de départ dans la pile de la tâche");
    TEST_ASSERT(sp == created_pstack, "T2 : pile de départ = pStack du TCB à la création");
-   TEST_ASSERT((f->OS_REG_PC & ~1u) == ((uint32_t)OS_StartTask & ~1u),
-               "T2 : PC de départ = trampoline embOS OS_StartTask");
+   TEST_ASSERT((bench_frame_pc(f) & ~1u) == (bench_start_pc(target_count_entry) & ~1u),
+               BENCH_START_PC_DESC);
    finish_target("T2 : premier démarrage");
    TEST_ASSERT(entry_count == 1, "T2 : point d'entrée exécuté une fois au démarrage");
    return 0;
@@ -343,7 +338,7 @@ static int test_t3(void){
    finish_target("T3 : fin de la cible");
    TEST_ASSERT(self_ok, "T3 : __is_thread_self vrai pour la tâche courante");
    TEST_ASSERT(other_ok, "T3 : __is_thread_self faux pour une autre tâche");
-   TEST_ASSERT(!__is_thread_self((&target_task)), "T3 : faux côté contrôleur pour la cible");
+   TEST_ASSERT(!__is_thread_self(((tcb_t*)&target_task)), "T3 : faux côté contrôleur pour la cible");
    return 0;
 }
 
@@ -371,7 +366,7 @@ static int t4_run(void (*routine)(void), void (*handler)(void)){
    TEST_ASSERT(deroute(handler) == 0, "T4 : gestionnaire exécuté");
    TEST_ASSERT(handler_on_target, "T4 : gestionnaire exécuté dans la tâche cible");
    deroute_exit();
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("T4 : reprise au point d'interruption");
    TEST_ASSERT(handler_count == 1, "T4 : un seul passage dans le gestionnaire");
    TEST_ASSERT(regs_ok, "T4 : R4-R11 intacts après retour du gestionnaire");
@@ -391,10 +386,7 @@ static int test_t4(void){
 #define XPSR_T          0x01000000u
 #define XPSR_ICI_IT     0x0600FC00u
 #define XPSR_ICI_LDM15  0x0000F000u   /* ICI : reprise d'un LDM/STM au registre 15 */
-static uint32_t* frame_xpsr(void* frame){
-   return frame_is_fpu(frame) ? &((OS_REGS_BASE_FPU*)frame)->OS_REG_XPSR
-                              : &((OS_REGS_BASE*)frame)->OS_REG_XPSR;
-}
+#define frame_xpsr(__frame__) bench_frame_xpsr(__frame__)
 static int test_tici(void){
    uint32_t* xpsr;
    uint32_t orig;
@@ -402,24 +394,24 @@ static int test_tici(void){
    handler_count = 0;
    handler_on_target = 0;
    target_create(target_hold, 0);
-   xpsr = frame_xpsr(target_task.pStack);
+   xpsr = frame_xpsr((void*)bench_task_sp(&target_task));
    orig = *xpsr;
    TEST_ASSERT((orig & XPSR_T) && !(orig & XPSR_ICI_IT), "TICI : cadre bloqué d'origine sans ICI/IT");
    *xpsr = orig | XPSR_ICI_LDM15;
-   OS_TASK_EnterRegion();
+   bench_region_enter();
    __bckup_context(tp.bckup_context, (&tp));
    __swap_signal_handler((&tp), sig_handler1);
    tp.stat |= PTHREAD_STATUS_SIGHANDLER;
    TEST_ASSERT(!(*xpsr & XPSR_ICI_IT) && (*xpsr & XPSR_T),
                "TICI : xPSR du cadre dérouté sans ICI/IT, T conservé");
-   OS_TASK_LeaveRegion();
+   bench_region_leave();
    TEST_ASSERT(ctrl_wait(EV_H, 200), "TICI : gestionnaire exécuté");
    TEST_ASSERT(handler_on_target, "TICI : gestionnaire exécuté dans la tâche cible");
    /* reprise : le contexte sauvegardé est celui préparé par le test (ICI fictif) ; il est rendu
-      cohérent avant la restauration, la cible est bloquée dans embOS et non dans un LDM */
-   *frame_xpsr(&tp.bckup_context.os_regs) = orig;
+      cohérent avant la restauration, la cible est bloquée dans le micro-noyau et non dans un LDM */
+   *frame_xpsr(BENCH_CTX_REGS(tp.bckup_context)) = orig;
    deroute_exit();
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("TICI : reprise au point d'interruption");
    TEST_ASSERT(handler_count == 1, "TICI : un seul passage dans le gestionnaire");
    TEST_ASSERT(regs_ok, "TICI : R4-R11 intacts après retour du gestionnaire");
@@ -457,7 +449,7 @@ static int t6_run(void (*routine)(void), void (*h1)(void), void (*h2)(void)){
    if(pending)
       TEST_ASSERT(deroute(h2) == 0, "T6 : second gestionnaire délivré à la sortie du premier");
    deroute_exit();
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("T6 : reprise après les deux gestionnaires");
    TEST_ASSERT(handler_count == 2 && handler_order[0] == 1 && handler_order[1] == 2,
                "T6 : gestionnaires exécutés dans l'ordre 1, 2, sans imbrication");
@@ -493,7 +485,7 @@ static int t7_run(void (*parent)(void), void (*child)(void)){
    __rstr_context(tp.bckup_context, (&tp));
    __set_active_pthread((&tp));
    _sys_free(backup);
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("T7 : reprise du parent");
    TEST_ASSERT(child_ran, "T7 : fils exécuté sur la tâche du parent");
    TEST_ASSERT(canary_ok, "T7 : pile du parent restituée (canari intact)");
@@ -512,9 +504,9 @@ static int test_t8(void){
    uint32_t top = (uint32_t)target_stack + sizeof(target_stack);
    exec_sp = 0;
    regs_ok = 0;
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
    target_create(target_fpu_hold_rz, 0);     /* ancienne image, bloquée avec ses motifs et sa FPU */
-   TEST_ASSERT(frame_is_fpu(target_task.pStack), "T8 : ancienne image bloquée avec un contexte FPU");
+   TEST_ASSERT(frame_is_fpu((void*)bench_task_sp(&target_task)), "T8 : ancienne image bloquée avec un contexte FPU");
 #else
    target_create(target_hold, 0);            /* ancienne image, bloquée avec ses motifs */
 #endif
@@ -524,10 +516,10 @@ static int test_t8(void){
    TEST_ASSERT(exec_sp > top - 256u && exec_sp <= top, "T8 : pile réinitialisée (haut de pile)");
    TEST_ASSERT(memcmp(exec_regs, pattern, sizeof(pattern)) != 0,
                "T8 : aucun registre de l'ancien flux ne survit");
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
    /* décision 2026-09-30 : contexte FPU non hérité (le banc de registres FPU est physique ; son
       contenu résiduel est journalisé, pas exigé : dette de sécurité, isolation MPU) */
-   TEST_ASSERT(!frame_is_fpu(&tp.start_context.os_regs), "T8 : cadre de départ non étendu (sans FPU)");
+   TEST_ASSERT(!frame_is_fpu(BENCH_CTX_REGS(tp.start_context)), "T8 : cadre de départ non étendu (sans FPU)");
    TEST_ASSERT(!(exec_control & CONTROL_FPCA), "T8 : aucun contexte FPU hérité (CONTROL.FPCA = 0)");
    TEST_ASSERT((exec_fpscr & FPSCR_RMODE_RZ) == 0, "T8 : FPSCR par défaut (mode d'arrondi non hérité)");
    kal_test_put_u32("T8 : FPSCR de la nouvelle image = ", exec_fpscr);
@@ -535,37 +527,34 @@ static int test_t8(void){
                  ? "T8 : S16-S31 résiduels = motifs de l'ancienne image (journalisé, non exigé)\n"
                  : "T8 : S16-S31 résiduels différents des motifs de l'ancienne image\n");
 #endif
-   OS_TASKEVENT_Set(&target_task, EV_GO);    /* l'ancienne image ne doit pas reprendre */
-   OS_TASK_Delay(20);
+   bench_event_set(&target_task, EV_GO);    /* l'ancienne image ne doit pas reprendre */
+   bench_delay(20);
    TEST_ASSERT(!regs_ok, "T8 : l'ancienne image ne reprend pas");
    return 0;
 }
 
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
 /* T1F : T1 avec contexte FPU actif ; lazy stacking (FPCCR) actif */
 static int test_t1f(void){
-   static uint32_t snapshot[sizeof(OS_REGS_BASE_FPU) / 4];
-   OS_REGS_BASE_FPU* f;
+   static uint32_t snapshot[BENCH_FPU_WORDS];
+   void* f;
 
    TEST_ASSERT((kal_fpu_fpccr() & FPCCR_ASPEN_LSPEN) == FPCCR_ASPEN_LSPEN,
                "T1F : lazy stacking actif (FPCCR ASPEN, LSPEN)");
    regs_ok = fpu_ok = 0;
    target_create(target_fpu_hold, 0);
-   f = (OS_REGS_BASE_FPU*)target_task.pStack;
+   f = (void*)bench_task_sp(&target_task);
    if(!frame_is_fpu(f)) {
       TEST_ASSERT(0, "T1F : cadre étendu (FPU) de la cible bloquée");
       return -1;
    }
    memcpy(snapshot, f, sizeof(snapshot));
    __bckup_context(tp.bckup_context, (&tp));
-   f->OS_REG_R4 = f->OS_REG_R5 = f->OS_REG_R6 = f->OS_REG_R7 = 0xDEAD0000u;
-   f->OS_REG_R8 = f->OS_REG_R9 = f->OS_REG_R10 = f->OS_REG_R11 = 0xDEAD0001u;
-   memset(&f->S16_S31, 0xEE, sizeof(f->S16_S31));
-   memset(&f->S0_S15, 0xEE, sizeof(f->S0_S15));
+   bench_frame_corrupt_fpu(f);
    __rstr_context(tp.bckup_context, (&tp));
    TEST_ASSERT(memcmp(snapshot, f, sizeof(snapshot)) == 0,
                "T1F : cadre étendu restitué à l'identique (R4-R11, S0-S31, FPSCR)");
-   OS_TASKEVENT_Set(&target_task, EV_GO);
+   bench_event_set(&target_task, EV_GO);
    finish_target("T1F : fin de la cible");
    TEST_ASSERT(regs_ok, "T1F : R4-R11 restaurés");
    TEST_ASSERT(fpu_ok, "T1F : S16-S31 restaurés");
@@ -599,7 +588,7 @@ static int test_t7f(void){
 #endif
 
 /* IRQ : sections critiques à nom neutre (lepton_irq.h, ETAPE-3 tâche 1) : PRIMASK, imbrication,
-   et effet réel : le temps d'embOS (SysTick) n'avance pas pendant une section critique. */
+   et effet réel : le temps du micro-noyau (SysTick) n'avance pas pendant une section critique. */
 static void irq_spin(volatile uint32_t n){
    while(n--) {
    }
@@ -607,7 +596,7 @@ static void irq_spin(volatile uint32_t n){
 
 static int test_irq(void){
    lepton_irq_state_t s1, s2;
-   OS_TIME t0, t1;
+   uint32_t t0, t1;
    uint32_t n = 0;
 
    TEST_ASSERT(kal_cpu_primask() == 0, "IRQ : interruptions autorisées au départ");
@@ -625,22 +614,22 @@ static int test_irq(void){
    TEST_ASSERT(kal_cpu_primask() == 0, "IRQ : enable démasque");
 
    /* étalonnage : boucle d'au moins 5 ticks, interruptions autorisées */
-   OS_TASK_Delay(1);
-   t0 = OS_TIME_GetTicks32();
-   while(OS_TIME_GetTicks32() - t0 < 5) {
+   bench_delay(1);
+   t0 = bench_ticks();
+   while(bench_ticks() - t0 < 5) {
       irq_spin(1000);
       n += 1000;
    }
    /* même boucle en section critique : aucun tick compté */
    s1 = __lepton_irq_save();
-   t0 = OS_TIME_GetTicks32();
+   t0 = bench_ticks();
    irq_spin(n);
-   t1 = OS_TIME_GetTicks32();
+   t1 = bench_ticks();
    __lepton_irq_restore(s1);
    kal_test_put_u32("IRQ : itérations pour 5 ticks = ", n);
    TEST_ASSERT(t1 == t0, "IRQ : temps figé pendant la section critique");
-   OS_TASK_Delay(2);
-   TEST_ASSERT(OS_TIME_GetTicks32() != t1, "IRQ : le temps reprend après restore");
+   bench_delay(2);
+   TEST_ASSERT(bench_ticks() != t1, "IRQ : le temps reprend après restore");
    return 0;
 }
 
@@ -656,11 +645,11 @@ static int test_tclk(void){
    long long us, expect_us;
    TEST_ASSERT(SYST_RVR + 1u == SystemCoreClock / _SC_CLK_TCK,
                "TCLK : SysTick programmé à _SC_CLK_TCK interruptions par seconde");
-   OS_TASK_Delay(1);   /* départ juste après un tick */
-   t0 = OS_TIME_GetTicks32();
+   bench_delay(1);   /* départ juste après un tick */
+   t0 = bench_ticks();
    _sys_gettimeofday(&tv0, 0);
-   OS_TASK_Delay(500);
-   t1 = OS_TIME_GetTicks32();
+   bench_delay(500);
+   t1 = bench_ticks();
    _sys_gettimeofday(&tv1, 0);
    us = (long long)(tv1.tv_sec - tv0.tv_sec) * 1000000LL + (tv1.tv_usec - tv0.tv_usec);
    expect_us = (long long)(t1 - t0) * 1000000LL / _SC_CLK_TCK;
@@ -711,7 +700,7 @@ static int test_harness_fail(void){
 static const struct { const char* name; int (*fn)(void); } tests[] = {
    { "T1", test_t1 }, { "T2", test_t2 }, { "T3", test_t3 }, { "T4", test_t4 },
    { "T5", test_t5 }, { "T6", test_t6 }, { "T7", test_t7 }, { "T8", test_t8 },
-#if (OS_CPU_HAS_VFP == 1)
+#if BENCH_HAS_VFP
    { "T1F", test_t1f }, { "T4F", test_t4f }, { "T6F", test_t6f }, { "T7F", test_t7f },
 #endif
    { "TICI", test_tici }, { "TCLK", test_tclk }, { "TSBRK", test_tsbrk },
@@ -750,11 +739,6 @@ static void controller(void){
 int main(void){
    if(kal_test_cmdline(cmdline, sizeof(cmdline)) < 0)
       cmdline[0] = 0;
-   OS_IncDI();
-   OS_Init();
-   OS_InitHW();
-   OS_TASK_Create(&ctrl_task, "controller", PRIO_CTRL, controller,
-                  ctrl_stack, sizeof(ctrl_stack), 2);
-   OS_Start();
+   bench_start(&ctrl_task, "controller", PRIO_CTRL, controller, ctrl_stack, sizeof(ctrl_stack));
    return 0;
 }

@@ -31,7 +31,10 @@ endif()
 set(kal_platform_sources ${LEPTON_ISA_STARTUP_SOURCES} ${LEPTON_KAL_HW_SOURCES})
 list(TRANSFORM kal_platform_sources PREPEND ${LEPTON_SRC}/)
 add_executable(kal_bench ${kal_bench_c} kal_semihost.c ${kal_isa_asm} ${kal_platform_sources})
-target_include_directories(kal_bench PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# services du micro-noyau et oracle de trame (étape 7), à côté de kal_bench.c :
+# arch/armv7m/backend/<backend>/kal_bench_os.h
+target_include_directories(kal_bench PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+                           ${CMAKE_CURRENT_SOURCE_DIR}/arch/armv7m/backend/${LEPTON_KAL_BACKEND})
 lepton_link_firmware(kal_bench)
 
 set(kal_labels "kal;arch:${LEPTON_CPU};backend:${LEPTON_KAL_BACKEND}")
