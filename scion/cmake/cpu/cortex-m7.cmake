@@ -19,6 +19,9 @@ else()
   message(FATAL_ERROR "LEPTON_M7_FPU=${LEPTON_M7_FPU} : dp ou sp")
 endif()
 set(LEPTON_EMBOS_LIB_FAMILY T7VHL)
+# FreeRTOS : port ARM_CM4F (Cortex-M7 r1 et suivants, FPU sp ou dp : S16-S31 sauvegardés) ; un cœur
+# r0p0/r0p1 (erratum 837070) prend ARM_CM7/r0p1, posé par la carte (cmake/boards).
+set(LEPTON_FREERTOS_PORT ARM_CM4F)
 target_compile_options(lepton_options INTERFACE ${cpu_flags})
 target_link_options(lepton_options INTERFACE ${cpu_flags})
 # Nom du cœur (uname, __KERNEL_CPU_NAME de kernelconf.h).

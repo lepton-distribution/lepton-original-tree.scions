@@ -61,3 +61,7 @@ set(LEPTON_KAL_SOURCES
   ${LEPTON_FREERTOS_DIR}/timers.c
   ${LEPTON_FREERTOS_DIR}/event_groups.c
   ${LEPTON_FREERTOS_PORT_DIR}/port.c)
+# ports à assembleur séparé (ARM_CM0 : gestionnaires SVC/PendSV, masque d'interruptions)
+if(EXISTS ${LEPTON_SRC}/${LEPTON_FREERTOS_PORT_DIR}/portasm.c)
+  list(APPEND LEPTON_KAL_SOURCES ${LEPTON_FREERTOS_PORT_DIR}/portasm.c)
+endif()

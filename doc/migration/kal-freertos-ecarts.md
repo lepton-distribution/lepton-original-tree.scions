@@ -51,7 +51,7 @@ FreeRTOS. Inactifs (aucun preset) : `dev_os_debug.c`, pilotes LCD, `uip_core`.
 | `__is_thread_self` | `== OS_pCurrentTask` | `== xTaskGetCurrentTaskHandle()` | public |
 | lien pthread ↔ tâche | `thread->tcb` | idem (handle = adresse du `StaticTask_t`) ; inverse si besoin : `vTaskSetThreadLocalStoragePointer` | public |
 | `__bckup_context` / `__rstr_context` | copie de tout l'`OS_TASK` (liens préservés) + trame `OS_REGS` | **ne pas copier le TCB** (listes, priorité, notifications, mutex détenus) : sauvegarder `pxTopOfStack` + trame | **interne I1** : `pxTopOfStack` = premier membre du TCB (garanti par l'ABI des ports, lu par `PendSV`) |
-| trame de contexte | `OS_REGS_BASE[_FPU]`, E3 | CM3 et CM0 : R4-R11 puis trame matérielle ; CM4F et CM7 : R4-R11, EXC_RETURN, [S16-S31 si bit 4 d'EXC_RETURN à 0], trame matérielle [S0-S15, FPSCR] | **interne I2** : défini par `port.c` (`xPortPendSVHandler`), pas par un en-tête ; `cpu_regs_t` à décrire dans `kal/backend/freertos` par ISA, contrôlé par `_Static_assert` sur `pxPortInitialiseStack` |
+| trame de contexte | `OS_REGS_BASE[_FPU]`, E3 | CM3 : R4-R11 puis trame matérielle ; CM0 (V11, sans MPU) : EXC_RETURN, R4-R7, R8-R11 puis trame matérielle (relevé au module 7.3) ; CM4F et CM7 : R4-R11, EXC_RETURN, [S16-S31 si bit 4 d'EXC_RETURN à 0], trame matérielle [S0-S15, FPSCR] | **interne I2** : défini par `port.c` (`xPortPendSVHandler`), pas par un en-tête ; `cpu_regs_t` à décrire dans `kal/backend/freertos` par ISA, contrôlé par `_Static_assert` sur `pxPortInitialiseStack` |
 | `__bckup_stack` / `__rstr_stack` | `start_context.os_task.pStack` | `pxTopOfStack` sauvegardé (même algorithme) | I1 |
 | `__swap_signal_handler` | PC et xPSR (ICI/IT) de la trame, `OS_MakeTaskReady` | même modification de trame (I2) ; réveil par `xTaskAbortDelay` (tâche bloquée, attente infinie comprise depuis V10) ou `vTaskResume` (suspendue) | public ; **HYPOTHÈSE À VALIDER** (banc T2/T3) : `xTaskAbortDelay` sur attente infinie de sémaphore |
 | `__exit_signal_handler` | `__rstr_context(bckup)` | idem (I1, I2) | |
@@ -79,7 +79,7 @@ FreeRTOS. Inactifs (aucun preset) : `dev_os_debug.c`, pilotes LCD, `uip_core`.
 - **Pilotes en interruption** : `configMAX_SYSCALL_INTERRUPT_PRIORITY` doit couvrir les priorités
   des IRQ qui appellent l'API (UART, Ethernet) ; `configASSERT` actif le vérifie
   (`vPortValidateInterruptPriority`).
-- **ARMv6-M** (SAMD21) : port `ARM_CM0` (pas de BASEPRI), trame R8-R11/R4-R7 à vérifier (I2).
+- **ARMv6-M** (SAMD21) : port `ARM_CM0` (pas de BASEPRI), trame relevée au module 7.3 (`kal/backend/freertos/arch/armv6m`, I2) ; gestionnaires et masque d'interruptions dans `portasm.c`, compilé avec `port.c`.
   **M4 sans FPU** (WL55) : port `ARM_CM3`. **M7 r0p1** (F746) : `ARM_CM7/r0p1`. M4F, M7 (an500) :
   `ARM_CM4F`.
 - **FPU** : FreeRTOS fait le lazy stacking par EXC_RETURN comme embOS (E3) ; le constat de sécurité

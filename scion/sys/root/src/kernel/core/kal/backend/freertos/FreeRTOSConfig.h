@@ -78,7 +78,10 @@ void lepton_freertos_assert(const char* file, int line);
 #define configGENERATE_RUN_TIME_STATS              0
 #define configASSERT(x)                            do { if(!(x)) lepton_freertos_assert(__FILE__, __LINE__); } while(0)
 
-/* --- interruptions (ARMv7-M : BASEPRI) ------------------------------------------------------ */
+/* --- protection mémoire : sans MPU (ports ARMv6-M ARM_CM0 : définition exigée) -------------- */
+#define configENABLE_MPU                           0
+
+/* --- interruptions (ARMv7-M : BASEPRI ; ARMv6-M : PRIMASK, priorités sans effet) ---------- */
 #define configKERNEL_INTERRUPT_PRIORITY            0xFF
 #define configMAX_SYSCALL_INTERRUPT_PRIORITY       0x80
 #define configMAX_API_CALL_INTERRUPT_PRIORITY      configMAX_SYSCALL_INTERRUPT_PRIORITY
