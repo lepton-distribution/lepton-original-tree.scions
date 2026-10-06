@@ -53,21 +53,24 @@ src/kernel/core/bin.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-deb
 src/kernel/core/bin.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",24,7
 src/kernel/core/board.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",0,7
 src/kernel/core/compiler.h,actif,étape 3 : abstraction compilateur (macros __lepton_*),14,0
-src/kernel/core/core-freertos/core_rttimer.c,différé,règle : backend FreeRTOS (étape 7),55,5
-src/kernel/core/core-freertos/fork.c,différé,règle : backend FreeRTOS (étape 7),128,5
-src/kernel/core/core-freertos/heap.c,différé,règle : backend FreeRTOS (étape 7),12,0
-src/kernel/core/core-freertos/kernel.c,différé,règle : backend FreeRTOS (étape 7),682,5
-src/kernel/core/core-freertos/kernel_clock.c,différé,règle : backend FreeRTOS (étape 7),50,5
-src/kernel/core/core-freertos/kernel_elfloader.c,différé,règle : backend FreeRTOS (étape 7),436,5
-src/kernel/core/core-freertos/kernel_object.c,différé,règle : backend FreeRTOS (étape 7),233,5
-src/kernel/core/core-freertos/kernel_pthread.c,différé,règle : backend FreeRTOS (étape 7),219,5
-src/kernel/core/core-freertos/kernel_pthread_mutex.c,différé,règle : backend FreeRTOS (étape 7),66,5
-src/kernel/core/core-freertos/kernel_sem.c,différé,règle : backend FreeRTOS (étape 7),103,5
-src/kernel/core/core-freertos/kernel_sigqueue.c,différé,règle : backend FreeRTOS (étape 7),161,5
-src/kernel/core/core-freertos/kernel_timer.c,différé,règle : backend FreeRTOS (étape 7),163,5
-src/kernel/core/core-freertos/process.c,différé,règle : backend FreeRTOS (étape 7),903,5
-src/kernel/core/core-freertos/signal.c,différé,règle : backend FreeRTOS (étape 7),219,5
-src/kernel/core/core-freertos/syscall.c,différé,règle : backend FreeRTOS (étape 7),645,5
+src/kernel/core/core-freertos/arch/armv7m/freertos_hooks.c,actif,"étape 7 : backend FreeRTOS (core-freertos remis à niveau, démarrage, crochets)",20,0
+src/kernel/core/core-freertos/arch/armv7m/freertos_main.c,actif,"étape 7 : backend FreeRTOS (core-freertos remis à niveau, démarrage, crochets)",12,0
+src/kernel/core/core-freertos/core_rttimer.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),55,5
+src/kernel/core/core-freertos/fork.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),128,5
+src/kernel/core/core-freertos/heap.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),12,0
+src/kernel/core/core-freertos/kernel.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),682,5
+src/kernel/core/core-freertos/kernel_clock.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),50,5
+src/kernel/core/core-freertos/kernel_elfloader.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),436,5
+src/kernel/core/core-freertos/kernel_object.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),233,5
+src/kernel/core/core-freertos/kernel_pthread.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),219,5
+src/kernel/core/core-freertos/kernel_pthread_mutex.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),66,5
+src/kernel/core/core-freertos/kernel_sem.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),103,5
+src/kernel/core/core-freertos/kernel_sigqueue.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),161,5
+src/kernel/core/core-freertos/kernel_syscall_lock.c,actif,"étape 7 : backend FreeRTOS (core-freertos remis à niveau, démarrage, crochets)",35,0
+src/kernel/core/core-freertos/kernel_timer.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),163,5
+src/kernel/core/core-freertos/process.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),903,5
+src/kernel/core/core-freertos/signal.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),219,5
+src/kernel/core/core-freertos/syscall.c,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),645,5
 src/kernel/core/core-generic/kernel_pthread_tsd.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",113,3
 src/kernel/core/core-segger/arch/armv6m/embos_init_hw.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",53,0
 src/kernel/core/core-segger/arch/armv7m/embos_init_hw.c,actif,"étape 3 : backend embOS (démarrage, RTOSInit, verrou des appels système)",53,0
@@ -137,7 +140,11 @@ src/kernel/core/kal/arch/armv7m/kal_arch_conf.h,actif,"étape 4 (KAL) : KAL déc
 src/kernel/core/kal/arch/host/kal_arch.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",4,0
 src/kernel/core/kal/arch/host/kal_arch_conf.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",12,0
 src/kernel/core/kal/backend/embos/kal_backend.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",137,0
-src/kernel/core/kal/backend/freertos/kal_backend.h,différé,"étape 4 (KAL) : backend FreeRTOS extrait tel quel, étape 7",131,0
+src/kernel/core/kal/backend/freertos/FreeRTOSConfig.h,actif,"étape 7 : KAL FreeRTOS (backend V11.3.0, région atomique, configuration)",72,0
+src/kernel/core/kal/backend/freertos/arch/armv6m/kal_freertos_frame.h,actif,"étape 7 : KAL FreeRTOS (backend V11.3.0, région atomique, configuration)",4,0
+src/kernel/core/kal/backend/freertos/arch/armv7m/kal_freertos_frame.h,actif,"étape 7 : KAL FreeRTOS (backend V11.3.0, région atomique, configuration)",26,0
+src/kernel/core/kal/backend/freertos/kal_backend.h,actif,étape 7 : backend FreeRTOS remis à niveau et compilé (reclassé de différé),131,0
+src/kernel/core/kal/backend/freertos/kal_freertos.c,actif,"étape 7 : KAL FreeRTOS (backend V11.3.0, région atomique, configuration)",15,0
 src/kernel/core/kal/backend/static/kal_backend.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",78,0
 src/kernel/core/kal/contrat.h,actif,"étape 4 (KAL) : KAL décomposé (dispatcher, arch, backend, contrat)",18,0
 src/kernel/core/kernel.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",345,43
@@ -713,6 +720,50 @@ src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/stm32wl55xx.h,actif,"étape 6 : 
 src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/stm32wlxx.h,actif,"étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)",134,6
 src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/system_stm32wlxx.c,différé,"déclaré par tauon-basic_stm32wl55jci_nucleo_8.40/Debug (STM32WL55 Nucleo, carte non listée (à décider))",102,2
 src/kernel/core/ucore/cmsis/Device/st/stm32wlxx/system_stm32wlxx.h,actif,"étape 6 : CMSIS Device STM32WL (tiers, STM32CubeWL)",16,6
+src/kernel/core/ucore/freeRTOS_11-3-0/croutine.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",204,0
+src/kernel/core/ucore/freeRTOS_11-3-0/event_groups.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",530,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/FreeRTOS.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",2310,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/StackMacros.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",4,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/atomic.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",169,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/croutine.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",83,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/deprecated_definitions.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",180,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/event_groups.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",76,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/list.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",142,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/message_buffer.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",58,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/mpu_prototypes.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",402,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/mpu_syscall_numbers.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",74,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/mpu_wrappers.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",187,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/newlib-freertos.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",17,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/picolibc-freertos.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",36,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/portable.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",133,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/projdefs.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",80,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/queue.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",183,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/semphr.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",67,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/stack_macros.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",72,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/stream_buffer.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",102,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/task.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",462,0
+src/kernel/core/ucore/freeRTOS_11-3-0/include/timers.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",121,0
+src/kernel/core/ucore/freeRTOS_11-3-0/list.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",95,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM0/mpu_wrappers_v2_asm.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",1874,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM0/port.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",863,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM0/portasm.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",445,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM0/portasm.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",14,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM0/portmacro.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",198,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM3/port.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",373,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM3/portmacro.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",147,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM4F/port.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",423,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM4F/portmacro.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",150,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM7/r0p1/port.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",420,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/GCC/ARM_CM7/r0p1/portmacro.h,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",151,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/MemMang/heap_1.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",82,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/MemMang/heap_2.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",216,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/MemMang/heap_3.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",42,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/MemMang/heap_4.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",376,0
+src/kernel/core/ucore/freeRTOS_11-3-0/portable/MemMang/heap_5.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",428,0
+src/kernel/core/ucore/freeRTOS_11-3-0/queue.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",2186,0
+src/kernel/core/ucore/freeRTOS_11-3-0/stream_buffer.c,hors-projet,"étape 7 : FreeRTOS V11.3.0 non compilé (tiers : MemMang, stream_buffer, croutine, MPU)",1112,0
+src/kernel/core/ucore/freeRTOS_11-3-0/tasks.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",5464,0
+src/kernel/core/ucore/freeRTOS_11-3-0/timers.c,actif,"étape 7 : noyau FreeRTOS V11.3.0 compilé (tiers, 202604 LTS)",816,0
 src/kernel/core/ucore/freeRTOS_8-0-0/source/arch/arm9/FreeRTOSConfig_arm926ejs.h,différé,règle : backend FreeRTOS (étape 7),41,0
 src/kernel/core/ucore/freeRTOS_8-0-0/source/arch/arm9/at91sam9261/FreeRTOSConfig.h,différé,règle : backend FreeRTOS (étape 7),41,0
 src/kernel/core/ucore/freeRTOS_8-0-0/source/arch/arm9/at91sam9261/board.h,différé,règle : backend FreeRTOS (étape 7),116,2
@@ -2883,6 +2934,8 @@ src/kernel/net/lwip/ports/arm/lwipopts-small-memory.h,actif,rattaché par réper
 src/kernel/net/lwip/ports/arm/lwipopts.h,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",135,14
 src/kernel/net/lwip/ports/arm/lwipopts_1_2_1.h,actif,rattaché par répertoire (src/kernel/net/lwip/ports/arm),115,0
 src/kernel/net/lwip/ports/arm/sys_arch.c,actif,"déclaré par tauon_7.80/tauon-kernel-cortex-m4-debug (noyau, configuration Cortex-M4 embOS (socle))",233,6
+src/kernel/net/lwip/ports/freertos/include/arch/sys_arch.h,actif,étape 7 : sys_arch lwIP du backend FreeRTOS,42,0
+src/kernel/net/lwip/ports/freertos/sys_arch.c,actif,étape 7 : sys_arch lwIP du backend FreeRTOS,244,0
 src/kernel/net/lwip/ports/gnu/include/arch/bpstruct.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",0,0
 src/kernel/net/lwip/ports/gnu/include/arch/cc.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",21,0
 src/kernel/net/lwip/ports/gnu/include/arch/epstruct.h,hors-projet,"non déclaré par un projet, non inclus, sans règle",0,0
@@ -3687,6 +3740,8 @@ tests/host/ufs_format.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL
 tests/host/vfs_ufs.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",55,0
 tests/kal/arch/armv6m/kal_regs_armv6m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",43,0
 tests/kal/arch/armv6m/kal_regs_read_armv6m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",25,0
+tests/kal/arch/armv7m/backend/embos/kal_bench_os.h,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",70,0
+tests/kal/arch/armv7m/backend/freertos/kal_bench_os.h,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",101,0
 tests/kal/arch/armv7m/kal_bench.c,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",527,0
 tests/kal/arch/armv7m/kal_fpu_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",93,0
 tests/kal/arch/armv7m/kal_regs_armv7m.S,actif,"étapes 2-3 : bancs de test (ctest host, banc KAL)",18,0

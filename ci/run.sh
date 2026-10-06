@@ -3,8 +3,8 @@
 # Pipeline de l'étape 6 :
 #   - tests unitaires des outils de migration ; garde audit_iar.py (zéro IAR-isme Lepton actif) ;
 #   - preset hôte : build, ctest -L host ;
-#   - presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7) : build,
-#     ctest -L smoke, -L net, -L kal ;
+#   - presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7 ; étape 7 :
+#     mps2-an386 sous FreeRTOS) : build, ctest -L smoke, -L net, -L kal ;
 #   - presets carte (F439/F429, F746, SAMD21, WL55) : build seul (pas d'exécution sans sonde) ;
 #   - occupation mémoire de chaque exécutable (--print-memory-usage) archivée dans
 #     $LEPTON_BUILD/ci/memoire.csv, échec au-delà de LEPTON_MEM_ALERT % (défaut 90) par région ;
@@ -68,8 +68,10 @@ cmake --preset host >/dev/null
 cmake --build --preset host
 ctest --preset host -L host --no-tests=error
 
-# M4F hard-float (cible) puis soft-float (chemin sans FPU), M7 (étape 6)
-for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft qemu-mps2-an500-embos; do
+# M4F hard-float (cible) puis soft-float (chemin sans FPU), M7 (étape 6) ; backend FreeRTOS
+# (étape 7, matrice micro-noyau × machine complétée au module 7.3)
+for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft qemu-mps2-an500-embos \
+              qemu-mps2-an386-freertos; do
   build_cible "$preset"
 
   step "fumée ($preset) : ctest -L smoke"
