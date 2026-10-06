@@ -32,3 +32,23 @@ Aucun défaut rencontré pendant la session 1 (paliers 1-6 verts du premier coup
 |---|---|---|
 | ARP résolu, ping sans réponse ; carte : 3 requêtes reçues et 3 trames émises (compteurs MMC), réponse ICMP correcte dans le tampon d'émission ; hôte : 3 paquets reçus, `IcmpInCsumErrors` +3 | la HAL initialise chaque descripteur d'émission en insertion matérielle complète des sommes (`ETH_DMATXDESC_CHECKSUMTCPUDPICMPFULL`) et n'applique `ChecksumCtrl` qu'avec l'attribut `ETH_TX_PACKETS_FEATURES_CSUM` ; le MAC recalculait la somme ICMP par-dessus celle de lwIP | attribut `CSUM` + `ETH_CHECKSUM_DISABLE` (lwIP seule source des sommes, options par défaut) |
 
+
+## Étape 7 — backend FreeRTOS (module 7.3, 2026-10-06)
+
+Même carte, preset `stm32f746g-disco-freertos` : FreeRTOS V11.3.0, port **`ARM_CM7/r0p1`**
+(erratum 837070, posé par `cmake/boards/stm32f746g-disco.cmake` ; `ARM_CM4F` refuse un CPUID
+r0p1 par `configASSERT`), `fpv5-sp-d16`, `-Os -g`. Flash interne autorisée pour le module
+(décision 2026-10-06). Empreinte : text 291 108 / data 1 184 / bss 166 784 (embOS 285 944 /
+1 180 / 155 640) : code +1,8 %, RAM statique +7,1 % (pas de CCM sur la F746).
+
+| Palier | Statut | Preuve (FreeRTOS) |
+|---|---|---|
+| 1-3. Reset, mémoire, warmup | VERT (implicite) | non relevés au débogueur ; démarrage jusqu'à `lsh` prouvé par la fumée (palier 6) ; même BSP et même démarrage qu'embOS |
+| 4. Appel système tracé | non retracé | tracé sous FreeRTOS sur la F429 (module 7.2) ; KAL identique |
+| 5. Multitâche et signaux | VERT | banc KAL sur carte : T1-T8, T1F/T4F/T6F/T7F, TICI, TCLK, TSBRK, IRQ verts, `HARNESS_FAIL` rend 1 |
+| 6. Fumée canonique | VERT | `ctest --preset stm32f746g-disco-freertos -L board` **20/20** (dont `board.net`), deux fois : avant et après l'alignement de `kernelconf.h` (binaire final) |
+| 7. Réseau | VERT | `board.net` **5/5** d'affilée (20,5-21,6 s chacun) |
+| 8. Endurance | VERT | `tests/endurance_board.py`, **4 h** (15:02-19:02), cycles `lsh` toutes les 30 s et ping continu : **480 cycles, ping 14 395/14 395** (perte 0 %, plus longue coupure 0 s), aucun redémarrage, CFSR/HFSR nuls, aucune assertion ni débordement FreeRTOS. Piles (`lepton-stacks`) : `lsh` 78,1 % (448 o libres sur 2 048 ; embOS 67 %), `initd` 64,6 % (embOS 53,7 %), `lwip_core` 48,4 %, `kernel_thread` 21,5 %, `ftpd` 16 %, `tcpip_thread` 3,3 %, idle 9,4 %, temporisateurs 10,2 %, MSP 11,6 %. Binaire antérieur à l'alignement de `kernelconf.h` (ajout de `__KERNEL_USE_FILE_LOCK`) : endurance non rejouée, paliers 5-7 rejoués sur le binaire final |
+
+Aucun défaut propre à la carte. Tas de thread Lepton plus gros sous FreeRTOS (788 o contre 588 ;
+cause non analysée) : marge de `lsh` réduite à 448 o, comme sur la F429 (dette du module 7.2).
