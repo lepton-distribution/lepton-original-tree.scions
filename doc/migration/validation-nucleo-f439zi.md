@@ -74,3 +74,7 @@ Défauts trouvés et corrigés pendant le module (QEMU et carte) :
 Constat préexistant (embOS et FreeRTOS, non corrigé : dette) : chaque session FTP laisse ~420 à
 650 o de tas consommés (`_sbrk`) ; la 8ᵉ session consécutive échoue (« 421 Out of memory »)
 sous les deux backends, au même rang. `board.net` (une session par reset) n'est pas concerné.
+
+Rejeu du module 7.3 (2026-10-06), binaire final (`kernelconf.h` aligné sur embOS : verrous de
+fichiers ajoutés sous FreeRTOS ; RAM 51 %, CCM 85 %) : `ctest --preset nucleo-f439zi-freertos -L
+board` **20/20**, `board.net` **5/5** d'affilée ; endurance non rejouée.
