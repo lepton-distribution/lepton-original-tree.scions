@@ -59,6 +59,19 @@
       }
     },
     {
+      "name": "qemu-mps2-an386-freertos",
+      "displayName": "QEMU mps2-an386 (Cortex-M4F, hard-float), FreeRTOS",
+      "description": "Backend KAL FreeRTOS V11.3.0 (étape 7), même machine que qemu-mps2-an386-embos.",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m4f",
+        "LEPTON_BOARD": "qemu-mps2-an386",
+        "LEPTON_KAL_BACKEND": "freertos",
+        "LEPTON_FLOAT_ABI": "hard"
+      }
+    },
+    {
       "name": "nucleo-f439zi-embos",
       "displayName": "NUCLEO-F439ZI (Cortex-M4F), embOS",
       "inherits": "cross",
@@ -130,6 +143,10 @@
       "configurePreset": "qemu-mps2-an386-embos-soft"
     },
     {
+      "name": "qemu-mps2-an386-freertos",
+      "configurePreset": "qemu-mps2-an386-freertos"
+    },
+    {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos"
     },
@@ -168,6 +185,13 @@
     {
       "name": "qemu-mps2-an386-embos-soft",
       "configurePreset": "qemu-mps2-an386-embos-soft",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "qemu-mps2-an386-freertos",
+      "configurePreset": "qemu-mps2-an386-freertos",
       "output": {
         "outputOnFailure": true
       }
