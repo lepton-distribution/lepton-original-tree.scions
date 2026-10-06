@@ -110,6 +110,8 @@ FreeRTOS. Inactifs (aucun preset) : `dev_os_debug.c`, pilotes LCD, `uip_core`.
 | Priorités | aucune inversion (§3) | `__kal_priority` : 0-255 → [1, 30] ; « freeRTOS temporary patch » (priorité 4) retiré de `process.c` |
 | Pile | Lepton utilise le bas de pile comme tas (`kernel_pthread_alloca`) : il recouvrait la zone de contrôle de FreeRTOS | 20 octets réservés (`KERNEL_PTHREAD_STACK_GUARD`) |
 | Interruptions | `xSemaphoreGiveFromISR` ne remet jamais l'indicateur à `pdFALSE` | initialisé à chaque appel, cumulé dans `kernel_in_interrupt_higher_priority_task_woken` |
+| TCB (module 7.2) | intégré d'abord à `kernel_pthread_t` ; le noyau copie et efface des `kernel_pthread_t` entiers (`fork.c`, `process.c`) : listes de FreeRTOS corrompues (HardFault, `pxCurrentTCB` NULL ; réveils perdus), sous charge seulement | TCB et groupe d'événements alloués à part (`thread->tcb`), comme `OS_TASK` |
+| Mémoire (module 7.2) | mémoire statique propre à FreeRTOS (piles idle 1 Ko et temporisateurs 2 Ko, listes de prêts 640 o, TCB, file) en SRAM : tas newlib −4,7 Ko, session FTP en échec sur la F439 | placée en `.ccm_bss` (`ld/common-cortexm.ld`) ; tas au niveau embOS |
 | Hypothèse `xTaskAbortDelay` | — | **validée** : T4, T6, T7 et leurs variantes FPU réveillent une cible en attente infinie (groupe d'événements) |
 
 Timeslice par tâche (embOS) : non transposable, tourniquet global d'un tick (`configUSE_TIME_SLICING`).

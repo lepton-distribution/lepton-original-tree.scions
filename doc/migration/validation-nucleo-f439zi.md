@@ -45,3 +45,32 @@ d'adaptateur série) — HYPOTHÈSE À VALIDER (UM1974).
 - À VALIDER : USART6 sur PG14/PG9 (connecteur).
 - Puce déclarée `STM32F429xx` (pas d'en-tête `stm32f439xx.h` dans la SPL) : sans effet pour la
   F439 tant que CRYP/HASH ne sont pas utilisés ; à rejouer sur une F439ZI.
+
+## Étape 7 — backend FreeRTOS (module 7.2, 2026-10-06)
+
+Même carte (NUCLEO-F429ZI, ST-LINK `V2J27M15`, `/dev/ttyACM0`, hôte 192.168.2.20 sur `ens37`),
+preset `nucleo-f439zi-freertos` (FreeRTOS V11.3.0, port `ARM_CM4F`, hard-float, `-Os -g`). Flash
+interne autorisée pour le module (décision 2026-10-06). Comparaison avec la colonne embOS ci-dessus.
+
+| Palier | Statut | Preuve (FreeRTOS) |
+|---|---|---|
+| 1. Reset → `main` | VERT | gdb : vecteur 0 = MSP `0x20030000`, `Reset_Handler` ; à `main` : HSE retenu, `SystemCoreClock` 168 000 000, `RCC_CFGR` `0x940A`, `FLASH_ACR` `0x705` — identique |
+| 2. Mémoire | VERT | `.data` en RAM identique à l'ELF sauf `SystemCoreClock` ; `.bss` nul sauf `nucleo_f439zi_clock_hse` ; `.ccm_bss` (55 760 o) nul — identique |
+| 3. Warmup | VERT | `main` → `_start_kernel` → `_kernel_warmup_boot` ; console : bannière, invite `lsh` |
+| 4. Appel système tracé | VERT | `traces/palier4-appel-systeme-carte-freertos.gdb` → `.txt` : `initd` → `kernel_syscall_lock` ; `kernel_thread` (réveil par groupe d'événements) → `_kernel_syscall` (pid 1, syscall 49) → `_syscall_setpgid` → `kernel_syscall_unlock` (END) ; `initd` reprend, errno 0 — identique |
+| 5. Multitâche et signaux | VERT | banc KAL sur carte (`ctest -L board`) : T1-T8, T1F/T4F/T6F/T7F, TICI, TCLK, TSBRK, IRQ verts, `HARNESS_FAIL` rend 1 |
+| 6. Fumée canonique | VERT | `ctest --preset nucleo-f439zi-freertos -L board -E board.net` : 19/19, deux fois de suite (build final) |
+| 7. Réseau | VERT | `board.net` 5/5 : ping 3/3, FTP `LIST` 13 entrées, `RETR /usr/etc/.boot` identique, errno `ECONNRESET`=15 (numérotation Lepton), `ftpd` présent |
+| 8. Endurance | VERT | `tests/endurance_board.py`, 4 h (10:46-14:46), cycles `lsh` toutes les 30 s et ping continu : **480 cycles, ping 14 395/14 395** (perte 0 %, plus longue coupure 0 s), aucun redémarrage, CFSR/HFSR nuls, aucune assertion ni débordement FreeRTOS. Piles (`lepton-stacks`) : `lsh` 77,7 % (456 o libres sur 2 048 ; embOS 66 %), `initd` 66,8 %, `lwip_core` 48,4 %, `kernel_thread` 21,5 %, `ftpd` 16 %, `tcpip_thread` 3 %, idle 9,4 %, temporisateurs 10,2 %, MSP 11,6 % |
+
+Défauts trouvés et corrigés pendant le module (QEMU et carte) :
+
+| Symptôme | Cause | Correction |
+|---|---|---|
+| Carte : FTP `LIST` vide, « Error during reading of . » | tas newlib 4,7 Ko plus petit que sous embOS (mémoire statique de FreeRTOS en SRAM) : `malloc` de `sreaddir` en échec dès la première session | piles, TCB, listes et file internes de FreeRTOS en `.ccm_bss` (`ld/common-cortexm.ld`) : tas au niveau embOS (−528 o), CCM 85 % |
+| QEMU sous charge : HardFault (INVSTATE, `pxCurrentTCB` NULL) et réveils perdus | TCB FreeRTOS intégré à `kernel_pthread_t`, que le noyau copie et efface entier (vfork, exec) | TCB alloué à part (`thread->tcb`), comme `OS_TASK` sous embOS |
+| QEMU sous charge : console figée (aussi sous embOS) | `dev_cmsdk_uart` acquittait l'IRQ de réception après la lecture : octet sans interruption | acquittement avant la lecture (accord utilisateur) ; 0 blocage en 8 × 150 itérations sur les deux backends |
+
+Constat préexistant (embOS et FreeRTOS, non corrigé : dette) : chaque session FTP laisse ~420 à
+650 o de tas consommés (`_sbrk`) ; la 8ᵉ session consécutive échoue (« 421 Out of memory »)
+sous les deux backends, au même rang. `board.net` (une session par reset) n'est pas concerné.
