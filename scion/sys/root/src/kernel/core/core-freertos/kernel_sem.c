@@ -29,12 +29,8 @@ either the MPL or the [eCos GPL] License."
 | Includes
 ==============================================*/
 #include <stdint.h>
-#include <stdarg.h>
 
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/errno.h"
-#include "kernel/core/interrupt.h"
-#include "kernel/core/syscall.h"
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/kernel_sem.h"
 
@@ -114,7 +110,6 @@ int kernel_sem_getvalue(kernel_sem_t* kernel_sem, int *value){
 | Comments:
 | See:
 ----------------------------------------------*/
-
 int kernel_sem_post(kernel_sem_t* kernel_sem){
    if(!kernel_sem)
       return -1;
@@ -171,7 +166,7 @@ int kernel_sem_timedwait(kernel_sem_t* kernel_sem, int flag, const struct timesp
 }
 
 /*--------------------------------------------
-| Name:        kernel_sem_trywait
+| Name:        kernel_sem_trywait*
 | Description:
 | Parameters:  none
 | Return Type: none

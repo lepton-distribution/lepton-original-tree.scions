@@ -59,14 +59,16 @@ Includes
 =============================================*/
 #include <stdint.h>
 #include <stdarg.h>
-#include <string.h>
 
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/errno.h"
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/kernel_pthread_mutex.h"
+#include "kernel/core/kernel_pthread_tsd.h"
+
 #include "kernel/core/interrupt.h"
 #include "kernel/core/syscall.h"
+   
+#include "kernel/fs/vfs/vfstypes.h"
 
 
 /*===========================================
@@ -85,7 +87,7 @@ int g_pthread_id=0;
 Implementation
 =============================================*/
 /*--------------------------------------------
-| Name:        new_thread
+| Name: kernel_init_pthread
 | Description:
 | Parameters:  none
 | Return Type: none
@@ -123,7 +125,7 @@ int kernel_init_pthread(kernel_pthread_t* p){
 }
 
 /*--------------------------------------------
-| Name:        kernel_insert_gpthread
+| Name: kernel_insert_gpthread
 | Description:
 | Parameters:  none
 | Return Type: none
@@ -145,7 +147,7 @@ int kernel_insert_gpthread(kernel_pthread_t* p){
 }
 
 /*--------------------------------------------
-| Name:        kernel_remove_gpthread
+| Name: kernel_remove_gpthread
 | Description:
 | Parameters:  none
 | Return Type: none
@@ -167,7 +169,7 @@ int kernel_remove_gpthread(kernel_pthread_t* p){
 }
 
 /*-------------------------------------------
-| Name:get_pthread_id
+| Name: kernel_get_pthread_id
 | Description:
 | Parameters:
 | Return Type:
@@ -186,7 +188,7 @@ int kernel_get_pthread_id(kernel_pthread_t *p){
 }
 
 /*-------------------------------------------
-| Name:put_pthread_id
+| Name: kernel_put_pthread_id
 | Description:
 | Parameters:
 | Return Type:
@@ -199,7 +201,7 @@ int kernel_put_pthread_id(kernel_pthread_t *p){
 }
 
 /*--------------------------------------------
-| Name:        kernel_pthread_alloca
+| Name: kernel_pthread_alloca
 | Description:
 | Parameters:  none
 | Return Type: none
@@ -231,7 +233,49 @@ void* kernel_pthread_alloca(kernel_pthread_t *p, size_t size){
 }
 
 /*-------------------------------------------
-| Name:pthread_routine
+| Name: kernel_pthread_exit_callback
+| Description:
+| Parameters:
+| Return Type:
+| Comments:
+| See:
+---------------------------------------------*/
+void kernel_pthread_exit_cleanup(kernel_pthread_t* pthread) {
+   //thread specific data
+#ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+   kernel_pthread_cleanup_specific(pthread);
+#endif
+}
+
+/*-------------------------------------------
+| Name: kernel_pthread_exit_handler
+| Description:
+| Parameters:
+| Return Type:
+| Comments:
+| See:
+---------------------------------------------*/
+void kernel_pthread_exit_handler(void) {
+   kernel_pthread_t* pthread;
+   pthread_exit_t pthread_exit_dt;
+
+   //
+   pthread = kernel_pthread_self();
+   //execute callback at thread exit that must be in user land context. 
+   kernel_pthread_exit_cleanup(pthread);
+
+   //call kernel. signal thread termination
+   //pthread in process container
+   //use syscall
+   pthread_exit_dt.kernel_pthread = pthread;
+   pthread_exit_dt.value_ptr = (void*)0;
+   //
+   //to do check if it's the main thread call exit
+   __mk_syscall(_SYSCALL_PTHREAD_EXIT, pthread_exit_dt);
+}
+
+/*-------------------------------------------
+| Name: kernel_pthread_routine
 | Description:
 | Parameters:
 | Return Type:
@@ -239,26 +283,25 @@ void* kernel_pthread_alloca(kernel_pthread_t *p, size_t size){
 | See:
 ---------------------------------------------*/
 __begin_pthread(pthread_routine){
-
    kernel_pthread_t* pthread;
-   pthread_exit_t pthread_exit_dt;
-
    //
    pthread=kernel_pthread_self();
-   pthread->exit=pthread->start_routine(pthread->arg);
+   
+   //todo: pthread once
+   //__atomic_in()
 
-   //call kernel. signal thread termination
-   //pthread in process container
-   //use syscall
-   pthread_exit_dt.kernel_pthread = pthread;
-   pthread_exit_dt.value_ptr = (void*)0;
-   //to do check if it's the main thread call exit
-   __mk_syscall(_SYSCALL_PTHREAD_EXIT,pthread_exit_dt);
+   //__atomic_out()
+
+   //
+   pthread->exit=pthread->start_routine(pthread->arg);
+   //
+   kernel_pthread_exit_handler();
+   //
 }
 __end_pthread()
 
 /*-------------------------------------------
-| Name:pthread_create
+| Name: kernel_pthread_create
 | Description:
 | Parameters:
 | Return Type:
@@ -296,6 +339,9 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
    //
    memcpy(thread->sigaction_lst,sigaction_dfl_lst,sizeof(sigaction_dfl_lst));
 
+   //alloc tcb
+   if( !(thread->tcb=_sys_malloc(sizeof(tcb_t))) )
+      return -EAGAIN;
    //add to kernel pthread list
    if( kernel_get_pthread_id(thread)==-EAGAIN)
       return -EAGAIN;
@@ -312,7 +358,6 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
          name = thread->attr.name;
       else
          name = "daemon_kernel_thread";
-     
       //
 #if (configSUPPORT_STATIC_ALLOCATION==1)
       //event group for each pthread used for syscall signalisation
@@ -348,16 +393,9 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
       //check bottom stack with OS_STACKFILL_CHAR.
       //don't use the last byte at the bottom of thread stack.
       {
-         static const uint8_t ucExpectedStackBytes[] = {	
-            tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE,
-            tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE,		
-            tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE,		
-            tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE,		
-            tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE, tskSTACK_FILL_BYTE 
-         };	
          uint32_t _stack_addr = (uint32_t)thread->attr.stackaddr;
-         uint8_t _align = (4-(_stack_addr%4))+4+sizeof(ucExpectedStackBytes); ///to remove: just debug test
-         //
+         uint8_t _align = (4-(_stack_addr%4))+4; ///to remove: just debug test
+
          thread->heap_floor = (uint8_t*)(thread->attr.stackaddr)+_align*sizeof(uint8_t); //data alignement 4 bytes
          thread->heap_top   = thread->heap_floor;
 
@@ -367,21 +405,22 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
 #endif
 
 #if defined(__KERNEL_IO_SEM)
-   kernel_sem_init(&thread->io_sem,0,0);
+   void* p = &thread->io_sem;
+   kernel_sem_init(p,0,0);
 #endif
 
    return 0;
 }
 
 /*-------------------------------------------
-| Name:pthread_kill
+| Name: kernel_pthread_kill
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int   kernel_pthread_kill(kernel_pthread_t* thread, int sig){
+int kernel_pthread_kill(kernel_pthread_t* thread, int sig){
 
    kernel_pthread_t* _thread=thread;
    int _sig=sig;
@@ -392,14 +431,14 @@ int   kernel_pthread_kill(kernel_pthread_t* thread, int sig){
 }
 
 /*-------------------------------------------
-| Name:pthread_cancel
+| Name: kernel_pthread_cancel
 | Description:
 | Parameters:
 | Return Type:
 | Comments:
 | See:
 ---------------------------------------------*/
-int   kernel_pthread_cancel(kernel_pthread_t* thread){
+int kernel_pthread_cancel(kernel_pthread_t* thread){
 
    desc_t desc=0;
 
@@ -430,6 +469,19 @@ int   kernel_pthread_cancel(kernel_pthread_t* thread){
 
 #ifdef __KERNEL_UCORE_FREERTOS
    {
+<<<<<<< core-segger
+      //verrou des appels systeme : semaphore rendu par la tache noyau en fin d'appel, meme si
+      //ce thread est termine entre-temps (kernel_syscall_lock.c) ; plus de transfert de propriete.
+      if(kernel_syscall_lock_owner == thread)
+         kernel_syscall_lock_owner = &kernel_thread;
+      //terminate thread in scheduler
+      OS_Terminate(thread->tcb);
+      //free tcb
+      if(thread->tcb) {
+         _sys_free(thread->tcb);
+         thread->tcb = (tcb_t*)0;
+      }
+=======
       xTaskHandle whois_lock_kernel_mutex = xSemaphoreGetMutexHolder(&kernel_mutex.mutex);
       xTaskHandle this_task = (xTaskHandle)thread->tcb;
 
@@ -449,7 +501,9 @@ int   kernel_pthread_cancel(kernel_pthread_t* thread){
          //patch free ressource semaphore without proprietary. this pthread owner was terminated.
          __syscall_lock(); //kernel is proprietary now. the next _syscall_unlock() it's safe now.
       }
-
+   #endif
+>>>>>>> core-freertos
+      //
    }
 #endif
 
@@ -464,7 +518,7 @@ int   kernel_pthread_cancel(kernel_pthread_t* thread){
 
 
 /*-------------------------------------------
-| Name:pthread_self
+| Name: kernel_pthread_self
 | Description:
 | Parameters:
 | Return Type:
@@ -485,6 +539,18 @@ kernel_pthread_t* kernel_pthread_self(void){
 
    __atomic_out();
    return (kernel_pthread_t*)0;
+}
+
+/*-------------------------------------------
+| Name: kernel_pthread_once
+| Description:
+| Parameters:
+| Return Type:
+| Comments:
+| See:
+---------------------------------------------*/
+int kernel_pthread_once(void) {
+   return -1;
 }
 
 /** @} */

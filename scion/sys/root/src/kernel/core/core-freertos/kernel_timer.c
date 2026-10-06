@@ -30,11 +30,12 @@ either the MPL or the [eCos GPL] License."
 | Includes
 ==============================================*/
 #include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
 
 #include "kernel/core/errno.h"
-#include "kernel/core/syscall.h"
+#include "kernel/core/kernel_pthread.h"
+#include "kernel/core/kernel_pthread_mutex.h"
+
+#include "kernel/core/process.h"
 #include "kernel/core/timer.h"
 #include "kernel/core/kernel_timer.h"
 
@@ -84,7 +85,7 @@ void kernel_timer_generic_callback(xTimerHandle pxTimer ){
       return;
 #endif
    p_kernel_timer->interval=!p_kernel_timer->interval;
-   if(p_kernel_timer->interval && p_kernel_timer->itimerspec.it_interval.tv_nsec) {
+   if(p_kernel_timer->interval && (p_kernel_timer->itimerspec.it_interval.tv_sec || p_kernel_timer->itimerspec.it_interval.tv_nsec)) {
       //rcv KERNEL_TIMER_VALUE_PERIOD  and set KERNEL_TIMER_INTERVAL_PERIOD
 #ifdef __KERNEL_UCORE_FREERTOS
       xTimerStop( pxTimer, 0 ); 
@@ -93,7 +94,7 @@ void kernel_timer_generic_callback(xTimerHandle pxTimer ){
                         0);
       xTimerStart( pxTimer, 0 );
 #endif
-   }else if(!p_kernel_timer->interval && p_kernel_timer->itimerspec.it_interval.tv_nsec) {
+   }else if(!p_kernel_timer->interval && (p_kernel_timer->itimerspec.it_interval.tv_sec || p_kernel_timer->itimerspec.it_interval.tv_nsec)) {
       //rcv KERNEL_TIMER_INTERVAL_PERIOD  and set KERNEL_TIMER_VALUE_PERIOD
 #ifdef __KERNEL_UCORE_FREERTOS
       xTimerStop( pxTimer, 0 ); 
@@ -102,7 +103,7 @@ void kernel_timer_generic_callback(xTimerHandle pxTimer ){
                         0);
       xTimerStart( pxTimer, 0 ); 
 #endif
-      //don't send signal
+      //in this case don't send signal
       return;
    }
 
@@ -197,7 +198,7 @@ int kernel_timer_delete(kernel_timer_t* p_kernel_timer){
 | See:
 ----------------------------------------------*/
 int kernel_timer_gettime(kernel_timer_t* p_kernel_timer, struct itimerspec* value){
-   int elapse_time_ms=0;
+   int elsapse_time_ms;
 
    value->it_value.tv_sec=0;
    value->it_value.tv_nsec=0;

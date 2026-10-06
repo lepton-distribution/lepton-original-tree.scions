@@ -32,8 +32,6 @@ Includes
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
-#include <string.h>
-
 
 #include "kernel/core/kernelconf.h"
 #include "kernel/core/limits.h"
@@ -84,6 +82,7 @@ const char * _kernel_time = __TIME__;
 volatile pid_t _syscall_owner_pid;
 kernel_pthread_t* _syscall_owner_pthread_ptr;
 
+
 volatile int _kernel_in_static_mode=1;
 volatile int kernel_in_interrupt=0;
 
@@ -92,9 +91,12 @@ kernel_pthread_t kernel_thread;
 tmr_t kernel_tmr;
 
 //
-#if (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)
-   #define KERNEL_STACK_SIZE  2048//2560//2048 //CORTEXM0
+//pile du thread noyau : par coeur, posee par cmake/cpu/<coeur>.cmake (valeurs IAR : 4096 M4/M7,
+//2048 M3/M0)
+#ifndef __KERNEL_STACK_SIZE
+   #error "__KERNEL_STACK_SIZE non defini (cmake/cpu/<coeur>.cmake)"
 #endif
+#define KERNEL_STACK_SIZE  __KERNEL_STACK_SIZE
 
 #define KERNEL_PRIORITY    (configMAX_PRIORITIES-1)
 _macro_stack_addr char kernel_stack[KERNEL_STACK_SIZE];
@@ -188,6 +190,7 @@ kernel_syscall_t const kernel_syscall_lst[] = {
    __add_syscall(_syscall_pthread_create),
    __add_syscall(_syscall_pthread_cancel),
    __add_syscall(_syscall_pthread_exit),
+   __add_syscall(_syscall_pthread_join),
    __add_syscall(_syscall_pthread_kill),
    __add_syscall(_syscall_pthread_mutex_init),
    __add_syscall(_syscall_pthread_mutex_destroy),
@@ -239,6 +242,17 @@ int _kernel_syscall(void){
       _g_kernel_syscall_trace._syscall_owner_pthread_ptr = _syscall_owner_pthread_ptr;
       _g_kernel_syscall_trace.kernel_syscall_status = KERNEL_SYSCALL_STATUS_START;
 
+      //chack syscall nb validity
+      if (pthread_ptr->reg.syscall == _SYSCALL_INVALID || pthread_ptr->reg.syscall >= _SYSCALL_TOTAL_NB) {
+         //
+         _syscall_owner_pthread_ptr->_errno = ENOSYS;
+         //
+         _g_kernel_syscall_trace.kernel_syscall_status = KERNEL_SYSCALL_STATUS_ENDERROR;
+         __syscall_unlock();
+         return 0;
+      }
+
+      //
       if((kernel_syscall.p_syscall=kernel_syscall_lst[pthread_ptr->reg.syscall].p_syscall)) {
          //kernel trace for debug
          memcpy(&_g_kernel_syscall_trace._kernel_syscall,&kernel_syscall,sizeof(kernel_syscall_t));
@@ -585,12 +599,16 @@ void _kernel_warmup_dev(void){
 
          //strcat(ref,pdev_lst[dev]->dev_name);
          _vfs_mknod(ref,(int16_t)pdev_lst[dev]->dev_attr,dev);
-      }else if(pdev_lst[dev]->dev_name[0]=='i'
+      }
+#if defined (__KERNEL_WARMUP_I2C) && (__KERNEL_WARMUP_I2C==1)
+      else if(pdev_lst[dev]->dev_name[0]=='i'
                && pdev_lst[dev]->dev_name[1]=='2'
                && pdev_lst[dev]->dev_name[2]=='c'
                && pdev_lst[dev]->dev_name[3]=='0') {
          //already mount see _kernel_warmup_i2c
-      }else if(pdev_lst[dev]->dev_name[0]=='s'
+      }
+#endif
+       else if(pdev_lst[dev]->dev_name[0]=='s'
          && pdev_lst[dev]->dev_name[1]=='p'
          && pdev_lst[dev]->dev_name[2]=='i'
          && pdev_lst[dev]->dev_name[3]=='0'){
@@ -634,10 +652,11 @@ void _kernel_warmup_dev(void){
 | See:
 ----------------------------------------------*/
 void _kernel_warmup_tty(void){
+#ifdef __KERNEL_DEV_TTY
    desc_t desc_1;
    desc_t desc_2;
-   desc_t desc_tty;
-#ifdef __KERNEL_DEV_TTY
+   desc_t desc_tty=INVALID_DESC;
+
    if((desc_1 = _vfs_open(__KERNEL_DEV_TTY,O_RDWR,0))<0)
       return;
    //
@@ -665,32 +684,77 @@ void _kernel_warmup_tty(void){
 }
 
 /*--------------------------------------------
-| Name:        _kernel_warmup_stream
+| Name:        _kernel_warmup_mount_streams
 | Description:
 | Parameters:  none
 | Return Type: none
 | Comments:
 | See:
 ----------------------------------------------*/
-void _kernel_warmup_stream(void){
-   /*
-   desc_t desc_1;
-   desc_t desc_2;
-   //to remove: test stream with ftl
-   if((desc_1 = _vfs_open("/dev/ftl",O_RDWR,0))<0)
-      return;
+int _kernel_warmup_mount_streams(char* streams_up, char* streams_bottom, char* streams_attached,...){
+   va_list ap;
+   int arglist;
+   volatile int dummy_fd;
+   volatile int argc=0;
+   volatile char* argv[ARG_MAX];
+   
+   desc_t desc_up;
+   desc_t desc_bottom;
+  
+   //
+   //preserve compatibility with system call iotcl(fd1,I_LINK,fd2,argc,argv). 
+   //argc argv from main(argc,argv)  argv[0]="command"
+   argv[argc++]="_kernel_warmup_mount_streams"; 
+   argv[argc++]=streams_up;
+   argv[argc++]=streams_bottom;
+   argv[argc++]=streams_attached;
+   
+   //
+   va_list ptr;
+   va_start(ptr, streams_attached);
+   //
+   for(;argc<ARG_MAX;argc++){
+      argv[argc]=va_arg( ptr, char*);
+      if(argv[argc]==(char*)0)
+         break;
+   }
+   
+   //arguments exceed limit
+   if(argc==ARG_MAX){
+      return -1;
+   }
+   
+   //
+   va_end(ptr);
+   //
+   if((desc_up = _vfs_open(streams_up,O_RDWR,0))<0){
+      return-1;
+   }
+   //
+   if((desc_bottom = _vfs_open(streams_bottom,O_RDWR,0))<0){
+      _vfs_close(desc_up);
+      return -1;
+   }
+   //
+   if(_vfs_ioctl(desc_up,I_LINK,desc_bottom,ap)<0){
+      _vfs_close(desc_up);
+      _vfs_close(desc_bottom);
+      return -1;
+   }
 
-   if((desc_2 = _vfs_open("/dev/hd/hdd",O_RDWR,0))<0)
-      return;
+   //
+   if(_vfs_fattach(desc_up,streams_attached)<0){
+      _vfs_ioctl(desc_up,I_UNLINK,desc_bottom);
+      _vfs_close(desc_up);
+      _vfs_close(desc_bottom);
+      return -1;
+   }
 
-   if(_vfs_ioctl(desc_1,I_LINK,desc_2)<0)
-      return;
-
-   if(_vfs_fattach(desc_1,"/dev/hd/hdd0")<0)
-      return;
-
-   */
-
+   //
+   _vfs_close(desc_up);
+   _vfs_close(desc_bottom);
+   //
+   return 0;
 }
 
 /*--------------------------------------------
@@ -718,11 +782,17 @@ int _kernel_warmup_object_manager(void){
 ---------------------------------------------*/
 int _kernel_warmup_rtc(void){
    desc_t desc = -1;
+
+#if defined(__KERNEL_RTC_DEV_NAME__) && defined(__KERNEL_DEV_RTC_I2C_BUS_NAME__) && defined(__KERNEL_RTC_I2C_ADDR__)
+   _kernel_warmup_mount_streams(__KERNEL_RTC_DEV_NAME__,__KERNEL_DEV_RTC_I2C_BUS_NAME__,"/dev/rtc0",__KERNEL_RTC_I2C_ADDR__);
+#endif
+   
    //specific rtc
    //set kernel time from rtc
-   if((desc = _vfs_open("/dev/rtc0",O_RDONLY,0))<0) //ST m41t81
+   if((desc = _vfs_open("/dev/rtc0",O_RDONLY,0))<0){ //ST m41t81
       desc = _vfs_open("/dev/rtc1",O_RDONLY,0);
-
+   }
+   //
    if(desc>=0) {
       char buf[8]={0};
       struct tm _tm={ 0, 0, 12, 28, 0, 103 }; //init for test
@@ -760,8 +830,10 @@ int _kernel_warmup_rtc(void){
 
    //specific rtt
    //set kernel time from rtt
-   if((desc = _vfs_open("/dev/rtt0",O_RDONLY,0))<0) //ST m41t81
+   if((desc = _vfs_open("/dev/rtt0",O_RDONLY,0))<0){ //ST m41t81
       return -1;
+   }
+   //
    if(desc>=0) {
       time_t time=0;
 
@@ -773,8 +845,8 @@ int _kernel_warmup_rtc(void){
 
       return 0;
    }
-
-   return 0;
+   //
+   return -1;
 }
 
 /*-------------------------------------------
@@ -809,7 +881,7 @@ int _kernel_warmup_mount(void){
             argv[argc] = strtok( buf," ");
             while( argv[argc++] != NULL )
                argv[argc] = strtok( NULL," ");  //Get next token:
-            _kernel_mount(argv);
+            _kernel_mount((const char**)argv);
          }
          pbuf=buf;
       }
@@ -821,7 +893,7 @@ int _kernel_warmup_mount(void){
          argv[argc] = strtok( buf," ");
          while( argv[argc++] != NULL )
             argv[argc] = strtok( NULL," ");  //Get next token:
-         _kernel_mount(argv);
+         _kernel_mount((const char**)argv);
       }
       _vfs_close(desc);
    }
@@ -943,7 +1015,7 @@ int _kernel_warmup_boot(void){
                argv[argc] = strtok( buf," ");
                while( argv[argc++] != NULL )
                   argv[argc] = strtok( NULL," ");   //Get next token:
-               _sys_krnl_exec(argv[0],argv,0,0,0);
+               _sys_krnl_exec(argv[0],(const char**)argv,0,0,0);
                st=2;
             }
             break;
@@ -960,7 +1032,7 @@ int _kernel_warmup_boot(void){
    }else{
       //warning!!!:/dev/ttyp0 only for win32 version
       char* argv[ARG_MAX]={"-t","5000","-i","/dev/ttyp0","-o","/dev/ttyp0"};
-      _sys_krnl_exec("/bin/init",(char**)argv,0,0,0);
+      _sys_krnl_exec("/bin/init",(const char**)argv,0,0,0);
    }
 
    return 0;
@@ -1102,11 +1174,12 @@ void _start_kernel(char* arg){
 
    //
    kernel_pthread_mutex_init(&kernel_mutex,&mutex_attr);
+   kernel_syscall_lock_init();
 
-//   rttmr_attr.tm_msec=__KERNEL_ALARM_TIMER;
-//   rttmr_attr.func = _kernel_timer;
-//   rttmr_create(&kernel_tmr,&rttmr_attr);
-//   rttmr_start(&kernel_tmr);
+   rttmr_attr.tm_msec=__KERNEL_ALARM_TIMER;
+   rttmr_attr.func = _kernel_timer;
+   rttmr_create(&kernel_tmr,&rttmr_attr);
+   rttmr_start(&kernel_tmr);
 
    //stdio init(mutex for stdin, stdout, stderr)
    __stdio_init();
@@ -1129,15 +1202,15 @@ void _start_kernel(char* arg){
    //
    _kernel_warmup_load_mount_cpufs();
    //
+#if defined (__KERNEL_WARMUP_I2C) && (__KERNEL_WARMUP_I2C==1)
    _kernel_warmup_i2c();
+#endif
    //
    _kernel_warmup_spi();
    //
    _kernel_warmup_dev();
    //
    _kernel_warmup_tty();
-   //
-   _kernel_warmup_stream();
    //
    _kernel_warmup_object_manager();
    //

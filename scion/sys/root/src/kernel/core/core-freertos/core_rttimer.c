@@ -31,7 +31,6 @@ Includes
 =============================================*/
 #include <stdint.h>
 
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/core_rttimer.h"
 #include "kernel/core/interrupt.h"
 

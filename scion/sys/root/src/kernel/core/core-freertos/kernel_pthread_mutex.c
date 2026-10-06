@@ -30,13 +30,13 @@ either the MPL or the [eCos GPL] License."
 | Includes
 ==============================================*/
 #include <stdint.h>
-#include <stdarg.h>
 
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/errno.h"
-#include "kernel/core/interrupt.h"
-#include "kernel/core/syscall.h"
+#include "kernel/core/kal.h"
+#include "kernel/core/kernel.h"
 #include "kernel/core/kernel_pthread.h"
+#include "kernel/core/kernel_pthread_mutex.h"
+
 
 /*============================================
 | Global Declaration
@@ -85,15 +85,36 @@ int   kernel_pthread_mutex_init(kernel_pthread_mutex_t *mutex, const pthread_mut
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_destroy(kernel_pthread_mutex_t *mutex){
-   //
-   if(mutex->mutex==(void*)0)
-      return -1;
+   int count;
    //
    __atomic_in();
    //
+<<<<<<< core-segger
+#ifdef __KERNEL_UCORE_EMBOS
+   count = OS_GetSemaValue(&mutex->mutex);
+   if(!count) {
+      OS_DeleteRSema(&mutex->mutex);
+      __atomic_out();
+      return 0;   //mutex is not owned by any thread. it could be destroyed.
+   }
+   if(!OS_Request(&mutex->mutex)) {
+      __atomic_out();
+      return -1;    //mutex is not owned by this thread. error it cannot be destroyed;
+   }
+   //
+   count++;    //if request success mutex->count is incremented
+   //mutex is owned by this thread;
+   for(count; count>0; count--) {
+      OS_Unuse(&mutex->mutex);
+   }
+#endif
+
+   OS_DeleteRSema(&mutex->mutex);
+=======
 #ifdef __KERNEL_UCORE_FREERTOS
    vSemaphoreDelete(mutex->mutex);
 #endif
+>>>>>>> core-freertos
    //
    __atomic_out();
    //
@@ -122,10 +143,7 @@ int   kernel_pthread_mutex_owner_destroy(kernel_pthread_t* thread_ptr,kernel_pth
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_lock(kernel_pthread_mutex_t *mutex){
-   //
-   if(mutex->mutex==(void*)0)
-      return -1;
-   //
+
    if(__kernel_is_in_static_mode())
       return 0;
 
@@ -146,10 +164,7 @@ int   kernel_pthread_mutex_lock(kernel_pthread_mutex_t *mutex){
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_trylock(kernel_pthread_mutex_t *mutex){
-   //
-   if(mutex->mutex==(void*)0)
-      return -1;
-   //
+
    if(__kernel_is_in_static_mode())
       return 0;
 
@@ -171,10 +186,7 @@ int   kernel_pthread_mutex_trylock(kernel_pthread_mutex_t *mutex){
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_unlock(kernel_pthread_mutex_t *mutex){
-   //
-   if(mutex->mutex==(void*)0)
-      return -1;
-   //
+
    if(__kernel_is_in_static_mode())
       return 0;
 
