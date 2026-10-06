@@ -67,3 +67,21 @@ processus (3 tampons stdio de 64 octets) ; `lepton_embos_last_error` = `OS_OK`.
   `__pycache__` est écrit dans le trunk ; `board.radio` le pose dans son environnement).
 - Le pilote radio émet une trame de 64 octets par `write` : `echo` en émet deux (texte, puis fin
   de ligne) ; la réception affiche les octets nuls de remplissage.
+
+## Étape 7 — backend FreeRTOS (module 7.3, 2026-10-06)
+
+Mêmes cartes A et B, preset `nucleo-wl55jc1-freertos` : FreeRTOS V11.3.0, port **`ARM_CM3`**
+(Cortex-M4 sans FPU, soft-float), `-Os -g`, binaire postérieur à l'alignement de `kernelconf.h`.
+Flash interne autorisée pour le module (décision 2026-10-06). Empreinte : text 118 308 / data 844 /
+bss 32 164 (embOS 112 952 / 840 / 25 528) : code +4,7 %, RAM statique +25 % (50 % des 64 Ko).
+
+| Palier | Statut | Preuve (FreeRTOS) |
+|---|---|---|
+| 1-3. Reset, mémoire, warmup | VERT (implicite) | non relevés au débogueur ; démarrage jusqu'à `lsh` prouvé par la fumée |
+| 4. Appel système tracé | non retracé | tracé sous FreeRTOS sur la F429 (module 7.2) ; KAL identique |
+| 5. Multitâche et signaux | VERT | banc KAL sur la carte A : T1-T8, TICI, TCLK, TSBRK, IRQ verts, `HARNESS_FAIL` rend 1 |
+| 6. Fumée canonique | VERT | `ctest --preset nucleo-wl55jc1-freertos -L "board\|radio"` **16/16** |
+| 7. Radio | VERT | `board.radio` (A et B sous FreeRTOS, même image) vert : `radiotst tx/rx` et `ping/pong` dans les deux sens, fumée `/dev/radio` |
+| 8. Endurance | VERT | `tests/endurance_board.py` sans réseau (`--fault-check v7m`), **1 h** (19:18-20:18) : **120 cycles**, aucun redémarrage, nombre de processus constant, CFSR = HFSR = 0, aucune assertion ni débordement FreeRTOS. Piles : `lsh` 64,3 % (732 o libres ; embOS 52,9 %), `initd` 55,3 % (embOS 46,7 %), `kernel_thread` 20,5 %, idle 9 %, temporisateurs 10,2 %, MSP 23,2 % |
+
+Aucun défaut propre à la carte.
