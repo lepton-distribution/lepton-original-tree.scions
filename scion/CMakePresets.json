@@ -59,6 +59,28 @@
       }
     },
     {
+      "name": "qemu-mps2-an386-freertos-soft",
+      "displayName": "QEMU mps2-an386 (Cortex-M4F, soft-float), FreeRTOS",
+      "description": "Backend KAL FreeRTOS (étape 7, module 7.3), port ARM_CM3 ; même machine que qemu-mps2-an386-embos-soft.",
+      "inherits": "qemu-mps2-an386-freertos",
+      "cacheVariables": {
+        "LEPTON_FLOAT_ABI": "soft"
+      }
+    },
+    {
+      "name": "qemu-mps2-an386-freertos",
+      "displayName": "QEMU mps2-an386 (Cortex-M4F, hard-float), FreeRTOS",
+      "description": "Backend KAL FreeRTOS V11.3.0 (étape 7), même machine que qemu-mps2-an386-embos.",
+      "inherits": "cross",
+      "cacheVariables": {
+        "LEPTON_ISA": "armv7m",
+        "LEPTON_CPU": "cortex-m4f",
+        "LEPTON_BOARD": "qemu-mps2-an386",
+        "LEPTON_KAL_BACKEND": "freertos",
+        "LEPTON_FLOAT_ABI": "hard"
+      }
+    },
+    {
       "name": "nucleo-f439zi-embos",
       "displayName": "NUCLEO-F439ZI (Cortex-M4F), embOS",
       "inherits": "cross",
@@ -70,6 +92,15 @@
       }
     },
     {
+      "name": "nucleo-f439zi-freertos",
+      "displayName": "NUCLEO-F439ZI (Cortex-M4F), FreeRTOS",
+      "description": "Backend KAL FreeRTOS V11.3.0 (étape 7, module 7.2), même carte que nucleo-f439zi-embos.",
+      "inherits": "nucleo-f439zi-embos",
+      "cacheVariables": {
+        "LEPTON_KAL_BACKEND": "freertos"
+      }
+    },
+    {
       "name": "qemu-mps2-an500-embos",
       "displayName": "QEMU mps2-an500 (Cortex-M7, hard-float double précision), embOS",
       "inherits": "cross",
@@ -78,6 +109,15 @@
         "LEPTON_CPU": "cortex-m7",
         "LEPTON_BOARD": "qemu-mps2-an500",
         "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "qemu-mps2-an500-freertos",
+      "displayName": "QEMU mps2-an500 (Cortex-M7, hard-float double précision), FreeRTOS",
+      "description": "Backend KAL FreeRTOS (étape 7, module 7.3), même machine que qemu-mps2-an500-embos.",
+      "inherits": "qemu-mps2-an500-embos",
+      "cacheVariables": {
+        "LEPTON_KAL_BACKEND": "freertos"
       }
     },
     {
@@ -93,6 +133,15 @@
       }
     },
     {
+      "name": "stm32f746g-disco-freertos",
+      "displayName": "STM32F746G-DISCO (Cortex-M7 r0p1, FPU simple précision), FreeRTOS",
+      "description": "Backend KAL FreeRTOS (étape 7, module 7.3), port ARM_CM7/r0p1 ; même carte que stm32f746g-disco-embos.",
+      "inherits": "stm32f746g-disco-embos",
+      "cacheVariables": {
+        "LEPTON_KAL_BACKEND": "freertos"
+      }
+    },
+    {
       "name": "samd21-xplained-pro-embos",
       "displayName": "SAMD21 Xplained Pro (Cortex-M0+, ATSAMD21J18A), embOS",
       "inherits": "cross",
@@ -101,6 +150,15 @@
         "LEPTON_CPU": "cortex-m0plus",
         "LEPTON_BOARD": "samd21-xplained-pro",
         "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "samd21-xplained-pro-freertos",
+      "displayName": "SAMD21 Xplained Pro (Cortex-M0+, ATSAMD21J18A), FreeRTOS",
+      "description": "Backend KAL FreeRTOS (étape 7, module 7.3), port ARM_CM0 ; même carte que samd21-xplained-pro-embos.",
+      "inherits": "samd21-xplained-pro-embos",
+      "cacheVariables": {
+        "LEPTON_KAL_BACKEND": "freertos"
       }
     },
     {
@@ -113,6 +171,15 @@
         "LEPTON_FLOAT_ABI": "soft",
         "LEPTON_BOARD": "nucleo-wl55jc1",
         "LEPTON_KAL_BACKEND": "embos"
+      }
+    },
+    {
+      "name": "nucleo-wl55jc1-freertos",
+      "displayName": "NUCLEO-WL55JC1 (Cortex-M4 sans FPU, STM32WL55JC), FreeRTOS",
+      "description": "Backend KAL FreeRTOS (étape 7, module 7.3), port ARM_CM3 ; même carte que nucleo-wl55jc1-embos.",
+      "inherits": "nucleo-wl55jc1-embos",
+      "cacheVariables": {
+        "LEPTON_KAL_BACKEND": "freertos"
       }
     }
   ],
@@ -130,24 +197,52 @@
       "configurePreset": "qemu-mps2-an386-embos-soft"
     },
     {
+      "name": "qemu-mps2-an386-freertos-soft",
+      "configurePreset": "qemu-mps2-an386-freertos-soft"
+    },
+    {
+      "name": "qemu-mps2-an386-freertos",
+      "configurePreset": "qemu-mps2-an386-freertos"
+    },
+    {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos"
+    },
+    {
+      "name": "nucleo-f439zi-freertos",
+      "configurePreset": "nucleo-f439zi-freertos"
     },
     {
       "name": "qemu-mps2-an500-embos",
       "configurePreset": "qemu-mps2-an500-embos"
     },
     {
+      "name": "qemu-mps2-an500-freertos",
+      "configurePreset": "qemu-mps2-an500-freertos"
+    },
+    {
       "name": "stm32f746g-disco-embos",
       "configurePreset": "stm32f746g-disco-embos"
+    },
+    {
+      "name": "stm32f746g-disco-freertos",
+      "configurePreset": "stm32f746g-disco-freertos"
     },
     {
       "name": "samd21-xplained-pro-embos",
       "configurePreset": "samd21-xplained-pro-embos"
     },
     {
+      "name": "samd21-xplained-pro-freertos",
+      "configurePreset": "samd21-xplained-pro-freertos"
+    },
+    {
       "name": "nucleo-wl55jc1-embos",
       "configurePreset": "nucleo-wl55jc1-embos"
+    },
+    {
+      "name": "nucleo-wl55jc1-freertos",
+      "configurePreset": "nucleo-wl55jc1-freertos"
     }
   ],
   "testPresets": [
@@ -173,8 +268,29 @@
       }
     },
     {
+      "name": "qemu-mps2-an386-freertos-soft",
+      "configurePreset": "qemu-mps2-an386-freertos-soft",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "qemu-mps2-an386-freertos",
+      "configurePreset": "qemu-mps2-an386-freertos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "nucleo-f439zi-freertos",
+      "configurePreset": "nucleo-f439zi-freertos",
       "output": {
         "outputOnFailure": true
       }
@@ -187,8 +303,22 @@
       }
     },
     {
+      "name": "qemu-mps2-an500-freertos",
+      "configurePreset": "qemu-mps2-an500-freertos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
       "name": "stm32f746g-disco-embos",
       "configurePreset": "stm32f746g-disco-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "stm32f746g-disco-freertos",
+      "configurePreset": "stm32f746g-disco-freertos",
       "output": {
         "outputOnFailure": true
       }
@@ -201,8 +331,22 @@
       }
     },
     {
+      "name": "samd21-xplained-pro-freertos",
+      "configurePreset": "samd21-xplained-pro-freertos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
       "name": "nucleo-wl55jc1-embos",
       "configurePreset": "nucleo-wl55jc1-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "nucleo-wl55jc1-freertos",
+      "configurePreset": "nucleo-wl55jc1-freertos",
       "output": {
         "outputOnFailure": true
       }

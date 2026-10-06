@@ -1,0 +1,6 @@
+{
+  "kernel.c": {
+    "2": "freertos",
+    "5": "freertos"
+  }
+}

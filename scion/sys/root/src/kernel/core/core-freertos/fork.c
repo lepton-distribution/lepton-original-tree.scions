@@ -31,11 +31,7 @@ Includes
 =============================================*/
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
 
-
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/errno.h"
 #include "kernel/core/kernel.h"
 #include "kernel/core/process.h"

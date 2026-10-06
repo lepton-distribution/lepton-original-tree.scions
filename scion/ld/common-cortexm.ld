@@ -72,6 +72,10 @@ SECTIONS
     *(.bss.opipe_lst .bss.ofile_lst .bss.flock_lst)
     *(.bss.rtfsinode_lst .bss.rtfsblk_lst .bss.rtfs_superblk)
     *(.bss.kernel_stack .bss.kernel_thread .bss.lwip_core_stack .bss.lwip_core_thread)
+    /* FreeRTOS (étape 7) : mémoire statique fournie par le noyau (tâches idle et temporisateurs,
+       listes de prêts, file des temporisateurs) ; sans effet sous embOS */
+    *(.bss.uxIdleTaskStack* .bss.xIdleTaskTCB* .bss.uxTimerTaskStack* .bss.xTimerTaskTCB*)
+    *(.bss.pxReadyTasksLists .bss.ucStaticTimerQueueStorage* .bss.xStaticTimerQueue*)
     . = ALIGN(8);
     __ccm_bss_end__ = .;
   } > REGION_CCM

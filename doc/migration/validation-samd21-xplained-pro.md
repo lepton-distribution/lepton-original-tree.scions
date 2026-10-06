@@ -46,3 +46,41 @@ de 64 octets). Les commandes terminées (`ls`, `ps`…) ne sont pas mesurables a
 - `tests/kal/CMakeLists.txt` : `kal_bench.c` désigné sans dépendre de l'ISA, branche `armv6m`
   (registres en Thumb-1 sous `tests/kal/arch/armv6m/`).
 - `ajout-coeur.md` §3 et §4 complétés.
+
+## Étape 7 — backend FreeRTOS (module 7.3, 2026-10-06) : écart accepté
+
+Même carte, preset `samd21-xplained-pro-freertos` : FreeRTOS V11.3.0, port **`ARM_CM0`** (sans
+MPU), `-Os -g`. Flash interne autorisée pour le module (décision 2026-10-06). Empreinte : text
+101 684 / data 928 / bss 17 472 (embOS 97 056 / 924 / 13 008) : code +4,8 %, RAM statique +4,5 Ko ;
+tas (`__heap_start__` → `__stack_limit__`) **12 840 o** contre 17 304 sous embOS.
+
+| Palier | Statut | Preuve (FreeRTOS) |
+|---|---|---|
+| 5. Multitâche et signaux | VERT | banc KAL sur carte (`ctest -L kal -FS board_t0 -E board.smoke_lsh`) **14/14** : T1-T8, TICI, TCLK, TSBRK, IRQ, `HARNESS_FAIL` ; trame ARMv6-M du KAL validée (déroutement de signal, sauvegarde et restauration de contexte) |
+| 6. Fumée canonique | **ÉCHEC — écart accepté** | démarrage jusqu'à `lsh`, mais aucune commande ne s'exécute (`uname -a`, `ls`, `ps` : retour à l'invite sans sortie) |
+| 1-4, 8 | non faits | sans objet tant que `lsh` ne lance pas de commande |
+
+Diagnostic (gdb, point d'arrêt sur l'échec de `_sbrk`) : `_sys_vfork` (`core-freertos/fork.c:146`)
+alloue une copie de `kernel_pthread_t` (2 380 o ; 2 472 sous embOS) et ne trouve que 484 o
+libres (2 020 o après réduction des piles idle et temporisateurs, ci-dessous). Une commande
+demande ≈ 4 Ko au pic (copie du parent, pile du fils, TCB). Sous embOS, ≈ 6,5 Ko restent libres
+après le démarrage. Écart de RAM statique FreeRTOS − embOS, par poste :
+
+| Poste | embOS | FreeRTOS | Cause |
+|---|---|---|---|
+| `ofile_lst` (12 fichiers, 2 `kernel_sem_t` chacun) | 1 344 o | 3 072 o | sémaphore FreeRTOS = file générique (`StaticSemaphore_t`, 80 o) ; embOS `OS_CSEMA` 8 o |
+| pile de la tâche des temporisateurs | — | 1 024 o (2 048 par défaut) | embOS : rappels dans l'interruption du tick, sur la MSP |
+| listes de prêts `pxReadyTasksLists` | 104 o (`OS_Global`) | 640 o | une liste par priorité (32 × 20 o) ; embOS : une liste triée |
+| pile de la tâche idle | — | 512 o (1 024 par défaut) | `OS_Idle` d'embOS tourne sur la MSP |
+| divers (TCB idle et temporisateurs, file, globales) | — | ≈ 600 o | |
+
+Mesures prises : piles idle 128 mots et temporisateurs 256 mots, propres à la carte
+(`LEPTON_FREERTOS_CONFIG`, `cmake/boards/samd21-xplained-pro.cmake` ; pics relevés 88 o et
+236 o) : insuffisant. **Décision utilisateur (2026-10-06) : écart accepté** — sur la SAMD21,
+FreeRTOS est validé au niveau du KAL (banc), pas du système complet ; le preset reste construit
+par `ci/run.sh`. Pistes non retenues : sémaphore `core-freertos` plus léger (≈ 1,7 Ko),
+`configMAX_PRIORITIES` réduit, tampons stdio (64 o, 3 par processus) : gains insuffisants seuls.
+
+Défaut corrigé : l'oracle de trame du banc (`tests/kal/arch/armv7m/backend/freertos/kal_bench_os.h`)
+supposait la trame du port `ARM_CM3` (R4-R11 en tête) sans FPU ; le port `ARM_CM0` V11 range
+EXC_RETURN en tête : T2 et TICI en échec, KAL non en cause. Variante ARMv6-M ajoutée.

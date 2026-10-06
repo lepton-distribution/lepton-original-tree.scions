@@ -221,9 +221,10 @@ void _stop_kernel(void);
  * pose un verrou exclusif sur les appels systme vers le noyau
  * \hideinitializer
  */
-#if defined(__KERNEL_UCORE_EMBOS)
+#if defined(__KERNEL_UCORE_EMBOS) || defined(__KERNEL_UCORE_FREERTOS)
 //verrou pris par le thread appelant et rendu par la tache noyau : semaphore (un mutex embOS
-//ne peut etre rendu que par son proprietaire, embOS >= 5.20), voir core-segger/kernel_syscall_lock.c
+//ne peut etre rendu que par son proprietaire, embOS >= 5.20 ; de meme sous FreeRTOS,
+//configASSERT de xTaskPriorityDisinherit, etape 7), voir core-*/kernel_syscall_lock.c
 int kernel_syscall_lock_init(void);
 int kernel_syscall_lock(void);
 int kernel_syscall_trylock(void);
@@ -237,7 +238,7 @@ extern kernel_pthread_t* volatile kernel_syscall_lock_owner;
  * tente de poser un verrou exclusif sur les appels systme vers le noyau
  * \hideinitializer
  */
-#if defined(__KERNEL_UCORE_EMBOS)
+#if defined(__KERNEL_UCORE_EMBOS) || defined(__KERNEL_UCORE_FREERTOS)
 #define __syscall_trylock()   kernel_syscall_trylock()
 #else
 #define __syscall_trylock()   kernel_pthread_mutex_trylock(&kernel_mutex)
@@ -247,7 +248,7 @@ extern kernel_pthread_t* volatile kernel_syscall_lock_owner;
  * libre le verrou exclusif sur les appels systme vers le noyau
  * \hideinitializer
  */
-#if defined(__KERNEL_UCORE_EMBOS)
+#if defined(__KERNEL_UCORE_EMBOS) || defined(__KERNEL_UCORE_FREERTOS)
 #define __syscall_unlock()    kernel_syscall_unlock()
 #else
 #define __syscall_unlock()    kernel_pthread_mutex_unlock(&kernel_mutex)

@@ -344,7 +344,8 @@ Declaration
 
 
 //realtime posix extension
-#if defined(__KERNEL_UCORE_EMBOS)
+//même configuration sous les deux micro-noyaux (étape 7, décision 2026-10-06)
+#if defined(__KERNEL_UCORE_EMBOS) || defined(__KERNEL_UCORE_FREERTOS)
    #define ATEXIT_MAX    4
    #define __KERNEL_PTHREAD_SPECIFIC_DATA
    #define __KERNEL_POSIX_REALTIME_SIGNALS
@@ -353,16 +354,9 @@ Declaration
    #define __KERNEL_IO_SEM
 #endif
 
-#if defined(__KERNEL_UCORE_FREERTOS)
-   #define ATEXIT_MAX    4
    #define __KERNEL_PTHREAD_SPECIFIC_DATA
    #define __KERNEL_LOAD_LIB
-   #define __KERNEL_IO_SEM
-#endif
-
-   #define __KERNEL_PTHREAD_SPECIFIC_DATA
-   #define __KERNEL_LOAD_LIB
-   //__KERNEL_POSIX_REALTIME_SIGNALS, __KERNEL_USE_FILE_LOCK : kal_arch_conf.h (ISA)
+   //__KERNEL_POSIX_REALTIME_SIGNALS, __KERNEL_USE_FILE_LOCK : bloc embOS/FreeRTOS ci-dessus, sinon kal_arch_conf.h (ISA)
           
    //#define __KERNEL_IO_EVENT
    #define __KERNEL_IO_SEM

@@ -472,14 +472,14 @@ Non déclarés, non inclus, sans règle : bibliothèques tierces partiellement u
 
 Généré par `tools/migration/perimetre_complement.py` (idempotent ; rejouer après `build_closure.py`). Ajoute les sources créées par la migration (étapes 2 à 4 : KAL décomposé, démarrage GCC, pilotes et BSP QEMU, noyau statique hôte, bancs `tests/`, copies `legacy/`), classées par règle de chemin (`REGLES` du script, colonne `justification`) ; retire les lignes des fichiers disparus ; applique les renommages (`inc/legacy` → `inc/Legacy`). Les tableaux ci-dessus restent ceux de l'étape 1.
 
-Lignes retirées : `src/kernel/core/kal.c`, `tests/kal/kal_bench.c`, `tests/kal/kal_fpu_armv7m.S`, `tests/kal/kal_regs_armv7m.S`, `tests/kal/kal_regs_read_armv7m.S`, `src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386.h`, `src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386_board.c`, `sys/user/tauon-basic/src/arch/qemu-mps2-an386/kernel_mkconf/include/user_kernel_mkconf.h`.
+Lignes retirées : `src/kernel/core/kal.c`, `tests/kal/kal_bench.c`, `tests/kal/kal_fpu_armv7m.S`, `tests/kal/kal_regs_armv7m.S`, `tests/kal/kal_regs_read_armv7m.S`, `src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386.h`, `src/kernel/dev/bsp/qemu_mps2_an386/qemu_mps2_an386_board.c`, `sys/user/tauon-basic/src/arch/qemu-mps2-an386/kernel_mkconf/include/user_kernel_mkconf.h`, `tests/kal/backend/embos/kal_bench_os.h`, `tests/kal/backend/freertos/kal_bench_os.h`.
 
 | Ensemble | Fichiers ajoutés | Lignes ajoutées | Fichiers (total) | Lignes (total) |
 |---|---|---|---|---|
-| actif | 396 | 126836 | 1473 | 441808 |
-| différé | 1 | 131 | 1376 | 356452 |
-| gelé | 56 | 19690 | 821 | 177751 |
-| hors-projet | 89 | 68595 | 848 | 260972 |
-| **total** | 542 | 215252 | 4518 | 1236983 |
+| actif | 443 | 144710 | 1536 | 463888 |
+| différé | 0 | 0 | 1360 | 352246 |
+| gelé | 0 | 0 | 0 | 0 |
+| hors-projet | 97 | 72929 | 856 | 265306 |
+| **total** | 540 | 217639 | 3752 | 1081440 |
 
 <!-- perimetre_complement.py : fin -->

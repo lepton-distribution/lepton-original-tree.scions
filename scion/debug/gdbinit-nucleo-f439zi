@@ -36,15 +36,67 @@ end
 # principale (MSP, __stack_limit__ .. __stack_end__) n'est mesurée que si elle est peinte.
 # L'attachement de gdb arrête le cœur : terminer par « monitor resume » avant de quitter, sinon
 # la carte reste figée (tick, réseau, console ; constaté le 2026-10-03).
+# FreeRTOS (étape 7) : piles peintes en 0xA5 (tskSTACK_FILL_BYTE, contrôle de pile 2) ; tâches =
+# pthreads Lepton (attr.stackaddr, attr.stacksize, heap_top) et tâches propres à FreeRTOS (idle,
+# temporisateurs : uxIdleTaskStack, uxTimerTaskStack) ; cause d'arrêt FreeRTOS affichée.
 python
 import gdb
 
-def _lepton_cd_run(addr, size):
+def _lepton_fill_run(addr, size, fill):
     data = bytes(gdb.selected_inferior().read_memory(addr, size)) if size > 0 else b""
     n = 0
-    while n < len(data) and data[n] == 0xCD:
+    while n < len(data) and data[n] == fill:
         n += 1
     return n
+
+def _lepton_cd_run(addr, size):
+    return _lepton_fill_run(addr, size, 0xCD)
+
+def _lepton_symbol(name):
+    return gdb.lookup_global_symbol(name) is not None or gdb.lookup_static_symbol(name) is not None
+
+def _lepton_stacks_freertos():
+    """Backend FreeRTOS : pthreads Lepton, puis tâches idle et temporisateurs ; motif 0xA5."""
+    print("%-10s %-24s %7s %6s %7s %7s %5s"
+          % ("tcb", "nom", "taille", "tas", "pile", "marge", "%"))
+    p = gdb.parse_and_eval("g_pthread_lst")
+    seen = 0
+    while int(p) != 0 and seen < 256:
+        base = int(p["attr"]["stackaddr"])
+        size = int(p["attr"]["stacksize"])
+        floor = int(p["heap_top"])
+        name = p["attr"]["name"].string() if int(p["attr"]["name"]) != 0 else "?"
+        heap = floor - base
+        free = _lepton_fill_run(floor, base + size - floor, 0xA5)
+        used = size - heap - free
+        print("0x%08x %-24s %7d %6d %7d %7d %5.1f"
+              % (int(p["tcb"]), name[:24], size, heap, used, free, 100.0 * (size - free) / size))
+        p = p["gnext"]
+        seen += 1
+    for sym, name in (("'vApplicationGetIdleTaskMemory'::uxIdleTaskStack", "IDLE"),
+                      ("'vApplicationGetTimerTaskMemory'::uxTimerTaskStack", "Tmr Svc")):
+        try:
+            v = gdb.parse_and_eval(sym)
+            base = int(v.address)
+            size = v.type.sizeof
+        except gdb.error:
+            # symbole sans information de débogage (static de fonction : uxIdleTaskStack.2) :
+            # adresse par le symbole minimal, taille = configMINIMAL_STACK_SIZE (256 mots,
+            # FreeRTOSConfig.h)
+            if name != "IDLE":
+                continue
+            try:
+                base = int(gdb.parse_and_eval("(unsigned int)&'uxIdleTaskStack.2'"))
+            except gdb.error:
+                continue
+            size = 1024
+        free = _lepton_fill_run(base, size, 0xA5)
+        print("%-10s %-24s %7d %6d %7d %7d %5.1f"
+              % ("FreeRTOS", name, size, 0, size - free, free, 100.0 * (size - free) / size))
+    print("arret FreeRTOS : assert %s:%d, debordement %s"
+          % (gdb.parse_and_eval("lepton_freertos_assert_file"),
+             int(gdb.parse_and_eval("lepton_freertos_assert_line")),
+             gdb.parse_and_eval("lepton_freertos_overflow_task")))
 
 class LeptonStacks(gdb.Command):
     """Par tâche embOS : taille de pile, tas de thread Lepton, usage maximal de pile, marge."""
@@ -52,6 +104,10 @@ class LeptonStacks(gdb.Command):
         super().__init__("lepton-stacks", gdb.COMMAND_USER)
 
     def invoke(self, arg, from_tty):
+        if not _lepton_symbol("OS_Global"):
+            _lepton_stacks_freertos()
+            self.msp()
+            return
         heap_top = {}
         p = gdb.parse_and_eval("g_pthread_lst")
         seen = 0
@@ -75,6 +131,9 @@ class LeptonStacks(gdb.Command):
                   % (int(t), name[:24], size, heap, used, free, 100.0 * (size - free) / size))
             t = t["pNext"]
             seen += 1
+        self.msp()
+
+    def msp(self):
         lo = int(gdb.parse_and_eval("(unsigned)&__stack_limit__"))
         hi = int(gdb.parse_and_eval("(unsigned)&__stack_end__"))
         free = _lepton_cd_run(lo, hi - lo)

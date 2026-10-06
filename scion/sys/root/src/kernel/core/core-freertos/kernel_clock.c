@@ -31,7 +31,6 @@ either the MPL or the [eCos GPL] License."
 ==============================================*/
 #include <stdint.h>
 
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/kal.h"
 #include "kernel/core/interrupt.h"
 #include "kernel/core/time.h"

@@ -31,8 +31,6 @@ Includes
 =============================================*/
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
 
 #include "kernel/core/limits.h"
 #include "kernel/core/errno.h"
@@ -62,11 +60,7 @@ Global Declaration
 pid_t pid_counter;
 
 //patch: optimization for code memory occupation.
-#if defined (CPU_WIN32)
-process_t* __process_lst[PROCESS_MAX]={0};
-#else
 process_t* __process_lst[PROCESS_MAX];
-#endif
 
 process_t** process_lst=0;
 kernel_pthread_t* process_thread_lst=0;
@@ -607,55 +601,55 @@ int _sys_fcntl(pid_t pid, int fd, unsigned int cmd, unsigned int argc,void* argv
       return -EBADF;
 
    switch (cmd) {
-   case F_DUPFD: {
-      int limit=0;
-      if(argc>0)
-         limit = (int)argv[0];
-      result = _sys_dup(pid,fd,limit);
-   }
-   break;
-
-   case F_GETFD:
-      //to do: fcntl: F_GETFD(close on exec)
-      //result = test_bit(fd, &fils->close_on_exec);
-      break;
-
-   case F_SETFD:
-      //fcntl: F_SETFD(close on exec)
-      if(((unsigned int)argv[0])&FD_CLOEXEC)
-         result = _set_cloexec(pid,fd);
-      else
-         result = _unset_cloexec(pid,fd);
-      break;
-
-   case F_GETFL:
-      result = ofile_lst[desc].oflag;
-      break;
-
-   case F_SETFL: {
-      int oflag=0;
-      if(argc>0)
-         oflag = (int)argv[0];
-
-      /*
-       * In the case of an append-only file, O_APPEND
-       * cannot be cleared
-       */
-      result = -EPERM;
-      if (ofile_lst[desc].oflag&O_APPEND || oflag & O_APPEND) {
-         ofile_lst[desc].oflag &= ~(O_APPEND | O_NONBLOCK);
-         ofile_lst[desc].oflag |= oflag & (O_APPEND | O_NONBLOCK);
-         result = 0;
-      }else{
-         ofile_lst[desc].oflag = oflag;
-         result = 0;
+      case F_DUPFD: {
+         int limit=0;
+         if(argc>0)
+            limit = (int)argv[0];
+         result = _sys_dup(pid,fd,limit);
       }
-   }
-   break;
-
-   default:
-      result = EINVAL;
       break;
+
+      case F_GETFD:
+         //to do: fcntl: F_GETFD(close on exec)
+         //result = test_bit(fd, &fils->close_on_exec);
+         break;
+
+      case F_SETFD:
+         //fcntl: F_SETFD(close on exec)
+         if(((unsigned int)argv[0])&FD_CLOEXEC)
+            result = _set_cloexec(pid,fd);
+         else
+            result = _unset_cloexec(pid,fd);
+         break;
+
+      case F_GETFL:
+         result = ofile_lst[desc].oflag;
+         break;
+
+      case F_SETFL: {
+         int oflag=0;
+         if(argc>0)
+            oflag = (int)argv[0];
+
+         /*
+          * In the case of an append-only file, O_APPEND
+          * cannot be cleared
+          */
+         result = -EPERM;
+         if (ofile_lst[desc].oflag&O_APPEND || oflag & O_APPEND) {
+            ofile_lst[desc].oflag &= ~(O_APPEND | O_NONBLOCK);
+            ofile_lst[desc].oflag |= oflag & (O_APPEND | O_NONBLOCK);
+            result = 0;
+         }else{
+            ofile_lst[desc].oflag = oflag;
+            result = 0;
+         }
+      }
+      break;
+
+      default:
+         result = EINVAL;
+         break;
    }
 
    return result;
@@ -706,6 +700,14 @@ int _sys_pthread_create(kernel_pthread_t** new_kernel_pthread,
    pthread_ptr->kernel_sigqueue.constructor(&process_lst[pid]->kernel_object_head, &pthread_ptr->kernel_sigqueue);
 #endif
 
+   //thread specific data
+#ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+   for (kernel_pthread_key_t _key = 0; _key < PTHREAD_KEYS_MAX; _key++) {
+      //secondary thread specific data array 
+      pthread_ptr->specific_data_array[_key] = (void*)0;
+   }
+#endif
+
    //load static library
 #ifdef __KERNEL_LOAD_LIB
    #if __KERNEL_LOAD_LIB_PTHREAD
@@ -740,6 +742,7 @@ int _sys_pthread_cancel(kernel_pthread_t* kernel_pthread,pid_t pid){
    __atomic_in();
    if(pid>0){
       _dbg_printf("process(%d) cancel thread id=%d\n",kernel_pthread->pid,kernel_pthread->id);
+      //
       //unlock io desc if needed
       if(kernel_pthread->io_desc!=-1) {
          //kernel_pthread_mutex_owner_destroy(kernel_pthread,&ofile_lst[kernel_pthread->io_desc].mutex);
@@ -812,10 +815,10 @@ void* process_routine(void* arg){
    _dbg_printf("__process_routine\r\n");
 
    pid=_sys_getpid();
-
+   //
    process_lst[pid]->status = process_lst[pid]->process_routine(process_lst[pid]->argc,process_lst[pid]->argv);
    process_lst[pid]->pthread_ptr->exit=NULL;
-
+   //
    _dbg_printf("__exit(%d)\n",pid);
    //call kernel. signal thread termination
    _system_exit(process_lst[pid]->status);
@@ -904,9 +907,7 @@ pid_t _sys_krnl_exec(const char* path,
    if(_nextpid(&_pid)==-EAGAIN)
       return -ENOMEM;
 
-   //freeRTOS temporary patch
-   //attr.priority  = bin_lst[exec_file.index].priority;
-   attr.priority=4;
+   attr.priority  = bin_lst[exec_file.index].priority;
    
    //alloc process_t control block for the new process
    p = _sys_malloc(sizeof(process_t));
@@ -1006,20 +1007,43 @@ pid_t _sys_krnl_exec(const char* path,
    //restore default sig handler
    memcpy(process_lst[_pid]->pthread_ptr->sigaction_lst,sigaction_dfl_lst,sizeof(sigaction_dfl_lst));
 
+   //thread once mutex
+   pthread_mutexattr_t  thread_once_mutex_attr = 0;
+   //
+   if (kernel_pthread_mutex_init(&process_lst[_pid]->thread_once_mutex, &thread_once_mutex_attr) < 0) {
+      return -1;
+   }
+
    //thread sigqueue
 #ifdef __KERNEL_POSIX_REALTIME_SIGNALS
    memcpy(&process_lst[_pid]->pthread_ptr->kernel_sigqueue,&_kernel_sigqueue_initializer,sizeof(kernel_sigqueue_t));
    process_lst[_pid]->pthread_ptr->kernel_sigqueue.constructor(&process_lst[_pid]->kernel_object_head, &process_lst[_pid]->pthread_ptr->kernel_sigqueue);
 #endif
+   //thread specific data
+#ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+   memset(process_lst[_pid]->thread_specfic_data_keys_vector, 0, sizeof(process_lst[_pid]->thread_specfic_data_keys_vector));
+   //
+   for (kernel_pthread_key_t _key = 0; _key < PTHREAD_KEYS_MAX; _key++ ) {
+      process_lst[_pid]->thread_specfic_data_destructor[_key] = (pfn_pthread_specific_data_destructor_t)0;
+      //main thread specific data array 
+      process_lst[_pid]->pthread_ptr->specific_data_array[_key] = (void*)0;
+   }
+   //
+   pthread_mutexattr_t  tsd_mutex_attr = 0;
+   
+   if (kernel_pthread_mutex_init(&process_lst[_pid]->thread_specfic_data_mutex, &tsd_mutex_attr) < 0) {
+      return -1;
+   }
+#endif
+   //load static library (must be set before at_exit function). use pthread_alloca(). preserve lib offset calcul for main pthread an secondary pthread.
+   //secondary pthread dont use at_exit function. 
+#ifdef __KERNEL_LOAD_LIB
+   load_lib(process_lst[_pid]->pthread_ptr);
+#endif
 
    //atexit registred functions
 #if ATEXIT_MAX>0
       process_lst[_pid]->p_atexit_func  = (atexit_func_t*) kernel_pthread_alloca( process_lst[_pid]->pthread_ptr,(ATEXIT_MAX+1)*sizeof(atexit_func_t));
-#endif
-
-   //load static library
-#ifdef __KERNEL_LOAD_LIB
-   load_lib(process_lst[_pid]->pthread_ptr);
 #endif
 
    //
@@ -1171,9 +1195,7 @@ pid_t _sys_exec(const char* path,
       __atomic_out();
       return -ENOMEM;
    }
-   //freeRTOS temporary patch
-   //attr.priority  = bin_lst[exec_file.index].priority;
-   attr.priority=4;
+   attr.priority  = bin_lst[exec_file.index].priority;
    attr.stacksize = bin_lst[exec_file.index].stacksize;
    attr.timeslice = bin_lst[exec_file.index].timeslice;
 
@@ -1219,20 +1241,43 @@ pid_t _sys_exec(const char* path,
    //
    process_lst[pid]->pthread_ptr->stat=PTHREAD_STATUS_NULL;
 
+   //thread once mutex
+   pthread_mutexattr_t  thread_once_mutex_attr = 0;
+   //
+   if (kernel_pthread_mutex_init(&process_lst[pid]->thread_once_mutex, &thread_once_mutex_attr) < 0) {
+      return -1;
+   }
+
    //thread sigqueue
 #ifdef __KERNEL_POSIX_REALTIME_SIGNALS
    memcpy(&process_lst[pid]->pthread_ptr->kernel_sigqueue,&_kernel_sigqueue_initializer,sizeof(kernel_sigqueue_t));
    process_lst[pid]->pthread_ptr->kernel_sigqueue.constructor(&process_lst[pid]->kernel_object_head, &process_lst[pid]->pthread_ptr->kernel_sigqueue);
 #endif
+   //thread specific data
+#ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+   memset(process_lst[pid]->thread_specfic_data_keys_vector, 0, sizeof(process_lst[pid]->thread_specfic_data_keys_vector));
+   //
+   for (kernel_pthread_key_t _key = 0; _key < PTHREAD_KEYS_MAX; _key++) {
+      process_lst[pid]->thread_specfic_data_destructor[_key] = (pfn_pthread_specific_data_destructor_t)0;
+      //main thread specific data array 
+      process_lst[pid]->pthread_ptr->specific_data_array[_key] = (void*)0;
+   }
+   //
+   pthread_mutexattr_t  tsd_mutex_attr = 0;
+   //
+   if (kernel_pthread_mutex_init(&process_lst[pid]->thread_specfic_data_mutex, &tsd_mutex_attr) < 0) {
+      return -1;
+   }
+#endif
+   //load static library (must be set before at_exit function). use pthread_alloca(). preserve lib offset calcul for main pthread an secondary pthread.
+   //secondary pthread dont use at_exit function. 
+#ifdef __KERNEL_LOAD_LIB
+   load_lib(process_lst[pid]->pthread_ptr);
+#endif
 
    //atexit registred functions
 #if ATEXIT_MAX>0
       process_lst[pid]->p_atexit_func  = (atexit_func_t*) kernel_pthread_alloca( process_lst[pid]->pthread_ptr,(ATEXIT_MAX+1)*sizeof(atexit_func_t));
-#endif
-
-   //load static library
-#ifdef __KERNEL_LOAD_LIB
-   load_lib(process_lst[pid]->pthread_ptr);
 #endif
 
    //
@@ -1333,6 +1378,7 @@ void _sys_exit(pid_t pid,int status){
 
    //cancel all annexe thread in pid process main thread will be cancelled in _sys_waitpid()
    _sys_pthread_cancel_all_except(pid,process_lst[pid]->pthread_ptr);
+
    //
    process_lst[pid]->pthread_ptr->stat|=PTHREAD_STATUS_ZOMBI;
    //
@@ -1371,8 +1417,14 @@ pid_t _sys_waitpid(pid_t pid,pid_t child_pid,int options,int* status){
          if( (process_lst[_pid]->pthread_ptr) && (process_lst[_pid]->pthread_ptr->stat&PTHREAD_STATUS_ZOMBI)){
             *(((char*)status)+1) = (char)(process_lst[_pid]->status);
             //see _sys_vfork_exit() and _sys_exit()
-            //free main pthread of cureent process
+            //free main pthread of current process
             _sys_pthread_cancel_all_except(_pid,(kernel_pthread_t*)0);
+            //thread once mutex
+            kernel_pthread_mutex_destroy(&process_lst[_pid]->thread_once_mutex);
+            //thread specific data mutex
+            #ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+               kernel_pthread_mutex_destroy(&process_lst[_pid]->thread_specfic_data_mutex);
+            #endif
             //free process
             _sys_free(process_lst[_pid]);
             process_lst[_pid]= (process_t*)0;
@@ -1397,8 +1449,14 @@ pid_t _sys_waitpid(pid_t pid,pid_t child_pid,int options,int* status){
          if( (process_lst[_pid]->pthread_ptr) && (process_lst[_pid]->pthread_ptr->stat&PTHREAD_STATUS_ZOMBI)){
             *(((char*)status)+1) = (char)(process_lst[_pid]->status);
             //see _sys_vfork_exit() and _sys_exit()
-            //free main pthread of cureent process
+            //free main pthread of current process
             _sys_pthread_cancel_all_except(_pid,(kernel_pthread_t*)0);
+            //thread once mutex
+            kernel_pthread_mutex_destroy(&process_lst[_pid]->thread_once_mutex);
+            //thread specific data mutex
+            #ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+               kernel_pthread_mutex_destroy(&process_lst[_pid]->thread_specfic_data_mutex);
+            #endif
             //free process
             _sys_free(process_lst[_pid]);
             process_lst[_pid]= (process_t*)0;
@@ -1426,8 +1484,14 @@ pid_t _sys_waitpid(pid_t pid,pid_t child_pid,int options,int* status){
                && (process_lst[child_pid]->pthread_ptr->stat&PTHREAD_STATUS_ZOMBI)) {
          *(((char*)status)+1) = (char)(process_lst[child_pid]->status);
          //see _sys_vfork_exit() and _sys_exit()
-         //free main pthread of cureent process
+         //free main pthread of current process
          _sys_pthread_cancel_all_except(child_pid,(kernel_pthread_t*)0);
+         //thread once mutex
+         kernel_pthread_mutex_destroy(&process_lst[child_pid]->thread_once_mutex);
+         //thread specific data mutex
+         #ifdef __KERNEL_PTHREAD_SPECIFIC_DATA
+            kernel_pthread_mutex_destroy(&process_lst[child_pid]->thread_specfic_data_mutex);
+         #endif
          //free process
          _sys_free(process_lst[child_pid]);
          process_lst[child_pid]= (process_t*)0;
@@ -1557,8 +1621,8 @@ int _sys_kill(kernel_pthread_t* pthread_ptr,int sig,int atomic){
       return -1;
 
 
-   if(sig<NSIG) {
-      //standard signal
+   if(sig<NSIG || sig==SIGTHRKLL) {
+      //standard signal or specific signal (SIGTHRKLL...)
 
       //sig ignore?
       if((unsigned long)(pthread_ptr->sigaction_lst[sig].sa_handler)==SIG_IGN)

@@ -30,11 +30,12 @@ either the MPL or the [eCos GPL] License."
 | Includes
 ==============================================*/
 #include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
 
 #include "kernel/core/errno.h"
-#include "kernel/core/syscall.h"
+#include "kernel/core/kernel_pthread.h"
+#include "kernel/core/kernel_pthread_mutex.h"
+
+#include "kernel/core/process.h"
 #include "kernel/core/timer.h"
 #include "kernel/core/kernel_timer.h"
 
@@ -67,6 +68,28 @@ static const struct sigevent default_timer_sigevent={
 
 
 /*--------------------------------------------
+| Name:        kernel_timer_ticks
+| Description: duree d'une timespec en ticks FreeRTOS, 0 si nulle.
+----------------------------------------------*/
+static TickType_t kernel_timer_ticks(const struct timespec* ts){
+   return pdMS_TO_TICKS(__timer_s_to_ms(ts->tv_sec)+__timer_ns_to_ms(ts->tv_nsec));
+}
+
+/*--------------------------------------------
+| Name:        kernel_timer_rearm
+| Description: equivalent de OS_SetTimerPeriod + OS_RetriggerTimer : xTimerChangePeriod
+|              (re)demarre le temporisateur ; periode nulle refusee (configASSERT) : arret.
+|              Depuis la tache de service des temporisateurs : attente nulle.
+----------------------------------------------*/
+static void kernel_timer_rearm(TimerHandle_t timer, TickType_t ticks, TickType_t wait){
+   if(!ticks) {
+      xTimerStop(timer, wait);
+      return;
+   }
+   xTimerChangePeriod(timer, ticks, wait);
+}
+
+/*--------------------------------------------
 | Name:        kernel_timer_generic_callback
 | Description:
 | Parameters:  none
@@ -74,7 +97,7 @@ static const struct sigevent default_timer_sigevent={
 | Comments:
 | See:
 ----------------------------------------------*/
-void kernel_timer_generic_callback(xTimerHandle pxTimer ){
+void kernel_timer_generic_callback(TimerHandle_t pxTimer ){
    kernel_timer_t* p_kernel_timer   = (kernel_timer_t*)0;
    kernel_pthread_t* pthread_ptr    = (kernel_pthread_t*)0;
    pid_t pid;
@@ -84,25 +107,17 @@ void kernel_timer_generic_callback(xTimerHandle pxTimer ){
       return;
 #endif
    p_kernel_timer->interval=!p_kernel_timer->interval;
-   if(p_kernel_timer->interval && p_kernel_timer->itimerspec.it_interval.tv_nsec) {
+   if(p_kernel_timer->interval && (p_kernel_timer->itimerspec.it_interval.tv_sec || p_kernel_timer->itimerspec.it_interval.tv_nsec)) {
       //rcv KERNEL_TIMER_VALUE_PERIOD  and set KERNEL_TIMER_INTERVAL_PERIOD
 #ifdef __KERNEL_UCORE_FREERTOS
-      xTimerStop( pxTimer, 0 ); 
-      xTimerChangePeriod(pxTimer,
-                        (__timer_s_to_ms(p_kernel_timer->itimerspec.it_interval.tv_sec)+__timer_ns_to_ms(p_kernel_timer->itimerspec.it_interval.tv_nsec))/portTICK_RATE_MS,
-                        0);
-      xTimerStart( pxTimer, 0 );
+      kernel_timer_rearm(pxTimer, kernel_timer_ticks(&p_kernel_timer->itimerspec.it_interval), 0);
 #endif
-   }else if(!p_kernel_timer->interval && p_kernel_timer->itimerspec.it_interval.tv_nsec) {
+   }else if(!p_kernel_timer->interval && (p_kernel_timer->itimerspec.it_interval.tv_sec || p_kernel_timer->itimerspec.it_interval.tv_nsec)) {
       //rcv KERNEL_TIMER_INTERVAL_PERIOD  and set KERNEL_TIMER_VALUE_PERIOD
 #ifdef __KERNEL_UCORE_FREERTOS
-      xTimerStop( pxTimer, 0 ); 
-      xTimerChangePeriod(pxTimer,
-                        (__timer_s_to_ms(p_kernel_timer->itimerspec.it_value.tv_sec)+__timer_ns_to_ms(p_kernel_timer->itimerspec.it_value.tv_nsec))/portTICK_RATE_MS,
-                        0);
-      xTimerStart( pxTimer, 0 ); 
+      kernel_timer_rearm(pxTimer, kernel_timer_ticks(&p_kernel_timer->itimerspec.it_value), 0);
 #endif
-      //don't send signal
+      //in this case don't send signal
       return;
    }
 
@@ -181,8 +196,7 @@ int kernel_timer_delete(kernel_timer_t* p_kernel_timer){
    if(!p_kernel_timer->created)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   while(xTimerStop(p_kernel_timer->timer, 10 )!=pdPASS);
-   while(xTimerDelete(p_kernel_timer->timer, 10 )!=pdPASS);
+   while(xTimerDelete(p_kernel_timer->timer, portMAX_DELAY)!=pdPASS);
    p_kernel_timer->created=KERNEL_TIMER_NOT_CREATED;
 #endif
    return 0;
@@ -206,7 +220,9 @@ int kernel_timer_gettime(kernel_timer_t* p_kernel_timer, struct itimerspec* valu
    if(!p_kernel_timer->created)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   //elapse_time_ms = OS_GetTimerValue((OS_TIMER*)p_kernel_timer);
+   //equivalent de OS_GetTimerValue : temps restant avant expiration
+   if(xTimerIsTimerActive(p_kernel_timer->timer)!=pdFALSE)
+      elapse_time_ms = (int)(xTimerGetExpiryTime(p_kernel_timer->timer)-xTaskGetTickCount())*portTICK_PERIOD_MS;
 #endif
    value->it_value.tv_sec= elapse_time_ms/1000;
    value->it_value.tv_nsec=__timer_ms_to_ns( (elapse_time_ms%1000)  );
@@ -248,7 +264,8 @@ int kernel_timer_settime(kernel_timer_t* p_kernel_timer, int flags, const struct
 #ifdef __KERNEL_UCORE_FREERTOS
    if(ovalue) {
       int elsapse_time_ms=0;
-      //elsapse_time_ms = OS_GetTimerValue((OS_TIMER*)p_kernel_timer);
+      if(p_kernel_timer->created && xTimerIsTimerActive(p_kernel_timer->timer)!=pdFALSE)
+         elsapse_time_ms = (int)(xTimerGetExpiryTime(p_kernel_timer->timer)-xTaskGetTickCount())*portTICK_PERIOD_MS;
       ovalue->it_value.tv_sec= elsapse_time_ms/1000;
       ovalue->it_value.tv_nsec=__timer_ms_to_ns( (elsapse_time_ms%1000)  );
    }
@@ -264,31 +281,18 @@ int kernel_timer_settime(kernel_timer_t* p_kernel_timer, int flags, const struct
    //
    if(!p_kernel_timer->created) {
       p_kernel_timer->created=KERNEL_TIMER_CREATED;
-      
-      #if (configSUPPORT_STATIC_ALLOCATION==1)
-          p_kernel_timer->timer = xTimerCreateStatic( "timer",
-                   (portTickType)((__timer_s_to_ms(value->it_value.tv_sec)+__timer_ns_to_ms(value->it_value.tv_nsec))/portTICK_RATE_MS),
-                   pdFALSE,
-                   p_kernel_timer,
-                   (tmrTIMER_CALLBACK) kernel_timer_generic_callback,
-                   &p_kernel_timer->timer_static);
-      #else
-         p_kernel_timer->timer = xTimerCreate( "timer",
-                   (portTickType)((__timer_s_to_ms(value->it_value.tv_sec)+__timer_ns_to_ms(value->it_value.tv_nsec))/portTICK_RATE_MS),
-                   pdFALSE,
-                   p_kernel_timer,
-                   (tmrTIMER_CALLBACK) kernel_timer_generic_callback );
-      #endif
-   }else{
-        while(xTimerStop(p_kernel_timer->timer, 10 )!=pdPASS);//disarm timer
+      //periode provisoire de 1 tick (periode nulle refusee) ; temporisateur dormant jusqu'a
+      //kernel_timer_rearm.
+      p_kernel_timer->timer = xTimerCreateStatic("timer",
+                                                 1,
+                                                 pdFALSE,
+                                                 p_kernel_timer,
+                                                 kernel_timer_generic_callback,
+                                                 &p_kernel_timer->timer_static);
    }
-   //
-   while(xTimerChangePeriod(p_kernel_timer->timer,
-                            (__timer_s_to_ms(value->it_value.tv_sec)+__timer_ns_to_ms(value->it_value.tv_nsec))/portTICK_RATE_MS,
-                            10)!=pdPASS);
-   //
-   if(p_kernel_timer->itimerspec.it_value.tv_nsec!=0 || p_kernel_timer->itimerspec.it_value.tv_sec!=0)
-      while(xTimerStart(p_kernel_timer->timer, 10 )!=pdPASS);
+   //arme (valeur non nulle) ou desarme le temporisateur, comme OS_SetTimerPeriod +
+   //OS_RetriggerTimer ou OS_StopTimer
+   kernel_timer_rearm(p_kernel_timer->timer, kernel_timer_ticks(&value->it_value), portMAX_DELAY);
 
 #endif
 

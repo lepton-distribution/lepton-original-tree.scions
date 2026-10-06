@@ -23,77 +23,31 @@ either the MPL or the [eCos GPL] License."
 */
 
 
-//KAL, axe micro-noyau : FreeRTOS. Branche de kal.h extraite telle quelle (kal_split.py),
-//hors ARM7/ARM9 ; non compilée avant l'étape 7 (aucun cmake/kal/freertos.cmake).
-//Ses #if de cœur (cpu_regs_t M0 / M3-M7, SysTick) sont à répartir dans kal/arch/ à
-//l'étape 7 ; __va_list_copy y double celui de kal/arch/armv7m/kal_arch.h.
-//Condition d'origine : ((__tauon_compiler__ == __compiler_keil_arm__) || (__tauon_compiler__ == __compiler_gnuc__)) && defined(__KERNEL_UCORE_FREERTOS) && ((__tauon_cpu_core__ == __tauon_cpu_core_arm_arm7tdmi__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_arm926ejs__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__) || (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__))
+//KAL, axe micro-noyau : FreeRTOS (noyau V11.3.0, ucore/freeRTOS_11-3-0), étape 7.
+//Sélectionné par cmake/kal/freertos.cmake ; s'appuie sur kal_arch.h (inclus avant lui par
+//kal.h) et sur la trame du port, décrite par ISA (kal/backend/freertos/arch/<isa>).
+//Écarts et accès internes : doc/migration/kal-freertos-ecarts.md. Accès internes limités à
+//I1 (pxTopOfStack, premier membre du TCB, lu par le port) et I2 (trame du port) ; la structure
+//privée tskTCB n'est plus recopiée (ancien kal_freertos.h, FreeRTOS 8.0.0).
 #ifndef _KAL_BACKEND_FREERTOS_H
 #define _KAL_BACKEND_FREERTOS_H
-
-
-   //#include <stdlib.h>
-   //#include <string.h>   
-
+   #include <stdint.h>
+   #include <string.h>
+   #include <stdlib.h>
    #include "FreeRTOS.h"
    #include "task.h"
    #include "semphr.h"
    #include "timers.h"
    #include "event_groups.h"
+   #include "kal_freertos_frame.h"
 
-   #include "kernel/core/ucore/freeRTOS_8-0-0/source/include/kal_freertos.h"
-
-
-
-
-
-   #define __va_list_copy(__dest_va_list__,__src_va_list__) memcpy(&__dest_va_list__,&__src_va_list__,sizeof(__dest_va_list__))
-
-   #if ( (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM0__) )
-      typedef struct cpu_regs_st {
-           uint32_t  OS_REG_R4;
-           uint32_t  OS_REG_R5;
-           uint32_t  OS_REG_R6;
-           uint32_t  OS_REG_R7;
-           uint32_t  OS_REG_R8;
-           uint32_t  OS_REG_R9;
-           uint32_t  OS_REG_R10;
-           uint32_t  OS_REG_R11;
-           //uint32_t  OS_REG_LR;
-           uint32_t  OS_REG_R0;
-           uint32_t  OS_REG_R1;
-           uint32_t  OS_REG_R2;
-           uint32_t  OS_REG_R3;
-           uint32_t  OS_REG_R12;
-           uint32_t  OS_REG_R14;
-           uint32_t  OS_REG_PC;
-           uint32_t  OS_REG_XPSR;
-         } cpu_regs_t;
-   #elif (  (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM3__)\
-         || (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM4__)\
-         || (__tauon_cpu_core__ ==__tauon_cpu_core_arm_cortexM7__) )
-      typedef struct cpu_regs_st {
-           uint32_t  OS_REG_R4;
-           uint32_t  OS_REG_R5;
-           uint32_t  OS_REG_R6;
-           uint32_t  OS_REG_R7;
-           uint32_t  OS_REG_R8;
-           uint32_t  OS_REG_R9;
-           uint32_t  OS_REG_R10;
-           uint32_t  OS_REG_R11;
-           uint32_t  OS_REG_LR;
-           uint32_t  OS_REG_R0;
-           uint32_t  OS_REG_R1;
-           uint32_t  OS_REG_R2;
-           uint32_t  OS_REG_R3;
-           uint32_t  OS_REG_R12;
-           uint32_t  OS_REG_R14;
-           uint32_t  OS_REG_PC;
-           uint32_t  OS_REG_XPSR;
-         } cpu_regs_t;
-   #endif
-    
-   
+   //TCB fourni par Lepton (xTaskCreateStatic), alloué à part comme OS_TASK pour embOS (le noyau
+   //copie des kernel_pthread_t entiers : vfork, exec) : tâche en tête (handle de tâche = adresse
+   //du TCB, pxTopOfStack en premier mot), puis groupe d'événements des appels système.
+   typedef struct {
+      StaticTask_t task;
+      StaticEventGroup_t events;
+   }freertos_tcb_t; //nom utilisé par kernel_pthread.h
    typedef freertos_tcb_t tcb_t;
    typedef void (*_pthreadstart_routine_t)(void);
    typedef _pthreadstart_routine_t pthreadstart_routine_t;
@@ -106,42 +60,49 @@ either the MPL or the [eCos GPL] License."
    return; }
 
    #define __is_thread_self(__tcb__) \
-   ((xTaskHandle)__tcb__ == xTaskGetCurrentTaskHandle())
+   ((TaskHandle_t)(__tcb__) == xTaskGetCurrentTaskHandle())
 
-   #define _macro_stack_addr 
-   /*portSTACK_TYPE*/
+   #define _macro_stack_addr
 
+   //Priorités : Lepton 0-255 et FreeRTOS vont dans le même sens (plus grand = plus prioritaire,
+   //comme embOS) ; projection monotone sur [1, configMAX_PRIORITIES-2] : 0 reste à la tâche
+   //idle, configMAX_PRIORITIES-1 à la tâche de service des temporisateurs (dont les rappels
+   //s'exécutent dans le contexte du tick sous embOS). 150 (noyau) -> 18, 100 -> 12 sur 32 niveaux.
+   #define __kal_priority(__prio__) \
+      ((UBaseType_t)(1u + (((unsigned int)(__prio__) & 0xFFu) * (unsigned int)(configMAX_PRIORITIES-2)) / 256u))
 
+   //I1 : pointeur de pile sauvegardé de la tâche (pxTopOfStack).
+   #define __kal_frt_sp(__tcb__) (*(uint32_t**)(__tcb__))
+
+   //Contexte : pile sauvegardée et copie de la trame du port (pas de copie du TCB : listes,
+   //priorité, notifications et mutex détenus restent ceux de FreeRTOS, comme embOS préserve
+   //pPrev/pNext).
    typedef struct {
-      tcb_t tcb;
-      cpu_regs_t  os_regs;
+      uint32_t* sp;
+      uint32_t  os_regs[__KAL_FRT_FRAME_MAX_WORDS];
    }context_t;
 
    #define __inline_bckup_thread_start_context(__context__,__pthread_ptr__){ \
-      memcpy(&__context__.tcb,__pthread_ptr__->tcb,sizeof(tcb_t)); \
-      memcpy(&__context__.os_regs,((cpu_regs_t *)__pthread_ptr__->tcb->pStack),sizeof(cpu_regs_t));\
+      (__context__).sp = __kal_frt_sp((__pthread_ptr__)->tcb); \
+      memcpy((__context__).os_regs,(__context__).sp,__kal_frt_frame_words((__context__).sp)*sizeof(uint32_t)); \
    }
 
    #define __inline_bckup_context(__context__,__pthread_ptr__){ \
-      memcpy(&__context__.tcb,__pthread_ptr__->tcb,sizeof(tcb_t)); \
-      memcpy(&__context__.os_regs,((cpu_regs_t *)__pthread_ptr__->tcb->pStack),sizeof(cpu_regs_t));\
+      (__context__).sp = __kal_frt_sp((__pthread_ptr__)->tcb); \
+      memcpy((__context__).os_regs,(__context__).sp,__kal_frt_frame_words((__context__).sp)*sizeof(uint32_t)); \
    }
 
    #define __inline_rstr_context(__context__,__pthread_ptr__){ \
-      ListItem_t xGenericListItem=__pthread_ptr__->tcb->xGenericListItem;\
-      ListItem_t xEventListItem=__pthread_ptr__->tcb->xEventListItem;\
-      memcpy(__pthread_ptr__->tcb,&__context__.tcb,sizeof(tcb_t)); \
-      memcpy(((cpu_regs_t *)__pthread_ptr__->tcb->pStack),&__context__.os_regs,sizeof(cpu_regs_t));\
-      __pthread_ptr__->tcb->xGenericListItem=xGenericListItem;\
-      __pthread_ptr__->tcb->xEventListItem=xEventListItem;\
+      __kal_frt_sp((__pthread_ptr__)->tcb) = (__context__).sp; \
+      memcpy((__context__).sp,(__context__).os_regs,__kal_frt_frame_words((__context__).os_regs)*sizeof(uint32_t)); \
    }
 
    //Use Dynamic Allocation!!!
    #define __inline_bckup_stack(__pthread_ptr__){ \
       int __stack_size__; \
       void* __src_stack_ptr__; \
-      __stack_size__ = ((int)(__pthread_ptr__->bckup_context.tcb.pStack) - (int)(__pthread_ptr__->start_context.tcb.pStack));\
-      __src_stack_ptr__ = (void*)(((uint8_t*)__pthread_ptr__->start_context.tcb.pStack)+__stack_size__);\
+      __stack_size__ = ((int)(__pthread_ptr__->bckup_context.sp) - (int)(__pthread_ptr__->start_context.sp));\
+      __src_stack_ptr__ = (void*)(((uint8_t*)__pthread_ptr__->start_context.sp)+__stack_size__);\
       __pthread_ptr__->bckup_stack = (char*)_sys_malloc( abs(__stack_size__) ); \
       if(!__pthread_ptr__->bckup_stack) \
          return -ENOMEM; \
@@ -151,48 +112,61 @@ either the MPL or the [eCos GPL] License."
    #define __inline_rstr_stack(__pthread_ptr__){ \
       int __stack_size__; \
       void* __src_stack_ptr__; \
-      __stack_size__ = ((int)(__pthread_ptr__->bckup_context.tcb.pStack)- (int)(__pthread_ptr__->start_context.tcb.pStack));\
-      __src_stack_ptr__ = (void*)(((uint8_t*)__pthread_ptr__->start_context.tcb.pStack)+__stack_size__);\
+      __stack_size__ = ((int)(__pthread_ptr__->bckup_context.sp)- (int)(__pthread_ptr__->start_context.sp));\
+      __src_stack_ptr__ = (void*)(((uint8_t*)__pthread_ptr__->start_context.sp)+__stack_size__);\
       memcpy(__src_stack_ptr__,__pthread_ptr__->bckup_stack,abs(__stack_size__)); \
       _sys_free(__pthread_ptr__->bckup_stack); \
    }
 
-   
-   #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
-      ((cpu_regs_t *)__pthread_ptr__->tcb->pStack)->OS_REG_PC= (uint32_t)(__sig_handler__);\
+   //Réveil d'une tâche, équivalent d'OS_MakeTaskReady : bloquée (attente finie ou infinie,
+   //sémaphore, groupe d'événements, délai) -> xTaskAbortDelay ; suspendue -> vTaskResume.
+   //HYPOTHÈSE À VALIDER (banc KAL T2/T3) : xTaskAbortDelay sur une attente infinie
+   //(eTaskGetState rend eBlocked pour une tâche en attente d'événement, V10.x et suivantes).
+   #define __kal_frt_make_ready(__tcb__){ \
+      switch(eTaskGetState((TaskHandle_t)(__tcb__))) { \
+      case eBlocked:   xTaskAbortDelay((TaskHandle_t)(__tcb__)); break; \
+      case eSuspended: vTaskResume((TaskHandle_t)(__tcb__)); break; \
+      default: break; \
+      } \
    }
 
- 
+   //Déroutement vers le gestionnaire de signal : PC du cadre matériel (étendu si FPU, comme E3),
+   //état ICI/IT du xPSR effacé (kal_arch.h, test TICI), puis réveil.
+   #define __inline_swap_signal_handler(__pthread_ptr__,__sig_handler__){ \
+      uint32_t* __hw__ = __kal_frt_hw(__kal_frt_sp((__pthread_ptr__)->tcb)); \
+      __hw__[__KAL_FRT_HW_PC]   = (uint32_t)(__sig_handler__); \
+      __hw__[__KAL_FRT_HW_XPSR] = __kal_arch_redirect_xpsr(__hw__[__KAL_FRT_HW_XPSR]); \
+      __kal_frt_make_ready((__pthread_ptr__)->tcb); \
+   }
+
    /*TS_WAIT_TIME*/
    #define __inline_exit_signal_handler(__pthread_ptr__){ \
       __rstr_context(__pthread_ptr__->bckup_context,__pthread_ptr__); \
    }
 
    #define __set_active_pthread(__pthread_ptr__) \
-      if(__pthread_ptr__)vTaskResume((xTaskHandle)(__pthread_ptr__->tcb))
+      if(__pthread_ptr__) __kal_frt_make_ready((__pthread_ptr__)->tcb)
 
-   //stop task switching and software timer.
+   //Attente bloquante depuis une région atomique : la région est quittée pendant l'attente et
+   //reprise au réveil, comme sous embOS (kal_freertos.c). Toute attente bloquante du backend
+   //(sémaphores, mutex, événements, délais, sys_arch lwIP) passe par __kal_frt_block.
+   UBaseType_t kal_freertos_region_leave(void);
+   void kal_freertos_region_enter(UBaseType_t n);
+   #define __kal_frt_block(__stmt__) do { \
+      UBaseType_t __kal_region__ = kal_freertos_region_leave(); \
+      __stmt__; \
+      kal_freertos_region_enter(__kal_region__); \
+   } while(0)
+
+   //stop task switching (ordonnanceur suspendu, interruptions actives), comme OS_EnterRegion.
    #define __atomic_in() vTaskSuspendAll()
    //restart task switching
    #define __atomic_out() xTaskResumeAll()
 
+   //__stop_sched / __restart_sched : SysTick, kal_arch.h (commun aux micro-noyaux).
 
-
-   //GD all Cortex-M3 and cortex M4 MCUs have the same systick registers
-   #if   (__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM0__)\
-       ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM3__)\
-       ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM4__)\
-       ||(__tauon_cpu_core__ == __tauon_cpu_core_arm_cortexM7__)
-      #define __LEPTON_KAL_PIT_BASE    (0xE000E010)
-      #define __LEPTON_KAL_PIT_MR      (*(volatile uint32_t*)(__LEPTON_KAL_PIT_BASE + 0x00))
-      #define __stop_sched() __LEPTON_KAL_PIT_MR &= ~(1uL << (1));
-      #define __restart_sched() __LEPTON_KAL_PIT_MR |= (1uL << (1));
-   #endif
-
-
-   //uninterruptible section in
+   //uninterruptible section in (BASEPRI = configMAX_SYSCALL_INTERRUPT_PRIORITY en ARMv7-M)
    #define __disable_interrupt_section_in() taskENTER_CRITICAL()
-   
    //uninterruptible section out
    #define __disable_interrupt_section_out() taskEXIT_CRITICAL()
 
@@ -206,6 +180,5 @@ either the MPL or the [eCos GPL] License."
       #define __io_profiler_stop(__desc__)
       #define __io_profiler_get_counter(__desc__)
    #endif
-
 
 #endif //_KAL_BACKEND_FREERTOS_H

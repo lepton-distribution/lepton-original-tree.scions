@@ -29,17 +29,14 @@ either the MPL or the [eCos GPL] License."
 | Includes
 ==============================================*/
 #include <stdint.h>
-#include <stdarg.h>
 
-#include "kernel/core/kernelconf.h"
 #include "kernel/core/errno.h"
-#include "kernel/core/interrupt.h"
-#include "kernel/core/syscall.h"
 #include "kernel/core/kernel_pthread.h"
 #include "kernel/core/kernel_sem.h"
 
 #include "kernel/core/time.h"
 #include "kernel/core/kernel_clock.h"
+#include "kernel/core/interrupt.h"   //kernel_in_interrupt (FreeRTOS, contexte d'interruption)
 
 
 /*============================================
@@ -63,11 +60,10 @@ int kernel_sem_init(kernel_sem_t* kernel_sem, int pshared, unsigned int value){
    if(!kernel_sem)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   #if (configSUPPORT_STATIC_ALLOCATION==1)
-      kernel_sem->sem = xSemaphoreCreateCountingStatic( (unsigned portBASE_TYPE) (-1), (unsigned portBASE_TYPE) value,&kernel_sem->sem_static);
-   #else
-      kernel_sem->sem = xSemaphoreCreateCounting( (unsigned portBASE_TYPE) (-1), (unsigned portBASE_TYPE) value);
-   #endif
+   kernel_sem->xHigherPriorityTaskWoken = pdFALSE;
+   kernel_sem->sem = xSemaphoreCreateCountingStatic( (UBaseType_t)(-1), (UBaseType_t)value, &kernel_sem->sem_static);
+   if(kernel_sem->sem==(SemaphoreHandle_t)0)
+      return -1;
 #endif
    return 0;
 }
@@ -101,7 +97,7 @@ int kernel_sem_getvalue(kernel_sem_t* kernel_sem, int *value){
    if(!kernel_sem)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-     *value = (int) ( ( freertos_queue_t * ) kernel_sem->sem )->uxMessagesWaiting;
+   *value = (int)uxSemaphoreGetCount(kernel_sem->sem);
 #endif
    return 0;
 }
@@ -114,17 +110,22 @@ int kernel_sem_getvalue(kernel_sem_t* kernel_sem, int *value){
 | Comments:
 | See:
 ----------------------------------------------*/
-
 int kernel_sem_post(kernel_sem_t* kernel_sem){
    if(!kernel_sem)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   if(!kernel_in_interrupt)
+   if(!kernel_in_interrupt) {
       xSemaphoreGive(kernel_sem->sem);
-   else if(kernel_in_interrupt>0)
+   }else if(kernel_in_interrupt>0) {
+      //etape 7 : xSemaphoreGiveFromISR ne remet jamais l'indicateur a pdFALSE ; il est donc
+      //initialise a chaque appel, puis cumule dans celui de l'interruption (interrupt.h).
+      kernel_sem->xHigherPriorityTaskWoken = pdFALSE;
       xSemaphoreGiveFromISR(kernel_sem->sem,&kernel_sem->xHigherPriorityTaskWoken);
-   else
+      if(kernel_sem->xHigherPriorityTaskWoken!=pdFALSE)
+         kernel_in_interrupt_higher_priority_task_woken = pdTRUE;
+   }else{
      return -1;
+   }
 #endif
    return 0;
 }
@@ -140,14 +141,21 @@ int kernel_sem_post(kernel_sem_t* kernel_sem){
 int kernel_sem_timedwait(kernel_sem_t* kernel_sem, int flag, const struct timespec * abs_timeout){
 
    int timeout=0;
+   int ret=0;
+   UBaseType_t region;
 
    //
    if(!kernel_sem)
       return -1;
+   //etape 7 : region atomique quittee pendant l'attente (kal_freertos.c), avant de masquer
+   //les interruptions (xTaskResumeAll les demasque).
+   region = kal_freertos_region_leave();
    //
    if(flag==TIMER_ABSTIME && abs_timeout) { //warning: on 16bit architecture use ldiv instead '/' for division with long type.
      //
-     taskDISABLE_INTERRUPTS(); //re-enabled in freeRTOS semaphore api (use taskENTER_CRITICAL() and taskEXIT_CRITICAL()) 
+     //comme OS_DI() d'embOS : interruptions masquees jusqu'a l'attente (taskEXIT_CRITICAL de
+     //xSemaphoreTake les demasque, imbrication critique a 0 hors section critique).
+     taskDISABLE_INTERRUPTS();
      //
      timeout = kernel_clock_timeout(CLOCK_REALTIME,abs_timeout);
    } if(!flag && abs_timeout) {
@@ -156,22 +164,22 @@ int kernel_sem_timedwait(kernel_sem_t* kernel_sem, int flag, const struct timesp
    //
 #ifdef __KERNEL_UCORE_FREERTOS
    if(abs_timeout && timeout) {
-      if(!xSemaphoreTake(kernel_sem->sem, (portTickType)(timeout/portTICK_RATE_MS) )) {
-         return -1;
-      }
+      if(xSemaphoreTake(kernel_sem->sem, pdMS_TO_TICKS(timeout))!=pdPASS)
+         ret = -1;
    }else if(abs_timeout && !timeout) {
-      if(!xSemaphoreTake(kernel_sem->sem, (portTickType)(0)))   //try to get sem
-         return -EBUSY;
+      if(xSemaphoreTake(kernel_sem->sem, (TickType_t)0)!=pdPASS)   //try to get sem
+         ret = -EBUSY;
    }else{
-       while(!xSemaphoreTake(kernel_sem->sem, portMAX_DELAY));
+      while(xSemaphoreTake(kernel_sem->sem, portMAX_DELAY)!=pdPASS);
    }
 
 #endif
-   return 0;
+   kal_freertos_region_enter(region);
+   return ret;
 }
 
 /*--------------------------------------------
-| Name:        kernel_sem_trywait
+| Name:        kernel_sem_trywait*
 | Description:
 | Parameters:  none
 | Return Type: none
@@ -182,7 +190,7 @@ int kernel_sem_trywait(kernel_sem_t* kernel_sem){
    if(!kernel_sem)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   if(!xSemaphoreTake(kernel_sem->sem, (portTickType)(0)))
+   if(xSemaphoreTake(kernel_sem->sem, (TickType_t)0)!=pdPASS)
       return -EBUSY;
 #endif
    return 0;
@@ -200,7 +208,7 @@ int kernel_sem_wait(kernel_sem_t* kernel_sem){
    if(!kernel_sem)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-  while(!xSemaphoreTake(kernel_sem->sem, portMAX_DELAY));
+   __kal_frt_block(while(xSemaphoreTake(kernel_sem->sem, portMAX_DELAY)!=pdPASS));
 #endif
    return 0;
 }

@@ -147,6 +147,12 @@ int dev_cmsdk_uart_x_ioctl(desc_t desc, int request, va_list ap){
 void dev_cmsdk_uart_x_rx_interrupt(dev_cmsdk_uart_info_t* info){
    int woken = 0;
    __hw_enter_interrupt();
+   /* acquittement AVANT de vider le registre : un octet reçu pendant la boucle relève INT_RX et
+      redéclenche l'interruption. Acquitté après (avant l'étape 7), l'octet arrivé entre la fin de
+      la boucle et l'acquittement restait dans DATA sans interruption (STATE.RX_FULL = 1,
+      INTSTATUS = 0) : QEMU ne délivrait plus rien, console figée (embOS et FreeRTOS, sous charge). */
+   REG(info, UART_STATE) = STATE_RX_OVERRUN;
+   REG(info, UART_INTSTATUS) = INT_RX | INT_RX_OVERRUN;
    while(REG(info, UART_STATE) & STATE_RX_FULL) {
       uint8_t c = (uint8_t)REG(info, UART_DATA);
       uint16_t next = (uint16_t)((info->rx_head + 1u) % DEV_CMSDK_UART_RX_BUFFER_SIZE);
@@ -156,8 +162,6 @@ void dev_cmsdk_uart_x_rx_interrupt(dev_cmsdk_uart_info_t* info){
          woken = 1;
       }
    }
-   REG(info, UART_STATE) = STATE_RX_OVERRUN;
-   REG(info, UART_INTSTATUS) = INT_RX | INT_RX_OVERRUN;
    if(woken && info->desc_r >= 0)
       __fire_io_int(ofile_lst[info->desc_r].owner_pthread_ptr_read);
    __hw_leave_interrupt();

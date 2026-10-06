@@ -103,6 +103,11 @@ set(LEPTON_KERNEL_GROUP lepton_core lepton_kal_${LEPTON_KAL_BACKEND} lepton_vfs 
 # <network use="on"/> (mkconf : __KERNEL_NET_IPSTACK).
 if(LEPTON_NET_STACK STREQUAL "lwip")
   set(lwip kernel/net/lwip)
+  # sys_arch (primitives du micro-noyau) : ports/arm pour embOS, ports/freertos posé par
+  # cmake/kal/freertos.cmake (étape 7) ; lwipopts.h et cc.h restent ceux de ports/arm.
+  if(NOT LEPTON_LWIP_SYS_ARCH_DIR)
+    set(LEPTON_LWIP_SYS_ARCH_DIR ${lwip}/ports/arm)
+  endif()
   lepton_add_library(lepton_net_lwip SOURCES
     ${lwip}/api/api_lib.c ${lwip}/api/api_msg.c ${lwip}/api/err.c ${lwip}/api/netbuf.c
     ${lwip}/api/netdb.c ${lwip}/api/netifapi.c ${lwip}/api/sockets.c ${lwip}/api/tcpip.c
@@ -116,15 +121,15 @@ if(LEPTON_NET_STACK STREQUAL "lwip")
     ${lwip}/core/ipv4/ip4_addr.c ${lwip}/core/ipv4/ip4_frag.c
     ${lwip}/netif/ethernet.c ${lwip}/netif/ethernetif.c ${lwip}/netif/lowpan6.c
     ${lwip}/netif/slipif.c
-    ${lwip}/ports/arm/sys_arch.c
+    ${LEPTON_LWIP_SYS_ARCH_DIR}/sys_arch.c
     kernel/core/net/kernel_net_core_socket.c
     kernel/core/net/lwip_core/ethif_core.c
     kernel/core/net/lwip_core/lwip_core.c
     kernel/core/net/lwip_core/lwip_core_socket.c)
   # (include/ipv4 du projet IAR : absent de lwIP 2.0.1)
   target_include_directories(lepton_options INTERFACE
-    ${LEPTON_SRC}/${lwip} ${LEPTON_SRC}/${lwip}/include ${LEPTON_SRC}/${lwip}/ports/arm
-    ${LEPTON_SRC}/${lwip}/ports/arm/include)
+    ${LEPTON_SRC}/${lwip} ${LEPTON_SRC}/${lwip}/include ${LEPTON_SRC}/${LEPTON_LWIP_SYS_ARCH_DIR}/include
+    ${LEPTON_SRC}/${lwip}/ports/arm ${LEPTON_SRC}/${lwip}/ports/arm/include)
   list(APPEND LEPTON_KERNEL_GROUP lepton_net_lwip)
   # API sockets de la libc Lepton
   list(APPEND LEPTON_LIBC_SOURCES

@@ -31,9 +31,8 @@ either the MPL or the [eCos GPL] License."
 | Includes
 ==============================================*/
 #include <stdlib.h>
-#include <stdarg.h>
 #include <stdint.h>
-#include <string.h>
+#include <stdarg.h>
 
 #include "kernel/core/kernelconf.h"
 
@@ -41,7 +40,6 @@ either the MPL or the [eCos GPL] License."
 #include "kernel/core/types.h"
 #include "kernel/core/kernel.h"
 #include "kernel/core/system.h"
-#include "kernel/core/dirent.h"
 #include "kernel/core/statvfs.h"
 #include "kernel/core/time.h"
 #include "kernel/core/ioctl.h"
@@ -49,7 +47,6 @@ either the MPL or the [eCos GPL] License."
 #include "kernel/core/errno.h"
 #include "kernel/core//ioctl_lcd.h"
 #include "kernel/fs/vfs/vfs.h"
-#include "kernel/fs/vfs/vfskernel.h"
 #include "kernel/core/kernel_elfloader.h"
 
 #include "lib/libc/misc/ltostr.h"
@@ -164,7 +161,7 @@ int _elf_printf(const char * fmt, ...){
    int cb=0;
    FILE string[1] =
    {
-      {0, 0, (unsigned char*) -1, 0, (unsigned char*) -1, -1,
+      {0, 0, (unsigned char*)(unsigned) -1, 0, (unsigned char*) (unsigned) -1, -1,
        _IOFBF | __MODE_WRITE}
    };
 
@@ -176,7 +173,7 @@ int _elf_printf(const char * fmt, ...){
 
    va_strt(ptr, fmt);
    string->bufpos = (unsigned char*)buf;
-   string->bufend = (unsigned char*)buf+sizeof(buf);
+   string->bufend = (unsigned char*)(buf+sizeof(buf));
    rv = __vfprintf(string,fmt,ptr);
    va_end(ptr);
    *(string->bufpos) = 0;
@@ -658,14 +655,6 @@ unsigned long _kernel_elfloader(unsigned long flash_base, unsigned long base)
    //boot!!!!
    boot_handler();
 
-#if (__tauon_compiler__==__compiler_iar_arm__)
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-   asm ("nop");
-#endif
 
    return 1;
 }

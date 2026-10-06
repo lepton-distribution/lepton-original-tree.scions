@@ -177,10 +177,10 @@ typedef struct kernel_pthread_st {
 #endif
    
 #ifdef __KERNEL_UCORE_FREERTOS
+   //etape 7 : TCB (tache et groupe d'evenements statiques) alloue a part, comme OS_TASK pour
+   //embOS : le noyau copie et efface des kernel_pthread_t entiers (vfork, exec), ce qui ecraserait
+   //un TCB integre encore present dans les listes de FreeRTOS.
    freertos_tcb_t* tcb;
-   StaticTask_t  task_static;
-   
-   StaticEventGroup_t event_group_static;
    EventGroupHandle_t event_group_handle; //used by kernel (KERNEL_INTERRUPT and KERNEL_RET_INTERRUPT).
 #endif
 
