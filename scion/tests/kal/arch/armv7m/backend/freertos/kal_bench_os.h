@@ -23,12 +23,20 @@
 #include "task.h"
 #include "event_groups.h"
 
+/* trame des ports (pxPortInitialiseStack, PendSV) : ARM_CM4F/ARM_CM7 [R4-R11, EXC_RETURN, ...] ;
+   ARM_CM3 [R4-R11] ; ARM_CM0 (ARMv6-M, V11 sans MPU) [EXC_RETURN, R4-R7, R8-R11] */
 #if defined(__VFP_FP__) && !defined(__SOFTFP__)
    #define BENCH_HAS_VFP     1
    #define BENCH_SW_WORDS    9u     /* R4-R11, EXC_RETURN */
+   #define BENCH_R4_INDEX    0u
+#elif defined(__ARM_ARCH_6M__)
+   #define BENCH_HAS_VFP     0
+   #define BENCH_SW_WORDS    9u     /* EXC_RETURN, R4-R11 */
+   #define BENCH_R4_INDEX    1u
 #else
    #define BENCH_HAS_VFP     0
    #define BENCH_SW_WORDS    8u     /* R4-R11 */
+   #define BENCH_R4_INDEX    0u
 #endif
 #define BENCH_FPU_HI_WORDS   16u    /* S16-S31 */
 #define BENCH_HW_WORDS       8u     /* R0-R3, R12, LR, PC, xPSR */
@@ -113,7 +121,7 @@ static inline uint32_t* bench_frame_xpsr(void* frame){
    return &bench_frame_hw(frame)[7];
 }
 static inline void bench_frame_corrupt_r4_r11(void* frame){
-   uint32_t* f = (uint32_t*)frame;
+   uint32_t* f = (uint32_t*)frame + BENCH_R4_INDEX;
    f[0] = f[1] = f[2] = f[3] = 0xDEAD0000u;   /* R4-R7 */
    f[4] = f[5] = f[6] = f[7] = 0xDEAD0001u;   /* R8-R11 */
 }
