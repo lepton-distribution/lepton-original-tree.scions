@@ -1,0 +1,79 @@
+0x0800e87e in ETH_ReadPHYRegister (PHYAddress=PHYAddress@entry=0, PHYReg=PHYReg@entry=1) at kernel/dev/arch/cortexm/stm32f4xx/driverlib/stm32f4x7_eth.c:2336
+2336	    timeout++;
+
+### 0. palier 3 : warmup du noyau
+Breakpoint 1 at 0x8000ab0: file kernel/core/core-freertos/kernel.c, line 917.
+Note: automatically using hardware breakpoints for read-only addresses.
+
+Breakpoint 1, _kernel_warmup_boot () at kernel/core/core-freertos/kernel.c:917
+917	   if((desc=_vfs_open("/usr/etc/.boot",O_RDONLY,0))>=0) {
+#0  _kernel_warmup_boot () at kernel/core/core-freertos/kernel.c:917
+#1  0x08000d84 in _start_kernel (arg=arg@entry=0x0) at kernel/core/core-freertos/kernel.c:1223
+#2  0x0800031c in main () at kernel/core/core-freertos/arch/armv7m/freertos_main.c:17
+
+### 1. appelant : entree dans le verrou des appels systeme (__mk_syscall)
+Breakpoint 2 at 0x80029f4: file kernel/core/core-freertos/kernel_syscall_lock.c, line 32.
+
+Breakpoint 2, kernel_syscall_lock () at kernel/core/core-freertos/kernel_syscall_lock.c:32
+32	   if(__kernel_is_in_static_mode())
+tache courante FreeRTOS : initd
+#0  kernel_syscall_lock () at kernel/core/core-freertos/kernel_syscall_lock.c:32
+#1  0x080158bc in _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at kernel/core/system.c:520
+#2  0x0800ee8e in initd_main (argc=5, argv=0x200190c4) at sbin/initd.c:129
+#3  0x08001722 in process_routine (arg=<optimized out>) at kernel/core/core-freertos/process.c:819
+0x080158bc in _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at kernel/core/system.c:520
+520	   __mk_syscall(_SYSCALL_SETPGID,setpgid_dt);
+Value returned is $1 = 0
+retour dans l'appelant, tache : initd
+Line 520 of "kernel/core/system.c" starts at address 0x80158b2 <_system_setpgid+26> and ends at 0x8015930 <_system_setpgid+152>.
+pthread appelant (variable locale de __mk_syscall) : 0x20019a18
+Temporary breakpoint 3 at 0x8015930: file kernel/core/system.c, line 522.
+
+### 2. tache noyau : reveil par groupe d'evenements FreeRTOS, _kernel_syscall
+Breakpoint 4 at 0x80003f0: file kernel/core/core-freertos/kernel.c, line 229.
+
+Breakpoint 4, _kernel_syscall () at kernel/core/core-freertos/kernel.c:229
+229	   kernel_pthread_t* pthread_ptr = g_pthread_lst;
+tache courante FreeRTOS : kernel_thread
+#0  _kernel_syscall () at kernel/core/core-freertos/kernel.c:229
+#1  0x08000cc2 in kernel_routine (arg=<optimized out>) at kernel/core/core-freertos/kernel.c:1076
+#2  0x080013ce in pthread_routine () at kernel/core/core-freertos/kernel_pthread.c:298
+pthread appelant : 0x20019a18, pid=1, irq_nb=0x80, syscall=49, reg.data=0x20019974
+_syscall_setpgid + 1 in section .text
+
+### 3. gestionnaire de l'appel systeme (tache noyau)
+warning: Breakpoint address adjusted from 0x08003797 to 0x08003796.
+Breakpoint 5 at 0x8003796: file kernel/core/core-freertos/syscall.c, line 919.
+warning: Breakpoint 5 address previously adjusted from 0x08003797 to 0x08003796.
+
+Breakpoint 5, _syscall_setpgid (pthread_ptr=0x20019a18, pid=1, data=0x20019974) at kernel/core/core-freertos/syscall.c:919
+919	   setpgid_dt->id_grp = _sys_setpgid(setpgid_dt->pid,setpgid_dt->id_grp);
+tache courante FreeRTOS : kernel_thread
+#0  _syscall_setpgid (pthread_ptr=0x20019a18, pid=1, data=0x20019974) at kernel/core/core-freertos/syscall.c:919
+#1  0x0800046a in _kernel_syscall () at kernel/core/core-freertos/kernel.c:262
+#2  0x08000cc2 in kernel_routine (arg=<optimized out>) at kernel/core/core-freertos/kernel.c:1076
+0x0800046a in _kernel_syscall () at kernel/core/core-freertos/kernel.c:262
+262	         if(kernel_syscall.p_syscall(pthread_ptr,pthread_ptr->pid,pthread_ptr->reg.data)<0) {
+Value returned is $2 = 0
+
+### 4. fin : liberation du verrou par la tache noyau
+Breakpoint 6 at 0x8002a50: file kernel/core/core-freertos/kernel_syscall_lock.c, line 49.
+
+Breakpoint 6, kernel_syscall_unlock () at kernel/core/core-freertos/kernel_syscall_lock.c:49
+49	   if(__kernel_is_in_static_mode())
+tache courante FreeRTOS : kernel_thread
+#0  kernel_syscall_unlock () at kernel/core/core-freertos/kernel_syscall_lock.c:49
+#1  0x0800043e in _kernel_syscall () at kernel/core/core-freertos/kernel.c:271
+#2  0x08000cc2 in kernel_routine (arg=<optimized out>) at kernel/core/core-freertos/kernel.c:1076
+etat de la trace noyau : 2 (KERNEL_SYSCALL_STATUS_END = 2, kernel.h)
+
+### 5. appelant : reprise apres __wait_ret_int
+
+Temporary breakpoint 3, _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at kernel/core/system.c:522
+522	   return setpgid_dt.id_grp;
+tache courante FreeRTOS : initd
+Line 522 of "kernel/core/system.c" starts at address 0x8015930 <_system_setpgid+152> and ends at 0x8015934 <_system_setpgid+156>.
+errno de l'appelant : 0
+#0  _system_setpgid (pid=pid@entry=0, id_grp=id_grp@entry=0) at kernel/core/system.c:522
+#1  0x0800ee8e in initd_main (argc=5, argv=0x200190c4) at sbin/initd.c:129
+#2  0x08001722 in process_routine (arg=<optimized out>) at kernel/core/core-freertos/process.c:819
