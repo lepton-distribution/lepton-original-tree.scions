@@ -63,15 +63,6 @@ Implementation
 | Comments:Win32 Hacking code, disable esp check
 | See:/GZ VC++ compiler option
 ---------------------------------------------*/
-#if defined(WIN32) && defined(LEPTON_CHKESP)
-   #pragma message ("check esp patch")
-void __declspec ( naked ) _chkesp(void)
-{
-   _asm {
-      ret
-   }
-}
-#endif
 
 /*-------------------------------------------
 | Name:_sys_vfork
