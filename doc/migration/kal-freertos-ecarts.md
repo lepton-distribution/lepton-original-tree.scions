@@ -1,6 +1,7 @@
 # Écarts KAL embOS → FreeRTOS (étape 7, tâche 1)
 
-État au 2026-10-06 : analyse en lecture seule, **aucune implémentation**. Référence : FreeRTOS
+État au 2026-10-06 : analyse (tâche 1), puis implémentation du module 7.1 (QEMU `mps2-an386`,
+§5). Référence : FreeRTOS
 202604 LTS, noyau **V11.3.0** (décision 2026-10-06), archive `FreeRTOS-Kernel` tag `V11.3.0`,
 SHA-256 `76530a6bab55233e34e07c8df59f0d4c2e06db473763f8d33277d4fa10950084` (calculé au
 téléchargement ; GitHub ne publie pas d'empreinte pour les archives de tag). Licence MIT.
@@ -95,3 +96,20 @@ FreeRTOS. Inactifs (aucun preset) : `dev_os_debug.c`, pilotes LCD, `uip_core`.
 |---|---|---|---|
 | I1 | `*(StackType_t**)handle` = `pxTopOfStack` | vfork, exec et signaux reposent sur la pile sauvegardée ; premier membre du TCB, exigé par tous les ports | `_Static_assert(offsetof…)` impossible (TCB privé) → test de banc T1 |
 | I2 | trame sauvegardée par `xPortPendSVHandler` | redirection de PC, copie de contexte | `_Static_assert` sur la taille ; test d'unité hôte comparant `pxPortInitialiseStack` à `cpu_regs_t` |
+
+## 5. Constats de l'implémentation (module 7.1, QEMU `mps2-an386`)
+
+| Point | Constat | Traitement |
+|---|---|---|
+| Région atomique | `kernel_io_write` appelle le pilote dans `__atomic_in` ; le pilote socket (lwIP) y attend ses mutex et sémaphores. embOS laisse une tâche bloquer dans `OS_EnterRegion` ; FreeRTOS interdit de bloquer ordonnanceur suspendu (`configASSERT`, `queue.c:1682`, révélé par `ftpd`) | `kal_freertos.c` : toute attente bloquante du backend (`__kal_frt_block`) relâche les suspensions de la tâche courante, puis les rétablit au réveil (sémantique embOS) |
+| `__wait_ret_int` | réveillée par `xTaskAbortDelay` (signal), la tâche ressortait de `xEventGroupWaitBits` sans le bit | boucle jusqu'au bit (comme `OS_WaitEvent`) ; `KERNEL_RET` effacé dans `__make_interrupt` (comme `OS_ClearEvents`) |
+| Verrou des appels système | `kernel_mutex` rendu par la tâche noyau : interdit sous FreeRTOS aussi (`xTaskPriorityDisinherit`) | sémaphore, comme embOS (`kernel_syscall_lock.c`, `kernel.h`) |
+| Mutex | ancienne version : sémaphore binaire (ni récursif, ni propriétaire) | mutex récursif statique, comme `OS_RSEMA` ; `owner_destroy` non portable (inutilisé) |
+| Temporisateurs | `tmr_t` différent entre `rttimer.h` (handle) et `core_rttimer.h` (structure) : écriture hors de `kernel_tmr` ; `xTimerChangePeriod` démarre le temporisateur, période nulle = `configASSERT` ; temps restant non implémenté | `tmr_t` unique, trampoline `void(void)` ; période nulle = arrêt ; `xTimerGetExpiryTime` |
+| Rappels de temporisateur | embOS : contexte du tick ; FreeRTOS : tâche de service | tâche de service à `configMAX_PRIORITIES-1`, au-dessus de toutes les tâches Lepton |
+| Priorités | aucune inversion (§3) | `__kal_priority` : 0-255 → [1, 30] ; « freeRTOS temporary patch » (priorité 4) retiré de `process.c` |
+| Pile | Lepton utilise le bas de pile comme tas (`kernel_pthread_alloca`) : il recouvrait la zone de contrôle de FreeRTOS | 20 octets réservés (`KERNEL_PTHREAD_STACK_GUARD`) |
+| Interruptions | `xSemaphoreGiveFromISR` ne remet jamais l'indicateur à `pdFALSE` | initialisé à chaque appel, cumulé dans `kernel_in_interrupt_higher_priority_task_woken` |
+| Hypothèse `xTaskAbortDelay` | — | **validée** : T4, T6, T7 et leurs variantes FPU réveillent une cible en attente infinie (groupe d'événements) |
+
+Timeslice par tâche (embOS) : non transposable, tourniquet global d'un tick (`configUSE_TIME_SLICING`).
