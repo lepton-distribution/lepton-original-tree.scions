@@ -43,13 +43,20 @@ typedef _tmr_func_t tmr_func_t;
 typedef OS_TIMER tmr_t;
 
 #elif defined(__KERNEL_UCORE_FREERTOS)
-   typedef void (*_tmr_func_t)( xTimerHandle);
+   //etape 7 : meme definition dans rttimer.h et core_rttimer.h (kernel.c et core_rttimer.c
+   //n'incluaient pas le meme en-tete : handle seul d'un cote, structure de l'autre). Le rappel
+   //garde la signature embOS void(void), appele par un trampoline (core_rttimer.c).
+   #ifndef __KERNEL_TMR_T_DEFINED
+   #define __KERNEL_TMR_T_DEFINED
+   typedef void (*_tmr_func_t)(void);
    typedef _tmr_func_t tmr_func_t;
-   
+
    typedef struct tmr_st {
-      xTimerHandle timer;
+      TimerHandle_t timer;
       StaticTimer_t timer_static;
+      tmr_func_t func;
    }tmr_t;
+   #endif
 
 #elif USE_KERNEL_STATIC
    typedef void (*_tmr_func_t)(void);

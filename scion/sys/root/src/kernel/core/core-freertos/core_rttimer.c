@@ -44,6 +44,27 @@ Implementation
 =============================================*/
 
 /*-------------------------------------------
+| Name:rttmr_ms_to_ticks
+| Description: duree en ms vers ticks FreeRTOS, au moins 1 (periode nulle refusee par
+|              xTimerCreateStatic et xTimerChangePeriod, configASSERT).
+---------------------------------------------*/
+static TickType_t rttmr_ms_to_ticks(time_t msec){
+   TickType_t ticks = pdMS_TO_TICKS(msec);
+   return (ticks ? ticks : (TickType_t)1);
+}
+
+/*-------------------------------------------
+| Name:rttmr_trampoline
+| Description: rappel FreeRTOS (tache de service des temporisateurs) vers le rappel Lepton
+|              void(void), comme OS_CreateTimer d'embOS.
+---------------------------------------------*/
+static void rttmr_trampoline(TimerHandle_t timer){
+   tmr_t* tmr = (tmr_t*)pvTimerGetTimerID(timer);
+   if(tmr && tmr->func)
+      tmr->func();
+}
+
+/*-------------------------------------------
 | Name:rttmr_create
 | Description:
 | Parameters:
@@ -55,21 +76,15 @@ int rttmr_create(tmr_t* tmr,rttmr_attr_t* rttmr_attr){
    if(!tmr || !rttmr_attr)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   //OS_CreateTimer(tmr,rttmr_attr->func,rttmr_attr->tm_msec);
-   #if (configSUPPORT_STATIC_ALLOCATION==1)
-      tmr->timer = xTimerCreateStatic( "timer",
-                                       (portTickType)(rttmr_attr->tm_msec/portTICK_RATE_MS),
-                                       pdFALSE,
-                                       tmr,
-                                       (tmrTIMER_CALLBACK) rttmr_attr->func,
-                                       &tmr->timer_static);
-   #else
-      xTimerCreate( "timer",
-                  (portTickType)(rttmr_attr->tm_msec/portTICK_RATE_MS),
-                  pdFALSE,
-                  tmr,
-                  (tmrTIMER_CALLBACK) rttmr_attr->func );
-   #endif
+   tmr->func = rttmr_attr->func;
+   tmr->timer = xTimerCreateStatic("rttmr",
+                                   rttmr_ms_to_ticks(rttmr_attr->tm_msec),
+                                   pdFALSE,
+                                   tmr,
+                                   rttmr_trampoline,
+                                   &tmr->timer_static);
+   if(tmr->timer==(TimerHandle_t)0)
+      return -1;
 #endif
    return 0;
 }
@@ -86,7 +101,8 @@ int rttmr_start(tmr_t* tmr){
    if(!tmr)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   while(xTimerStart(tmr, 10 )!=pdPASS);
+   if(xTimerStart(tmr->timer, 0)!=pdPASS)
+      return -1;
 #endif
    return 0;
 }
@@ -103,7 +119,8 @@ int rttmr_stop(tmr_t* tmr){
    if(!tmr)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   while(xTimerStop(tmr, 10 )!=pdPASS);
+   if(xTimerStop(tmr->timer, 0)!=pdPASS)
+      return -1;
 #endif
    return 0;
 }
@@ -113,14 +130,15 @@ int rttmr_stop(tmr_t* tmr){
 | Description:
 | Parameters:
 | Return Type:
-| Comments:
+| Comments: equivalent de OS_RetriggerTimer (appele aussi depuis le rappel).
 | See:
 ---------------------------------------------*/
 int rttmr_restart(tmr_t* tmr){
    if(!tmr)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   //OS_RetriggerTimer(tmr);
+   if(xTimerReset(tmr->timer, 0)!=pdPASS)
+      return -1;
 #endif
    return 0;
 }
@@ -137,13 +155,11 @@ int rttmr_delete(tmr_t* tmr){
    if(!tmr)
       return -1;
 #ifdef __KERNEL_UCORE_FREERTOS
-   //OS_DeleteTimer(tmr);
+   if(xTimerDelete(tmr->timer, 0)!=pdPASS)
+      return -1;
 #endif
    return 0;
 }
-
-
-
 
 /*===========================================
 End of Sourcerttimer.c

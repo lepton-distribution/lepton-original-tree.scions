@@ -56,23 +56,13 @@ either the MPL or the [eCos GPL] License."
 ---------------------------------------------*/
 int   kernel_pthread_mutex_init(kernel_pthread_mutex_t *mutex, const pthread_mutexattr_t *attr){
    //attr not used. preserved POSIX compatibility
-
 #ifdef __KERNEL_UCORE_FREERTOS
-   #if (configSUPPORT_STATIC_ALLOCATION==1)
-      mutex->mutex = xSemaphoreCreateBinaryStatic(&mutex->mutex_static);
-      if(mutex->mutex==(void*)0)
-         return -1;
-   #else
-      //mutex->mutex = xSemaphoreCreateRecursiveMutex();
-      mutex->mutex = xSemaphoreCreateBinary();
-      if(mutex->mutex==(void*)0)
-         return -1;
-   #endif
-   
-   //
-   xSemaphoreGive(mutex->mutex);
+   //etape 7 : mutex recursif a proprietaire et heritage de priorite, comme OS_RSEMA d'embOS
+   //(l'ancienne version utilisait un semaphore binaire : ni recursif ni proprietaire).
+   mutex->mutex = xSemaphoreCreateRecursiveMutexStatic(&mutex->mutex_static);
+   if(mutex->mutex==(SemaphoreHandle_t)0)
+      return -1;
 #endif
-
    return 0;
 }
 
@@ -85,36 +75,23 @@ int   kernel_pthread_mutex_init(kernel_pthread_mutex_t *mutex, const pthread_mut
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_destroy(kernel_pthread_mutex_t *mutex){
-   int count;
    //
    __atomic_in();
    //
-<<<<<<< core-segger
-#ifdef __KERNEL_UCORE_EMBOS
-   count = OS_GetSemaValue(&mutex->mutex);
-   if(!count) {
-      OS_DeleteRSema(&mutex->mutex);
-      __atomic_out();
-      return 0;   //mutex is not owned by any thread. it could be destroyed.
-   }
-   if(!OS_Request(&mutex->mutex)) {
-      __atomic_out();
-      return -1;    //mutex is not owned by this thread. error it cannot be destroyed;
-   }
-   //
-   count++;    //if request success mutex->count is incremented
-   //mutex is owned by this thread;
-   for(count; count>0; count--) {
-      OS_Unuse(&mutex->mutex);
-   }
-#endif
-
-   OS_DeleteRSema(&mutex->mutex);
-=======
 #ifdef __KERNEL_UCORE_FREERTOS
+   {
+      TaskHandle_t holder = xSemaphoreGetMutexHolder(mutex->mutex);
+      if(holder!=(TaskHandle_t)0) {
+         if(holder!=xTaskGetCurrentTaskHandle()) {
+            __atomic_out();
+            return -1;    //mutex is not owned by this thread. error it cannot be destroyed;
+         }
+         //mutex is owned by this thread: release all recursive locks.
+         while(xSemaphoreGiveRecursive(mutex->mutex)==pdPASS);
+      }
+   }
    vSemaphoreDelete(mutex->mutex);
 #endif
->>>>>>> core-freertos
    //
    __atomic_out();
    //
@@ -124,14 +101,15 @@ int   kernel_pthread_mutex_destroy(kernel_pthread_mutex_t *mutex){
 /*--------------------------------------------
 | Name:        kernel_pthread_mutex_owner_destroy
 | Description:
-| Parameters:  none
-| Return Type: none
-| Comments:
+| Parameters:
+| Return Type:
+| Comments:    FreeRTOS : seul le proprietaire peut rendre un mutex (configASSERT) ; non utilise
+|              (appel en commentaire dans process.c), comme dans l'ancienne version.
 | See:
 ----------------------------------------------*/
 int   kernel_pthread_mutex_owner_destroy(kernel_pthread_t* thread_ptr,kernel_pthread_mutex_t *mutex){
    //not used
-   return 0;
+   return -1;
 }
 
 /*-------------------------------------------
@@ -143,15 +121,11 @@ int   kernel_pthread_mutex_owner_destroy(kernel_pthread_t* thread_ptr,kernel_pth
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_lock(kernel_pthread_mutex_t *mutex){
-
    if(__kernel_is_in_static_mode())
       return 0;
-
 #ifdef __KERNEL_UCORE_FREERTOS
-    //while(!xSemaphoreTakeRecursive(mutex->mutex, portMAX_DELAY));
-   while(!xSemaphoreTake(mutex->mutex, portMAX_DELAY));
+   __kal_frt_block(while(xSemaphoreTakeRecursive(mutex->mutex, portMAX_DELAY)!=pdPASS));
 #endif
-
    return 0;
 }
 
@@ -164,16 +138,12 @@ int   kernel_pthread_mutex_lock(kernel_pthread_mutex_t *mutex){
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_trylock(kernel_pthread_mutex_t *mutex){
-
    if(__kernel_is_in_static_mode())
       return 0;
-
 #ifdef __KERNEL_UCORE_FREERTOS
-   //if(!xSemaphoreTakeRecursive(mutex->mutex, (portTickType)(0)))
-   if(!xSemaphoreTake(mutex->mutex, (portTickType)(0)))
+   if(xSemaphoreTakeRecursive(mutex->mutex, (TickType_t)0)!=pdPASS)
       return -EBUSY;
 #endif
-
    return 0;
 }
 
@@ -186,15 +156,11 @@ int   kernel_pthread_mutex_trylock(kernel_pthread_mutex_t *mutex){
 | See:
 ---------------------------------------------*/
 int   kernel_pthread_mutex_unlock(kernel_pthread_mutex_t *mutex){
-
    if(__kernel_is_in_static_mode())
       return 0;
-
 #ifdef __KERNEL_UCORE_FREERTOS
-   //xSemaphoreGiveRecursive(mutex->mutex);
-   xSemaphoreGive(mutex->mutex);
+   xSemaphoreGiveRecursive(mutex->mutex);
 #endif
-
    return 0;
 }
 
