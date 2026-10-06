@@ -88,7 +88,7 @@ done
 
 # cartes (étapes 5 et 6) : build seul, les tests board exigent la sonde (ctest -L board, à la main)
 for preset in nucleo-f439zi-embos stm32f746g-disco-embos samd21-xplained-pro-embos \
-              nucleo-wl55jc1-embos; do
+              nucleo-wl55jc1-embos nucleo-f439zi-freertos; do
   build_cible "$preset"
 done
 

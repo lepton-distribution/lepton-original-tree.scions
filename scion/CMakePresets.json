@@ -83,6 +83,15 @@
       }
     },
     {
+      "name": "nucleo-f439zi-freertos",
+      "displayName": "NUCLEO-F439ZI (Cortex-M4F), FreeRTOS",
+      "description": "Backend KAL FreeRTOS V11.3.0 (étape 7, module 7.2), même carte que nucleo-f439zi-embos.",
+      "inherits": "nucleo-f439zi-embos",
+      "cacheVariables": {
+        "LEPTON_KAL_BACKEND": "freertos"
+      }
+    },
+    {
       "name": "qemu-mps2-an500-embos",
       "displayName": "QEMU mps2-an500 (Cortex-M7, hard-float double précision), embOS",
       "inherits": "cross",
@@ -151,6 +160,10 @@
       "configurePreset": "nucleo-f439zi-embos"
     },
     {
+      "name": "nucleo-f439zi-freertos",
+      "configurePreset": "nucleo-f439zi-freertos"
+    },
+    {
       "name": "qemu-mps2-an500-embos",
       "configurePreset": "qemu-mps2-an500-embos"
     },
@@ -199,6 +212,13 @@
     {
       "name": "nucleo-f439zi-embos",
       "configurePreset": "nucleo-f439zi-embos",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "nucleo-f439zi-freertos",
+      "configurePreset": "nucleo-f439zi-freertos",
       "output": {
         "outputOnFailure": true
       }
