@@ -341,7 +341,9 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
    //
    memcpy(thread->sigaction_lst,sigaction_dfl_lst,sizeof(sigaction_dfl_lst));
 
-   //tcb : StaticTask_t integre a kernel_pthread_t (task_static), xTaskCreateStatic ci-dessous.
+   //alloc tcb (tache et groupe d'evenements statiques, hors de kernel_pthread_t)
+   if( !(thread->tcb=_sys_malloc(sizeof(tcb_t))) )
+      return -EAGAIN;
    //add to kernel pthread list
    if( kernel_get_pthread_id(thread)==-EAGAIN)
       return -EAGAIN;
@@ -355,7 +357,7 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
       if(!name)
          name = "daemon_kernel_thread";
       //event group for each pthread used for syscall signalisation
-      thread->event_group_handle = xEventGroupCreateStatic(&thread->event_group_static);
+      thread->event_group_handle = xEventGroupCreateStatic(&thread->tcb->events);
       //etape 7 : TCB et pile fournis par Lepton ; priorite Lepton (0-255, plus grand = plus
       //prioritaire, comme embOS) projetee sur les priorites FreeRTOS (__kal_priority, KAL) ;
       //pas de timeslice par tache (configUSE_TIME_SLICING global, ecart documente).
@@ -365,8 +367,7 @@ int   kernel_pthread_create(kernel_pthread_t *thread, const pthread_attr_t *attr
                                                (void *)0,
                                                __kal_priority(thread->attr.priority),
                                                (StackType_t*)thread->attr.stackaddr,
-                                               &thread->task_static);
-      thread->tcb = (tcb_t*)freertos_task_handle;
+                                               &thread->tcb->task);
       if(!freertos_task_handle)
          return -EAGAIN;
 
@@ -452,11 +453,15 @@ int kernel_pthread_cancel(kernel_pthread_t* thread){
       //ce thread est termine entre-temps (kernel_syscall_lock.c) ; plus de transfert de propriete.
       if(kernel_syscall_lock_owner == thread)
          kernel_syscall_lock_owner = &kernel_thread;
-      //terminate thread in scheduler (TCB et pile statiques : rien a liberer cote FreeRTOS)
+      //terminate thread in scheduler (TCB et pile fournis par Lepton : rien a liberer cote FreeRTOS)
       vTaskDelete((TaskHandle_t)thread->tcb);
       //destroy event group
       vEventGroupDelete(thread->event_group_handle);
-      thread->tcb = (tcb_t*)0;
+      //free tcb
+      if(thread->tcb) {
+         _sys_free(thread->tcb);
+         thread->tcb = (tcb_t*)0;
+      }
       //
    }
 #endif

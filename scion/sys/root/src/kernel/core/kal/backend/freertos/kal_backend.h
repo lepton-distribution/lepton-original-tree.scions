@@ -41,9 +41,14 @@ either the MPL or the [eCos GPL] License."
    #include "event_groups.h"
    #include "kal_freertos_frame.h"
 
-   //TCB fourni par Lepton (xTaskCreateStatic) : handle de tâche = adresse du StaticTask_t.
-   typedef StaticTask_t tcb_t;
-   typedef StaticTask_t freertos_tcb_t; //nom utilisé par kernel_pthread.h
+   //TCB fourni par Lepton (xTaskCreateStatic), alloué à part comme OS_TASK pour embOS (le noyau
+   //copie des kernel_pthread_t entiers : vfork, exec) : tâche en tête (handle de tâche = adresse
+   //du TCB, pxTopOfStack en premier mot), puis groupe d'événements des appels système.
+   typedef struct {
+      StaticTask_t task;
+      StaticEventGroup_t events;
+   }freertos_tcb_t; //nom utilisé par kernel_pthread.h
+   typedef freertos_tcb_t tcb_t;
    typedef void (*_pthreadstart_routine_t)(void);
    typedef _pthreadstart_routine_t pthreadstart_routine_t;
    typedef int thr_id_t;
