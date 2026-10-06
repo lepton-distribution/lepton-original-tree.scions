@@ -15,6 +15,10 @@ set(LEPTON_BSP_SOURCES
   # couche SAMD21 de Lepton
   ${samd21}/dev_samd21/dev_samd21_uart_x.c)
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_samd21_xplained_pro.xml)
+# FreeRTOS (étape 7, module 7.3 ; décision 2026-10-06) : piles idle 128 mots et temporisateurs
+# 256 mots (défauts 256 et 512) : avec 1 Ko et 2 Ko, le tas ne laisse que 484 o après le
+# démarrage et lsh ne peut plus lancer de commande (pics relevés : idle 88 o, temporisateurs 236 o)
+set(LEPTON_FREERTOS_CONFIG configMINIMAL_STACK_SIZE=128 configTIMER_TASK_STACK_DEPTH=256)
 set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM0p-samd21)
 # carte réelle : console série de l'EDBG et sonde OpenOCD (CMSIS-DAP)
