@@ -3,9 +3,10 @@
 # Pipeline de l'étape 6 :
 #   - tests unitaires des outils de migration ; garde audit_iar.py (zéro IAR-isme Lepton actif) ;
 #   - preset hôte : build, ctest -L host ;
-#   - presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7 ; étape 7 :
-#     mps2-an386 sous FreeRTOS) : build, ctest -L smoke, -L net, -L kal ;
-#   - presets carte (F439/F429, F746, SAMD21, WL55) : build seul (pas d'exécution sans sonde) ;
+#   - matrice micro-noyau (embOS, FreeRTOS, étape 7) × machine :
+#     presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7) : build,
+#     ctest -L smoke, -L net, -L kal ;
+#     presets carte (F439/F429, F746, SAMD21, WL55) : build seul (pas d'exécution sans sonde) ;
 #   - occupation mémoire de chaque exécutable (--print-memory-usage) archivée dans
 #     $LEPTON_BUILD/ci/memoire.csv, échec au-delà de LEPTON_MEM_ALERT % (défaut 90) par région ;
 #   - artefacts .elf/.bin/.map copiés dans $LEPTON_BUILD/ci/artefacts/<preset>/.
@@ -68,10 +69,21 @@ cmake --preset host >/dev/null
 cmake --build --preset host
 ctest --preset host -L host --no-tests=error
 
-# M4F hard-float (cible) puis soft-float (chemin sans FPU), M7 (étape 6) ; backend FreeRTOS
-# (étape 7, matrice micro-noyau × machine complétée au module 7.3)
-for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft qemu-mps2-an500-embos \
-              qemu-mps2-an386-freertos; do
+# matrice micro-noyau × machine (étape 7) : <machine>-<micro-noyau>
+kernels="embos freertos"
+qemu_machines="qemu-mps2-an386 qemu-mps2-an386@soft qemu-mps2-an500"
+board_machines="nucleo-f439zi stm32f746g-disco samd21-xplained-pro nucleo-wl55jc1"
+# preset d'une machine : <machine>-<micro-noyau>[-<variante>] (an386@soft → an386-<µn>-soft)
+preset_of() {
+  local machine="${1%@*}" variant=""
+  [ "$machine" != "$1" ] && variant="-${1#*@}"
+  echo "$machine-$2$variant"
+}
+
+# M4F hard-float (cible) puis soft-float (chemin sans FPU), M7 (étape 6), sous chaque micro-noyau
+for kernel in $kernels; do
+for machine in $qemu_machines; do
+  preset="$(preset_of "$machine" "$kernel")"
   build_cible "$preset"
 
   step "fumée ($preset) : ctest -L smoke"
@@ -85,11 +97,13 @@ for preset in qemu-mps2-an386-embos qemu-mps2-an386-embos-soft qemu-mps2-an500-e
     ctest --preset "$preset" -L kal --no-tests=error
   fi
 done
+done
 
-# cartes (étapes 5 et 6) : build seul, les tests board exigent la sonde (ctest -L board, à la main)
-for preset in nucleo-f439zi-embos stm32f746g-disco-embos samd21-xplained-pro-embos \
-              nucleo-wl55jc1-embos nucleo-f439zi-freertos; do
-  build_cible "$preset"
+# cartes (étapes 5 à 7) : build seul, les tests board exigent la sonde (ctest -L board, à la main)
+for kernel in $kernels; do
+for machine in $board_machines; do
+  build_cible "$(preset_of "$machine" "$kernel")"
+done
 done
 
 step "trunk : aucun fichier régulier"
