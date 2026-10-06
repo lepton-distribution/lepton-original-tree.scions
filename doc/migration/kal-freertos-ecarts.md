@@ -115,3 +115,13 @@ FreeRTOS. Inactifs (aucun preset) : `dev_os_debug.c`, pilotes LCD, `uip_core`.
 | Hypothèse `xTaskAbortDelay` | — | **validée** : T4, T6, T7 et leurs variantes FPU réveillent une cible en attente infinie (groupe d'événements) |
 
 Timeslice par tâche (embOS) : non transposable, tourniquet global d'un tick (`configUSE_TIME_SLICING`).
+
+## 6. Constats du module 7.3 (autres cibles)
+
+| Point | Constat | Traitement |
+|---|---|---|
+| Ports | M7 r1 et plus : `ARM_CM4F` ; F746 (M7 r0p1) : `ARM_CM7/r0p1` (`ARM_CM4F` refuse ce CPUID par `configASSERT`) ; M4 sans FPU, M3 : `ARM_CM3` ; M0+ : `ARM_CM0` | `LEPTON_FREERTOS_PORT` par `cmake/cpu`, surchargé par la carte (F746) |
+| `ARM_CM0` (V11) | gestionnaires et masque d'interruptions dans `portasm.c` ; `configENABLE_MPU` exigé ; trame `[EXC_RETURN, R4-R7, R8-R11]` + cadre matériel | `portasm.c` compilé s'il existe ; `configENABLE_MPU 0` ; `arch/armv6m/kal_freertos_frame.h` ; oracle du banc complété |
+| Configuration du noyau | `kernelconf.h` (origine) : signaux temps réel et verrous de fichiers sous embOS seul ; FreeRTOS sans `flock` partout, sans signaux temps réel en ARMv6-M | extensions identiques sous les deux micro-noyaux (décision 2026-10-06) |
+| RAM (SAMD21, 32 Ko) | +4,5 Ko de RAM statique (sémaphores `StaticSemaphore_t` 80 o contre 8, tâches idle et temporisateurs, listes de prêts par priorité) : tas insuffisant pour `vfork` | piles idle et temporisateurs réduites par la carte ; **écart accepté** : KAL validé (banc 14/14), système complet non (`validation-samd21-xplained-pro.md`) |
+| Surcharges par carte | `FreeRTOSConfig.h` commun, valeurs en `#ifndef` | `LEPTON_FREERTOS_CONFIG` (liste de définitions) posé par `cmake/boards` |
