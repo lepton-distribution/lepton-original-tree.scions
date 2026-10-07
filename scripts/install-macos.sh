@@ -4,11 +4,18 @@
 # (préfixe Homebrew, archive de la toolchain), mais le build de Lepton n'y a pas été validé.
 #
 # Usage : ./install-macos.sh [--with-debug-tools] [--toolchain-dir <répertoire>]
+#                            [--pkg-manager macports|brew]
 #   --with-debug-tools : ajoute OpenOCD (flash et débogage des cartes, étape 10)
 #   --toolchain-dir    : où déposer la toolchain ARM (défaut : $LEPTON_TOOLCHAIN_DIR, sinon ~/opt)
+#   --pkg-manager      : gestionnaire de paquets ; défaut : MacPorts sur Intel, Homebrew sur
+#                        Apple Silicon, selon ce qui est installé
 #
-# Ce que le script ne fait pas : installer Homebrew ou les outils de ligne de commande Xcode
-# (il s'arrête en donnant la commande), utiliser sudo, modifier un fichier de démarrage du shell
+# Mac Intel : Homebrew n'y fournit plus de paquets binaires (Tier 3 depuis septembre 2026, tout
+# serait compilé sur place) ; MacPorts est donc le choix par défaut. MacPorts installe sous
+# /opt/local et exige sudo (port install) ; Homebrew n'en demande pas.
+#
+# Ce que le script ne fait pas : installer MacPorts, Homebrew ou les outils de ligne de commande
+# Xcode (il s'arrête en donnant la marche à suivre), modifier un fichier de démarrage du shell
 # (il affiche la ligne PATH à ajouter), copier le paquet embOS (licence SFL, hors git).
 # Rien d'i386 (retiré à l'étape 8) ; pas de règles udev (sans objet sous macOS).
 # Compatible bash 3.2. Rejouable : ce qui est déjà en place n'est pas réinstallé.
@@ -17,10 +24,12 @@ set -euo pipefail
 
 DEBUG_TOOLS=0
 TOOLCHAIN_DIR="${LEPTON_TOOLCHAIN_DIR:-$HOME/opt}"
+PKG=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --with-debug-tools) DEBUG_TOOLS=1; shift ;;
     --toolchain-dir)    TOOLCHAIN_DIR="${2:?--toolchain-dir : répertoire manquant}"; shift 2 ;;
+    --pkg-manager)      PKG="${2:?--pkg-manager : macports ou brew}"; shift 2 ;;
     --with-riscv)       echo "--with-riscv : non pris en charge sous macOS (portage reporté)." >&2; exit 2 ;;
     *) echo "option inconnue: $1" >&2; exit 2 ;;
   esac
@@ -48,18 +57,46 @@ esac
 
 xcode-select -p >/dev/null 2>&1 \
   || die "outils de ligne de commande Xcode absents : lancer « xcode-select --install », puis rejouer."
-command -v brew >/dev/null 2>&1 \
-  || die "Homebrew absent : l'installer depuis https://brew.sh, puis rejouer."
-BREW_PREFIX="$(brew --prefix)"   # /usr/local (Intel) ou /opt/homebrew (Apple Silicon)
+# Gestionnaire de paquets : choix explicite, sinon MacPorts sur Intel et Homebrew sur Apple
+# Silicon s'ils sont installés, sinon l'autre.
+have() { command -v "$1" >/dev/null 2>&1; }
+if [ -z "$PKG" ]; then
+  if [ "$ARCH" = "x86_64" ]; then
+    if have port; then PKG=macports; elif have brew; then PKG=brew; fi
+  else
+    if have brew; then PKG=brew; elif have port; then PKG=macports; fi
+  fi
+fi
+case "$PKG" in
+  macports) have port || die "MacPorts absent : l'installer depuis https://www.macports.org/install.php, puis rejouer."
+            PKG_PREFIX="/opt/local" ;;
+  brew)     have brew || die "Homebrew absent : l'installer depuis https://brew.sh, puis rejouer."
+            PKG_PREFIX="$(brew --prefix)"   # /usr/local (Intel) ou /opt/homebrew (Apple Silicon)
+            [ "$ARCH" = "x86_64" ] && warn "Homebrew sur Intel : plus de paquets binaires, compilation sur place (long, sans garantie). MacPorts conseillé." ;;
+  "")       if [ "$ARCH" = "x86_64" ]; then
+              die "aucun gestionnaire de paquets : installer MacPorts (https://www.macports.org/install.php), puis rejouer."
+            else
+              die "aucun gestionnaire de paquets : installer Homebrew (https://brew.sh), puis rejouer."
+            fi ;;
+  *)        die "--pkg-manager : macports ou brew (reçu : $PKG)" ;;
+esac
+echo "gestionnaire de paquets : $PKG ($PKG_PREFIX)"
 
-# brew_install <formule>… : installe ce qui manque, sans mettre à niveau l'existant.
-brew_install() {
-  local f
-  for f in "$@"; do
-    if brew list --formula "$f" >/dev/null 2>&1; then
-      echo "  $f : déjà installé"
+# pkg_install <nom brew>:<nom macports>… : installe ce qui manque, sans mettre à niveau l'existant.
+# Un nom MacPorts peut porter des variantes (« qemu +target_arm »).
+pkg_install() {
+  local pair b m
+  for pair in "$@"; do
+    b="${pair%%:*}"; m="${pair#*:}"
+    if [ "$PKG" = brew ]; then
+      if brew list --formula "$b" >/dev/null 2>&1; then echo "  $b : déjà installé"; else brew install "$b"; fi
     else
-      brew install "$f"
+      # shellcheck disable=SC2086  # variantes séparées du nom du port
+      if port -q installed ${m%% *} 2>/dev/null | grep -q '(active)'; then
+        echo "  ${m%% *} : déjà installé"
+      else
+        sudo port -N install $m
+      fi
     fi
   done
 }
@@ -67,13 +104,13 @@ brew_install() {
 # --- Base : build system, scripts ----------------------------------------------
 # Compilateur hôte : Apple clang (outils Xcode). expat : fourni par le SDK de macOS.
 log "Base (cmake, ninja, python, pipx)"
-brew_install cmake ninja python pipx
+pkg_install cmake:cmake ninja:ninja python:python313 pipx:pipx
 SDK="$(xcrun --show-sdk-path 2>/dev/null || true)"
 if [ -n "$SDK" ] && [ -f "$SDK/usr/include/expat.h" ]; then
   echo "expat : SDK ($SDK)"
 else
-  warn "expat.h absent du SDK : installation par Homebrew (chemin à donner à CMake)."
-  brew_install expat
+  warn "expat.h absent du SDK : installation par $PKG (chemin $PKG_PREFIX à donner à CMake)."
+  pkg_install expat:expat
 fi
 
 # --- scion : composition de l'arbre des sources (étape 0), même tag que Debian ---
@@ -85,19 +122,21 @@ pipx ensurepath >/dev/null 2>&1 || true
 
 # --- Outillage (métriques, documentation) --------------------------------------
 log "Outillage (cloc, doxygen, graphviz)"
-brew_install cloc doxygen graphviz
+pkg_install cloc:cloc doxygen:doxygen graphviz:graphviz
 # coccinelle : outillage de transformation de la migration (terminée) ; facultatif ici.
-brew list --formula coccinelle >/dev/null 2>&1 || brew install coccinelle \
+(pkg_install coccinelle:coccinelle) \
   || warn "coccinelle non installé (facultatif : transformations de masse de la migration)."
 
 # --- QEMU (socle mps2-an386 et mps2-an500, banc KAL) ----------------------------
 log "QEMU (system-arm)"
-brew_install qemu
+# MacPorts : la cible ARM de QEMU est une variante non activée par défaut ; l'activer peut
+# déclencher une compilation sur place.
+pkg_install "qemu:qemu +target_arm"
 # Le test réseau QEMU (label net) exige un tap en espace de noms (unshare) : Linux seulement.
 
 # --- Toolchain croisée ARM ------------------------------------------------------
 # Arm GNU Toolchain 14.2.Rel1 (GCC 14.2.1, comme Debian 13), archive officielle d'Arm vérifiée
-# par SHA-256. Pas la formule Homebrew : elle suit la dernière version et n'est pas épinglable.
+# par SHA-256. Pas le paquet du gestionnaire : il suit la dernière version, non épinglable.
 ARM_VERSION="14.2.rel1"
 ARM_NAME="arm-gnu-toolchain-${ARM_VERSION}-${ARM_HOST}-arm-none-eabi"
 ARM_URL="https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_VERSION}/binrel/${ARM_NAME}.tar.xz"
@@ -128,8 +167,8 @@ fi
 
 # --- Flash et débogage des cartes (étape 10) -----------------------------------
 if [ "$DEBUG_TOOLS" = "1" ]; then
-  log "Outils de débogage (open-ocd ; gdb : arm-none-eabi-gdb de la toolchain)"
-  brew_install open-ocd
+  log "Outils de débogage (OpenOCD ; gdb : arm-none-eabi-gdb de la toolchain)"
+  pkg_install open-ocd:openocd
   # Debian nomme gdb « gdb-multiarch » ; ici c'est arm-none-eabi-gdb (tests/endurance_board.py
   # et debug/gdbinit-* citent le nom Debian).
 fi
@@ -137,7 +176,7 @@ fi
 # --- Récapitulatif : versions à consigner dans MIGRATION-STATUS.md --------------
 log "Versions installées (à consigner dans MIGRATION-STATUS.md)"
 printf '  %-26s %s\n' "macOS" "$(sw_vers -productVersion) ($ARCH)"
-printf '  %-26s %s\n' "Homebrew" "$BREW_PREFIX"
+printf '  %-26s %s\n' "paquets" "$PKG ($PKG_PREFIX)"
 for c in cc cmake ninja python3 scion cloc spatch \
          arm-none-eabi-gcc arm-none-eabi-gdb qemu-system-arm doxygen openocd; do
   if command -v "$c" >/dev/null 2>&1; then

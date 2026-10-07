@@ -15,7 +15,8 @@ référence.
 
 - Étape 8 close : preset `host` en 64 bits, `tests/host/mklepton_empreintes.sha256` versionné,
   build clang vert sur Debian ; `handoff/etape-8.md`.
-- Mac Intel, Homebrew installé ; version de macOS à consigner.
+- Mac Intel, **MacPorts** installé (Homebrew ne fournit plus de paquets binaires pour Intel
+  depuis septembre 2026) ; version de macOS à consigner.
 - Rootstock sur le Mac : `<À CONFIRMER>` (proposition : `~/lepton`, comme sur Debian).
 - Paquet embOS-Classic V5.20.0.0 Cortex-M GCC copié par l'utilisateur dans
   `<ROOTSTOCK>/third_party/embos/cortexm-gcc/5.20.0.0/` (licence SFL : hors git, jamais téléchargé
@@ -32,12 +33,12 @@ sous macOS). Le rejouer, corriger ce qui échoue, sans en changer les choix ci-d
 
 | Élément | Debian | macOS |
 |---|---|---|
-| CMake, Ninja, Python 3, pipx | apt | Homebrew |
-| expat | `libexpat1-dev` | SDK de macOS ; Homebrew seulement si l'en-tête manque |
+| CMake, Ninja, Python 3, pipx | apt | MacPorts (`cmake`, `ninja`, `python313`, `pipx`) |
+| expat | `libexpat1-dev` | SDK de macOS ; MacPorts seulement si l'en-tête manque |
 | `scion` | pipx, tag `0.5.0.1` | idem, même tag |
-| QEMU | `qemu-system-arm` 10.0.13 | Homebrew `qemu` ; `mps2-an386` et `mps2-an500` exigées |
+| QEMU | `qemu-system-arm` 10.0.13 | MacPorts `qemu +target_arm` (variante non activée par défaut : compilation sur place possible) ; `mps2-an386` et `mps2-an500` exigées |
 | Toolchain ARM | `gcc-arm-none-eabi` 14.2.1, newlib 4.5.0.20241231 | Arm GNU Toolchain 14.2.Rel1, hôte `darwin-x86_64` (site d'Arm), pas la formule Homebrew (non épinglable) |
-| OpenOCD, gdb | `openocd` 0.12.0, `gdb-multiarch` | Homebrew `open-ocd` ; `arm-none-eabi-gdb` de la toolchain |
+| OpenOCD, gdb | `openocd` 0.12.0, `gdb-multiarch` | MacPorts `openocd` ; `arm-none-eabi-gdb` de la toolchain |
 
 - Le script télécharge l'archive d'Arm, en vérifie le SHA-256, la dépose sous `~/opt` (ou
   `--toolchain-dir`), contrôle `libc_nano.a` pour cortex-m4 hard-float et relève la version de
@@ -46,9 +47,10 @@ sous macOS). Le rejouer, corriger ce qui échoue, sans en changer les choix ci-d
   tronc (révision `7923059`), et non la 4.5.0.20241231 de Debian. Présenter les deux versions
   relevées et faire trancher avant de construire une cible : accepter l'écart (les firmwares du
   Mac diffèrent alors de ceux de Debian, l'étape 10 les valide) ou chercher une autre toolchain.
-- Apple Silicon : le script choisit l'archive `darwin-arm64` et le préfixe Homebrew adéquat,
+- Apple Silicon : le script choisit l'archive `darwin-arm64` et y prend Homebrew par défaut,
   mais ce plan ne valide que le Mac Intel.
-- Pas de `sudo` hors Homebrew ; rien d'i386 ; pas de règles udev.
+- `sudo` pour `port install` seulement ; rien d'i386 ; pas de règles udev. Paquets sous
+  `/opt/local` : vérifier que CMake y trouve ce qu'il cherche sans chemin codé en dur.
 
 ### 2. Arbre des sources
 
@@ -124,6 +126,9 @@ sous macOS). Le rejouer, corriger ce qui échoue, sans en changer les choix ci-d
 
 ## Pièges connus
 
+- **Mac Intel en fin de support** : Apple abandonne Intel à partir de macOS 27 et Homebrew ne le
+  prend plus en charge ; cet hôte ne recevra plus de mises à jour d'outils. Consigner les
+  versions installées, ne pas compter sur leur renouvellement.
 - **Quarantaine** : une toolchain téléchargée par navigateur porte l'attribut
   `com.apple.quarantine` ; symptôme « impossible d'ouvrir … développeur non vérifié » au premier
   `arm-none-eabi-gcc`. Parade : retirer l'attribut sur le répertoire de la toolchain.
@@ -136,7 +141,7 @@ sous macOS). Le rejouer, corriger ce qui échoue, sans en changer les choix ci-d
 - **Mach-O** : `__attribute__((section("nom")))` exige `"segment,section"` ; pas d'alias de
   symbole (`__attribute__((alias))`) ; `--start-group`, `--gc-sections` inconnus de l'éditeur de
   liens. Aucun de ces usages dans le noyau statique au 2026-10-07.
-- **Deux Python** (outils Xcode, Homebrew) : `pipx` et `cmake` doivent voir le même `python3`.
+- **Deux Python** (outils Xcode, MacPorts) : `pipx` et `cmake` doivent voir le même `python3`.
 - **`LEPTON_MKLEPTON`** des presets croisés pointe `../build/host/mklepton` : construire le preset
   `host` avant tout preset croisé, comme sur Debian.
 
