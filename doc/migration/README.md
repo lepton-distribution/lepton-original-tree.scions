@@ -24,6 +24,8 @@ accueillir de nouveaux cœurs (annexe). Abandonnés (code gelé) : ARM7, ARM9, M
   `depots/lepton/original/master` du dépôt `lepton-original-tree.scions`. On édite et on utilise git
   (commandes natives) dans le clone ; on compile depuis le trunk.
 - Conteneur `ci/Dockerfile` (même `install-debian.sh`) : référence de la CI et de la reproductibilité.
+- Second hôte (étapes 8 à 10, chantier ouvert le 2026-10-07) : macOS sur Mac Intel ; Debian reste
+  l'hôte de référence.
 - Git local uniquement : aucun push sans accord explicite de l'utilisateur (ORCHESTRATION §5) ;
   suivi par `MIGRATION-STATUS.md`, `handoff/` et `git log` sur la machine.
 
@@ -62,12 +64,15 @@ accueillir de nouveaux cœurs (annexe). Abandonnés (code gelé) : ARM7, ARM9, M
 | 5 | `ETAPE-5-nucleo-f439zi.md` | Carte de base NUCLEO-F439ZI | Base de départ posée |
 | 6 | `ETAPE-6-generalisation.md` | Olimex P407, Discovery F7, M3, M0+ ; CI ; retrait d'IAR | Mono-chaîne GCC |
 | 7 | `ETAPE-7-backend-freertos.md` | Backend KAL FreeRTOS (depuis `core-freertos`) | Iso-comportement avec embOS |
+| 8 | `ETAPE-8-hote-64-bits.md` | Noyau statique hôte en 64 bits : `va_list` de `I_LINK`, `size_t`, retrait de `-m32` | mklepton 64 bits, sorties identiques |
+| 9 | `ETAPE-9-hote-macos.md` | Second hôte : macOS sur Mac Intel (noyau statique, mklepton, QEMU) | `install-macos.sh`, `ci/run.sh` vert sur macOS |
+| 10 | `ETAPE-10-cartes-macos.md` | Validation des quatre cartes depuis macOS, embOS | `validation-macos.md` |
 | — | `BANC-TEST-KAL-QEMU.md` | Tests unitaires du KAL sous QEMU (contexte, signaux, vfork/exec) | Matrice cœur × micro-noyau |
 | — | `ANNEXE-nouveau-coeur-riscv.md` | RISC-V reporté ; exigences sur l'architecture | Liste de contrôle |
 | — | `sources/lepton-migration-guide-step-1.md` | Guide de l'auteur (étapes 2 et 3 du plan : §1.1-1.2 et §2.1) | Source |
 
 ```
-0 ──► 1 ──► 2 ──► 3 ──► 4 ──► 5 ──► 6 ──► 7
+0 ──► 1 ──► 2 ──► 3 ──► 4 ──► 5 ──► 6 ──► 7 ──► 8 ──► 9 ──► 10
                   └── banc KAL (3, 4, 6, 7)
 ```
 

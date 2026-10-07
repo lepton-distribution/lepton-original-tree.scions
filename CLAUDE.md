@@ -213,6 +213,8 @@ Ouverts (décision humaine ou chantier à planifier) :
 - [ ] SAMD21 sous FreeRTOS : système complet non supporté (RAM), écart accepté ; piste :
   sémaphore `core-freertos` plus léger.
 - [ ] Conteneur `ci/Dockerfile` jamais construit.
+- [ ] Chantier « hôte macOS » (ouvert le 2026-10-07) : `ETAPE-8-hote-64-bits.md` (Debian),
+  `ETAPE-9-hote-macos.md`, `ETAPE-10-cartes-macos.md` ; état dans `MIGRATION-STATUS.md`.
 - [ ] Dette technique : section « Blocages et dette » de `MIGRATION-STATUS.md`.
 
 ---
