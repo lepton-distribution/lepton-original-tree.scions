@@ -2,7 +2,7 @@
 # ci/run.sh — non-régression Lepton (étape 3 ; ORCHESTRATION §5 : vert avant chaque commit).
 # Pipeline de l'étape 6 :
 #   - tests unitaires des outils de migration ; garde audit_iar.py (zéro IAR-isme Lepton actif) ;
-#   - preset hôte : build, ctest -L host ;
+#   - preset hôte : build, ctest -L host ; même chose avec clang ($LEPTON_BUILD/host-clang, étape 8) ;
 #   - matrice micro-noyau (embOS, FreeRTOS, étape 7) × machine :
 #     presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7) : build,
 #     ctest -L smoke, -L net, -L kal ;
@@ -68,6 +68,11 @@ step "preset host : configuration, build, ctest -L host"
 cmake --preset host >/dev/null
 cmake --build --preset host
 ctest --preset host -L host --no-tests=error
+
+step "preset host, second compilateur (clang) : configuration, build, ctest -L host"
+cmake --preset host -B "$LEPTON_BUILD/host-clang" -DCMAKE_C_COMPILER=clang >/dev/null
+cmake --build "$LEPTON_BUILD/host-clang"
+ctest --test-dir "$LEPTON_BUILD/host-clang" -L host --no-tests=error
 
 # matrice micro-noyau × machine (étape 7) : <machine>-<micro-noyau>
 kernels="embos freertos"

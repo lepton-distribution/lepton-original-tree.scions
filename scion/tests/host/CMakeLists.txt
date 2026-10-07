@@ -45,6 +45,12 @@ add_test(NAME host.mklepton
                  -DTARGET=cortexm_lepton -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton
                  -P ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_check.cmake)
 
+# --- mklepton : mêmes octets que la référence -m32 (étape 8), quel que soit l'hôte ---------------
+add_test(NAME host.mklepton_empreintes
+         COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_empreintes.sh
+                 --mklepton $<TARGET_FILE:mklepton> --trunk ${CMAKE_SOURCE_DIR}
+                 --check ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_empreintes.sha256)
+
 set_tests_properties(host.vfs_ufs host.ufs_format_host host.ufs_format_arm host.kernel_stub
-                     host.mklepton
+                     host.mklepton host.mklepton_empreintes
                      PROPERTIES LABELS host)
