@@ -1,6 +1,6 @@
 /*
  * Format de l'image UFS : structures écrites sur le support (doc/migration/noyau-statique.md §4).
- * Compilé pour l'hôte (noyau statique, -m32) ET par arm-none-eabi-gcc (test host.ufs_format_arm) :
+ * Compilé pour l'hôte (noyau statique, x86_64) ET par arm-none-eabi-gcc (test host.ufs_format_arm) :
  * les mêmes assertions garantissent qu'une image construite par mklepton est lue telle quelle
  * par la cible ARM. Le superbloc est écrit champ par champ (pas de sizeof(superblk_t)).
  */

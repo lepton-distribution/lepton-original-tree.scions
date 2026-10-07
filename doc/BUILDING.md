@@ -15,7 +15,7 @@ l'étape 6 ; état précédent : tag local `legacy-iar`). Versions épinglées :
 | Cortex-M7 (`armv7m`) | STM32F746G-DISCO | `stm32f746g-disco-embos` | validé sur carte (réseau, endurance 4 h) ; build en CI |
 | Cortex-M4 sans FPU (`armv7m`, soft) | NUCLEO-WL55JC1 (CPU1 seul) | `nucleo-wl55jc1-embos` | validé sur carte (radio FSK 868 MHz, endurance 1 h, sans réseau IP) ; build en CI |
 | Cortex-M0+ (`armv6m`) | SAMD21 Xplained Pro | `samd21-xplained-pro-embos` | validé sur carte (endurance 1 h, sans réseau) ; build en CI |
-| hôte x86 (`-m32`) | noyau statique, mklepton | `host` | tests hôte verts (CI) |
+| hôte x86_64 (gcc, clang) | noyau statique, mklepton | `host` | tests hôte verts avec gcc et clang (CI) |
 
 Micro-noyau : embOS (port GCC Segger) sur toutes les cibles ARM. Cortex-M3 (`mps2-an385`) : fichier
 cœur présent, hors périmètre de validation. Ajouter un cœur ou une carte :

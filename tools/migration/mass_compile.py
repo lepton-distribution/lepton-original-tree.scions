@@ -357,7 +357,7 @@ def main():
              "Généré par `tools/migration/mass_compile.sh` — ne pas éditer à la main.  ",
              "Commande : `%s`" % " ".join(["mass_compile.sh"] + sys.argv[1:]), "",
              "Résultat : **%d/%d fichiers C OK (%.1f %%)** ; `arm-none-eabi-gcc -c` (outils hôte : "
-             "`cc -m32`)." % (ok, len(res), 100.0 * ok / max(1, len(res))), "",
+             "`cc`)." % (ok, len(res), 100.0 * ok / max(1, len(res))), "",
              "Commande de chaque fichier : entrée du preset qui le compile, sinon gabarit du preset "
              "QEMU le plus proche corrigé par profil (voir l'en-tête du script). Détail par fichier : "
              "`mass-compile.csv`.", "",
