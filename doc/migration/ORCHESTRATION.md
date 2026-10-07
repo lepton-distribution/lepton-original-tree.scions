@@ -20,7 +20,7 @@ scripts/claude-lepton.sh "Lis doc/migration/ORCHESTRATION.md et poursuis la migr
 7. **Valider** : dérouler les critères de validation du fichier d'étape. Un critère en échec → l'étape reste `EN COURS`, consigner le blocage, ne jamais passer outre.
 8. **Clore la session** : produire ou compléter le handoff (§3bis), mettre à jour `MIGRATION-STATUS.md` (statut, métriques, décisions, blocages), commit **local** (aucun push, §5), et produire un résumé court à l'utilisateur : fait / reste / blocages / prochaine action.
 
-Ordre des étapes : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7, strictement linéaire. Le banc `BANC-TEST-KAL-QEMU.md` est transversal : construit à l'étape 3, rejoué à chaque lot de l'étape 4, exigé aux étapes 6 et 7. Le RISC-V (`ANNEXE-nouveau-coeur-riscv.md`) est hors séquence : il n'est pas exécuté, seules ses exigences d'architecture sont vérifiées aux étapes 2, 4 et 6.
+Ordre des étapes : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7, strictement linéaire ; puis le chantier « hôte macOS », 8 → 9 → 10, linéaire lui aussi (8 sur Debian, 9 et 10 sur le Mac ; étape 10 : une carte par session). Le banc `BANC-TEST-KAL-QEMU.md` est transversal : construit à l'étape 3, rejoué à chaque lot de l'étape 4, exigé aux étapes 6 et 7. Le RISC-V (`ANNEXE-nouveau-coeur-riscv.md`) est hors séquence : il n'est pas exécuté, seules ses exigences d'architecture sont vérifiées aux étapes 2, 4 et 6.
 
 ## 2. Mode plan — systématique en début d'étape
 
@@ -78,6 +78,10 @@ Décisions à faire acter explicitement, consignées avec date dans `MIGRATION-S
 | 5 | Passage de `-Og` à `-Os`/`-O2` après validation |
 | 6 | Liste des cartes (Discovery F7 : modèle ; cartes M3 et M0+) ; suppression des fichiers IAR ; sort du code gelé |
 | 7 | Devenir du backend embOS après validation FreeRTOS |
+| 8 | Correction du `va_list` de `I_LINK` : macro d'architecture (actée) ; passage à `va_list*` reporté en dette |
+| 8 | Tout `.bin` ARM ou toute sortie de mklepton qui change d'un octet |
+| 9 | Emplacement du rootstock sur le Mac ; toolchain ARM dont la version de GCC ou de newlib diffère de Debian ; label `net` non exécuté sur macOS ; toute modification du noyau commun pour macOS ; collision de casse sur APFS |
+| 10 | Limites de l'écriture en flash (flash interne seulement) ; adresse du Mac sur le câble des cartes ; modification d'un `debug/openocd-*.cfg` ; pile de la SAMD21 au-dessus de 85 % ; endurances de 1 h (SAMD21, WL55) ; exécution de FreeRTOS sur carte depuis macOS |
 | — | Lancement du portage RISC-V (annexe) |
 
 En outre : fin d'étape = arrêt systématique et validation utilisateur avant d'entamer la suivante, même si tout est vert.
@@ -87,7 +91,7 @@ En outre : fin d'étape = arrêt systématique et validation utilisateur avant d
 - Git se pratique **en commande native dans le clone** (répertoire de lancement, `$LEPTON_CLONE`), jamais `scion git`, jamais dans le trunk (vue de liens, pas un dépôt). Tout fichier nouveau est créé dans le clone puis rendu visible par `scion graft` ; le hook `.claude/hooks/lepton_guard.py` refuse toute écriture dans le trunk.
 - Une branche par étape : `migration/etape-N` (ou `migration/etape-4-<repertoire>` pour les modules), fusionnée après validation utilisateur.
 - Commits **mécaniques** (générés par script : un commit par répertoire × règle, message référençant le script et la règle) strictement séparés des commits **sémantiques** (petits, relus).
-- Dès l'étape 2, `ctest -L host` vert avant chaque commit ; dès l'étape 3, `ci/run.sh` vert ; dès l'étape 5, ni régression sur la carte F439 (vérification manuelle ou exécutant CI équipé).
+- Dès l'étape 2, `ctest -L host` vert avant chaque commit ; dès l'étape 3, `ci/run.sh` vert ; dès l'étape 5, ni régression sur la carte F439 (vérification manuelle ou exécutant CI équipé) ; dès l'étape 9, `ci/run.sh` vert sur Debian **et** sur macOS avant toute fusion dans `master`.
 - Ne jamais réécrire l'historique.
 - **Aucun push, aucune opération distante** (décision 2026-09-30) : toutes les opérations git restent locales (commits, branches, tags). Pousser vers GitHub exige de **demander l'accord de l'utilisateur à chaque fois**, en indiquant la branche et les commits concernés ; le hook `.claude/hooks/lepton_guard.py` force cette demande pour toute commande `git push`. La supervision se fait sur la machine locale (`MIGRATION-STATUS.md`, `handoff/`, `git log`).
 
