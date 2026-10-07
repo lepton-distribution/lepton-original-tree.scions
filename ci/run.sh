@@ -2,7 +2,7 @@
 # ci/run.sh — non-régression Lepton (étape 3 ; ORCHESTRATION §5 : vert avant chaque commit).
 # Pipeline de l'étape 6 :
 #   - tests unitaires des outils de migration ; garde audit_iar.py (zéro IAR-isme Lepton actif) ;
-#   - preset hôte : build, ctest -L host ;
+#   - preset hôte : build, ctest -L host ; même chose avec clang ($LEPTON_BUILD/host-clang, étape 8) ;
 #   - matrice micro-noyau (embOS, FreeRTOS, étape 7) × machine :
 #     presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7) : build,
 #     ctest -L smoke, -L net, -L kal ;
@@ -10,6 +10,11 @@
 #   - occupation mémoire de chaque exécutable (--print-memory-usage) archivée dans
 #     $LEPTON_BUILD/ci/memoire.csv, échec au-delà de LEPTON_MEM_ALERT % (défaut 90) par région ;
 #   - artefacts .elf/.bin/.map copiés dans $LEPTON_BUILD/ci/artefacts/<preset>/.
+# Date fixe (étape 8) : SOURCE_DATE_EPOCH (__DATE__/__TIME__ de GCC, uname) vaut la date du dernier
+# commit, sauf valeur donnée par l'environnement : artefacts reproductibles par commit ;
+# SOURCE_DATE_EPOCH=0 ci/run.sh donne les .bin de référence de handoff/etape-8.md.
+# Build incrémental : la date est celle de la dernière compilation de core-*/kernel.c (ninja ne
+# suit pas l'environnement) ; comparer des .bin après effacement des répertoires des presets.
 # Code de retour non nul au premier échec. Lancer depuis n'importe où dans le rootstock.
 #   ci/run.sh            tous les presets
 #   ci/run.sh --no-kal   sans le banc KAL
@@ -22,6 +27,7 @@ here="$(cd "$(dirname "$0")/.." && pwd)"
 # argument explicite : sinon lepton-env.sh lirait les options de ce script ($1)
 # shellcheck source=/dev/null
 source "$here/scripts/lepton-env.sh" "$here" >/dev/null
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$here" log -1 --format=%ct)}"
 
 run_kal=1
 for arg in "$@"; do
@@ -68,6 +74,11 @@ step "preset host : configuration, build, ctest -L host"
 cmake --preset host >/dev/null
 cmake --build --preset host
 ctest --preset host -L host --no-tests=error
+
+step "preset host, second compilateur (clang) : configuration, build, ctest -L host"
+cmake --preset host -B "$LEPTON_BUILD/host-clang" -DCMAKE_C_COMPILER=clang >/dev/null
+cmake --build "$LEPTON_BUILD/host-clang"
+ctest --test-dir "$LEPTON_BUILD/host-clang" -L host --no-tests=error
 
 # matrice micro-noyau × machine (étape 7) : <machine>-<micro-noyau>
 kernels="embos freertos"

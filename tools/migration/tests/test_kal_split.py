@@ -54,9 +54,10 @@ class Rejeu(unittest.TestCase):
     """Rejoue gel → dispatcher sur legacy/ ; compare aux fichiers non retouchés depuis."""
 
     # fichiers dont le contenu versionné est exactement la sortie du script ; arch/armv7m et
-    # backend/embos ont reçu ensuite des commits sémantiques (primitives d'arch)
+    # backend/embos ont reçu ensuite des commits sémantiques (primitives d'arch), arch/host aussi
+    # (__va_list_from_arg, étape 8)
     IDENTIQUES = ["kal.h", "kal/contrat.h", "kal/backend/freertos/kal_backend.h",
-                  "kal/backend/static/kal_backend.h", "kal/arch/host/kal_arch.h"]
+                  "kal/backend/static/kal_backend.h"]
 
     def test_rejeu_complet(self):
         legacy = os.path.join(CLONE, "scion", "legacy", k.CORE)

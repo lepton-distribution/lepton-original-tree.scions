@@ -33,7 +33,7 @@ $SUDO apt-get update
 # --- Base : build system, compilateur host, scripts -------------------------
 log "Base (build-essential, cmake, ninja, python, git)"
 $SUDO apt-get install -y --no-install-recommends \
-  build-essential gcc g++ gdb \
+  build-essential gcc g++ gdb clang \
   cmake ninja-build \
   git ca-certificates \
   python3 python3-pip pipx \
@@ -53,16 +53,6 @@ pipx ensurepath >/dev/null 2>&1 || true
 log "Outillage migration (cloc, coccinelle)"
 $SUDO apt-get install -y --no-install-recommends \
   cloc coccinelle
-
-# --- Bibliothèques i386 : noyau statique -m32 et mklepton (étape 2) ---------
-log "Bibliothèques i386 (noyau statique -m32, mklepton)"
-$SUDO dpkg --add-architecture i386
-$SUDO apt-get update
-$SUDO apt-get install -y --no-install-recommends libc6:i386 libexpat1:i386 \
-  gcc-multilib libexpat1-dev:i386 \
-  || echo "AVERTISSEMENT: bibliothèques i386 non installées — noyau statique et mklepton (-m32) non constructibles."
-# mklepton_gnu exige aussi libkernel.so (i386), absente de l'arbre : oracle binaire non exécutable
-# (étape 1, repli décidé le 2026-09-30).
 
 # --- Toolchain croisée ARM (étapes 2 à 7) -------------------------------------
 log "Toolchain ARM (gcc-arm-none-eabi + newlib)"

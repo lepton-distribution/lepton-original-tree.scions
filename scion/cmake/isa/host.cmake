@@ -1,14 +1,12 @@
 # ISA host : noyau Lepton statique pour Linux x86_64 (bibliothèque de mklepton), gcc de l'hôte.
 #
 # Le noyau est compilé en freestanding (lepton_freestanding, cmake/lepton_target.cmake) : glibc à
-# l'édition de liens seulement. Format UFS : structures identiques i386 / arm-none-eabi
+# l'édition de liens seulement. Format UFS : structures identiques x86_64 / i386 / arm-none-eabi
 # (assertions statiques dans tests/host).
 
-# ILP32 (-m32, décision 2026-09-30) : va_list scalaire et dispositions de structures identiques à
-# arm-none-eabi ; le noyau transmet des va_list par argument variadique (vfs.c, I_LINK), ce que
-# l'ABI x86_64 (va_list tableau) ne permet pas. Paquets : gcc-multilib, libexpat1-dev:i386.
-add_compile_options(-m32)
-add_link_options(-m32)
+# ABI native de l'hôte (LP64 en x86_64 ; -m32 retiré à l'étape 8, décision 2026-10-07). Le va_list
+# reçu par argument variadique (vfs.c, I_LINK) passe par __va_list_from_arg (kal/arch/host). gcc
+# et clang (ci/run.sh). Sorties de mklepton gardées par host.mklepton_empreintes.
 
 set(LEPTON_HOST_ARCH_DIR ${LEPTON_SRC}/kernel/core/arch/host)
 # KAL, axe ISA : kal_arch.h (inclus par kernel/core/kal.h, dispatcher).
@@ -19,7 +17,7 @@ target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_A
 set(LEPTON_HOST_ARM_CHECK_FLAGS -mcpu=cortex-m4 -mthumb)
 
 target_compile_options(lepton_options INTERFACE -std=gnu99 -fno-common)
-lepton_freestanding(-m32)
+lepton_freestanding()
 # CPU_GNU32 : macro historique de la cible « synthétique » ; seule sa branche USE_KERNEL_STATIC
 # (sans ordonnanceur) est utilisée. Elle n'est posée qu'ici (axe ISA).
 target_compile_definitions(lepton_options INTERFACE

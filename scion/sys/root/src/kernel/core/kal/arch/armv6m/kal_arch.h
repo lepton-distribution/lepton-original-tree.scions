@@ -30,6 +30,9 @@ either the MPL or the [eCos GPL] License."
 
    #define __va_list_copy(__dest_va_list__,__src_va_list__) memcpy(&__dest_va_list__,&__src_va_list__,sizeof(__dest_va_list__))
 
+   //va_list reçu par argument variadique (vfs.c, I_LINK) : va_list scalaire.
+   #define __va_list_from_arg(__dest_va_list__,__ap__) __dest_va_list__ = va_arg(__ap__, va_list)
+
    //SysTick (CTRL.TICKINT, bit 1) : coupe / relance l'IT du tick de l'ordonnanceur.
    #define __LEPTON_KAL_PIT_BASE    (0xE000E010)
    #define __LEPTON_KAL_PIT_MR      (*(volatile uint32_t*)(__LEPTON_KAL_PIT_BASE + 0x00))

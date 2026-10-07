@@ -30,6 +30,9 @@ either the MPL or the [eCos GPL] License."
 
    #define __va_list_copy(__dest_va_list__,__src_va_list__) memcpy(&__dest_va_list__,&__src_va_list__,sizeof(__dest_va_list__))
 
+   //va_list reçu par argument variadique (vfs.c, I_LINK) : va_list scalaire.
+   #define __va_list_from_arg(__dest_va_list__,__ap__) __dest_va_list__ = va_arg(__ap__, va_list)
+
    //SysTick (CTRL.TICKINT, bit 1), commun à tous les cœurs ARMv7-M : coupe / relance l'IT du tick
    //de l'ordonnanceur. Type uint32_t (et non OS_U32 d'embOS) : indépendant du micro-noyau.
    #define __LEPTON_KAL_PIT_BASE    (0xE000E010)
