@@ -26,7 +26,9 @@ référence.
 
 ### 1. Prérequis de l'hôte : `scripts/install-macos.sh`
 
-Pendant de `install-debian.sh`, même structure, même récapitulatif final des versions.
+Pendant de `install-debian.sh`, même structure, même récapitulatif final des versions. Le script
+est **fourni** (écrit le 2026-10-07 sans Mac : syntaxe et `shellcheck` seulement, jamais exécuté
+sous macOS). Le rejouer, corriger ce qui échoue, sans en changer les choix ci-dessous.
 
 | Élément | Debian | macOS |
 |---|---|---|
@@ -37,11 +39,15 @@ Pendant de `install-debian.sh`, même structure, même récapitulatif final des 
 | Toolchain ARM | `gcc-arm-none-eabi` 14.2.1, newlib 4.5.0.20241231 | Arm GNU Toolchain 14.2.Rel1, hôte `darwin-x86_64` (site d'Arm), pas la formule Homebrew (non épinglable) |
 | OpenOCD, gdb | `openocd` 0.12.0, `gdb-multiarch` | Homebrew `open-ocd` ; `arm-none-eabi-gdb` de la toolchain |
 
-- Le script vérifie, sans les deviner : `arm-none-eabi-gcc --version` = 14.2.1, présence de
-  `libc_nano.a` pour cortex-m4 hard-float (même contrôle que `install-debian.sh`), version de
-  newlib (`_NEWLIB_VERSION`).
-- **Point d'arrêt** si la version de GCC ou de newlib diffère de Debian : faire trancher avant
-  de construire une cible.
+- Le script télécharge l'archive d'Arm, en vérifie le SHA-256, la dépose sous `~/opt` (ou
+  `--toolchain-dir`), contrôle `libc_nano.a` pour cortex-m4 hard-float et relève la version de
+  newlib (`_NEWLIB_VERSION`). Il affiche la ligne `PATH` à ajouter, sans modifier le shell.
+- **Point d'arrêt, attendu** : la note de version d'Arm indique une newlib construite depuis le
+  tronc (révision `7923059`), et non la 4.5.0.20241231 de Debian. Présenter les deux versions
+  relevées et faire trancher avant de construire une cible : accepter l'écart (les firmwares du
+  Mac diffèrent alors de ceux de Debian, l'étape 10 les valide) ou chercher une autre toolchain.
+- Apple Silicon : le script choisit l'archive `darwin-arm64` et le préfixe Homebrew adéquat,
+  mais ce plan ne valide que le Mac Intel.
 - Pas de `sudo` hors Homebrew ; rien d'i386 ; pas de règles udev.
 
 ### 2. Arbre des sources

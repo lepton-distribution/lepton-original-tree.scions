@@ -176,6 +176,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 6 | ~~NUCLEO-WL55JC1~~ : actée le 2026-10-05 (voir « Décisions actées »). |
 | 7 | ~~Devenir du backend embOS~~ : acté le 2026-10-06 (maintenu, voir « Décisions actées »). |
 | 9 | Emplacement du rootstock sur le Mac (proposition : `~/lepton`). |
+| 9 | Toolchain ARM du Mac : Arm GNU Toolchain 14.2.Rel1 (GCC 14.2.1 comme Debian, newlib construite depuis le tronc et non 4.5.0.20241231) — accepter l'écart de newlib ou non. |
 | 9 | Label `net` (tap en espace de noms, Linux seul) : non exécuté sur macOS, annoncé par CMake et `ci/run.sh` (proposition). |
 | 10 | Limites de l'écriture en flash : reprise des limites des étapes 5 à 7 (flash interne seulement ; ni option bytes, ni fusibles, ni user row, ni protection, ni QSPI, ni SFSA/ESE) — à confirmer. |
 | 10 | Adresse du Mac sur le câble Ethernet des cartes (F429ZI, F746). |
