@@ -23,11 +23,19 @@ either the MPL or the [eCos GPL] License."
 */
 
 
-//KAL, axe ISA : hôte x86 (noyau statique de mklepton, -m32).
+//KAL, axe ISA : hôte (noyau statique de mklepton), x86_64 ou autre ABI.
 //Extrait de kal.h (kal_split.py, étape extraire-static) ; sélectionné par cmake/isa/host.cmake.
 #ifndef _KAL_ARCH_HOST_H
 #define _KAL_ARCH_HOST_H
 
-   #define __va_list_copy(__dest_va_list__,__src_va_list__) __dest_va_list__ = __src_va_list__
+   #define __va_list_copy(__dest_va_list__,__src_va_list__) va_copy(__dest_va_list__,__src_va_list__)
+
+   //va_list reçu par argument variadique (vfs.c, I_LINK). x86_64 : va_list est un tableau,
+   //l'appelant a donc transmis un pointeur vers son va_list (étape 8).
+   #if defined(__x86_64__)
+      #define __va_list_from_arg(__dest_va_list__,__ap__) va_copy(__dest_va_list__,*(va_list *)va_arg(__ap__, void *))
+   #else
+      #define __va_list_from_arg(__dest_va_list__,__ap__) __dest_va_list__ = va_arg(__ap__, va_list)
+   #endif
 
 #endif //_KAL_ARCH_HOST_H

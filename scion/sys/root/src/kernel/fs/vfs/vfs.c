@@ -910,7 +910,7 @@ int _vfs_ioctl2(desc_t desc, int request, va_list ap){
       if(_vfs_link_desc(desc,desc_link)<0)
          return -1;
       //
-      __ap = va_arg(_ap, va_list);
+      __va_list_from_arg(__ap,_ap);
       //warning: if request I_LINK /do nothing in device driver, it must return 0 not -1.
       // To avoid failure of this operation
       if((ret = ofile_lst[desc].pfsop->fdev.fdev_ioctl(desc,request,__ap))<0) {
