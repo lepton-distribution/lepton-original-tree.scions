@@ -1,7 +1,7 @@
 # Handoff étape 8 (hôte 64 bits, retrait de `-m32`) → étape 9 (hôte macOS)
 
 État au 2026-10-07 : branche `migration/etape-8` (locale, non fusionnée), tâches 1 à 6 faites,
-critères verts, **en attente de validation utilisateur**. Debian 13, gcc 14.2.0, clang 19.1.7.
+critères verts ; **étape validée par l'utilisateur le 2026-10-07**, fusionnée dans `master`. Debian 13, gcc 14.2.0, clang 19.1.7.
 
 ## Réponses aux prérequis de l'étape 9
 - Preset `host` en 64 bits : `file $LEPTON_BUILD/host/mklepton` → « ELF 64-bit LSB pie
