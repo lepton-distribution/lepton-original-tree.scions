@@ -10,6 +10,11 @@
 #   - occupation mémoire de chaque exécutable (--print-memory-usage) archivée dans
 #     $LEPTON_BUILD/ci/memoire.csv, échec au-delà de LEPTON_MEM_ALERT % (défaut 90) par région ;
 #   - artefacts .elf/.bin/.map copiés dans $LEPTON_BUILD/ci/artefacts/<preset>/.
+# Date fixe (étape 8) : SOURCE_DATE_EPOCH (__DATE__/__TIME__ de GCC, uname) vaut la date du dernier
+# commit, sauf valeur donnée par l'environnement : artefacts reproductibles par commit ;
+# SOURCE_DATE_EPOCH=0 ci/run.sh donne les .bin de référence de handoff/etape-8.md.
+# Build incrémental : la date est celle de la dernière compilation de core-*/kernel.c (ninja ne
+# suit pas l'environnement) ; comparer des .bin après effacement des répertoires des presets.
 # Code de retour non nul au premier échec. Lancer depuis n'importe où dans le rootstock.
 #   ci/run.sh            tous les presets
 #   ci/run.sh --no-kal   sans le banc KAL
@@ -22,6 +27,7 @@ here="$(cd "$(dirname "$0")/.." && pwd)"
 # argument explicite : sinon lepton-env.sh lirait les options de ce script ($1)
 # shellcheck source=/dev/null
 source "$here/scripts/lepton-env.sh" "$here" >/dev/null
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$here" log -1 --format=%ct)}"
 
 run_kal=1
 for arg in "$@"; do

@@ -11,8 +11,9 @@ critères verts, **en attente de validation utilisateur**. Debian 13, gcc 14.2.0
   Test permanent `host.mklepton_empreintes` (label `host`).
 - Build clang vert sur Debian, intégré à `ci/run.sh` (`$LEPTON_BUILD/host-clang`).
 - Feuilles du trunk : **4019** (`scion graft` ; `scion rootstock-information` : 2 scions greffés).
-- SHA-256 des `.bin` des 14 presets : **à comparer seulement à date fixe** (`SOURCE_DATE_EPOCH=0`,
-  voir pièges). Valeurs Debian (identiques avant et après l'étape) :
+- SHA-256 des `.bin` des 14 presets : **à comparer seulement à date fixe**, obtenus par
+  `SOURCE_DATE_EPOCH=0 ci/run.sh` après `cmake --build <dir> --target clean` des presets (vérifié).
+  Valeurs Debian (identiques avant et après l'étape) :
 
 | Preset | SHA-256 de `lepton.bin` (`SOURCE_DATE_EPOCH=0`) |
 |---|---|
@@ -32,15 +33,16 @@ critères verts, **en attente de validation utilisateur**. Debian 13, gcc 14.2.0
 | stm32f746g-disco-freertos | `feeaf29a4e3d02f7bc39fa500ef530711f424f0298246abcd14e6f6f50b20ba8` |
 
 ## Décisions actées pendant l'étape 8
-- Aucune nouvelle ; appliquées : macro d'architecture `__va_list_from_arg` et retrait de `-m32`
-  (2026-10-07).
+- Appliquées : macro d'architecture `__va_list_from_arg` et retrait de `-m32` (2026-10-07).
+- `ci/run.sh` à date fixe : `SOURCE_DATE_EPOCH` = date du dernier commit, ou valeur de
+  l'environnement (2026-10-07, recommandation acceptée par l'utilisateur).
 
 ## Artefacts produits (manifeste, pas copie)
 | Fichier | Contenu, quand le lire |
 |---|---|
 | `kal/arch/{armv7m,armv6m,host}/kal_arch.h` | `__va_list_from_arg` ; hôte : `__va_list_copy` = `va_copy`, branche `__x86_64__` |
 | `scion/tests/host/mklepton_empreintes.sha256` | référence `-m32` des sorties de mklepton ; ne jamais régénérer |
-| `ci/run.sh` | étape clang après le preset `host` |
+| `ci/run.sh` | étape clang après le preset `host` ; `SOURCE_DATE_EPOCH` exporté (date fixe) |
 | `$LEPTON_BUILD/etape-8/avant`, `apres` | artefacts CI avec heure de compilation (non comparables octet à octet) |
 | `$LEPTON_BUILD/etape-8/sde/{avant,apres}.sha256` | `.bin` à date fixe : preuve d'identité |
 | `$LEPTON_BUILD/etape-8/mass-compile-{avant,apres}.{md,csv}` | 426/444 des deux côtés, mêmes échecs |
@@ -61,8 +63,9 @@ critères verts, **en attente de validation utilisateur**. Debian 13, gcc 14.2.0
   `ci/run.sh` successifs semblaient identiques parce que le second ne recompilait rien. Preuve
   retenue (plus forte que l'objdump prévu) : 14 presets construits avec `SOURCE_DATE_EPOCH=0`
   (GCC fige `__DATE__`/`__TIME__`), sources ARM de `master` puis `HEAD`, `.bin` identiques.
-  **Étape 9 : comparer les `.bin` du Mac à date fixe uniquement** (script de référence :
-  construire chaque preset avec `SOURCE_DATE_EPOCH=0 cmake --build`, répertoire séparé).
+  Suite : `ci/run.sh` exporte `SOURCE_DATE_EPOCH` (date du commit par défaut). **Étape 9 :**
+  `--target clean` des presets puis `SOURCE_DATE_EPOCH=0 ci/run.sh`, comparer au tableau ci-dessus
+  (en incrémental, la date reste celle de la dernière compilation de `kernel.c`).
 - **mass_compile 426/444, non 414/414** (valeur du fichier d'étape, relevée à la fin de
   l'étape 6) : 18 fichiers FreeRTOS reclassés actifs à l'étape 7 sont compilés avec le gabarit
   embOS (pas de profil FreeRTOS dans `mass_compile.py`) ; préexistant, inchangé ; en dette.
