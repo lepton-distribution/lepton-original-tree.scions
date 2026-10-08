@@ -38,6 +38,7 @@ LEPTON_EMBOS_ROOT="${LEPTON_EMBOS_ROOT:-$LEPTON_ROOTSTOCK/third_party/embos/cort
 export LEPTON_ROOTSTOCK LEPTON_TRUNK LEPTON_CLONE LEPTON_BUILD LEPTON_EMBOS_ROOT
 echo "rootstock: $LEPTON_ROOTSTOCK"
 echo "trunk    : $LEPTON_TRUNK"
-echo "clone    : $LEPTON_CLONE ($(git -C "$LEPTON_CLONE" branch --show-current 2>/dev/null))"
+# rev-parse plutôt que « branch --show-current » (git ≥ 2.22) : macOS peut porter un git ancien.
+echo "clone    : $LEPTON_CLONE ($(git -C "$LEPTON_CLONE" rev-parse --abbrev-ref HEAD 2>/dev/null))"
 echo "build    : $LEPTON_BUILD"
 echo "embOS    : $LEPTON_EMBOS_ROOT"
