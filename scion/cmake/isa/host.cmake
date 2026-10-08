@@ -31,6 +31,14 @@ set(LEPTON_LIBC_SOURCES kernel/core/arch/host/libc_host.c)
 # Bibliothèques système liées après le groupe du noyau (dev_part : pow).
 set(LEPTON_SYSTEM_LIBS m)
 
+# $<LINK_GROUP:RESCAN,…> (cycle des bibliothèques du noyau) : CMake ne le définit pas pour
+# l'éditeur de liens d'Apple, qui reparcourt de lui-même les archives jusqu'à résolution
+# (pas d'option --start-group) ; groupe vide, ordre des archives indifférent (étape 9).
+if(APPLE)
+  set(CMAKE_C_LINK_GROUP_USING_RESCAN "" "")
+  set(CMAKE_C_LINK_GROUP_USING_RESCAN_SUPPORTED TRUE)
+endif()
+
 # « Carte » hôte : disque sur fichier (.fsflash.o, décision 2026-09-30) et horloge. La partie
 # POSIX des pilotes est compilée avec les en-têtes de la glibc, hors lepton_options.
 set(LEPTON_BSP_NAME host)
