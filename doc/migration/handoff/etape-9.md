@@ -1,64 +1,63 @@
-# Handoff étape 9 (hôte macOS) — intermédiaire, session 1 → session 2
+# Handoff étape 9 → 10 (hôte macOS → cartes depuis macOS)
 
-État au 2026-10-08 : branche `migration/etape-9` (locale), tâches 1 à 3 faites, tâches 4 à 7 à
-faire. Mac Intel, macOS 15.8.1. Ce fichier deviendra le handoff étape 9 → 10 en fin d'étape.
+État au 2026-10-08 : tâches 1 à 7 faites sur le Mac Intel (macOS 15.8.1), branche locale
+`migration/etape-9` non fusionnée. **Reste avant clôture** : `ci/run.sh` vert sur Debian (critère
+de l'étape, ORCHESTRATION §5) et validation de l'utilisateur.
 
-## Pour reprendre (session 2 : tâches 4 à 7)
-- **PATH** : la toolchain Arm n'est pas dans le PATH des nouveaux shells tant que l'utilisateur
-  n'a pas ajouté à `~/.zprofile` :
-  `export PATH="$HOME/opt/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin:$PATH"`
-  (le script ne modifie pas le shell). Vérifier `command -v arm-none-eabi-gcc` d'abord.
-- Tâche 4 : `cmake --preset host` avec Apple clang ; points à vérifier dans ETAPE-9 §4
-  (`LINK_GROUP:RESCAN`, `-print-file-name=include`/`-nostdinc`, expat du SDK, POSIX de
-  `host_posix.c`, `m`). Attention : CMake cherche aussi dans `/opt/local` (Darwin) — les ports
-  i386 de 2008 sont désinstallés, mais vérifier quel expat est retenu.
-- Tâche 5 : appliquer la décision `net` (2026-10-08) : `cmake/components/firmware.cmake:147`
-  (`if(... AND NOT APPLE)` + `message(STATUS …)`) et `ci/run.sh:103-104` (`ctest -L net
-  --no-tests=error` échouerait sinon). QEMU **11.1.2** sur le Mac (10.0.13 sur Debian) :
-  premier écart à surveiller sur la fumée et le banc KAL.
-- Tâche 6 : `--target clean` puis `SOURCE_DATE_EPOCH=0 ci/run.sh`, comparer les SHA-256 des
-  `.bin` au tableau de `handoff/etape-8.md` ; différences attendues (newlib « 4.4.0 »).
-- `export PYTHONDONTWRITEBYTECODE=1` avant tout `ctest` hors `ci/run.sh`.
+## Réponses aux prérequis de l'étape 10
+- Rootstock du Mac : `~/lepton` (`/Users/cle_d_anton/lepton`), comme sur Debian.
+- OpenOCD : `/opt/local/bin/openocd`, 0.12.0 (MacPorts `+ftdi`) ; un OpenOCD 0.12.0 Homebrew
+  existe aussi (`/usr/local/bin`), masqué par `/opt/local/bin` : vérifier `command -v openocd`.
+  Commande inchangée : `cmake --build --preset <carte>-embos --target flash` (`debug/openocd-*.cfg`).
+- gdb : `arm-none-eabi-gdb` 15.2.90 de la toolchain Arm 14.2.Rel1
+  (`~/opt/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin`, dans le `PATH` par
+  `~/.zprofile`) ; `debug/gdbinit-*` non rejoués sur le Mac.
+- Comparaison des `.bin` : **les 14 diffèrent** de `handoff/etape-8.md` (newlib « 4.4.0 » au lieu
+  de 4.5.0.20241231, écart accepté) ; détail et tailles : `etape-9-bin-macos.md`. Les firmwares
+  carte du Mac ne sont donc validés par aucun banc : c'est l'objet de l'étape 10.
 
-## Réponses aux prérequis (ETAPE-9) et tâches faites
-- Étape 8 close (handoff `etape-8.md`) ; MacPorts installé et réparé ; macOS 15.8.1 consigné.
-- Rootstock `~/lepton` (décision 2026-10-08) ; embOS 5.20.0.0 présent dans
-  `third_party/embos/cortexm-gcc/5.20.0.0/` (copié par l'utilisateur).
-- Tâche 1 : `install-macos.sh --with-debug-tools` rejoué jusqu'au bout ; versions dans
-  « Versions épinglées » ; corrections : commit `3cc34c5`.
-- Tâche 2 : `scion rootstock-information` = 2 scions ; **4019 feuilles** (= étape 8) ; clone
-  propre ; `find -L trunk -type l` vide ; aucune collision de casse (`git ls-files`).
-- Tâche 3 : `lepton-env.sh` (`rev-parse --abbrev-ref`, commit `f487de4`) vert sous zsh et bash
-  3.2 (cinq variables) ; hook : Write et redirection vers le trunk refusés ; 5 `.DS_Store`
-  supprimés du trunk (et celui du rootstock) ; contrôle « trunk sans fichier régulier » vert.
+## Tâches 4 à 7 (session 2)
+- Tâche 4 : `host` avec Apple clang 17 ; une correction : groupe `RESCAN` vide sous `APPLE`
+  (`cmake/isa/host.cmake`, `31c13e2`) ; mklepton Mach-O 64-bit x86_64 ; `ctest -L host` 6/6,
+  `host.mklepton_empreintes` identique à la référence ; expat = SDK (`/usr/lib/libexpat.1.dylib`) ;
+  `-nostdinc` + en-têtes de clang ; `host_posix.c` et `m` sans retouche.
+- Tâche 5 : décision `net` appliquée (`3b25e72`) ; six presets QEMU sous QEMU 11.1.2 : fumée
+  verte, banc KAL 18/18 (M4F, M7) et 14/14 (soft), embOS et FreeRTOS ; listes de tests = Debian
+  moins `net.ping_ftpd` (seule condition d'hôte dans le CMake : `grep CMAKE_HOST`).
+- Tâche 6 : `SOURCE_DATE_EPOCH=0 ci/run.sh` après `clean` : vert de bout en bout (8 presets carte
+  construits, `memoire.py`, trunk sans fichier régulier) ; mesure `5e90c8d`.
+- Tâche 7 : `doc/BUILDING.md` §3 ter « Hôte macOS » ; propositions `CLAUDE.md` et skill : à
+  trancher par l'utilisateur (compte rendu de session).
 
-## Décisions actées pendant la session 1 (détail : MIGRATION-STATUS)
-- MacPorts ; 14 ports i386 de 2008 désinstallés ; Python/scion conservés ; écart newlib
-  accepté ; label `net` non exécuté sur macOS (à appliquer, tâche 5).
+## Décisions actées pendant l'étape 9 (détail : MIGRATION-STATUS)
+- Rootstock `~/lepton` ; MacPorts ; écart newlib accepté ; label `net` non exécuté sur macOS
+  (mis en œuvre avec `CMAKE_HOST_APPLE`, `APPLE` étant faux en build croisé) ; Python/scion du Mac
+  conservés.
 
 ## Artefacts produits (manifeste, pas copie)
 | Fichier | Contenu, quand le lire |
 |---|---|
-| `scripts/install-macos.sh` | prérequis du Mac ; rejouable (ce qui est en place est sauté) |
-| `$LEPTON_BUILD/install-macos.log`, `install-macos-2.log` | 1er passage (échec graphviz), 2e passage complet |
-| `~/opt/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/*-manifest.txt` | options de configuration de la toolchain et de newlib (Arm) |
+| `scripts/install-macos.sh` | prérequis du Mac ; rejouable |
+| `doc/BUILDING.md` §3 ter | procédure macOS, écarts avec Debian, pièges |
+| `doc/migration/etape-9-bin-macos.md` | SHA-256 et tailles des 14 `.bin` du Mac, répartition par origine |
+| `tools/migration/map_origine.py` | octets par origine depuis les `.map` ; à rejouer sur Debian pour localiser l'écart |
+| `$LEPTON_BUILD/ci/` (Mac) | artefacts et `memoire.csv` de `ci/run.sh` à date fixe |
+| `$LEPTON_BUILD/etape9-*.log`, `etape9-bin-sha256.txt` | journaux des presets QEMU et de la CI, empreintes |
 
-## Écarts au plan et pièges découverts (environnement du Mac, hors dépôt)
-- **MacPorts jamais initialisé** : registre root, migré un palier par lancement en root
-  (1.211 → 1.215) : `sudo port -v selfupdate` puis `sudo port -q installed` répété ; source
-  rsync non signée à remplacer dans `sources.conf`.
-- **14 ports i386 de 2008** (expat 2.0.1, zlib 1.2.3, pkgconfig…) dans `/opt/local` : `pkg-config`
-  i386 en tête du PATH, `expat.h` de 2008 visible de CMake → désinstallés.
-- **C++ cassé par un reste des CLT** : `CommandLineTools/usr/include/c++/v1` orphelin (59
-  fichiers 2020-2023, aucun paquet propriétaire) masquait la libc++ du SDK ; tout `clang++`
-  échouait (`'cstdint' file not found`, échec de libheif → graphviz). Supprimé par
-  l'utilisateur. Symptôme à reconnaître sur un autre Mac.
-- `graphviz` sans paquet binaire darwin 24 : rendu facultatif dans le script.
-- git 2.18 (`/usr/local/bin/git`, 2018) devant le git d'Apple 2.50.1 : `--show-current`
-  absent → script corrigé ; retrait du lien laissé à l'utilisateur.
+## Écarts au plan et pièges découverts
+- `$<LINK_GROUP:RESCAN>` : erreur de configuration sous Apple (« not supported for the 'C' link
+  language ») — seule hypothèse du tableau de la tâche 4 qui s'est vérifiée.
+- `cc` et `clang` sont le même Apple clang : la seconde passe `host` de `ci/run.sh` ne teste pas
+  un second compilateur sur le Mac (gcc et clang restent couverts sur Debian).
+- Avertissements Apple clang sur le noyau (`-Wvisibility` `struct stat` dans `vfstypes.h`,
+  `-Wvarargs` de `kernel_io.c`…) : non comparés à clang 19 de Debian, aucun traité.
+- `.DS_Store` dans le clone (ignorés par git, non greffés) : Finder ouvert sur le clone ; sans effet.
+- Mac (environnement, hors dépôt) : voir la session 1 — MacPorts jamais initialisé, CLT avec un
+  `c++/v1` orphelin, git 2.18 dans `/usr/local/bin`, `sudo` par l'utilisateur (`! …`).
 - Le shell de l'agent est zsh : `$var` non découpé en mots ; passer par `bash <<'EOF'`.
-- `sudo` exige un mot de passe : les commandes root passent par l'utilisateur (`! …`).
 
 ## Non transmis volontairement
-- Diagnostic détaillé du registre MacPorts et des CLT : historique de la conversation ; les
-  gestes à refaire sont ci-dessus. Journaux MacPorts : `/opt/local/var/macports/logs/`.
+- Diagnostic de l'environnement du Mac (session 1) : historique de la conversation et journaux
+  `/opt/local/var/macports/logs/`.
+- Taille par section des `.bin` Debian : non disponible sur le Mac ; à produire sur Debian par
+  `map_origine.py` si l'écart doit être localisé.
