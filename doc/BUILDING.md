@@ -120,7 +120,7 @@ tout preset croisé). `ci/run.sh` (§3 bis) tourne aussi sur le Mac.
 | Édition de liens hôte | éditeur de liens d'Apple : pas de `--start-group`, le groupe `RESCAN` du noyau est vide (`cmake/isa/host.cmake`) |
 | newlib de la toolchain Arm | « 4.4.0 » (tronc) au lieu de 4.5.0.20241231 : `.bin` différents de ceux de Debian, validés par exécution (écart accepté) |
 | QEMU | version MacPorts (11.1.x), plus récente que celle de Debian |
-| Label `net` | **non exécuté** : le test crée un tap dans un espace de noms (Linux seul) ; non créé par CMake (message à la configuration), sauté par `ci/run.sh` ; réseau couvert par Debian et sur carte |
+| Label `net` | **non exécuté** : le test crée un tap dans un espace de noms (Linux seul) ; non créé par CMake (message à la configuration), sauté par `ci/run.sh` ; réseau couvert par Debian et sur carte (`board.net` exécuté depuis macOS, étape 10) |
 
 **Pièges.** Ne pas ouvrir le trunk dans le Finder (`.DS_Store` : fichier régulier, contrôle final
 de `ci/run.sh` en échec ; le supprimer). Toolchain téléchargée par navigateur : retirer
@@ -163,6 +163,22 @@ Optimisation : `-Os` pour toutes les cibles Cortex-M (`LEPTON_OPT_LEVEL`, `-g` c
 `-DLEPTON_OPT_LEVEL=-O0` pour un débogage pas à pas fidèle au source.
 
 Débogage (gdb, OpenOCD, registres de faute) : `doc/migration/debug-gcc.md`.
+
+**Depuis macOS** (étape 10, `doc/migration/validation-macos.md`) : la console est
+`/dev/cu.usbmodem…` (jamais `/dev/tty.usbmodem…`, qui attend la porteuse) ; son nom change au
+rebranchement et selon le port USB : le relever (`ls /dev/cu.usbmodem*`) avant chaque
+configuration. Interface Ethernet du Mac en adresse fixe sur le réseau de la carte (validé :
+192.168.2.10/16 sur `en0` ; vérifier `route -n get 192.168.2.5`), sinon macOS prend une adresse
+169.254.x.x. Tests sous `caffeinate -i` (mise en veille : la sonde décroche) :
+
+```bash
+cmake --preset nucleo-f439zi-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303 -DLEPTON_NET_TEST_HOST_IP=192.168.2.10
+cmake --build --preset nucleo-f439zi-embos --target flash
+caffeinate -i ctest --preset nucleo-f439zi-embos -L board        # board.net compris
+cmake --build --preset nucleo-f439zi-embos --target flash        # le banc laisse kal_bench
+```
+
+Console : `screen /dev/cu.usbmodem… 115200` (quitter par `Ctrl-a k`) ; la refermer avant `ctest`.
 
 ## 5. Carte STM32F746G-DISCO (étape 6)
 
