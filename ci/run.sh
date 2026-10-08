@@ -5,7 +5,7 @@
 #   - preset hôte : build, ctest -L host ; même chose avec clang ($LEPTON_BUILD/host-clang, étape 8) ;
 #   - matrice micro-noyau (embOS, FreeRTOS, étape 7) × machine :
 #     presets QEMU (mps2-an386 hard-float et soft-float, mps2-an500 Cortex-M7) : build,
-#     ctest -L smoke, -L net, -L kal ;
+#     ctest -L smoke, -L net (Linux seul, étape 9), -L kal ;
 #     presets carte (F439/F429, F746, SAMD21, WL55) : build seul (pas d'exécution sans sonde) ;
 #   - occupation mémoire de chaque exécutable (--print-memory-usage) archivée dans
 #     $LEPTON_BUILD/ci/memoire.csv, échec au-delà de LEPTON_MEM_ALERT % (défaut 90) par région ;
@@ -101,7 +101,12 @@ for machine in $qemu_machines; do
   ctest --preset "$preset" -L smoke --no-tests=error
 
   step "réseau ($preset) : ctest -L net (ping, ftpd ; tap en espace de noms)"
-  ctest --preset "$preset" -L net --no-tests=error
+  if [ "$(uname -s)" = Darwin ]; then
+    # test non créé sur macOS (cmake/components/firmware.cmake, décision 2026-10-08)
+    echo "net : non exécuté sur macOS"
+  else
+    ctest --preset "$preset" -L net --no-tests=error
+  fi
 
   if [ "$run_kal" = 1 ]; then
     step "banc KAL ($preset) : ctest -L kal"

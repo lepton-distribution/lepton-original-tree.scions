@@ -1,6 +1,6 @@
-# Construire Lepton (GCC, Linux) et flasher les cartes
+# Construire Lepton (GCC, Linux et macOS) et flasher les cartes
 
-Procédure de bout en bout sur un hôte Debian 13 x86_64 : arbre des sources, build, tests sous
+Procédure de bout en bout sur un hôte Debian 13 x86_64 (second hôte : macOS sur Mac Intel, §3 ter) : arbre des sources, build, tests sous
 QEMU, CI, flash et test sur les cartes. Chaîne unique : `arm-none-eabi-gcc` et CMake (IAR retiré à
 l'étape 6 ; état précédent : tag local `legacy-iar`). Versions épinglées :
 `doc/migration/MIGRATION-STATUS.md`.
@@ -88,6 +88,46 @@ conteneur sur l'hôte de validation) : la CI est validée en natif.
 
 Compilation de masse du périmètre actif (hors CI, après une transformation) :
 `tools/migration/mass_compile.sh`.
+
+## 3 ter. Hôte macOS (Mac Intel, étape 9)
+
+Second hôte, validé sur un Mac Intel (macOS 15.8.1) ; Debian reste l'hôte de référence. Apple
+Silicon : non validé. Versions relevées : « Versions épinglées » de `MIGRATION-STATUS.md`.
+
+**Prérequis.** Outils de ligne de commande Xcode (`xcode-select --install`) et
+[MacPorts](https://www.macports.org) installés à la main (Homebrew ne fournit plus de paquets
+binaires pour Intel). Puis :
+
+```bash
+git clone https://github.com/lepton-distribution/lepton-original-tree.scions.git /tmp/lepton-tree
+/tmp/lepton-tree/scripts/install-macos.sh --with-debug-tools   # sudo demandé pour port install
+```
+
+Le script installe par MacPorts CMake, Ninja, QEMU (`+target_arm`, compilé sur place : long) et
+OpenOCD ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
+vérifié) et **affiche la ligne `PATH` à ajouter** à `~/.zprofile` (il ne modifie pas le shell).
+expat vient du SDK de macOS. Python et pipx : ceux déjà présents sont conservés. embOS : comme
+au §1. Arbre des sources et `lepton-env.sh` : §2, à l'identique (zsh ou bash 3.2).
+
+**Build et fumée QEMU** : commandes du §3, à l'identique (preset `host` avec Apple clang, avant
+tout preset croisé). `ci/run.sh` (§3 bis) tourne aussi sur le Mac.
+
+**Écarts avec Debian.**
+
+| Sujet | macOS |
+|---|---|
+| Compilateur hôte | Apple clang (`cc` et `clang` sont le même : les deux passes `host` de `ci/run.sh` sont identiques) ; `mklepton` en Mach-O x86_64 ; sorties identiques à la référence (`host.mklepton_empreintes`) |
+| Édition de liens hôte | éditeur de liens d'Apple : pas de `--start-group`, le groupe `RESCAN` du noyau est vide (`cmake/isa/host.cmake`) |
+| newlib de la toolchain Arm | « 4.4.0 » (tronc) au lieu de 4.5.0.20241231 : `.bin` différents de ceux de Debian, validés par exécution (écart accepté) |
+| QEMU | version MacPorts (11.1.x), plus récente que celle de Debian |
+| Label `net` | **non exécuté** : le test crée un tap dans un espace de noms (Linux seul) ; non créé par CMake (message à la configuration), sauté par `ci/run.sh` ; réseau couvert par Debian et sur carte |
+
+**Pièges.** Ne pas ouvrir le trunk dans le Finder (`.DS_Store` : fichier régulier, contrôle final
+de `ci/run.sh` en échec ; le supprimer). Toolchain téléchargée par navigateur : retirer
+l'attribut `com.apple.quarantine` de son répertoire. `export PYTHONDONTWRITEBYTECODE=1` avant
+tout `ctest` lancé à la main. Un git ancien devant celui d'Apple (`/usr/local/bin`) est toléré
+par les scripts. Outils de migration non portés (hors CI) : `tools/migration/mklepton_oracle.sh`,
+`tools/migration/lib_unresolved.sh` (bash 4, GNU).
 
 ## 4. Carte NUCLEO-F439ZI (validée sur NUCLEO-F429ZI)
 

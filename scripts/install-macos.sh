@@ -104,7 +104,14 @@ pkg_install() {
 # --- Base : build system, scripts ----------------------------------------------
 # Compilateur hôte : Apple clang (outils Xcode). expat : fourni par le SDK de macOS.
 log "Base (cmake, ninja, python, pipx)"
-pkg_install cmake:cmake ninja:ninja python:python313 pipx:pipx
+pkg_install cmake:cmake ninja:ninja
+# python3 et pipx déjà présents (Python.org, ou autre gestionnaire) : conservés, sinon un second
+# pipx (MacPorts : python314) passerait devant dans le PATH et réinstallerait scion.
+if have pipx && have python3; then
+  echo "  python3, pipx : déjà présents ($(command -v python3), $(command -v pipx)) — conservés"
+else
+  pkg_install python:python313 pipx:pipx
+fi
 SDK="$(xcrun --show-sdk-path 2>/dev/null || true)"
 if [ -n "$SDK" ] && [ -f "$SDK/usr/include/expat.h" ]; then
   echo "expat : SDK ($SDK)"
@@ -116,21 +123,29 @@ fi
 # --- scion : composition de l'arbre des sources (étape 0), même tag que Debian ---
 SCION_REF="0.5.0.1"
 log "scion ${SCION_REF}"
-pipx install --force "git+https://github.com/lepton-distribution/seed.scions.git@${SCION_REF}" \
-  || warn "installation de scion échouée — bloquant pour l'arbre des sources."
+if have scion && scion version 2>/dev/null | grep -q "scion version: ${SCION_REF}\$"; then
+  echo "  scion ${SCION_REF} : déjà installé ($(command -v scion))"
+else
+  pipx install --force "git+https://github.com/lepton-distribution/seed.scions.git@${SCION_REF}" \
+    || warn "installation de scion échouée — bloquant pour l'arbre des sources."
+fi
 pipx ensurepath >/dev/null 2>&1 || true
 
 # --- Outillage (métriques, documentation) --------------------------------------
 log "Outillage (cloc, doxygen, graphviz)"
-pkg_install cloc:cloc doxygen:doxygen graphviz:graphviz
+pkg_install cloc:cloc doxygen:doxygen
+# graphviz : graphes de Doxygen seulement ; sans paquet binaire MacPorts sur Intel (darwin 24),
+# compilé sur place avec une longue chaîne de dépendances : facultatif, comme coccinelle.
+(pkg_install graphviz:graphviz) \
+  || warn "graphviz non installé (facultatif : graphes de la documentation Doxygen)."
 # coccinelle : outillage de transformation de la migration (terminée) ; facultatif ici.
 (pkg_install coccinelle:coccinelle) \
   || warn "coccinelle non installé (facultatif : transformations de masse de la migration)."
 
 # --- QEMU (socle mps2-an386 et mps2-an500, banc KAL) ----------------------------
 log "QEMU (system-arm)"
-# MacPorts : la cible ARM de QEMU est une variante non activée par défaut ; l'activer peut
-# déclencher une compilation sur place.
+# MacPorts : target_arm est une variante par défaut de qemu (2.12.6) ; demandée explicitement
+# pour ne pas dépendre de ce défaut.
 pkg_install "qemu:qemu +target_arm"
 # Le test réseau QEMU (label net) exige un tap en espace de noms (unshare) : Linux seulement.
 
@@ -180,7 +195,8 @@ printf '  %-26s %s\n' "paquets" "$PKG ($PKG_PREFIX)"
 for c in cc cmake ninja python3 scion cloc spatch \
          arm-none-eabi-gcc arm-none-eabi-gdb qemu-system-arm doxygen openocd; do
   if command -v "$c" >/dev/null 2>&1; then
-    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>/dev/null | head -1)"; fi
+    # openocd écrit sa version sur stderr
+    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>&1 | head -1)"; fi
     printf '  %-26s %s\n' "$c" "$v"
   else
     printf '  %-26s (absent)\n' "$c"
