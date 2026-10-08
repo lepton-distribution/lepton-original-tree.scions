@@ -26,7 +26,8 @@ endurances de 1 h (SAMD21, WL55) rejouées ; endurances de 4 h non rejouées (20
 | NUCLEO-F429ZI | ST-LINK V2-1 (`0483:374b`), Location ID `0x14543000` | `0672FF495252717267243842` | `/dev/cu.usbmodem1454303` |
 | STM32F746G-DISCO | ST-LINK V2-1 (`0483:374b`), Location ID `0x14543000` (même port USB) | `0671FF495351885087181231` | `/dev/cu.usbmodem1454303` |
 | SAMD21 Xplained Pro | EDBG CMSIS-DAP (`03eb:2111`, FW 01.1A.00FB), Location ID `0x14543000` (même port USB) | `ATML2130021800003505` (même sonde que Debian) | `/dev/cu.usbmodem1454302` |
-| NUCLEO-WL55JC1 A / B | | | |
+| NUCLEO-WL55JC1 A | STLINK-V3, Location ID `0x14543000` | `002700253431510837393937` (même sonde que Debian) | `/dev/cu.usbmodem1454303` |
+| NUCLEO-WL55JC1 B | STLINK-V3, Location ID `0x14544000` | `004F003E3431510937393937` (même sonde que Debian) | `/dev/cu.usbmodem1454403` |
 
 ## NUCLEO-F429ZI (presets `nucleo-f439zi-*`) — 2026-10-08
 
@@ -138,4 +139,39 @@ sous `scion/`) :
   `arm-none-eabi-gcc` 16.1.0 dans `/opt/local/bin` : le build reste sur la toolchain d'Arm 14.2.1,
   placée avant dans le `PATH` (cache CMake vérifié).
 - Ces deux points : `scripts/install-macos.sh --with-debug-tools`, `BUILDING.md` §3 ter et §6.
+
+## NUCLEO-WL55JC1 (presets `nucleo-wl55jc1-*`) — 2026-10-08
+
+Paire A/B branchée en même temps, sans réseau IP. Configuration (une seule, pour les deux
+cartes) : `-DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303
+-DLEPTON_BOARD_STLINK_SERIAL=002700253431510837393937
+-DLEPTON_RADIO_PEER_STLINK_SERIAL=004F003E3431510937393937
+-DLEPTON_RADIO_PEER_SERIAL_PORT=/dev/cu.usbmodem1454403` ; `board.radio` flashe la même image
+sur B par `openocd-nucleo-wl55jc1-paire.cfg` (généré). Appariement console ↔ sonde déduit du
+Location ID, confirmé par un démarrage de chaque carte par sa propre sonde (fin de session).
+Aucune modification de code ni de test.
+
+| Palier | Verdict | Commande | Écart avec le journal Debian |
+|---|---|---|---|
+| Liste des tests | identique | `ctest -N -L board` : 16 tests (`board.radio`, `board.smoke_lsh`, `kal.board_flash`, T1-T8, TICI, TCLK, TSBRK, IRQ, `harness_fail`) | aucun : 15 de la carte A + `board.radio` (labels `board` et `radio`, créé par les options du pair) ; Debian 7.3 : 16/16 ; même liste sous FreeRTOS |
+| Flash (embOS) | VERT | `--target flash` | aucun (« Verified OK », flash interne) ; premier flash ST-LINK avec OpenOCD `+cmsis` : sans effet ; avertissement « Unable to match requested speed 500 kHz, using 200 kHz » sans conséquence |
+| `-L board` embOS | **VERT ×2** (16/16, 16/16), 20:02 et 20:03 | `caffeinate -i ctest --preset nucleo-wl55jc1-embos -L board` | aucun ; deux passes antérieures (19:58) terminées, la seconde vérifiée à 16/16, synthèse de la première non conservée |
+| `board.radio` embOS | **VERT** à chaque passe | inclus dans `-L board` | aucun : `radiotst tx/rx` 20/20 A→B et B→A (perdus 0, désordre 0, doublons 0), `ping/pong` 20/20, fumée `/dev/radio` reçue dans les deux sens |
+| `uname -a` | identique | fumée | machine `cortexM4-stm32wlxx` |
+| Endurance 1 h embOS | **VERT** | `tests/endurance_board.py --duration 3600 --fault-check v7m` (sans `--ping-ip`), 20:06-21:06, carte A | aucun : 120 cycles de 5 commandes, aucun redémarrage, CFSR = HFSR = 0 ; piles à la fin : `lsh` 53,7 % (Debian 52,9), `initd` 46,7 (46,7), `kernel_thread` 21,0 (20,0), MSP 23,4 (23,2) |
+| `-L board` FreeRTOS | **VERT ×2** (16/16, 16/16), 21:06 et 21:08 | `caffeinate -i ctest --preset nucleo-wl55jc1-freertos -L board` | aucun (Debian 7.3 : 16/16) ; `board.radio` : mêmes comptes qu'embOS (20/20 partout) |
+| Paliers 1 à 5 au débogueur ; endurance FreeRTOS | non rejoués | — | banc KAL ; endurance de 1 h rejouée sous embOS seulement (décision 2026-10-08) |
+| Fin de session | `lepton.elf` embOS en flash sur A **et** B, démarrage contrôlé (`uname -a`) sur chacune | `openocd … program lepton.elf verify reset exit` (cfg A et `-paire`), puis `smoke_lsh.py` avec reset sans écriture | — |
+
+**Occupation mémoire** (`-Os`) :
+
+| Preset | text / data / bss (Mac) | Debian (journal) | Écart | Régions (édition de liens, Mac) |
+|---|---|---|---|---|
+| `nucleo-wl55jc1-embos` | 109 056 / 840 / 25 528 | 112 952 / 840 / 25 528 (module 7.3) | text −3 896 | FLASH 41,9 %, RAM 40,2 % |
+| `nucleo-wl55jc1-freertos` | 114 424 / 844 / 32 172 | 118 308 / 844 / 32 164 (module 7.3) | text −3 884, **bss +8** | FLASH 44,0 %, RAM 50,4 % |
+
+text : newlib « 4.4.0 » (`v7e-m/nofp`), comme sur les autres cartes. bss +8 octets sous
+FreeRTOS seulement : origine non établie (le binaire Debian final n'est pas disponible sur le
+Mac ; la valeur Debian date du module 7.3, avant d'éventuelles retouches ultérieures) ; à
+chiffrer par `map_origine.py` sur Debian. Aucune région au-dessus de 90 %.
 

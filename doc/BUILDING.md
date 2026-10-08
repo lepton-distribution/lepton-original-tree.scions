@@ -256,6 +256,24 @@ répertoire (`cmake --preset nucleo-wl55jc1-embos -B "$LEPTON_BUILD/nucleo-wl55j
 sans modifier le preset. Débogage : `debug/openocd-nucleo-wl55jc1.cfg`,
 `debug/gdbinit-nucleo-wl55jc1`.
 
+**Depuis macOS** (étape 10) : pas de `/dev/serial/by-id/` ; relever les numéros des deux
+STLINK-V3 et leur « Location ID » (`system_profiler SPUSBDataType`), puis les consoles
+(`ls /dev/cu.usbmodem*`) : la console d'une sonde de Location ID `0x14543000` est
+`/dev/cu.usbmodem1454303` (préfixe commun). Une seule configuration suffit pour la paire :
+`board.radio` flashe la même image sur la carte B par le fichier généré
+`openocd-nucleo-wl55jc1-paire.cfg` et le test fait alors partie de `-L board`.
+
+```bash
+cmake --preset nucleo-wl55jc1-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303 \
+    -DLEPTON_BOARD_STLINK_SERIAL=<n° A> -DLEPTON_RADIO_PEER_SERIAL_PORT=/dev/cu.usbmodem1454403 \
+    -DLEPTON_RADIO_PEER_STLINK_SERIAL=<n° B>
+caffeinate -i ctest --preset nucleo-wl55jc1-embos -L board   # 16 tests, board.radio compris
+```
+
+Endurance de 1 h : comme la SAMD21 (§6), avec `debug/gdbinit-nucleo-wl55jc1`, la configuration
+OpenOCD générée `"$LEPTON_BUILD"/nucleo-wl55jc1-embos/openocd-nucleo-wl55jc1.cfg` (numéro de la
+sonde A) et `--fault-check v7m`.
+
 ## 8. Documentation Doxygen
 
 ```bash
