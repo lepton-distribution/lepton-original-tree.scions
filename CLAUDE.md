@@ -27,7 +27,7 @@ refactorisation non demandée ; toute fonctionnalité hors du plan.
 | Toolchain cible | `arm-none-eabi-gcc` (mono-toolchain GCC) ; `-Os -g` (`LEPTON_OPT_LEVEL`) |
 | Micro-noyau | **deux backends maintenus** (décision 2026-10-06) : embOS port GCC Segger 5.20 et FreeRTOS 202604 LTS (noyau V11.3.0) ; SAMD21 : système complet sous embOS seulement |
 | Architecture | quatre axes ISA / cœur / carte / micro-noyau ; un nouveau cœur = fichiers nouveaux aux emplacements de `doc/migration/ajout-coeur.md` |
-| Build system | CMake ≥ 3.24 + presets `<machine>-<micro-noyau>[-soft]` ; bibliothèques statiques par composant (`bin`, `sbin`, `lib` hors de `kernel/`) ; mklepton natif Linux (génération C + rootfs, sorties par `--output-dir` dans `$LEPTON_BUILD`) |
+| Build system | CMake ≥ 3.24 + presets `<machine>-<micro-noyau>[-soft]` ; bibliothèques statiques par composant (`bin`, `sbin`, `lib` hors de `kernel/`) ; mklepton natif de l'hôte, Linux ou macOS (génération C + rootfs, sorties par `--output-dir` dans `$LEPTON_BUILD`) |
 | Environnement de build | Debian natif (`scripts/install-debian.sh --with-debug-tools`), hôte de référence ; second hôte macOS Intel (`scripts/install-macos.sh --with-debug-tools` : MacPorts, Arm GNU Toolchain 14.2.Rel1, label `net` non exécuté) ; `ci/run.sh` vert sur les deux avant fusion ; conteneur `ci/Dockerfile` écrit, jamais construit |
 | Arbre des sources | composé par `scion` 0.5.0.1 (rootstock, seed `lepton-seed.scions` branche `original-tree`) : `trunk/` = liens relatifs vers `depots/` (ETAPE-0) |
 | Versions | épinglées dans `doc/migration/MIGRATION-STATUS.md` |
