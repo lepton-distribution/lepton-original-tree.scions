@@ -124,7 +124,9 @@ Règles de rédaction :
 ### Étape 6 — Conventions du projet Lepton (à respecter dans tout fichier)
 
 - Langue : français ; ton neutre, objectif, concis.
-- Environnement : Debian natif (`scripts/install-debian.sh`), Claude Code lancé par
+- Environnement : deux hôtes, Debian natif (`scripts/install-debian.sh`, référence) et macOS
+  Intel (`scripts/install-macos.sh`) ; scripts compatibles bash 3.2 et outils BSD, sans coreutils
+  GNU ; tout critère de CI se vérifie sur les deux hôtes. Claude Code lancé par
   `scripts/claude-lepton.sh` à la racine du clone ; variables `LEPTON_*` (`scripts/lepton-env.sh`) ;
   build dans `$LEPTON_BUILD` ; flash par OpenOCD sur la même machine ; versions épinglées dans
   `MIGRATION-STATUS.md`.

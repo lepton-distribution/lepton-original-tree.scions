@@ -175,6 +175,7 @@ décisions de l'auteur et de relevés faits sur l'arbre réel ; à tenir à jour
 | 2026-10-08 | Étape 9 — **label `net` non exécuté sur macOS** (proposition acceptée) : `net.ping_ftpd` non créé sous `APPLE` avec message à la configuration (`cmake/components/firmware.cmake`), étape sautée dans `ci/run.sh` avec « net : non exécuté sur macOS » ; réseau couvert sous QEMU par Debian et sur carte à l'étape 10. À appliquer à la tâche 5. |
 | 2026-10-08 | Étape 9 — Python et scion du Mac conservés tels quels (Python.org 3.11.5, pipx 1.17.12, scion 0.5.0.1) : `install-macos.sh` n'installe python313/pipx que si `pipx` manque et ne réinstalle pas scion déjà au bon tag. |
 | 2026-10-08 | Étape 9 — décision `net` mise en œuvre avec `CMAKE_HOST_APPLE` (et non `APPLE`, faux en build croisé) : `cmake/components/firmware.cmake`, `ci/run.sh` (`uname -s` = Darwin). Groupe `RESCAN` de l'éditeur de liens d'Apple vide (`cmake/isa/host.cmake`) : correction dans le périmètre de la tâche 4, noyau commun non touché. |
+| 2026-10-08 | Étape 9, tâche 7 — propositions appliquées (accord de l'utilisateur) : `CLAUDE.md` §2 « Environnement de build » (Debian hôte de référence, macOS Intel second hôte, `ci/run.sh` vert sur les deux avant fusion) ; convention « Environnement » du skill `lepton-portage-instructions` (copie du dépôt, `.claude/skills/`). |
 
 ## Décisions ouvertes (ORCHESTRATION §4)
 
