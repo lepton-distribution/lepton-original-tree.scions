@@ -1,8 +1,8 @@
 # Handoff étape 9 → 10 (hôte macOS → cartes depuis macOS)
 
-État au 2026-10-08 : tâches 1 à 7 faites sur le Mac Intel (macOS 15.8.1), branche locale
-`migration/etape-9` non fusionnée. **Reste avant clôture** : `ci/run.sh` vert sur Debian (critère
-de l'étape, ORCHESTRATION §5) et validation de l'utilisateur.
+État au 2026-10-08 : étape close, **validée par l'utilisateur** ; tâches 1 à 7 faites sur le Mac
+Intel (macOS 15.8.1) ; `ci/run.sh` vert sur macOS et sur Debian (branche transférée par
+`git bundle`) ; `migration/etape-9` fusionnée dans `master` (local, non poussée).
 
 ## Réponses aux prérequis de l'étape 10
 - Rootstock du Mac : `~/lepton` (`/Users/cle_d_anton/lepton`), comme sur Debian.
