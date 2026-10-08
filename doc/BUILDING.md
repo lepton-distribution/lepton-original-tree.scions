@@ -103,8 +103,8 @@ git clone https://github.com/lepton-distribution/lepton-original-tree.scions.git
 /tmp/lepton-tree/scripts/install-macos.sh --with-debug-tools   # sudo demandé pour port install
 ```
 
-Le script installe par MacPorts CMake, Ninja, QEMU (`+target_arm`, compilé sur place : long) et
-OpenOCD ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
+Le script installe par MacPorts CMake, Ninja, QEMU (`+target_arm`, compilé sur place : long),
+OpenOCD (`+ftdi +cmsis`) et gdb (`arm-none-eabi-gdb +python313`, lien `gdb-multiarch` ; voir les écarts) ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
 vérifié) et **affiche la ligne `PATH` à ajouter** à `~/.zprofile` (il ne modifie pas le shell).
 expat vient du SDK de macOS. Python et pipx : ceux déjà présents sont conservés. embOS : comme
 au §1. Arbre des sources et `lepton-env.sh` : §2, à l'identique (zsh ou bash 3.2).
@@ -120,6 +120,9 @@ tout preset croisé). `ci/run.sh` (§3 bis) tourne aussi sur le Mac.
 | Édition de liens hôte | éditeur de liens d'Apple : pas de `--start-group`, le groupe `RESCAN` du noyau est vide (`cmake/isa/host.cmake`) |
 | newlib de la toolchain Arm | « 4.4.0 » (tronc) au lieu de 4.5.0.20241231 : `.bin` différents de ceux de Debian, validés par exécution (écart accepté) |
 | QEMU | version MacPorts (11.1.x), plus récente que celle de Debian |
+| gdb | `arm-none-eabi-gdb` de **MacPorts** (variante `+python313`), pas celui de l'Arm GNU Toolchain : ce dernier est construit sans Python, et les commandes `lepton-stacks` et `lepton-fault` de `debug/gdbinit-*` sont écrites en Python. `--with-debug-tools` installe le port, vérifie `python print('ok')` et crée le lien `~/.local/bin/gdb-multiarch` → `/opt/local/bin/arm-none-eabi-gdb` (nom Debian, appelé par `tests/endurance_board.py`) ; `~/.local/bin` doit être dans le `PATH`. Le `arm-none-eabi-gdb` de la toolchain d'Arm, s'il passe devant dans le `PATH`, reste utilisable sans ces commandes |
+| OpenOCD | variante `+cmsis` (hidapi) indispensable à la sonde EDBG de la SAMD21 (CMSIS-DAP v1, HID seulement) ; sur une installation existante : `sudo port upgrade --enforce-variants openocd +ftdi +cmsis` |
+| Dépendances du port gdb | le port tire `arm-none-eabi-gcc` (16.x) et `arm-none-eabi-binutils` dans `/opt/local/bin` ; le build les ignore tant que la toolchain d'Arm (14.2.1, épinglée) précède `/opt/local/bin` dans le `PATH` (`cmake/toolchains/arm-none-eabi.cmake` cherche `arm-none-eabi-gcc` par le `PATH`). Le port ne déclare pas `texinfo`, nécessaire à son build (`makeinfo`) : installé avant lui. La signature de code demandée par la note du port ne sert qu'au débogage de processus locaux ; sans objet pour une cible distante par OpenOCD |
 | Label `net` | **non exécuté** : le test crée un tap dans un espace de noms (Linux seul) ; non créé par CMake (message à la configuration), sauté par `ci/run.sh` ; réseau couvert par Debian et sur carte (`board.net` exécuté depuis macOS, étape 10) |
 
 **Pièges.** Ne pas ouvrir le trunk dans le Finder (`.DS_Store` : fichier régulier, contrôle final
@@ -217,6 +220,18 @@ ctest --preset samd21-xplained-pro-embos -L board   # fumée + banc KAL ; reflas
 
 Débogage : `debug/openocd-samd21-xplained-pro.cfg`, `debug/gdbinit-samd21-xplained-pro`
 (registres de faute ARMv6-M : `lepton-fault-v6m`).
+
+**Depuis macOS** (étape 10) : console `/dev/cu.usbmodem…` (CDC de l'EDBG ; relevée avant chaque
+configuration, `ls /dev/cu.usbmodem*`) ; OpenOCD de MacPorts avec la variante `+cmsis` (sonde
+EDBG en HID, §3 ter). Endurance de 1 h (`gdb-multiarch` : lien vers le gdb de MacPorts, §3 ter) :
+
+```bash
+caffeinate -i python3 tests/endurance_board.py --port /dev/cu.usbmodem… --duration 3600 \
+    --reset-command "openocd -f debug/openocd-samd21-xplained-pro.cfg -c init -c reset -c exit" \
+    --openocd-cfg debug/openocd-samd21-xplained-pro.cfg --gdbinit debug/gdbinit-samd21-xplained-pro \
+    --elf "$LEPTON_BUILD"/samd21-xplained-pro-embos/lepton.elf \
+    --log "$LEPTON_BUILD"/samd21-xplained-pro-embos/endurance_board.log --fault-check v6m
+```
 
 ## 7. Carte NUCLEO-WL55JC1 (Cortex-M4 du CPU1, étape 6)
 

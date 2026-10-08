@@ -10,8 +10,8 @@ Intel avec des firmwares construits par la toolchain ARM du Mac. Oracle : les jo
 |---|---|
 | macOS | 15.8.1 (24H32), Intel x86_64 |
 | Toolchain ARM | Arm GNU Toolchain 14.2.Rel1 (Build arm-14.52), GCC 14.2.1 20241119, newlib « 4.4.0 » (écart accepté le 2026-10-08) |
-| OpenOCD | 0.12.0 (MacPorts `+ftdi`, `/opt/local/bin/openocd`) |
-| gdb | `arm-none-eabi-gdb` 15.2.90 (toolchain Arm) |
+| OpenOCD | 0.12.0 (MacPorts `+ftdi`, `/opt/local/bin/openocd`) ; **`+ftdi +cmsis`** (hidapi 0.15.0) depuis la session 3 (SAMD21) |
+| gdb | sessions 1-2 : `arm-none-eabi-gdb` 15.2.90 (toolchain Arm, **sans Python**) ; depuis la session 3 : `arm-none-eabi-gdb` 17.2 de MacPorts (`+python313`, Python 3.13.16), lien `~/.local/bin/gdb-multiarch` |
 | CMake / Python | 3.31.12 / Python.org 3.11.5 |
 | Réseau des cartes | `en0` (Ethernet), 192.168.2.10/16 fixe ; Wi-Fi `en1` 192.168.1.7/24 ; `route -n get 192.168.2.5` → `en0` |
 
@@ -25,7 +25,7 @@ endurances de 1 h (SAMD21, WL55) rejouées ; endurances de 4 h non rejouées (20
 |---|---|---|---|
 | NUCLEO-F429ZI | ST-LINK V2-1 (`0483:374b`), Location ID `0x14543000` | `0672FF495252717267243842` | `/dev/cu.usbmodem1454303` |
 | STM32F746G-DISCO | ST-LINK V2-1 (`0483:374b`), Location ID `0x14543000` (même port USB) | `0671FF495351885087181231` | `/dev/cu.usbmodem1454303` |
-| SAMD21 Xplained Pro | | | |
+| SAMD21 Xplained Pro | EDBG CMSIS-DAP (`03eb:2111`, FW 01.1A.00FB), Location ID `0x14543000` (même port USB) | `ATML2130021800003505` (même sonde que Debian) | `/dev/cu.usbmodem1454302` |
 | NUCLEO-WL55JC1 A / B | | | |
 
 ## NUCLEO-F429ZI (presets `nucleo-f439zi-*`) — 2026-10-08
@@ -96,3 +96,46 @@ Même câble et mêmes options que la F429ZI (`-DLEPTON_BOARD_SERIAL_PORT=/dev/c
 Même écart de text sous les deux backends, data et bss identiques : l'écart vient de la
 bibliothèque C (newlib « 4.4.0 » du Mac, écart accepté), pas du noyau. Aucune région au-dessus
 de 90 %.
+
+## SAMD21 Xplained Pro (presets `samd21-xplained-pro-*`) — 2026-10-08
+
+Configuration : `-DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454302` ; sans réseau. Aucune
+modification de code ni de test ; deux corrections de l'environnement du Mac (ci-dessous).
+
+| Palier | Verdict | Commande | Écart avec le journal Debian |
+|---|---|---|---|
+| Liste des tests | identique | `ctest -N -L board` : 15 tests (`board.smoke_lsh`, `kal.board_flash`, T1-T8, TICI, TCLK, TSBRK, IRQ, `harness_fail`) | aucun (Debian : 15/15) ; même liste sous FreeRTOS |
+| Flash (embOS) | VERT | `--target flash` | aucun (« Verified OK », flash interne), après ajout de `+cmsis` à OpenOCD |
+| `-L board` embOS | **VERT ×2** (15/15, 15/15) | `caffeinate -i ctest --preset samd21-xplained-pro-embos -L board` | aucun |
+| `uname -a` | identique | fumée | machine `cortexM0p-samd21` |
+| Piles après fumée | VERT (max 72,7 %) | reset sans écriture puis `ls`, `ps`, `cat /usr/etc/.boot`, `pwd`, `ls /dev` (`smoke_lsh.py`), puis `lepton-stacks` (OpenOCD + `gdb-multiarch`) | `lsh` 72,7 % (Debian 72,7), `initd` 65,4 (65,4), `kernel_thread` 40,8 (41,6), MSP 62,0 (62,8) ; ICSR 0, `lepton_embos_last_error` `OS_OK` |
+| Endurance 1 h embOS | **VERT** | `tests/endurance_board.py --duration 3600 --fault-check v6m` (sans `--ping-ip`), 18:46-19:46 | aucun : 120 cycles de 5 commandes, aucun redémarrage, ICSR 0, `EMBOS=0` ; piles à la fin : `lsh` 72,7 %, `initd` 65,4, `kernel_thread` 42,8, MSP 62,0 |
+| `-L board` FreeRTOS | **ÉCHEC ×2 — écart accepté** (fumée en échec, banc non lancé par la fixture) | `caffeinate -i ctest --preset samd21-xplained-pro-freertos -L board` | aucun : même symptôme que Debian (`lsh` démarre, `uname -a`, `ls`, `ps` reviennent à l'invite sans sortie) |
+| Banc KAL FreeRTOS | **VERT ×2** (14/14, 14/14) | `ctest -L kal -FS board_t0 -E board.smoke_lsh` | aucun (Debian : 14/14) |
+| Paliers 1 à 5 au débogueur ; endurance 4 h | non rejoués | — | banc KAL ; décision 2026-10-07 |
+| Fin de session | `lepton.elf` embOS en flash, démarrage contrôlé (`uname -a`) | `--target flash` | — |
+
+**Occupation mémoire** (`-Os`) :
+
+| Preset | text / data / bss (Mac) | Debian (journal) | Écart | Régions (`memoire.py`, Mac) |
+|---|---|---|---|---|
+| `samd21-xplained-pro-embos` | 94 092 / 924 / 13 008 | 97 056 / 924 / 13 008 | text −2 964 | FLASH 36,3 %, RAM 42,5 % |
+| `samd21-xplained-pro-freertos` | 98 724 / 928 / 17 472 | 101 684 / 928 / 17 472 | text −2 960 | FLASH 38,0 %, RAM 56,1 % |
+
+Comme sur les cartes précédentes, seul text diffère (newlib « 4.4.0 », `v6-m/nofp`). Aucune
+région au-dessus de 90 %.
+
+**Corrections de l'environnement du Mac** (décisions de l'utilisateur, dépôt Lepton inchangé
+sous `scion/`) :
+- OpenOCD de MacPorts installé en `+ftdi` seul : pas de hidapi, la sonde EDBG (CMSIS-DAP v1, HID)
+  est introuvable (« unable to find a matching CMSIS-DAP device ») ; diagnostic confirmé en
+  lecture seule par l'OpenOCD de Homebrew (lié à hidapi) ; réinstallé par l'utilisateur :
+  `sudo port upgrade --enforce-variants openocd +ftdi +cmsis`.
+- gdb de l'Arm GNU Toolchain construit sans Python : `lepton-stacks` et `lepton-fault`
+  (Python, `debug/gdbinit-*`) inutilisables. `arm-none-eabi-gdb +python313` de MacPorts (après
+  `texinfo`, que le port ne déclare pas : `makeinfo` manquant, erreur 127) ; lien
+  `~/.local/bin/gdb-multiarch` pour `tests/endurance_board.py` (inchangé). Le port tire aussi
+  `arm-none-eabi-gcc` 16.1.0 dans `/opt/local/bin` : le build reste sur la toolchain d'Arm 14.2.1,
+  placée avant dans le `PATH` (cache CMake vérifié).
+- Ces deux points : `scripts/install-macos.sh --with-debug-tools`, `BUILDING.md` §3 ter et §6.
+
