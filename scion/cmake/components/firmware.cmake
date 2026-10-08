@@ -144,7 +144,11 @@ if(LEPTON_QEMU_MACHINE)
   add_subdirectory(${CMAKE_SOURCE_DIR}/tests/kal ${CMAKE_BINARY_DIR}/tests/kal)
 
   # --- palier réseau (label net) : ping et session ftpd depuis l'hôte, tap en espace de noms ----
-  if(LEPTON_NET_STACK AND LEPTON_NET_TEST_FTP_FILE)
+  # Espace de noms et tap (unshare) propres à Linux : test non créé sur un hôte macOS (décision
+  # 2026-10-08) ; réseau couvert sous QEMU par Debian et sur carte (étape 10).
+  if(LEPTON_NET_STACK AND LEPTON_NET_TEST_FTP_FILE AND CMAKE_HOST_APPLE)
+    message(STATUS "net.ping_ftpd : non créé sur un hôte macOS (tap en espace de noms, Linux seul)")
+  elseif(LEPTON_NET_STACK AND LEPTON_NET_TEST_FTP_FILE)
     add_test(NAME net.ping_ftpd
              COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/net_qemu.py
                      --qemu ${LEPTON_QEMU_ARM} --machine ${LEPTON_QEMU_MACHINE}
