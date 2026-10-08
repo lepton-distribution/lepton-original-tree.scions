@@ -198,6 +198,9 @@ Débogage : `debug/openocd-stm32f746g-disco.cfg`, `debug/gdbinit-stm32f746g-disc
 comme la NUCLEO (adresse 192.168.2.5 du `.init`, `ftpd`) ; test sur carte avec
 `-DLEPTON_NET_TEST_HOST_IP=<adresse de l'hôte sur le câble>` puis `ctest … -R board.net`.
 
+**Depuis macOS** : comme la NUCLEO (§4) ; console `/dev/cu.usbmodem…` (relevée avant chaque
+configuration), `-DLEPTON_NET_TEST_HOST_IP=192.168.2.10`, tests sous `caffeinate -i`.
+
 ## 6. Carte SAMD21 Xplained Pro (Cortex-M0+, étape 6)
 
 Brancher la carte par le connecteur USB de l'EDBG (« DEBUG USB », sonde CMSIS-DAP `03eb:2111`).

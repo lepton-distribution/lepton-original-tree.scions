@@ -24,7 +24,7 @@ endurances de 1 h (SAMD21, WL55) rejouées ; endurances de 4 h non rejouées (20
 | Carte | Sonde (USB) | Numéro de série | Console |
 |---|---|---|---|
 | NUCLEO-F429ZI | ST-LINK V2-1 (`0483:374b`), Location ID `0x14543000` | `0672FF495252717267243842` | `/dev/cu.usbmodem1454303` |
-| STM32F746G-DISCO | | | |
+| STM32F746G-DISCO | ST-LINK V2-1 (`0483:374b`), Location ID `0x14543000` (même port USB) | `0671FF495351885087181231` | `/dev/cu.usbmodem1454303` |
 | SAMD21 Xplained Pro | | | |
 | NUCLEO-WL55JC1 A / B | | | |
 
@@ -67,3 +67,32 @@ pour le chiffrer). Aucune région au-dessus du seuil de 90 %.
 Note : le binaire testé porte la date de compilation « Jan 1 1970 » (`kernel.c` compilé en
 dernier par `SOURCE_DATE_EPOCH=0 ci/run.sh` à l'étape 9, non recompilé en incrémental) ; sans
 effet sur les tests.
+
+## STM32F746G-DISCO (presets `stm32f746g-disco-*`) — 2026-10-08
+
+Même câble et mêmes options que la F429ZI (`-DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303
+-DLEPTON_NET_TEST_HOST_IP=192.168.2.10`) ; carte en 192.168.2.5 (`.init`). Journaux :
+`$LEPTON_BUILD/etape10-f746-*.log`. Aucune modification de code ni de test.
+
+| Palier | Verdict | Commande | Écart avec le journal Debian |
+|---|---|---|---|
+| Liste des tests | identique | `ctest -N -L board` : 20 tests (mêmes noms que la F429ZI) | aucun (Debian : 20/20 dont `board.net`, sessions 6.2 et 7.3) |
+| Flash (embOS) | VERT | `--target flash` | aucun (« Verified OK », flash interne) |
+| `-L board` embOS | **VERT ×2** (20/20, 20/20) | `caffeinate -i ctest --preset stm32f746g-disco-embos -L board` | aucun |
+| `board.net` embOS | **VERT 5/5** d'affilée | `ctest -R '^board\.net$'` | aucun : ping 3/3, `LIST` 13 entrées, `RETR /usr/etc/.boot` 57 o identique, errno `ECONNRESET`=15 |
+| `uname -a` | identique | fumée | `lepton-cortexm7-32 4.10.0.2 … cortexM7-stm32f7` |
+| `-L board` FreeRTOS | **VERT ×2** (20/20, 20/20) | `caffeinate -i ctest --preset stm32f746g-disco-freertos -L board` | aucun (Debian : 20/20) |
+| `board.net` FreeRTOS | **VERT 5/5** d'affilée | `ctest -R '^board\.net$'` | aucun (Debian : 5/5) |
+| Paliers 1 à 5 au débogueur ; endurance 4 h | non rejoués | — | banc KAL ; décision 2026-10-07 |
+| Fin de session | `lepton.elf` embOS en flash | `--target flash` | — |
+
+**Occupation mémoire** (`-Os`) :
+
+| Preset | text / data / bss (Mac) | Debian (journal) | Écart | Régions (`memoire.py`, Mac) |
+|---|---|---|---|---|
+| `stm32f746g-disco-embos` | 280 936 / 1 180 / 155 640 | 285 944 / 1 180 / 155 640 | text −5 008 | FLASH 26,9 %, RAM 48,7 % |
+| `stm32f746g-disco-freertos` | 286 100 / 1 184 / 166 784 | 291 108 / 1 184 / 166 784 | text −5 008 | FLASH 27,4 %, RAM 53,7 % |
+
+Même écart de text sous les deux backends, data et bss identiques : l'écart vient de la
+bibliothèque C (newlib « 4.4.0 » du Mac, écart accepté), pas du noyau. Aucune région au-dessus
+de 90 %.
