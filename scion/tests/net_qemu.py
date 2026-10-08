@@ -59,16 +59,23 @@ def setup_tap(host_ip, prefix):
     return None
 
 
+def _ping_wait(seconds):
+    """Valeur de -W : secondes sous Linux, millisecondes sous macOS."""
+    return str(seconds * 1000 if sys.platform == "darwin" else seconds)
+
+
 def ping(guest_ip, count, deadline_s):
     """Attend que l'invité réponde (lwIP et ARP prêts), puis exige count réponses."""
     end = time.monotonic() + deadline_s
     while time.monotonic() < end:
-        r = subprocess.run(["ping", "-c", "1", "-W", "1", guest_ip], capture_output=True, text=True)
+        r = subprocess.run(["ping", "-c", "1", "-W", _ping_wait(1), guest_ip],
+                           capture_output=True, text=True)
         if r.returncode == 0:
             break
-    r = subprocess.run(["ping", "-c", str(count), "-W", "2", guest_ip],
+    r = subprocess.run(["ping", "-c", str(count), "-W", _ping_wait(2), guest_ip],
                        capture_output=True, text=True)
-    m = re.search(r"(\d+) received", r.stdout)
+    # Linux : « 3 received » ; macOS : « 3 packets received ».
+    m = re.search(r"(\d+) (?:packets )?received", r.stdout)
     received = int(m.group(1)) if m else 0
     return received, r.stdout.strip().splitlines()[-2:] if r.stdout else [r.stderr.strip()]
 

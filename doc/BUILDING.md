@@ -103,8 +103,8 @@ git clone https://github.com/lepton-distribution/lepton-original-tree.scions.git
 /tmp/lepton-tree/scripts/install-macos.sh --with-debug-tools   # sudo demandé pour port install
 ```
 
-Le script installe par MacPorts CMake, Ninja, QEMU (`+target_arm`, compilé sur place : long) et
-OpenOCD ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
+Le script installe par MacPorts CMake, Ninja, QEMU (`+target_arm`, compilé sur place : long),
+OpenOCD (`+ftdi +cmsis`) et gdb (`arm-none-eabi-gdb +python313`, lien `gdb-multiarch` ; voir les écarts) ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
 vérifié) et **affiche la ligne `PATH` à ajouter** à `~/.zprofile` (il ne modifie pas le shell).
 expat vient du SDK de macOS. Python et pipx : ceux déjà présents sont conservés. embOS : comme
 au §1. Arbre des sources et `lepton-env.sh` : §2, à l'identique (zsh ou bash 3.2).
@@ -120,7 +120,10 @@ tout preset croisé). `ci/run.sh` (§3 bis) tourne aussi sur le Mac.
 | Édition de liens hôte | éditeur de liens d'Apple : pas de `--start-group`, le groupe `RESCAN` du noyau est vide (`cmake/isa/host.cmake`) |
 | newlib de la toolchain Arm | « 4.4.0 » (tronc) au lieu de 4.5.0.20241231 : `.bin` différents de ceux de Debian, validés par exécution (écart accepté) |
 | QEMU | version MacPorts (11.1.x), plus récente que celle de Debian |
-| Label `net` | **non exécuté** : le test crée un tap dans un espace de noms (Linux seul) ; non créé par CMake (message à la configuration), sauté par `ci/run.sh` ; réseau couvert par Debian et sur carte |
+| gdb | `arm-none-eabi-gdb` de **MacPorts** (variante `+python313`), pas celui de l'Arm GNU Toolchain : ce dernier est construit sans Python, et les commandes `lepton-stacks` et `lepton-fault` de `debug/gdbinit-*` sont écrites en Python. `--with-debug-tools` installe le port, vérifie `python print('ok')` et crée le lien `~/.local/bin/gdb-multiarch` → `/opt/local/bin/arm-none-eabi-gdb` (nom Debian, appelé par `tests/endurance_board.py`) ; `~/.local/bin` doit être dans le `PATH`. Le `arm-none-eabi-gdb` de la toolchain d'Arm, s'il passe devant dans le `PATH`, reste utilisable sans ces commandes |
+| OpenOCD | variante `+cmsis` (hidapi) indispensable à la sonde EDBG de la SAMD21 (CMSIS-DAP v1, HID seulement) ; sur une installation existante : `sudo port upgrade --enforce-variants openocd +ftdi +cmsis` |
+| Dépendances du port gdb | le port tire `arm-none-eabi-gcc` (16.x) et `arm-none-eabi-binutils` dans `/opt/local/bin` ; le build les ignore tant que la toolchain d'Arm (14.2.1, épinglée) précède `/opt/local/bin` dans le `PATH` (`cmake/toolchains/arm-none-eabi.cmake` cherche `arm-none-eabi-gcc` par le `PATH`). Le port ne déclare pas `texinfo`, nécessaire à son build (`makeinfo`) : installé avant lui. La signature de code demandée par la note du port ne sert qu'au débogage de processus locaux ; sans objet pour une cible distante par OpenOCD |
+| Label `net` | **non exécuté** : le test crée un tap dans un espace de noms (Linux seul) ; non créé par CMake (message à la configuration), sauté par `ci/run.sh` ; réseau couvert par Debian et sur carte (`board.net` exécuté depuis macOS, étape 10) |
 
 **Pièges.** Ne pas ouvrir le trunk dans le Finder (`.DS_Store` : fichier régulier, contrôle final
 de `ci/run.sh` en échec ; le supprimer). Toolchain téléchargée par navigateur : retirer
@@ -164,6 +167,22 @@ Optimisation : `-Os` pour toutes les cibles Cortex-M (`LEPTON_OPT_LEVEL`, `-g` c
 
 Débogage (gdb, OpenOCD, registres de faute) : `doc/migration/debug-gcc.md`.
 
+**Depuis macOS** (étape 10, `doc/migration/validation-macos.md`) : la console est
+`/dev/cu.usbmodem…` (jamais `/dev/tty.usbmodem…`, qui attend la porteuse) ; son nom change au
+rebranchement et selon le port USB : le relever (`ls /dev/cu.usbmodem*`) avant chaque
+configuration. Interface Ethernet du Mac en adresse fixe sur le réseau de la carte (validé :
+192.168.2.10/16 sur `en0` ; vérifier `route -n get 192.168.2.5`), sinon macOS prend une adresse
+169.254.x.x. Tests sous `caffeinate -i` (mise en veille : la sonde décroche) :
+
+```bash
+cmake --preset nucleo-f439zi-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303 -DLEPTON_NET_TEST_HOST_IP=192.168.2.10
+cmake --build --preset nucleo-f439zi-embos --target flash
+caffeinate -i ctest --preset nucleo-f439zi-embos -L board        # board.net compris
+cmake --build --preset nucleo-f439zi-embos --target flash        # le banc laisse kal_bench
+```
+
+Console : `screen /dev/cu.usbmodem… 115200` (quitter par `Ctrl-a k`) ; la refermer avant `ctest`.
+
 ## 5. Carte STM32F746G-DISCO (étape 6)
 
 Brancher la carte par le connecteur USB du ST-LINK (CN14). Console de Lepton : USART1,
@@ -182,6 +201,9 @@ Débogage : `debug/openocd-stm32f746g-disco.cfg`, `debug/gdbinit-stm32f746g-disc
 comme la NUCLEO (adresse 192.168.2.5 du `.init`, `ftpd`) ; test sur carte avec
 `-DLEPTON_NET_TEST_HOST_IP=<adresse de l'hôte sur le câble>` puis `ctest … -R board.net`.
 
+**Depuis macOS** : comme la NUCLEO (§4) ; console `/dev/cu.usbmodem…` (relevée avant chaque
+configuration), `-DLEPTON_NET_TEST_HOST_IP=192.168.2.10`, tests sous `caffeinate -i`.
+
 ## 6. Carte SAMD21 Xplained Pro (Cortex-M0+, étape 6)
 
 Brancher la carte par le connecteur USB de l'EDBG (« DEBUG USB », sonde CMSIS-DAP `03eb:2111`).
@@ -198,6 +220,18 @@ ctest --preset samd21-xplained-pro-embos -L board   # fumée + banc KAL ; reflas
 
 Débogage : `debug/openocd-samd21-xplained-pro.cfg`, `debug/gdbinit-samd21-xplained-pro`
 (registres de faute ARMv6-M : `lepton-fault-v6m`).
+
+**Depuis macOS** (étape 10) : console `/dev/cu.usbmodem…` (CDC de l'EDBG ; relevée avant chaque
+configuration, `ls /dev/cu.usbmodem*`) ; OpenOCD de MacPorts avec la variante `+cmsis` (sonde
+EDBG en HID, §3 ter). Endurance de 1 h (`gdb-multiarch` : lien vers le gdb de MacPorts, §3 ter) :
+
+```bash
+caffeinate -i python3 tests/endurance_board.py --port /dev/cu.usbmodem… --duration 3600 \
+    --reset-command "openocd -f debug/openocd-samd21-xplained-pro.cfg -c init -c reset -c exit" \
+    --openocd-cfg debug/openocd-samd21-xplained-pro.cfg --gdbinit debug/gdbinit-samd21-xplained-pro \
+    --elf "$LEPTON_BUILD"/samd21-xplained-pro-embos/lepton.elf \
+    --log "$LEPTON_BUILD"/samd21-xplained-pro-embos/endurance_board.log --fault-check v6m
+```
 
 ## 7. Carte NUCLEO-WL55JC1 (Cortex-M4 du CPU1, étape 6)
 
@@ -221,6 +255,24 @@ exige une seconde carte, désignée par `-DLEPTON_RADIO_PEER_STLINK_SERIAL=<n°>
 répertoire (`cmake --preset nucleo-wl55jc1-embos -B "$LEPTON_BUILD/nucleo-wl55jc1-embos-b" …`),
 sans modifier le preset. Débogage : `debug/openocd-nucleo-wl55jc1.cfg`,
 `debug/gdbinit-nucleo-wl55jc1`.
+
+**Depuis macOS** (étape 10) : pas de `/dev/serial/by-id/` ; relever les numéros des deux
+STLINK-V3 et leur « Location ID » (`system_profiler SPUSBDataType`), puis les consoles
+(`ls /dev/cu.usbmodem*`) : la console d'une sonde de Location ID `0x14543000` est
+`/dev/cu.usbmodem1454303` (préfixe commun). Une seule configuration suffit pour la paire :
+`board.radio` flashe la même image sur la carte B par le fichier généré
+`openocd-nucleo-wl55jc1-paire.cfg` et le test fait alors partie de `-L board`.
+
+```bash
+cmake --preset nucleo-wl55jc1-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303 \
+    -DLEPTON_BOARD_STLINK_SERIAL=<n° A> -DLEPTON_RADIO_PEER_SERIAL_PORT=/dev/cu.usbmodem1454403 \
+    -DLEPTON_RADIO_PEER_STLINK_SERIAL=<n° B>
+caffeinate -i ctest --preset nucleo-wl55jc1-embos -L board   # 16 tests, board.radio compris
+```
+
+Endurance de 1 h : comme la SAMD21 (§6), avec `debug/gdbinit-nucleo-wl55jc1`, la configuration
+OpenOCD générée `"$LEPTON_BUILD"/nucleo-wl55jc1-embos/openocd-nucleo-wl55jc1.cfg` (numéro de la
+sonde A) et `--fault-check v7m`.
 
 ## 8. Documentation Doxygen
 

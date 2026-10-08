@@ -5,7 +5,7 @@
 #
 # Usage : ./install-macos.sh [--with-debug-tools] [--toolchain-dir <répertoire>]
 #                            [--pkg-manager macports|brew]
-#   --with-debug-tools : ajoute OpenOCD (flash et débogage des cartes, étape 10)
+#   --with-debug-tools : ajoute OpenOCD et gdb avec Python (lien gdb-multiarch ; étape 10)
 #   --toolchain-dir    : où déposer la toolchain ARM (défaut : $LEPTON_TOOLCHAIN_DIR, sinon ~/opt)
 #   --pkg-manager      : gestionnaire de paquets ; défaut : MacPorts sur Intel, Homebrew sur
 #                        Apple Silicon, selon ce qui est installé
@@ -182,10 +182,25 @@ fi
 
 # --- Flash et débogage des cartes (étape 10) -----------------------------------
 if [ "$DEBUG_TOOLS" = "1" ]; then
-  log "Outils de débogage (OpenOCD ; gdb : arm-none-eabi-gdb de la toolchain)"
-  pkg_install open-ocd:openocd
-  # Debian nomme gdb « gdb-multiarch » ; ici c'est arm-none-eabi-gdb (tests/endurance_board.py
-  # et debug/gdbinit-* citent le nom Debian).
+  log "Outils de débogage (OpenOCD ; gdb avec Python : arm-none-eabi-gdb du gestionnaire)"
+  # +cmsis (hidapi) : sonde EDBG de la SAMD21 Xplained Pro, CMSIS-DAP v1 en HID seulement ;
+  # sans elle, « unable to find a matching CMSIS-DAP device » (ST-LINK : libusb, déjà présent).
+  pkg_install "open-ocd:openocd +ftdi +cmsis"
+  # Le gdb de l'Arm GNU Toolchain est construit sans Python : les commandes lepton-stacks et
+  # lepton-fault (debug/gdbinit-*), écrites en Python, n'y existent pas. gdb vient donc du
+  # gestionnaire de paquets (étape 10).
+  # Le port tire arm-none-eabi-gcc 16.x dans /opt/local/bin : la toolchain d'Arm (14.2.1) doit
+  # rester devant dans le PATH. Il construit sa doc .info sans déclarer texinfo (makeinfo).
+  pkg_install texinfo:texinfo "arm-none-eabi-gdb:arm-none-eabi-gdb +python313"
+  GDB="$PKG_PREFIX/bin/arm-none-eabi-gdb"
+  [ -x "$GDB" ] || die "$GDB introuvable après installation."
+  "$GDB" -batch -ex "python print('ok')" 2>/dev/null | grep -qx ok \
+    || die "$GDB sans Python (variante +python313 absente ?)."
+  # Debian nomme gdb « gdb-multiarch » (tests/endurance_board.py l'appelle par ce nom) :
+  # lien hors dépôt dans ~/.local/bin, à placer dans le PATH.
+  mkdir -p "$HOME/.local/bin"
+  ln -sfn "$GDB" "$HOME/.local/bin/gdb-multiarch"
+  echo "  gdb-multiarch -> $GDB (~/.local/bin)"
 fi
 
 # --- Récapitulatif : versions à consigner dans MIGRATION-STATUS.md --------------
@@ -193,7 +208,7 @@ log "Versions installées (à consigner dans MIGRATION-STATUS.md)"
 printf '  %-26s %s\n' "macOS" "$(sw_vers -productVersion) ($ARCH)"
 printf '  %-26s %s\n' "paquets" "$PKG ($PKG_PREFIX)"
 for c in cc cmake ninja python3 scion cloc spatch \
-         arm-none-eabi-gcc arm-none-eabi-gdb qemu-system-arm doxygen openocd; do
+         arm-none-eabi-gcc arm-none-eabi-gdb gdb-multiarch qemu-system-arm doxygen openocd; do
   if command -v "$c" >/dev/null 2>&1; then
     # openocd écrit sa version sur stderr
     if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>&1 | head -1)"; fi
