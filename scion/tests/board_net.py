@@ -16,7 +16,7 @@ conforme (CTest, labels board et net).
 
 Exemple :
   board_net.py --port /dev/ttyACM0 --host-ip 192.168.2.20 --guest-ip 192.168.2.5 \\
-      --reset-command "openocd -f debug/openocd-nucleo-f439zi.cfg -c 'program lepton.elf verify reset exit'" \\
+      --reset-command "openocd -f sys/root/src/kernel/dev/bsp/nucleo-f429zi/debug/openocd-nucleo-f439zi.cfg -c 'program lepton.elf verify reset exit'" \\
       --ftp-file /usr/etc/.boot --ftp-reference sys/user/tauon-basic/etc/nucleo-f439zi/.boot \\
       --errno-header sys/root/src/kernel/core/errno.h
 """

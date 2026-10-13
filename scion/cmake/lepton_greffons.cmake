@@ -127,6 +127,7 @@ function(_lepton_greffon_lire fichier)
   _lepton_json(vecteurs ARRAY "${json}" ${fichier} vecteurs)
   _lepton_json(remplacants_forts ARRAY "${json}" ${fichier} remplacants_forts)
   _lepton_json(demarrage ARRAY "${json}" ${fichier} demarrage)
+  _lepton_json(openocd ARRAY "${json}" ${fichier} openocd)
   foreach(champ famille coeur abi_flottante entete_config_noyau script_liens)
     _lepton_json(${champ} STRING "${json}" ${fichier} ${champ})
   endforeach()
@@ -192,7 +193,7 @@ function(_lepton_greffon_lire fichier)
     set(${p}_${P}_DRAPEAUX "${${portee}_drapeaux}" PARENT_SCOPE)
     set(${p}_${P}_INCLUSIONS "${${portee}_inclusions}" PARENT_SCOPE)
   endforeach()
-  foreach(champ coeurs vecteurs remplacants_forts demarrage famille coeur abi_flottante
+  foreach(champ coeurs vecteurs remplacants_forts demarrage openocd famille coeur abi_flottante
           entete_config_noyau script_liens frequence_cpu qemu_machine)
     string(TOUPPER ${champ} C)
     set(${p}_${C} "${${champ}}" PARENT_SCOPE)
@@ -246,6 +247,7 @@ endfunction()
 # lepton_greffons_carte(<nom>) : carte décrite par le manifeste BSP <nom> et sa famille. Pose
 # LEPTON_BOARD_FAMILLE, LEPTON_BOARD_MEMORY_LD, LEPTON_BOARD_CPU_FREQ,
 # LEPTON_BOARD_KERNEL_CONFIG_HEADER (relatif au trunk, pour mklepton), LEPTON_QEMU_MACHINE,
+# LEPTON_BOARD_OPENOCD_CFG (champ openocd : un seul fichier jusqu'à ENV-9, cible flash et tests),
 # LEPTON_BOARD_DEMARRAGE_SOURCES (OBJECT bsp_demarrage), LEPTON_BOARD_OBJECT_SOURCES (vecteurs et
 # remplaçants forts de la famille, OBJECT bsp_objets) et LEPTON_BOARD_CMAKE (CMakeLists.txt
 # facultatif du BSP : paramètres hors manifeste, PA-7 Q3, à inclure par l'appelant).
@@ -280,6 +282,15 @@ function(lepton_greffons_carte nom)
     set(LEPTON_BOARD_KERNEL_CONFIG_HEADER ${entete} PARENT_SCOPE)
   endif()
   set(LEPTON_QEMU_MACHINE "${${b}_QEMU_MACHINE}" PARENT_SCOPE)
+  list(LENGTH ${b}_OPENOCD n)
+  if(n GREATER 1)
+    _lepton_manifeste_erreur(${${b}_FICHIER} "champ « openocd » : un seul fichier pris en charge (${n})")
+  endif()
+  set(LEPTON_BOARD_OPENOCD_CFG PARENT_SCOPE)
+  if(n EQUAL 1)
+    _lepton_greffon_fichier(cfg ${nom} ${${b}_OPENOCD})
+    set(LEPTON_BOARD_OPENOCD_CFG ${LEPTON_SRC}/${cfg} PARENT_SCOPE)
+  endif()
   set(demarrage)
   foreach(fichier IN LISTS ${b}_DEMARRAGE)
     _lepton_greffon_fichier(chemin ${nom} ${fichier})
