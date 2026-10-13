@@ -54,7 +54,7 @@ add_test(NAME host.mklepton_format
                  -DSRC=${CMAKE_SOURCE_DIR}
                  -DXML=sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml
                  -DCPU_FREQ=25000000
-                 -DKERNEL_CONFIG_HEADER=sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h
+                 -DKERNEL_CONFIG_HEADER=sys/root/src/kernel/dev/bsp/qemu-mps2-an386/include/user_kernel_mkconf.h
                  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton_format
                  -P ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_format_check.cmake)
 
