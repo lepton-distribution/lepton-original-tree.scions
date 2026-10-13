@@ -1,0 +1,17 @@
+{
+  "nom": "lepton-noyau",
+  "type": "noyau",
+  "version": "4.10.0.2",
+  "description": "Noyau Lepton : bibliothèques kernel (kernel/, kernel/dev/arch), lib, sbin, bin ; main et démarrage générique Cortex-M (kernel_demarrage) ; définies par cmake/components du greffon (BLD-1). Version : __LEPTON_VERSION (kernel/core/ver.h).",
+  "destination": "",
+  "coeurs": [
+    "cortex-m0plus",
+    "cortex-m3",
+    "cortex-m4f",
+    "cortex-m7"
+  ],
+  "backends": [
+    "embos",
+    "freertos"
+  ]
+}

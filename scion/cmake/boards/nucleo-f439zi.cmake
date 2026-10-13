@@ -8,10 +8,10 @@ if(NOT LEPTON_CPU STREQUAL "cortex-m4f")
   message(FATAL_ERROR "nucleo-f439zi : LEPTON_CPU=cortex-m4f attendu")
 endif()
 set(LEPTON_BOARD_MEMORY_LD ${CMAKE_SOURCE_DIR}/ld/mem_nucleo-f439zi.ld)
-set(LEPTON_BSP_NAME nucleo_f439zi)
 set(stm32f4 kernel/dev/arch/cortexm/stm32f4xx)
-set(LEPTON_BSP_SOURCES
-  kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_board.c
+set(LEPTON_BSP_SOURCES kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_board.c)
+# famille STM32F4 (bibliothèque kernel)
+set(LEPTON_DEV_ARCH_SOURCES
   # couche STM32F4 de Lepton (pilotes génériques, paramétrés par le BSP)
   ${stm32f4}/gpio.c
   ${stm32f4}/uart.c
@@ -26,9 +26,9 @@ set(LEPTON_BSP_SOURCES
   ${stm32f4}/driverlib/stm32f4xx_dma.c
   ${stm32f4}/driverlib/stm32f4xx_syscfg.c
   ${stm32f4}/driverlib/stm32f4x7_eth.c)
-# vecteurs : objet de l'exécutable, comme le démarrage (dans une bibliothèque, rien ne le tirerait :
-# les gestionnaires faibles du démarrage suffisent à l'éditeur de liens)
-list(APPEND LEPTON_FIRMWARE_SOURCES kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_vectors.c)
+# vecteurs : bibliothèque OBJECT bsp_objets, comme le démarrage (dans une archive, rien ne les
+# tirerait : les gestionnaires faibles du démarrage suffisent à l'éditeur de liens)
+set(LEPTON_BOARD_OBJECT_SOURCES kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_vectors.c)
 set(LEPTON_NET_STACK lwip)   # USE_LWIP dans user_kernel_mkconf.h
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_f439zi.xml)
 set(LEPTON_BOARD_CPU_FREQ 168000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)

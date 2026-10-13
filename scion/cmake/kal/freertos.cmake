@@ -21,7 +21,7 @@ endif()
 # (configASSERT, débordement de pile) communs aux ISA, aussi liés au banc KAL.
 set(LEPTON_KAL_MAIN_SOURCES kernel/core/core-freertos/arch/armv7m/freertos_main.c)
 set(LEPTON_KAL_HW_SOURCES kernel/core/core-freertos/arch/armv7m/freertos_hooks.c)
-list(APPEND LEPTON_FIRMWARE_SOURCES ${LEPTON_KAL_MAIN_SOURCES} ${LEPTON_KAL_HW_SOURCES})
+# main et matériel du micro-noyau : sources de l'exécutif (cmake/components/firmware.cmake)
 
 # KAL, axe micro-noyau : kal_backend.h, FreeRTOSConfig.h, trame du port par ISA.
 set(LEPTON_KAL_BACKEND_DIR kernel/core/kal/backend/freertos)

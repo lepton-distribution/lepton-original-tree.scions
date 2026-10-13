@@ -27,7 +27,7 @@ set(LEPTON_KAL_LINK_LIBS ${LEPTON_EMBOS_LIB})
 # priorité de SysTick selon les bits de priorité implémentés).
 set(LEPTON_KAL_MAIN_SOURCES kernel/core/core-segger/arch/armv7m/embos_main.c)
 set(LEPTON_KAL_HW_SOURCES kernel/core/core-segger/arch/${LEPTON_ISA}/embos_init_hw.c)
-list(APPEND LEPTON_FIRMWARE_SOURCES ${LEPTON_KAL_MAIN_SOURCES} ${LEPTON_KAL_HW_SOURCES})
+# main et matériel du micro-noyau : sources de l'exécutif (cmake/components/firmware.cmake)
 
 target_include_directories(lepton_options INTERFACE ${LEPTON_EMBOS_ROOT}/Start/Inc)
 # KAL, axe micro-noyau : kal_backend.h (inclus par kernel/core/kal.h, dispatcher).

@@ -22,7 +22,7 @@ target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_A
 # KAL, axe ISA : kal_arch.h (inclus par kernel/core/kal.h, dispatcher).
 set(LEPTON_KAL_ARCH_DIR kernel/core/kal/arch/armv6m)
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_KAL_ARCH_DIR})
-# démarrage de la famille et _sbrk borné à __stack_limit__ (commun Cortex-M)
+# démarrage de la famille et _sbrk borné à __stack_limit__ (commun Cortex-M) : bibliothèque OBJECT
+# kernel_demarrage (BLD-1, cmake/components/firmware.cmake)
 set(LEPTON_ISA_STARTUP_SOURCES kernel/core/arch/cortexm/startup_armv6m.c
   kernel/core/arch/cortexm/sbrk_cortexm.c)
-set(LEPTON_FIRMWARE_SOURCES ${LEPTON_ISA_STARTUP_SOURCES})
