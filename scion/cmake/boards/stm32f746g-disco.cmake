@@ -25,7 +25,8 @@ set(LEPTON_NET_STACK lwip)   # USE_LWIP dans user_kernel_mkconf.h
 set(LEPTON_EMBOS_LIB_VARIANT _837070)
 set(LEPTON_FREERTOS_PORT ARM_CM7/r0p1)   # FreeRTOS : port de l'erratum 837070 (remplace ARM_CM4F du cœur)
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_stm32f746g_disco.xml)
-set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
+set(LEPTON_BOARD_CPU_FREQ 216000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)
+set(LEPTON_BOARD_KERNEL_CONFIG_HEADER sys/user/tauon-basic/src/arch/stm32f746g-disco/kernel_mkconf/include/user_kernel_mkconf.h)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM7-stm32f7)
 # carte réelle : console série du ST-LINK et sonde OpenOCD
 set(LEPTON_BOARD_OPENOCD_CFG ${CMAKE_SOURCE_DIR}/debug/openocd-stm32f746g-disco.cfg)

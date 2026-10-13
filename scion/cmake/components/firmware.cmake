@@ -7,7 +7,14 @@ if(NOT LEPTON_BOARD_MKCONF)
 endif()
 
 # --- configuration générée (kernel_mkconf.h, dev_mkconf.c, bin_mkconf.c, dev_dskimg.c) ----------
-lepton_generate(board XML ${LEPTON_BOARD_MKCONF} MKCONF_TARGET ${LEPTON_BOARD_MKCONF_TARGET})
+foreach(v LEPTON_BOARD_CPU_FREQ LEPTON_BOARD_KERNEL_CONFIG_HEADER)
+  if(NOT ${v})
+    message(FATAL_ERROR "firmware : ${v} non défini pour la carte ${LEPTON_BOARD}")
+  endif()
+endforeach()
+lepton_generate(board XML ${LEPTON_BOARD_MKCONF}
+                CPU_FREQ ${LEPTON_BOARD_CPU_FREQ}
+                KERNEL_CONFIG_HEADER ${LEPTON_BOARD_KERNEL_CONFIG_HEADER})
 # kernel_mkconf.h (chemin d'inclusion, kernelconf.h) et en-tête projet relatif au trunk
 target_include_directories(lepton_options INTERFACE ${board_GENERATED_DIR} ${CMAKE_SOURCE_DIR})
 foreach(lib IN LISTS LEPTON_KERNEL_GROUP)

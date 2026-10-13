@@ -40,6 +40,7 @@ either the MPL or the [eCos GPL] License."
 #include <dirent.h>
 #include <libgen.h>
 
+#include <errno.h>
 #include <expat.h>
 #include "mklepton.h"
 #include "kernel_stub.h"
@@ -48,9 +49,10 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Global Declaration
 ==============================================*/
-char * xml_current_target=(char*)0;
-char * mk_current_target=(char*)0;
 char* xml_mk_file=(char*)0;
+
+//format du XML (CFG-8, ENV-4) : attribut version de <mklepton>, seule valeur admise
+#define MK_FORMAT_VERSION "2"
 
 //migration GCC/Linux (etape 2) : repertoire de sortie (-o) prioritaire sur les dest_path,
 //racine des chemins d'entree relatifs des mkconf (-s)
@@ -85,7 +87,7 @@ struct kernel_conf_t g_kernel_conf={0};
 const char dflt_kernel_conf_filepath[] = "kernel_mkconf.h";
 #define MK_KERNELCONF_FILEPATH   kernel_conf_filepath
 char * kernel_conf_filepath = (char*)dflt_kernel_conf_filepath; //see xml_elmt_mklepton()
-//en-tete de configuration propre au projet (<arch include_absolute_path>, repris de mklepton-w32.c)
+//en-tete de configuration propre a la carte (--kernel-config-header ; format 1 : <arch include_absolute_path>)
 char * kernel_conf_incabspath = (char*)0;
 const char kernelconf_top_header[]=
    "/*===========================================\n\
@@ -486,49 +488,6 @@ int xml_elmt_end_kernel(void){
 }
 
 /*-------------------------------------------
-| Name:xml_elmt_kernel_cpu
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_kernel_cpu(const char **attr){
-
-   int i;
-   char* attr_name;
-   char* attr_val;
-
-   for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_FREQ)) {
-         g_kernel_conf.str_cpu_freq =strdup(attr_val);
-         //modif since support sma7se. 29/07/2007
-         g_kernel_conf.cpu_freq = atol(attr_val);
-         if( !(g_kernel_conf.cpu_freq/1000000L) )
-            g_kernel_conf.cpu_freq = atol(attr_val)*1000000L;  //define in MHz in xml else define in Hz.
-
-         if(g_kernel_conf.cpu_freq<=0)
-            return -1;
-      }else if(!strcasecmp(attr_name,XML_TAG_ATTR_TYPE)) {
-         cpu_type_enum_t cpu_type_enum=CPU_TYPE_GNU32;
-
-         g_kernel_conf.str_cpu_type =strdup(attr_val);
-         while(cpu_type_list[cpu_type_enum]) {
-            if(!strcasecmp(g_kernel_conf.str_cpu_type,cpu_type_list[cpu_type_enum]))
-               break;
-            cpu_type_enum++;
-         }
-         g_kernel_conf.cpu_type = cpu_type_enum;
-      }else
-         return -1;
-   }
-
-   return 0;
-}
-/*-------------------------------------------
 | Name:xml_elmt_kernel_heap
 | Description:
 | Parameters:
@@ -690,12 +649,8 @@ int xml_elmt_kernel_cpufs(const char **attr){
          g_kernel_conf.cpufs_size=atol(attr_val);
       }else if(!strcasecmp(attr_name,XML_TAG_ATTR_NODE)) {
          g_kernel_conf.cpufs_node=atoi(attr_val);
-      }else if(!strcasecmp(attr_name,XML_TAG_ATTR_BLOCK)) {
-         g_kernel_conf.cpufs_block=atoi(attr_val);
       }else if(!strcasecmp(attr_name,XML_TAG_ATTR_BLOCKSZ)) {
          g_kernel_conf.cpufs_blocksz=atoi(attr_val);
-      }else if(!strcasecmp(attr_name,XML_TAG_ATTR_OPTION)) {
-         g_kernel_conf.str_cpufs_option=strdup(attr_val);
       }else
          return -1;
    }
@@ -1254,102 +1209,25 @@ int xml_elmt_file(const char **attr){
 ---------------------------------------------*/
 int xml_elmt_mklepton(const char **attr){
    int i;
-   char* attr_name;
-   char* attr_val;
+   const char* version = (const char*)0;
 
    for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH) && !mk_output_dir) {
-         kernel_conf_filepath        = mk_join(attr_val,kernel_conf_filepath);
-         dev_conf_filepath           = mk_join(attr_val,dev_conf_filepath);
-         bin_conf_filepath           = mk_join(attr_val,bin_conf_filepath);
-         dskimg_conf_filepath        = mk_join(attr_val,dskimg_conf_filepath);
-         dskimg_conf_header_filepath = mk_join(attr_val,dskimg_conf_header_filepath);
-      }
+      if(!attr[i + 1]) continue;
+      if(!strcmp(attr[i],XML_TAG_ATTR_VERSION))
+         version = attr[i + 1];
    }
 
-   return 0;
-}
-
-/*-------------------------------------------
-| Name:xml_elmt_mklepton
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_arch(const char **attr){
-   int i;
-   char* attr_name;
-   char* attr_val;
-
-   for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH) && !mk_output_dir) {
-         kernel_conf_filepath        = mk_join(attr_val,kernel_conf_filepath);
-         dev_conf_filepath           = mk_join(attr_val,dev_conf_filepath);
-         bin_conf_filepath           = mk_join(attr_val,bin_conf_filepath);
-         dskimg_conf_filepath        = mk_join(attr_val,dskimg_conf_filepath);
-         dskimg_conf_header_filepath = mk_join(attr_val,dskimg_conf_header_filepath);
-      }
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_INCABSPATH)) {
-         //user kernel conf header files with specific project definition
-         if(kernel_conf_incabspath) {
-            printf("error! include_absolute_path already defined:%s\n",kernel_conf_incabspath);
-            return -1;
-         }
-         kernel_conf_incabspath = strdup(attr_val);
-      }
+   if(!version) {
+      fprintf(stderr,"error: %s: no format version (<mklepton version=\"%s\"> expected); "
+              "format 1 files must be migrated\n",xml_mk_file,MK_FORMAT_VERSION);
+      exit(EXIT_FAILURE);
+   }
+   if(strcmp(version,MK_FORMAT_VERSION)) {
+      fprintf(stderr,"error: %s: unknown format version \"%s\" (expected \"%s\")\n",
+              xml_mk_file,version,MK_FORMAT_VERSION);
+      exit(EXIT_FAILURE);
    }
 
-   return 0;
-}
-
-/*-------------------------------------------
-| Name:xml_elmt_start_target
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_start_target(const char **attr){
-   int i;
-   char* attr_name;
-   char* attr_val;
-
-   for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_NAME)) {
-         xml_current_target=strdup(attr_val);
-         printf("xml target=%s\n",xml_current_target);
-      }
-   }
-   return 0;
-}
-
-/*-------------------------------------------
-| Name:xml_elmt_end_target
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_end_target(void){
-
-   if(xml_current_target)
-      free(xml_current_target);
-   xml_current_target=(char*)0;
-   printf("xml end target: ok!\n");
    return 0;
 }
 
@@ -1425,26 +1303,20 @@ int xml_elmt_dir(const char **attr) {
 static void start(void *data, const char *el, const char **attr){
    int error=0;
 
-   if(!strcasecmp(el,XML_TAG_ELMT_TARGET)) {
-      error=xml_elmt_start_target(attr);
-   }else {
-      //target filter
-      if(   mk_current_target
-            && xml_current_target
-            && strcasecmp(xml_current_target,mk_current_target))
-         return;
-
-      if(!mk_current_target && xml_current_target)
-         return;  //filter not set
+   //elements du format 1 retires du format 2 (CFG-8)
+   if(   !strcasecmp(el,XML_TAG_ELMT_TARGET)
+         || !strcasecmp(el,XML_TAG_ELMT_ARCH)
+         || !strcasecmp(el,XML_TAG_ELMT_CPU)) {
+      fprintf(stderr,"error: %s: element <%s> is not part of format %s\n",
+              xml_mk_file,el,MK_FORMAT_VERSION);
+      exit(EXIT_FAILURE);
+   }
+   {
       //
       if(!strcasecmp(el,XML_TAG_ELMT_MKLEPTON)) {
          error=xml_elmt_mklepton(attr);
-      }else if(!strcasecmp(el,XML_TAG_ELMT_ARCH)) {
-         error=xml_elmt_arch(attr);
       }else if(!strcasecmp(el,XML_TAG_ELMT_KERNEL) && (opt&OPT_MSK_K) ) {
          error=xml_elmt_start_kernel(attr);
-      }else if(!strcasecmp(el,XML_TAG_ELMT_CPU) && (opt&OPT_MSK_K)) {
-         error=xml_elmt_kernel_cpu(attr);
       }else if(!strcasecmp(el,XML_TAG_ELMT_HEAP) && (opt&OPT_MSK_K)) {
          error=xml_elmt_kernel_heap(attr);
       }else if(!strcasecmp(el,XML_TAG_ELMT_THREAD) && (opt&OPT_MSK_K)) {
@@ -1510,17 +1382,7 @@ static void start(void *data, const char *el, const char **attr){
 static void end(void *data, const char *el)
 {
    Depth--;
-   if(!strcasecmp(el,XML_TAG_ELMT_TARGET)) {
-      xml_elmt_end_target();
-   }else {
-      if(   mk_current_target
-            && xml_current_target
-            && strcasecmp(xml_current_target,mk_current_target))
-         return;
-
-      if(!mk_current_target && xml_current_target)
-         return;  //filter not set
-
+   {
       if(!strcasecmp(el,XML_TAG_ELMT_KERNEL) && (opt&OPT_MSK_K)) {
          xml_elmt_end_kernel();
       }else if(!strcasecmp(el,XML_TAG_ELMT_DEVICES) && (opt&OPT_MSK_D)) {
@@ -2388,6 +2250,25 @@ int main( int argc, char *argv[])
          mk_source_root=argv[i];
          continue;
       }
+      if(!strcmp(argv[i],"--cpu-freq")) {
+         char* end;
+         if(++i==argc)
+            return -1;
+         errno=0;
+         g_kernel_conf.cpu_freq = strtoul(argv[i],&end,10);
+         if(errno || *end || !*argv[i] || g_kernel_conf.cpu_freq<=0) {
+            fprintf(stderr,"error: --cpu-freq %s: positive frequency in Hz expected\n",argv[i]);
+            return -1;
+         }
+         g_kernel_conf.str_cpu_freq = argv[i];
+         continue;
+      }
+      if(!strcmp(argv[i],"--kernel-config-header")) {
+         if(++i==argc)
+            return -1;
+         kernel_conf_incabspath = argv[i];
+         continue;
+      }
       if(argv[i][0]=='-') {
          unsigned char c;
          unsigned char l=strlen(argv[i]);
@@ -2415,22 +2296,6 @@ int main( int argc, char *argv[])
             case 'r':   //directories
                opt |= OPT_MSK_R;
                break;
-
-            case 't':   //target
-            {
-               opt |= OPT_MSK_T;
-               if((i+1) == argc)   //not enough parameter
-                  return -1;
-               if(argv[i][c+1])
-                  break;
-               if(argv[i+1][0]=='-')
-                  break;
-
-               i++;
-               if(argv[i])
-                  mk_current_target=argv[i];
-            }
-            break;
             }
          }
       }else{
@@ -2439,7 +2304,7 @@ int main( int argc, char *argv[])
       }
    }
 
-   if(!opt || (opt == OPT_MSK_T))
+   if(!opt)
       opt = OPT_MSK_ALL;
 
    if(mk_source_root) {
@@ -2543,10 +2408,7 @@ int main( int argc, char *argv[])
    }
    printf("\n_mk_dskimg ok!\n\n");
 
-   if(mk_current_target)
-      printf("\nmklepton for %s success :)!\n",mk_current_target);
-   else
-      printf("\nmklepton success :)! no target specified???\n");
+   printf("\nmklepton success :)!\n");
 
    return 0;
 }

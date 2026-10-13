@@ -41,13 +41,13 @@ either the MPL or the [eCos GPL] License."
 ==============================================*/
 
 #define XML_TAG_ELMT_MKLEPTON    "mklepton"
-#define XML_TAG_ELMT_TARGET      "target"
-#define XML_TAG_ELMT_ARCH        "arch"
+#define XML_TAG_ELMT_TARGET      "target"   //format 1, refuse
+#define XML_TAG_ELMT_ARCH        "arch"     //format 1, refuse
 #define XML_TAG_ELMT_KERNEL      "kernel"
 #define XML_TAG_ELMT_DEVICES     "devices"
 #define XML_TAG_ELMT_DEV         "dev"
 #define XML_TAG_ELMT_BINARIES    "binaries"
-#define XML_TAG_ELMT_CPU         "cpu"
+#define XML_TAG_ELMT_CPU         "cpu"      //format 1, refuse
 #define XML_TAG_ELMT_HEAP        "heap"
 #define XML_TAG_ELMT_THREAD      "thread"
 #define XML_TAG_ELMT_PROCESS     "process"
@@ -79,17 +79,14 @@ either the MPL or the [eCos GPL] License."
 #define XML_TAG_ATTR_TIMESLICE   "timeslice"
 #define XML_TAG_ATTR_SIZE        "size"
 #define XML_TAG_ATTR_MAX         "max"
-#define XML_TAG_ATTR_FREQ        "freq"
 #define XML_TAG_ATTR_ARG         "arg"
 #define XML_TAG_ATTR_VALUE       "value"
 #define XML_TAG_ATTR_TYPE        "type"
 #define XML_TAG_ATTR_POINT       "point"
 #define XML_TAG_ATTR_PATH        "path"
 #define XML_TAG_ATTR_NODE        "node"
-#define XML_TAG_ATTR_BLOCK       "block"
 #define XML_TAG_ATTR_BLOCKSZ     "blocksz"
-#define XML_TAG_ATTR_OPTION      "option"
-#define XML_TAG_ATTR_INCABSPATH  "include_absolute_path"
+#define XML_TAG_ATTR_VERSION     "version"
 
 
 typedef enum {
@@ -127,9 +124,7 @@ struct kernel_conf_t {
    int network_used;
    long cpufs_size;
    int cpufs_node;
-   int cpufs_block;
    int cpufs_blocksz;
-   char* str_cpufs_option;
 };
 
 //boot struct config
@@ -209,7 +204,6 @@ struct mkdir_t {
 #define OPT_MSK_D 0x0004   //-d
 #define OPT_MSK_F 0x0008   //-f
 #define OPT_MSK_K 0x0010   //-k
-#define OPT_MSK_T 0x0020   //-t
 #define OPT_MSK_R 0x0040   //-r
 
 #define OPT_MSK_ALL OPT_MSK_B|OPT_MSK_D|OPT_MSK_F|OPT_MSK_K|OPT_MSK_R
@@ -235,7 +229,6 @@ struct mkdir_t {
 //xml func
 int xml_elmt_start_kernel(const char **attr);
 int xml_elmt_end_kernel(void);
-int xml_elmt_kernel_cpu(const char **attr);
 int xml_elmt_kernel_heap(const char **attr);
 int xml_elmt_kernel_thread(const char **attr);
 int xml_elmt_kernel_process(const char **attr);
@@ -259,9 +252,6 @@ int xml_elmt_bin(const char **attr);
 int xml_elmt_files(const char **attr);
 int xml_elmt_file(const char **attr);
 int xml_elmt_mklepton(const char **attr);
-int xml_elmt_arch(const char **attr);
-int xml_elmt_start_target(const char **attr);
-int xml_elmt_end_target(void);
 
 //
 int xml_elmt_dirs(const char **attr);

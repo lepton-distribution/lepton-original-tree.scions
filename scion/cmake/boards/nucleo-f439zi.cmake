@@ -31,7 +31,8 @@ set(LEPTON_BSP_SOURCES
 list(APPEND LEPTON_FIRMWARE_SOURCES kernel/dev/bsp/nucleo_f439zi/nucleo_f439zi_vectors.c)
 set(LEPTON_NET_STACK lwip)   # USE_LWIP dans user_kernel_mkconf.h
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_f439zi.xml)
-set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
+set(LEPTON_BOARD_CPU_FREQ 168000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)
+set(LEPTON_BOARD_KERNEL_CONFIG_HEADER sys/user/tauon-basic/src/arch/nucleo-f439zi/kernel_mkconf/include/user_kernel_mkconf.h)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM4-stm32f4)   # __KERNEL_CPU_DEVICE_NAME (kernelconf.h)
 # carte réelle (étape 5) : console série du ST-LINK et sonde OpenOCD
 set(LEPTON_BOARD_OPENOCD_CFG ${CMAKE_SOURCE_DIR}/debug/openocd-nucleo-f439zi.cfg)

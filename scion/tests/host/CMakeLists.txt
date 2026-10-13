@@ -42,7 +42,9 @@ add_test(NAME host.mklepton
                  -DMKLEPTON=$<TARGET_FILE:mklepton> -DUFS_CHECK=$<TARGET_FILE:test_ufs_check>
                  -DSRC=${CMAKE_SOURCE_DIR}
                  -DXML=sys/user/tauon-basic/etc/mkconf_tauon_basic_lwip_stm32f4-olimex-p407.xml
-                 -DTARGET=cortexm_lepton -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton
+                 -DCPU_FREQ=80000000
+                 -DKERNEL_CONFIG_HEADER=sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h
+                 -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton
                  -P ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_check.cmake)
 
 # --- mklepton : mêmes octets que la référence -m32 (étape 8), quel que soit l'hôte ---------------

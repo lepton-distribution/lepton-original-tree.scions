@@ -1,11 +1,11 @@
 # mklepton_check.cmake — critère mklepton de l'étape 2 (reformulé le 2026-09-30, oracle sans binaire).
-#   cmake -DMKLEPTON=<exe> -DUFS_CHECK=<exe> -DSRC=<trunk> -DXML=<mkconf relatif> -DTARGET=<cible>
-#         -DWORK=<répertoire> -P mklepton_check.cmake
+#   cmake -DMKLEPTON=<exe> -DUFS_CHECK=<exe> -DSRC=<trunk> -DXML=<mkconf relatif> -DCPU_FREQ=<Hz>
+#         -DKERNEL_CONFIG_HEADER=<en-tête relatif> -DWORK=<répertoire> -P mklepton_check.cmake
 # 1. déterminisme : deux exécutions (SOURCE_DATE_EPOCH=0) → sorties identiques octet à octet ;
 # 2. structure : conforme au jeu de référence (doc/migration/mklepton-ref.md) ;
 # 3. image : signature « ufs 1.5 », relue par le noyau statique (pseudo-binaires du mkconf).
 
-foreach(v MKLEPTON UFS_CHECK SRC XML TARGET WORK)
+foreach(v MKLEPTON UFS_CHECK SRC XML CPU_FREQ KERNEL_CONFIG_HEADER WORK)
   if(NOT DEFINED ${v})
     message(FATAL_ERROR "variable ${v} manquante")
   endif()
@@ -16,7 +16,8 @@ foreach(run a b)
   file(MAKE_DIRECTORY ${WORK}/${run})
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E env SOURCE_DATE_EPOCH=0
-            ${MKLEPTON} -s ${SRC} -o ${WORK}/${run} -t ${TARGET} ${XML}
+            ${MKLEPTON} -s ${SRC} -o ${WORK}/${run}
+            --cpu-freq ${CPU_FREQ} --kernel-config-header ${KERNEL_CONFIG_HEADER} ${XML}
     RESULT_VARIABLE rc OUTPUT_FILE ${WORK}/${run}.log ERROR_FILE ${WORK}/${run}.log)
   if(NOT rc EQUAL 0)
     message(FATAL_ERROR "mklepton (${run}) : code ${rc}, voir ${WORK}/${run}.log")
@@ -93,4 +94,4 @@ if(NOT rc EQUAL 0)
   message(FATAL_ERROR "relecture de l'image : échec")
 endif()
 list(LENGTH bins nbins)
-message("mklepton_check : ${XML} [${TARGET}] déterministe, structure conforme, ${nbins} pseudo-binaires relus")
+message("mklepton_check : ${XML} déterministe, structure conforme, ${nbins} pseudo-binaires relus")

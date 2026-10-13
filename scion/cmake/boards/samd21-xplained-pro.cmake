@@ -19,7 +19,8 @@ set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_samd21_xplai
 # 256 mots (défauts 256 et 512) : avec 1 Ko et 2 Ko, le tas ne laisse que 484 o après le
 # démarrage et lsh ne peut plus lancer de commande (pics relevés : idle 88 o, temporisateurs 236 o)
 set(LEPTON_FREERTOS_CONFIG configMINIMAL_STACK_SIZE=128 configTIMER_TASK_STACK_DEPTH=256)
-set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
+set(LEPTON_BOARD_CPU_FREQ 48000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)
+set(LEPTON_BOARD_KERNEL_CONFIG_HEADER sys/user/tauon-basic/src/arch/samd21-xplained-pro/kernel_mkconf/include/user_kernel_mkconf.h)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM0p-samd21)
 # carte réelle : console série de l'EDBG et sonde OpenOCD (CMSIS-DAP)
 set(LEPTON_BOARD_OPENOCD_CFG ${CMAKE_SOURCE_DIR}/debug/openocd-samd21-xplained-pro.cfg)
