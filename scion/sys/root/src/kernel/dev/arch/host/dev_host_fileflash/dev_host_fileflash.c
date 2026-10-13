@@ -51,6 +51,9 @@ dev_map_t dev_host_fileflash_map={
 static int fh=-1;
 static int instance_counter=0;
 static long memory_size=DEV_HOST_FILEFLASH_DFLT_SIZE;
+//acces hors du disque (lecture, ecriture ou deplacement au-dela de la fin) : lu par mklepton pour
+//refuser une image cpufs trop petite (ENV-4, dimensionnement de cpufs)
+int dev_host_fileflash_overflow=0;
 
 int dev_host_fileflash_load(void){
    return 0;
@@ -82,10 +85,14 @@ int dev_host_fileflash_close(desc_t desc){
 
 int dev_host_fileflash_read(desc_t desc, char* buf,int size){
    int r;
-   if(ofile_lst[desc].offset>memory_size)
-      return -1;
-   if(ofile_lst[desc].offset+size>memory_size)
+   if(size>0 && ofile_lst[desc].offset>=memory_size) {
+      dev_host_fileflash_overflow++;
+      return -1;   //0 ferait boucler les lectures de bloc de l'ufs
+   }
+   if(ofile_lst[desc].offset+size>memory_size) {
+      dev_host_fileflash_overflow++;
       size=(int)(memory_size-ofile_lst[desc].offset);
+   }
    if((r=host_file_pread(fh,buf,size,(long)ofile_lst[desc].offset))<0)
       return -1;
    ofile_lst[desc].offset+=r;
@@ -94,10 +101,14 @@ int dev_host_fileflash_read(desc_t desc, char* buf,int size){
 
 int dev_host_fileflash_write(desc_t desc, const char* buf,int size){
    int w;
-   if(ofile_lst[desc].offset>memory_size)
+   if(size>0 && ofile_lst[desc].offset>=memory_size) {
+      dev_host_fileflash_overflow++;
       return -1;
-   if(ofile_lst[desc].offset+size>memory_size)
+   }
+   if(ofile_lst[desc].offset+size>memory_size) {
+      dev_host_fileflash_overflow++;
       size=(int)(memory_size-ofile_lst[desc].offset);
+   }
    if((w=host_file_pwrite(fh,buf,size,(long)ofile_lst[desc].offset))<0)
       return -1;
    ofile_lst[desc].offset+=w;
@@ -112,8 +123,10 @@ int dev_host_fileflash_seek(desc_t desc,int offset,int origin){
    case SEEK_END: pos=memory_size+offset; break;
    default: return -1;
    }
-   if(pos<0 || pos>memory_size)
+   if(pos<0 || pos>memory_size) {
+      dev_host_fileflash_overflow++;
       return -1;
+   }
    ofile_lst[desc].offset=pos;
    return (int)pos;
 }

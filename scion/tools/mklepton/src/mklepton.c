@@ -345,6 +345,11 @@ int Depth;
 struct mkdir_t * pdir_lst_end=NULL;
 struct mkdir_t * pdir_lst_start=NULL;
 
+//echec de creation ou d'ecriture dans l'image cpufs (image trop petite)
+static int mk_cpufs_error=0;
+//acces hors du disque /dev/hd/hdc (kernel/dev/arch/host/dev_host_fileflash)
+extern int dev_host_fileflash_overflow;
+
 /*============================================
 | Implementation
 ==============================================*/
@@ -371,8 +376,8 @@ int xml_elmt_start_kernel(const char **attr){
    fwrite(kernelconf_top_header,sizeof(char),strlen(kernelconf_top_header),f_kernelconf);
    printf("make kernel:%s ...\n",MK_KERNELCONF_FILEPATH);
 
-   //default value
-   g_kernel_conf.cpufs_size = 16000;
+   //default value (cpufs size et node absents : dimensionnement automatique, _mk_cpufs_dimension)
+   g_kernel_conf.cpufs_size = 0;
    g_kernel_conf.cpufs_blocksz = 32;
 
    return 0;
@@ -1538,8 +1543,17 @@ int _mk_binaries(void){
       strcat(ref,pbin->bin_name);
       printf("creat %s\n",ref);
       desc= _vfs_open(ref,_O_CREAT|_O_WRONLY,0);
+      if(desc<0) {
+         printf("error! cannot create %s\n",ref);
+         mk_cpufs_error=-1;
+         pbin = pbin->pprev;
+         continue;
+      }
       cb=sizeof(exec_file);
-      cb=_vfs_write(desc,(char*)&exec_file,cb);
+      if(_vfs_write(desc,(char*)&exec_file,cb)!=cb) {
+         printf("error! cannot write %s\n",ref);
+         mk_cpufs_error=-1;
+      }
       _vfs_close(desc);
 
       //
@@ -1622,6 +1636,8 @@ int _mk_binaries(void){
    printf("umount /usr\n");
    _vfs_umount("/usr");
 
+   if(mk_cpufs_error<0)
+      return -1;
    printf("make binaries:%s ok\n",MK_BINCONF_FILEPATH);
 
    return 0;
@@ -1723,14 +1739,11 @@ int _mk_file(void){
       }
 
       while((cb=read(fd,fbuf,sizeof(fbuf)-1))>0) {
-         cb=_vfs_write(desc,fbuf,cb);
-         if(cb<0) {
+         if(_vfs_write(desc,fbuf,cb)!=cb) {
             printf("error! cannot write file:%s\n",ref);
-            pfile = pfile->pprev;
             err=-1;
-            continue;
+            break;
          }
-
       }
 
       close(fd);
@@ -1859,11 +1872,10 @@ int _mk_dir(void) {
 
             //copy file content
             while((cb=read(host_fd,fbuf,sizeof(fbuf)-1))>0) {
-               cb=_vfs_write(target_fd,fbuf,cb);
-               if(cb<0) {
+               if(_vfs_write(target_fd,fbuf,cb)!=cb) {
                   printf("error! cannot write file:%s\n",target_ppath);
                   err=-1;
-                  continue;
+                  break;
                }
             }
 
@@ -1917,6 +1929,151 @@ int _mk_dir(void) {
    return 0;
 }
 
+
+/*-------------------------------------------
+| Name:_mk_cpufs_probe
+| Description: construit l'image cpufs (binaires, fichiers, repertoires) avec la taille et le
+|              nombre de noeuds donnes, sortie standard muette
+| Parameters:  size : octets ; node : noeuds
+| Return Type: 0 si tout le contenu tient dans l'image, -1 sinon
+| Comments:    ENV-4 (CFG-8, PA-3) ; _mk_dir ajoute les sous-repertoires a la liste : elle est
+|              restauree apres l'essai
+| See:         _mk_cpufs_dimension
+---------------------------------------------*/
+static int _mk_cpufs_probe(long size, int node){
+   struct mkdir_t* dir_end = pdir_lst_end;
+   int saved_stdout;
+   int devnull;
+   int r=0;
+
+   g_kernel_conf.cpufs_size = size;
+   g_kernel_conf.cpufs_node = node;
+   mk_cpufs_error = 0;
+   dev_host_fileflash_overflow = 0;
+
+   fflush(stdout);
+   saved_stdout = dup(STDOUT_FILENO);
+   devnull = open("/dev/null",O_WRONLY);
+   if(saved_stdout>=0 && devnull>=0)
+      dup2(devnull,STDOUT_FILENO);
+
+   if((opt&OPT_MSK_B) && _mk_binaries()<0)
+      r=-1;
+   if((opt&OPT_MSK_F) && _mk_file()<0)
+      r=-1;
+   if((opt&OPT_MSK_R) && _mk_dir()<0)
+      r=-1;
+   _vfs_umount("/usr"); //_mk_binaries sans binaire laisse /usr monte
+   if(dev_host_fileflash_overflow)
+      r=-1;   //geometrie de l'ufs plus grande que le disque
+
+   fflush(stdout);
+   if(saved_stdout>=0) {
+      dup2(saved_stdout,STDOUT_FILENO);
+      close(saved_stdout);
+   }
+   if(devnull>=0)
+      close(devnull);
+
+   if(dir_end) {
+      dir_end->pprev = 0;
+      pdir_lst_end = dir_end;
+   }
+   mk_cpufs_error = 0;
+   return r;
+}
+
+/*-------------------------------------------
+| Name:_mk_cpufs_dimension
+| Description: dimensionnement de l'image cpufs (<cpufs size node>, format 2)
+| Parameters:
+| Return Type: 0, -1 si l'image ne peut pas contenir le rootfs
+| Comments:    ENV-4 (CFG-8, PA-3) : size et node absents -> plus petites valeurs pour
+|              lesquelles tout le contenu tient (bornes par doublement, puis dichotomie : le
+|              succes est monotone en size et en node) ; presents -> imposes, refuses s'ils sont trop petits.
+|              Image en lecture seule (filecpu_memory, const) : aucune place libre n'est
+|              reservee.
+| See:         _mk_cpufs_probe
+---------------------------------------------*/
+#define MK_CPUFS_NODE_MAX  4096       //ufs_inodenb_t : int16_t
+#define MK_CPUFS_BLOCK_MAX 32767L     //ufs_blocknb_t : int16_t
+int _mk_cpufs_dimension(void){
+   long size = g_kernel_conf.cpufs_size;
+   int node  = g_kernel_conf.cpufs_node;
+   long size_max;
+   long s_hi;
+   int n_hi;
+   long lo,hi;
+
+   if(g_kernel_conf.cpufs_blocksz<=0)
+      g_kernel_conf.cpufs_blocksz = 32;
+   size_max = MK_CPUFS_BLOCK_MAX*g_kernel_conf.cpufs_blocksz;
+
+   //valeurs imposees : un essai suffit
+   if(size>0 && node>0 && !_mk_cpufs_probe(size,node)) {
+      g_kernel_conf.cpufs_size = size;
+      g_kernel_conf.cpufs_node = node;
+      return 0;
+   }
+
+   //bornes superieures par doublement (le cout d'un essai croit avec la taille de l'image)
+   s_hi = 64L*g_kernel_conf.cpufs_blocksz;
+   n_hi = 16;
+   while(_mk_cpufs_probe(s_hi,n_hi)<0) {
+      if(s_hi>=size_max && n_hi>=MK_CPUFS_NODE_MAX) {
+         fprintf(stderr,"error: %s: rootfs does not fit in cpufs (size=%ld node=%d)\n",xml_mk_file,
+                 size_max,MK_CPUFS_NODE_MAX);
+         return -1;
+      }
+      s_hi = (2*s_hi<size_max) ? 2*s_hi : size_max;
+      n_hi = (2*n_hi<MK_CPUFS_NODE_MAX) ? 2*n_hi : MK_CPUFS_NODE_MAX;
+   }
+
+   //noeuds : plus petite valeur suffisante
+   lo=1; hi=n_hi;
+   while(lo<hi) {
+      long mid=(lo+hi)/2;
+      if(!_mk_cpufs_probe(s_hi,(int)mid))
+         hi=mid;
+      else
+         lo=mid+1;
+   }
+   if(node<=0)
+      node=(int)lo;
+   else if(node<lo) {
+      fprintf(stderr,"error: %s: <cpufs node=\"%d\"> too small (minimum: %ld)\n",xml_mk_file,node,lo);
+      return -1;
+   }
+
+   //octets : plus petite valeur suffisante avec ces noeuds
+   while(_mk_cpufs_probe(s_hi,node)<0) {
+      if(s_hi>=size_max) {
+         fprintf(stderr,"error: %s: rootfs does not fit in cpufs (size=%ld node=%d)\n",xml_mk_file,
+                 size_max,node);
+         return -1;
+      }
+      s_hi = (2*s_hi<size_max) ? 2*s_hi : size_max;
+   }
+   lo=1; hi=s_hi;
+   while(lo<hi) {
+      long mid=(lo+hi)/2;
+      if(!_mk_cpufs_probe(mid,node))
+         hi=mid;
+      else
+         lo=mid+1;
+   }
+   if(size<=0)
+      size=lo;
+   else if(size<lo) {
+      fprintf(stderr,"error: %s: <cpufs size=\"%ld\"> too small (minimum: %ld)\n",xml_mk_file,size,lo);
+      return -1;
+   }
+
+   g_kernel_conf.cpufs_size = size;
+   g_kernel_conf.cpufs_node = node;
+   printf("cpufs: size=%ld node=%d blocksz=%d\n",size,node,g_kernel_conf.cpufs_blocksz);
+   return 0;
+}
 
 /*-------------------------------------------
 | Name:_mk_boot
@@ -2370,6 +2527,12 @@ int main( int argc, char *argv[])
       return -1;
    }
    printf("\n_mk_boot ok!\n\n");
+
+   //size the cpufs image (format 2: <cpufs size node> optional)
+   if( (opt&(OPT_MSK_B|OPT_MSK_F|OPT_MSK_R)) && _mk_cpufs_dimension()<0) {
+      fprintf(stderr,"\nerror: _mk_cpufs_dimension failed!\n");
+      return -1;
+   }
 
    //make binaries
    if( (opt&OPT_MSK_B) && _mk_binaries()<0) {
