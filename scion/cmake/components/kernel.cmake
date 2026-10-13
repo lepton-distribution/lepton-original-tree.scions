@@ -1,5 +1,11 @@
-# Bibliothèques du noyau (chemins relatifs à sys/root/src), une par composant.
-# Découpage et cycles : doc/migration/dependances.md ; édition de liens en groupe (lepton_kernel).
+# Bibliothèques du greffon noyau (BLD-1, ENV-5), chemins relatifs à sys/root/src :
+#   kernel  kernel/ (cœur, micro-noyau, pilotes logiciels, VFS, systèmes de fichiers, réseau)
+#           et kernel/dev/arch (code de famille de la carte, LEPTON_DEV_ARCH_SOURCES) ;
+#   lib     lib/ (libc Lepton, pthread, librt) ;
+#   bsp     kernel/dev/bsp (carte, LEPTON_BSP_SOURCES) ;
+#   sbin, bin : cmake/components/firmware.cmake.
+# Listes par composant ci-dessous ; cycles : doc/migration/dependances.md ; édition de liens en
+# groupe (lepton_kernel, LEPTON_KERNEL_GROUP).
 
 # --- kernel/core, partie commune ---------------------------------------------------------------
 set(LEPTON_CORE_SOURCES
@@ -36,13 +42,13 @@ if(NOT LEPTON_KAL_BACKEND STREQUAL "static")
   list(APPEND LEPTON_CORE_SOURCES ${LEPTON_CORE_SYSCALL_SOURCES}
        kernel/core/core-generic/kernel_pthread_tsd.c)
 endif()
-lepton_add_library(lepton_core SOURCES ${LEPTON_CORE_SOURCES})
+set(LEPTON_KERNEL_SOURCES ${LEPTON_CORE_SOURCES})
 
 # --- micro-noyau (axe kal) ----------------------------------------------------------------------
-lepton_add_library(lepton_kal_${LEPTON_KAL_BACKEND} SOURCES ${LEPTON_KAL_SOURCES})
+list(APPEND LEPTON_KERNEL_SOURCES ${LEPTON_KAL_SOURCES})
 
 # --- pilotes logiciels (jamais de pilote matériel ici) ------------------------------------------
-lepton_add_library(lepton_dev SOURCES
+list(APPEND LEPTON_KERNEL_SOURCES
   kernel/dev/dev_cpufs/dev_cpufs.c
   kernel/dev/dev_head/dev_head.c
   kernel/dev/dev_null/dev_null.c
@@ -53,15 +59,15 @@ lepton_add_library(lepton_dev SOURCES
   kernel/dev/dev_tty/tty_font-8x16.c)
 
 # --- VFS et systèmes de fichiers ---------------------------------------------------------------
-lepton_add_library(lepton_vfs SOURCES
+list(APPEND LEPTON_KERNEL_SOURCES
   kernel/fs/vfs/vfs.c
   kernel/fs/vfs/vfscore.c
   kernel/fs/vfs/vfsdev.c
   kernel/fs/vfs/vfskernel.c)
-lepton_add_library(lepton_fs_rootfs SOURCES
+list(APPEND LEPTON_KERNEL_SOURCES
   kernel/fs/rootfs/rootfs.c
   kernel/fs/rootfs/rootfscore.c)
-lepton_add_library(lepton_fs_ufs SOURCES
+list(APPEND LEPTON_KERNEL_SOURCES
   kernel/fs/ufs/ufs.c
   kernel/fs/ufs/ufscore.c
   kernel/fs/ufs/ufsdriver.c
@@ -72,8 +78,7 @@ lepton_add_library(lepton_fs_ufs SOURCES
 
 # kofs (objets du noyau) : profils de fichiers des cibles ; absent du noyau statique.
 if(NOT LEPTON_KAL_BACKEND STREQUAL "static")
-  lepton_add_library(lepton_fs_kofs SOURCES kernel/fs/kofs/kofs.c)
-  set(LEPTON_FS_EXTRA lepton_fs_kofs)
+  list(APPEND LEPTON_KERNEL_SOURCES kernel/fs/kofs/kofs.c)
 endif()
 
 # --- libc Lepton (lib/, hors kernel/) -------------------------------------------------------------
@@ -93,8 +98,6 @@ if(NOT DEFINED LEPTON_LIBC_SOURCES)
     lib/pthread/pthread.c lib/pthread/pthread_cond.c lib/pthread/pthread_mutex.c
     lib/librt/mq.c lib/librt/sem.c)
 endif()
-set(LEPTON_KERNEL_GROUP lepton_core lepton_kal_${LEPTON_KAL_BACKEND} lepton_vfs lepton_fs_rootfs
-                        lepton_fs_ufs ${LEPTON_FS_EXTRA} lepton_dev)
 
 # --- pile réseau (choisie par la carte : LEPTON_NET_STACK) ----------------------------------------
 # lwIP 2.0.1 de l'arbre et couches Lepton lwip_core (décision 2026-09-30) ; liste de sources et
@@ -108,7 +111,7 @@ if(LEPTON_NET_STACK STREQUAL "lwip")
   if(NOT LEPTON_LWIP_SYS_ARCH_DIR)
     set(LEPTON_LWIP_SYS_ARCH_DIR ${lwip}/ports/arm)
   endif()
-  lepton_add_library(lepton_net_lwip SOURCES
+  list(APPEND LEPTON_KERNEL_SOURCES
     ${lwip}/api/api_lib.c ${lwip}/api/api_msg.c ${lwip}/api/err.c ${lwip}/api/netbuf.c
     ${lwip}/api/netdb.c ${lwip}/api/netifapi.c ${lwip}/api/sockets.c ${lwip}/api/tcpip.c
     ${lwip}/core/def.c ${lwip}/core/dns.c ${lwip}/core/inet_chksum.c ${lwip}/core/init.c
@@ -130,34 +133,41 @@ if(LEPTON_NET_STACK STREQUAL "lwip")
   target_include_directories(lepton_options INTERFACE
     ${LEPTON_SRC}/${lwip} ${LEPTON_SRC}/${lwip}/include ${LEPTON_SRC}/${LEPTON_LWIP_SYS_ARCH_DIR}/include
     ${LEPTON_SRC}/${lwip}/ports/arm ${LEPTON_SRC}/${lwip}/ports/arm/include)
-  list(APPEND LEPTON_KERNEL_GROUP lepton_net_lwip)
   # API sockets de la libc Lepton
   list(APPEND LEPTON_LIBC_SOURCES
     lib/libc/net/htonl.c lib/libc/net/socket.c lib/libc/net/inet/inet_addr.c)
 elseif(LEPTON_NET_STACK)
   message(FATAL_ERROR "LEPTON_NET_STACK=${LEPTON_NET_STACK} : seule lwip est intégrée")
 endif()
-if(LEPTON_LIBC_SOURCES)
-  lepton_add_library(lepton_libc SOURCES ${LEPTON_LIBC_SOURCES})
-  list(APPEND LEPTON_KERNEL_GROUP lepton_libc)
-else()
-  message(STATUS "lepton_libc : aucune source pour LEPTON_ISA=${LEPTON_ISA} (étape 3)")
-endif()
 
-# --- pilotes matériels de la « carte » (axe carte ; hôte : disque sur fichier) -------------------
-if(LEPTON_BSP_SOURCES)
-  lepton_add_library(lepton_bsp_${LEPTON_BSP_NAME} SOURCES ${LEPTON_BSP_SOURCES})
-  list(APPEND LEPTON_KERNEL_GROUP lepton_bsp_${LEPTON_BSP_NAME})
-else()
-  message(STATUS "lepton_bsp_${LEPTON_BSP_NAME} : aucune source (carte décrite, BSP à venir)")
-endif()
-if(LEPTON_BSP_HOST_SOURCES)
+# --- code de famille de la carte (kernel/dev/arch : couche Lepton et pilotes tiers de la famille,
+# cmake/boards ; hôte : disque sur fichier et horloge, cmake/isa/host.cmake) ; extrait vers les
+# greffons famille en ENV-6 -----------------------------------------------------------------------
+list(APPEND LEPTON_KERNEL_SOURCES ${LEPTON_DEV_ARCH_SOURCES})
+lepton_add_library(kernel SOURCES ${LEPTON_KERNEL_SOURCES})
+set(LEPTON_KERNEL_GROUP kernel)
+if(LEPTON_DEV_ARCH_HOST_SOURCES)
   # Partie hors noyau (en-têtes de la glibc) d'un pilote hôte : sans lepton_options.
-  add_library(lepton_bsp_${LEPTON_BSP_NAME}_posix STATIC ${LEPTON_BSP_HOST_SOURCES})
-  target_link_libraries(lepton_bsp_${LEPTON_BSP_NAME} PUBLIC lepton_bsp_${LEPTON_BSP_NAME}_posix)
+  add_library(kernel_posix STATIC ${LEPTON_DEV_ARCH_HOST_SOURCES})
+  target_link_libraries(kernel PUBLIC kernel_posix)
 endif()
 
-# --- noyau assemblé : cycle core ↔ kal ↔ vfs ↔ fs ↔ dev ↔ libc (dependances.md, CFC 1) ------------
+if(LEPTON_LIBC_SOURCES)
+  lepton_add_library(lib SOURCES ${LEPTON_LIBC_SOURCES})
+  list(APPEND LEPTON_KERNEL_GROUP lib)
+else()
+  message(STATUS "lib : aucune source pour LEPTON_ISA=${LEPTON_ISA} (étape 3)")
+endif()
+
+# --- carte (kernel/dev/bsp, cmake/boards) ---------------------------------------------------------
+if(LEPTON_BSP_SOURCES)
+  lepton_add_library(bsp SOURCES ${LEPTON_BSP_SOURCES})
+  list(APPEND LEPTON_KERNEL_GROUP bsp)
+else()
+  message(STATUS "bsp : aucune source pour la carte ${LEPTON_BOARD}")
+endif()
+
+# --- noyau assemblé : cycle kernel ↔ lib ↔ bsp (dependances.md, CFC 1) ----------------------------
 add_library(lepton_kernel INTERFACE)
 list(JOIN LEPTON_KERNEL_GROUP "," group)
 set(LEPTON_KERNEL_GROUP_CSV ${group})

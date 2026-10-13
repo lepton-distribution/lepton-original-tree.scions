@@ -39,10 +39,10 @@ if(APPLE)
   set(CMAKE_C_LINK_GROUP_USING_RESCAN_SUPPORTED TRUE)
 endif()
 
-# « Carte » hôte : disque sur fichier (.fsflash.o, décision 2026-09-30) et horloge. La partie
-# POSIX des pilotes est compilée avec les en-têtes de la glibc, hors lepton_options.
-set(LEPTON_BSP_NAME host)
-set(LEPTON_BSP_SOURCES
+# « Carte » hôte : disque sur fichier (.fsflash.o, décision 2026-09-30) et horloge, dans la
+# bibliothèque kernel (kernel/dev/arch). La partie POSIX des pilotes est compilée avec les en-têtes
+# de la glibc, hors lepton_options (kernel_posix).
+set(LEPTON_DEV_ARCH_SOURCES
   kernel/dev/arch/host/dev_host_fileflash/dev_host_fileflash.c
   kernel/dev/arch/host/dev_host_rtc/dev_host_rtc.c)
-set(LEPTON_BSP_HOST_SOURCES ${LEPTON_SRC}/kernel/dev/arch/host/common/host_posix.c)
+set(LEPTON_DEV_ARCH_HOST_SOURCES ${LEPTON_SRC}/kernel/dev/arch/host/common/host_posix.c)

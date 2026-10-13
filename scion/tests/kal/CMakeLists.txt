@@ -28,7 +28,9 @@ else()
   return()
 endif()
 
-set(kal_platform_sources ${LEPTON_ISA_STARTUP_SOURCES} ${LEPTON_KAL_HW_SOURCES})
+# démarrage générique (OBJECT kernel_demarrage) et configuration générée (OBJECT generated) : par
+# lepton_link_firmware, comme lepton
+set(kal_platform_sources ${LEPTON_KAL_HW_SOURCES})
 list(TRANSFORM kal_platform_sources PREPEND ${LEPTON_SRC}/)
 add_executable(kal_bench ${kal_bench_c} kal_semihost.c ${kal_isa_asm} ${kal_platform_sources})
 # services du micro-noyau et oracle de trame (étape 7), à côté de kal_bench.c :

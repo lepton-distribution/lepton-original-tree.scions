@@ -1,5 +1,11 @@
 # Firmware d'une carte (presets croisés) : configuration générée par mklepton, pseudo-binaires
-# (sbin, bin) déclarés par le mkconf de la carte, exécutable lepton.elf et image lepton.bin.
+# (bibliothèques sbin, bin) déclarés par le mkconf de la carte, exécutable lepton.elf et sorties
+# lepton.bin, lepton.hex, lepton.map, lepton.occupation.txt (BLD-1, BLD-4).
+#
+# Exécutif (BLD-1, décisions 2 et 4) : main et matériel du micro-noyau (sources), sources générées
+# par mklepton (OBJECT generated : table des périphériques, liée en premier, hors du cycle
+# kernel ↔ bsp), démarrage générique (OBJECT kernel_demarrage), vecteurs et remplaçants forts de la
+# carte (OBJECT bsp_objets) ; puis le groupe sbin, bin, kernel, lib, bsp.
 
 if(NOT LEPTON_BOARD_MKCONF)
   message(STATUS "firmware : aucun mkconf pour la carte ${LEPTON_BOARD} (firmware non construit)")
@@ -21,12 +27,28 @@ foreach(lib IN LISTS LEPTON_KERNEL_GROUP)
   add_dependencies(${lib} board_mkconf)
 endforeach()
 
-add_library(lepton_generated STATIC
+# lepton_add_objects(<nom> SOURCES <fichiers relatifs à sys/root/src>) : bibliothèque OBJECT liée
+# directement aux exécutables (objets toujours retenus, contrairement aux membres d'une archive).
+function(lepton_add_objects name)
+  cmake_parse_arguments(ARG "" "" "SOURCES" ${ARGN})
+  list(TRANSFORM ARG_SOURCES PREPEND ${LEPTON_SRC}/)
+  add_library(${name} OBJECT ${ARG_SOURCES})
+  target_link_libraries(${name} PRIVATE lepton_options)
+  add_dependencies(${name} board_mkconf)
+endfunction()
+
+add_library(generated OBJECT
   ${board_GENERATED_DIR}/dev_mkconf.c
   ${board_GENERATED_DIR}/bin_mkconf.c
   ${board_GENERATED_DIR}/dev_dskimg.c)
-target_link_libraries(lepton_generated PRIVATE lepton_options)
-add_dependencies(lepton_generated board_mkconf)
+target_link_libraries(generated PRIVATE lepton_options)
+add_dependencies(generated board_mkconf)
+lepton_add_objects(kernel_demarrage SOURCES ${LEPTON_ISA_STARTUP_SOURCES})
+set(firmware_objects generated kernel_demarrage)
+if(LEPTON_BOARD_OBJECT_SOURCES)
+  lepton_add_objects(bsp_objets SOURCES ${LEPTON_BOARD_OBJECT_SOURCES})
+  list(APPEND firmware_objects bsp_objets)
+endif()
 
 # --- pseudo-binaires : <binaries src_path="…"><bin name="…"> du mkconf → src/<src_path>/<nom>.c,
 # ou tous les .c de src/<src_path>/<nom>/ (binaire en plusieurs fichiers, ex. bin/net/ftpd) -------
@@ -52,29 +74,37 @@ foreach(l IN LISTS mkconf_lines)
     endif()
   endif()
 endforeach()
-set(firmware_libs lepton_generated)
+set(firmware_libs)
 if(sbin_sources)
-  lepton_add_library(lepton_sbin SOURCES ${sbin_sources})
-  add_dependencies(lepton_sbin board_mkconf)
-  list(APPEND firmware_libs lepton_sbin)
+  lepton_add_library(sbin SOURCES ${sbin_sources})
+  add_dependencies(sbin board_mkconf)
+  list(APPEND firmware_libs sbin)
 endif()
 if(bin_sources)
-  lepton_add_library(lepton_bin SOURCES ${bin_sources})
-  add_dependencies(lepton_bin board_mkconf)
-  list(APPEND firmware_libs lepton_bin)
+  lepton_add_library(bin SOURCES ${bin_sources})
+  add_dependencies(bin board_mkconf)
+  list(APPEND firmware_libs bin)
 endif()
+
+# --- greffons : manifestes lepton-greffon.json (BLD-2) ---------------------------------------------
+enable_language(ASM)   # fichiers .S des greffons (décision 7)
+lepton_greffons_appliquer()
+list(APPEND firmware_libs ${LEPTON_GREFFONS_BIBLIOTHEQUES})
 
 # --- exécutables -----------------------------------------------------------------------------------
 list(JOIN firmware_libs "," LEPTON_FIRMWARE_GROUP_CSV)
+if(LEPTON_FIRMWARE_GROUP_CSV)
+  string(APPEND LEPTON_FIRMWARE_GROUP_CSV ",")
+endif()
 
-# lepton_link_firmware(<cible>) : édition de liens d'un exécutable de la carte (noyau complet,
-# configuration générée, pseudo-binaires, micro-noyau, scripts de liens) ; utilisé par lepton et
-# par le banc KAL (tests/kal).
+# lepton_link_firmware(<cible>) : édition de liens d'un exécutable de la carte (configuration
+# générée et démarrage en objets, pseudo-binaires, noyau complet, micro-noyau, scripts de liens) ;
+# utilisé par lepton et par le banc KAL (tests/kal).
 function(lepton_link_firmware target)
   set_target_properties(${target} PROPERTIES SUFFIX .elf)
   add_dependencies(${target} board_mkconf)
-  target_link_libraries(${target} PRIVATE lepton_options
-    "$<LINK_GROUP:RESCAN,${LEPTON_FIRMWARE_GROUP_CSV},${LEPTON_KERNEL_GROUP_CSV}>"
+  target_link_libraries(${target} PRIVATE lepton_options generated kernel_demarrage
+    "$<LINK_GROUP:RESCAN,${LEPTON_FIRMWARE_GROUP_CSV}${LEPTON_KERNEL_GROUP_CSV}>"
     ${LEPTON_KAL_LINK_LIBS} ${LEPTON_SYSTEM_LIBS})
   target_link_options(${target} PRIVATE
     -T${LEPTON_BOARD_MEMORY_LD} -T${CMAKE_SOURCE_DIR}/ld/common-cortexm.ld
@@ -83,13 +113,22 @@ function(lepton_link_firmware target)
     ${LEPTON_BOARD_MEMORY_LD} ${CMAKE_SOURCE_DIR}/ld/common-cortexm.ld)
 endfunction()
 
-set(LEPTON_FIRMWARE_ISA_SOURCES ${LEPTON_FIRMWARE_SOURCES})
-list(TRANSFORM LEPTON_FIRMWARE_SOURCES PREPEND ${LEPTON_SRC}/)
-add_executable(lepton ${LEPTON_FIRMWARE_SOURCES})
+set(firmware_sources ${LEPTON_KAL_MAIN_SOURCES} ${LEPTON_KAL_HW_SOURCES})
+list(TRANSFORM firmware_sources PREPEND ${LEPTON_SRC}/)
+add_executable(lepton ${firmware_sources})
 lepton_link_firmware(lepton)
+if(TARGET bsp_objets)
+  target_link_libraries(lepton PRIVATE bsp_objets)
+endif()
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 add_custom_command(TARGET lepton POST_BUILD
   COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:lepton> ${CMAKE_BINARY_DIR}/lepton.bin
+  COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:lepton> ${CMAKE_BINARY_DIR}/lepton.hex
   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:lepton>
+  COMMAND ${Python3_EXECUTABLE} ${LEPTON_TOOLS}/occupation/occupation.py
+          ${CMAKE_BINARY_DIR}/lepton.map --out ${CMAKE_BINARY_DIR}/lepton.occupation.txt
+  BYPRODUCTS ${CMAKE_BINARY_DIR}/lepton.bin ${CMAKE_BINARY_DIR}/lepton.hex
+             ${CMAKE_BINARY_DIR}/lepton.occupation.txt
   VERBATIM)
 
 # --- carte réelle (étape 5) : flash par OpenOCD, test de fumée sur le port série (label board) --

@@ -8,10 +8,10 @@ if(NOT LEPTON_CPU STREQUAL "cortex-m7" OR NOT LEPTON_M7_FPU STREQUAL "sp")
   message(FATAL_ERROR "stm32f746g-disco : LEPTON_CPU=cortex-m7 et LEPTON_M7_FPU=sp attendus")
 endif()
 set(LEPTON_BOARD_MEMORY_LD ${CMAKE_SOURCE_DIR}/ld/mem_stm32f746g-disco.ld)
-set(LEPTON_BSP_NAME stm32f746g_disco)
 set(stm32f7 kernel/dev/arch/cortexm/stm32f7xx)
-set(LEPTON_BSP_SOURCES
-  kernel/dev/bsp/stm32f746g_disco/stm32f746g_disco_board.c
+set(LEPTON_BSP_SOURCES kernel/dev/bsp/stm32f746g_disco/stm32f746g_disco_board.c)
+# famille STM32F7 (bibliothèque kernel)
+set(LEPTON_DEV_ARCH_SOURCES
   # couche STM32F7 de Lepton
   ${stm32f7}/dev_stm32f7xx/dev_stm32f7xx_uart_x.c
   ${stm32f7}/dev_stm32f7xx/dev_stm32f7xx_eth_x.c

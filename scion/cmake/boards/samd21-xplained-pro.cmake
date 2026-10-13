@@ -8,12 +8,10 @@ if(NOT LEPTON_CPU STREQUAL "cortex-m0plus")
   message(FATAL_ERROR "samd21-xplained-pro : LEPTON_CPU=cortex-m0plus attendu")
 endif()
 set(LEPTON_BOARD_MEMORY_LD ${CMAKE_SOURCE_DIR}/ld/mem_samd21-xplained-pro.ld)
-set(LEPTON_BSP_NAME samd21_xplained_pro)
 set(samd21 kernel/dev/arch/cortexm/samd21)
-set(LEPTON_BSP_SOURCES
-  kernel/dev/bsp/samd21_xplained_pro/samd21_xplained_pro_board.c
-  # couche SAMD21 de Lepton
-  ${samd21}/dev_samd21/dev_samd21_uart_x.c)
+set(LEPTON_BSP_SOURCES kernel/dev/bsp/samd21_xplained_pro/samd21_xplained_pro_board.c)
+# couche SAMD21 de Lepton (bibliothèque kernel)
+set(LEPTON_DEV_ARCH_SOURCES ${samd21}/dev_samd21/dev_samd21_uart_x.c)
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_samd21_xplained_pro.xml)
 # FreeRTOS (étape 7, module 7.3 ; décision 2026-10-06) : piles idle 128 mots et temporisateurs
 # 256 mots (défauts 256 et 512) : avec 1 Ko et 2 Ko, le tas ne laisse que 484 o après le

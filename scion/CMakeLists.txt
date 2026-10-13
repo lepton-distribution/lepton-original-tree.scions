@@ -38,6 +38,7 @@ include(kal/${LEPTON_KAL_BACKEND})
 
 enable_testing()
 include(components/kernel)
+include(lepton_greffons)
 include(mklepton)
 if(NOT LEPTON_ISA STREQUAL "host")
   include(components/firmware)

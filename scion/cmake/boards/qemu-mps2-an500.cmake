@@ -7,11 +7,11 @@ if(NOT LEPTON_CPU STREQUAL "cortex-m7")
   message(FATAL_ERROR "qemu-mps2-an500 : LEPTON_CPU=cortex-m7 attendu")
 endif()
 set(LEPTON_BOARD_MEMORY_LD ${CMAKE_SOURCE_DIR}/ld/mem_qemu-mps2-an500.ld)
-set(LEPTON_BSP_NAME qemu_mps2_an500)   # bibliothèque lepton_bsp_<nom>, une par carte
-set(LEPTON_BSP_SOURCES
+# pilotes de famille (bibliothèque kernel) et carte (bibliothèque bsp)
+set(LEPTON_DEV_ARCH_SOURCES
   kernel/dev/arch/all/uart/dev_cmsdk_uart/dev_cmsdk_uart_x.c
-  kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.c
-  kernel/dev/bsp/qemu_mps2/qemu_mps2_board.c)
+  kernel/dev/arch/all/eth/dev_eth_lan9118/dev_eth_lan9118_x.c)
+set(LEPTON_BSP_SOURCES kernel/dev/bsp/qemu_mps2/qemu_mps2_board.c)
 set(LEPTON_NET_STACK lwip)   # USE_LWIP dans user_kernel_mkconf.h
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml)
 set(LEPTON_BOARD_CPU_FREQ 25000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)
