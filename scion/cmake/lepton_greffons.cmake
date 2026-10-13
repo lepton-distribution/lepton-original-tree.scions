@@ -10,15 +10,24 @@
 # types contrôlés, FATAL_ERROR citant le fichier. Résultat : LEPTON_GREFFONS (noms) et
 # LEPTON_GREFFON_<nom>_<CHAMP>.
 #
+# Carte (lepton_greffons_carte, avant le micro-noyau, ENV-6) : le BSP dont le nom est LEPTON_BOARD
+# et sa famille (GRF-3) donnent les variables de carte (script de liens, fréquence, en-tête de
+# configuration noyau, machine QEMU, démarrage de carte, vecteurs et remplaçants forts) ; leurs
+# options publiques vont sur lepton_options (PA-7 R7 : le noyau en dépend sans dépendre de la
+# carte) ; contrôles : cœur = LEPTON_CPU, cœur couvert par la famille, ABI imposée. Les autres
+# manifestes de type famille ou bsp du trunk sont lus et ignorés.
+#
 # Application (presets croisés, lepton_greffons_appliquer) :
 # - greffon noyau : ses bibliothèques sont définies par son CMakeLists.txt (BLD-1) ; options de
 #   portée publique → lepton_options (tous les greffons dépendent du noyau), privée → sources
 #   de kernel, lib, sbin, bin, kernel_demarrage, relevées avant l'ajout de celles des greffons ;
-# - autre greffon : fichiers .c et .S des répertoires `sources` (file(GLOB … CONFIGURE_DEPENDS))
-#   ajoutés à la bibliothèque `bibliotheque`, créée si absente et alors ajoutée au groupe d'édition
+# - autre greffon : fichiers .c et .S des répertoires `sources` (file(GLOB … CONFIGURE_DEPENDS)),
+#   ou fichier désigné par un élément de `sources` (PA-7 Q2), hors fichiers liés comme objets
+#   (démarrage, vecteurs, remplaçants forts), ajoutés à la bibliothèque `bibliotheque`, créée si absente et alors ajoutée au groupe d'édition
 #   de liens (LEPTON_GREFFONS_BIBLIOTHEQUES) ; options de portée privée → sources du greffon,
 #   publique → sources du greffon et des greffons qui en dépendent (propriétés de source, visibles
-#   dans compile_commands.json).
+#   dans compile_commands.json) ; famille et BSP : publique déjà sur lepton_options.
+# Répertoires d'inclusion (`inclusions`, PA-7 Q1) : relatifs à sys/root/src, mêmes portées.
 # Options configurables (`options`) : définition <nom>=<défaut> (booléen : 1 ou 0 ; chaîne entre
 # guillemets) dans la portée déclarée ; valeurs de la graine : ENV-8.
 
@@ -111,7 +120,18 @@ function(_lepton_greffon_lire fichier)
   foreach(portee privee publique)
     _lepton_json(${portee}_definitions ARRAY "${json}" ${fichier} compilation ${portee} definitions)
     _lepton_json(${portee}_drapeaux ARRAY "${json}" ${fichier} compilation ${portee} drapeaux)
+    _lepton_json(${portee}_inclusions ARRAY "${json}" ${fichier} compilation ${portee} inclusions)
   endforeach()
+  # famille et BSP (GRF-3) ; frequence_cpu : nombre JSON
+  _lepton_json(coeurs ARRAY "${json}" ${fichier} coeurs)
+  _lepton_json(vecteurs ARRAY "${json}" ${fichier} vecteurs)
+  _lepton_json(remplacants_forts ARRAY "${json}" ${fichier} remplacants_forts)
+  _lepton_json(demarrage ARRAY "${json}" ${fichier} demarrage)
+  foreach(champ famille coeur abi_flottante entete_config_noyau script_liens)
+    _lepton_json(${champ} STRING "${json}" ${fichier} ${champ})
+  endforeach()
+  _lepton_json(frequence_cpu NUMBER "${json}" ${fichier} frequence_cpu)
+  _lepton_json(qemu_machine STRING "${json}" ${fichier} qemu machine)
 
   string(JSON t ERROR_VARIABLE err TYPE "${json}" options)
   if(NOT err)
@@ -170,8 +190,119 @@ function(_lepton_greffon_lire fichier)
     string(TOUPPER ${portee} P)
     set(${p}_${P}_DEFINITIONS "${${portee}_definitions}" PARENT_SCOPE)
     set(${p}_${P}_DRAPEAUX "${${portee}_drapeaux}" PARENT_SCOPE)
+    set(${p}_${P}_INCLUSIONS "${${portee}_inclusions}" PARENT_SCOPE)
+  endforeach()
+  foreach(champ coeurs vecteurs remplacants_forts demarrage famille coeur abi_flottante
+          entete_config_noyau script_liens frequence_cpu qemu_machine)
+    string(TOUPPER ${champ} C)
+    set(${p}_${C} "${${champ}}" PARENT_SCOPE)
   endforeach()
   set(LEPTON_GREFFONS ${LEPTON_GREFFONS} ${nom} PARENT_SCOPE)
+endfunction()
+
+# _lepton_greffon_publiques(<nom>) : options publiques du greffon sur lepton_options.
+function(_lepton_greffon_publiques nom)
+  set(p LEPTON_GREFFON_${nom})
+  target_compile_definitions(lepton_options INTERFACE ${${p}_PUBLIQUE_DEFINITIONS})
+  target_compile_options(lepton_options INTERFACE ${${p}_PUBLIQUE_DRAPEAUX})
+  set(inclusions ${${p}_PUBLIQUE_INCLUSIONS})
+  list(TRANSFORM inclusions PREPEND ${LEPTON_SRC}/)
+  target_include_directories(lepton_options INTERFACE ${inclusions})
+endfunction()
+
+# _lepton_greffon_privees(<nom> <fichiers relatifs à sys/root/src>...) : options privées du
+# greffon sur des fichiers liés comme objets (démarrage, vecteurs, remplaçants forts).
+function(_lepton_greffon_privees nom)
+  set(p LEPTON_GREFFON_${nom})
+  set(fichiers ${ARGN})
+  if(NOT fichiers)
+    return()
+  endif()
+  list(TRANSFORM fichiers PREPEND ${LEPTON_SRC}/)
+  if(${p}_PRIVEE_DEFINITIONS)
+    set_property(SOURCE ${fichiers} APPEND PROPERTY COMPILE_DEFINITIONS ${${p}_PRIVEE_DEFINITIONS})
+  endif()
+  if(${p}_PRIVEE_DRAPEAUX)
+    set_property(SOURCE ${fichiers} APPEND PROPERTY COMPILE_OPTIONS ${${p}_PRIVEE_DRAPEAUX})
+  endif()
+  if(${p}_PRIVEE_INCLUSIONS)
+    set(inclusions ${${p}_PRIVEE_INCLUSIONS})
+    list(TRANSFORM inclusions PREPEND ${LEPTON_SRC}/)
+    set_property(SOURCE ${fichiers} APPEND PROPERTY INCLUDE_DIRECTORIES ${inclusions})
+  endif()
+endfunction()
+
+# _lepton_greffon_fichier(<sortie> <nom> <fichier relatif à la destination>) : chemin relatif à
+# sys/root/src ; fichier absent : erreur.
+function(_lepton_greffon_fichier sortie nom fichier)
+  set(p LEPTON_GREFFON_${nom})
+  set(chemin ${${p}_DESTINATION}/${fichier})
+  if(NOT EXISTS ${LEPTON_SRC}/${chemin})
+    _lepton_manifeste_erreur(${${p}_FICHIER} "fichier absent : ${LEPTON_SRC}/${chemin}")
+  endif()
+  set(${sortie} ${chemin} PARENT_SCOPE)
+endfunction()
+
+# lepton_greffons_carte(<nom>) : carte décrite par le manifeste BSP <nom> et sa famille. Pose
+# LEPTON_BOARD_FAMILLE, LEPTON_BOARD_MEMORY_LD, LEPTON_BOARD_CPU_FREQ,
+# LEPTON_BOARD_KERNEL_CONFIG_HEADER (relatif au trunk, pour mklepton), LEPTON_QEMU_MACHINE,
+# LEPTON_BOARD_DEMARRAGE_SOURCES (OBJECT bsp_demarrage), LEPTON_BOARD_OBJECT_SOURCES (vecteurs et
+# remplaçants forts de la famille, OBJECT bsp_objets) et LEPTON_BOARD_CMAKE (CMakeLists.txt
+# facultatif du BSP : paramètres hors manifeste, PA-7 Q3, à inclure par l'appelant).
+function(lepton_greffons_carte nom)
+  set(b LEPTON_GREFFON_${nom})
+  if(NOT ${b}_TYPE STREQUAL "bsp")
+    _lepton_manifeste_erreur(${${b}_FICHIER} "LEPTON_BOARD=${nom} : type bsp attendu, ${${b}_TYPE} trouvé")
+  endif()
+  set(famille ${${b}_FAMILLE})
+  set(f LEPTON_GREFFON_${famille})
+  if(NOT famille IN_LIST LEPTON_GREFFONS OR NOT ${f}_TYPE STREQUAL "famille")
+    _lepton_manifeste_erreur(${${b}_FICHIER} "famille « ${famille} » : aucun greffon famille de ce nom")
+  endif()
+  if(NOT ${b}_COEUR STREQUAL LEPTON_CPU)
+    _lepton_manifeste_erreur(${${b}_FICHIER} "cœur ${${b}_COEUR}, LEPTON_CPU=${LEPTON_CPU}")
+  endif()
+  if(NOT ${b}_COEUR IN_LIST ${f}_COEURS)
+    _lepton_manifeste_erreur(${${b}_FICHIER}
+      "cœur ${${b}_COEUR} non couvert par la famille ${famille} (${${f}_COEURS})")
+  endif()
+  if(${b}_ABI_FLOTTANTE AND NOT ${b}_ABI_FLOTTANTE STREQUAL LEPTON_FLOAT_ABI)
+    _lepton_manifeste_erreur(${${b}_FICHIER}
+      "ABI flottante ${${b}_ABI_FLOTTANTE} imposée, LEPTON_FLOAT_ABI=${LEPTON_FLOAT_ABI}")
+  endif()
+
+  _lepton_greffon_fichier(ld ${nom} "${${b}_SCRIPT_LIENS}")
+  set(LEPTON_BOARD_MEMORY_LD ${LEPTON_SRC}/${ld} PARENT_SCOPE)
+  set(LEPTON_BOARD_CPU_FREQ ${${b}_FREQUENCE_CPU} PARENT_SCOPE)
+  if(${b}_ENTETE_CONFIG_NOYAU)
+    _lepton_greffon_fichier(entete ${nom} ${${b}_ENTETE_CONFIG_NOYAU})
+    file(RELATIVE_PATH entete ${CMAKE_SOURCE_DIR} ${LEPTON_SRC}/${entete})
+    set(LEPTON_BOARD_KERNEL_CONFIG_HEADER ${entete} PARENT_SCOPE)
+  endif()
+  set(LEPTON_QEMU_MACHINE "${${b}_QEMU_MACHINE}" PARENT_SCOPE)
+  set(demarrage)
+  foreach(fichier IN LISTS ${b}_DEMARRAGE)
+    _lepton_greffon_fichier(chemin ${nom} ${fichier})
+    list(APPEND demarrage ${chemin})
+  endforeach()
+  set(LEPTON_BOARD_DEMARRAGE_SOURCES ${demarrage} PARENT_SCOPE)
+  _lepton_greffon_privees(${nom} ${demarrage})
+  set(objets)
+  foreach(fichier IN LISTS ${f}_VECTEURS ${f}_REMPLACANTS_FORTS)
+    _lepton_greffon_fichier(chemin ${famille} ${fichier})
+    list(APPEND objets ${chemin})
+  endforeach()
+  set(LEPTON_BOARD_OBJECT_SOURCES ${objets} PARENT_SCOPE)
+  _lepton_greffon_privees(${famille} ${objets})
+  set(LEPTON_BOARD_CMAKE PARENT_SCOPE)
+  if(EXISTS ${LEPTON_SRC}/${${b}_DESTINATION}/CMakeLists.txt)
+    set(LEPTON_BOARD_CMAKE ${LEPTON_SRC}/${${b}_DESTINATION}/CMakeLists.txt PARENT_SCOPE)
+  endif()
+  set(LEPTON_BOARD_FAMILLE ${famille} PARENT_SCOPE)
+
+  _lepton_greffon_publiques(${famille})
+  _lepton_greffon_publiques(${nom})
+  message(STATUS "carte ${nom} : famille ${famille}, cœur ${${b}_COEUR}")
 endfunction()
 
 # lepton_greffons_appliquer() : sources et options des greffons (presets croisés) ; pose
@@ -183,8 +314,7 @@ function(lepton_greffons_appliquer)
     if(NOT ${p}_TYPE STREQUAL "noyau")
       continue()
     endif()
-    target_compile_definitions(lepton_options INTERFACE ${${p}_PUBLIQUE_DEFINITIONS})
-    target_compile_options(lepton_options INTERFACE ${${p}_PUBLIQUE_DRAPEAUX})
+    _lepton_greffon_publiques(${nom})
     set(fichiers)
     foreach(cible kernel lib sbin bin kernel_demarrage)
       if(TARGET ${cible})
@@ -198,11 +328,22 @@ function(lepton_greffons_appliquer)
     if(${p}_PRIVEE_DRAPEAUX)
       set_property(SOURCE ${fichiers} APPEND PROPERTY COMPILE_OPTIONS ${${p}_PRIVEE_DRAPEAUX})
     endif()
+    if(${p}_PRIVEE_INCLUSIONS)
+      set(inclusions ${${p}_PRIVEE_INCLUSIONS})
+      list(TRANSFORM inclusions PREPEND ${LEPTON_SRC}/)
+      set_property(SOURCE ${fichiers} APPEND PROPERTY INCLUDE_DIRECTORIES ${inclusions})
+    endif()
   endforeach()
+
+  # fichiers liés comme objets (bsp_demarrage, bsp_objets) : hors découverte des sources
+  set(objets ${LEPTON_BOARD_DEMARRAGE_SOURCES} ${LEPTON_BOARD_OBJECT_SOURCES})
+  list(TRANSFORM objets PREPEND ${LEPTON_SRC}/)
 
   foreach(nom IN LISTS LEPTON_GREFFONS)
     set(p LEPTON_GREFFON_${nom})
-    if(${p}_TYPE STREQUAL "noyau")
+    if(${p}_TYPE STREQUAL "noyau"
+       OR (${p}_TYPE STREQUAL "famille" AND NOT nom STREQUAL LEPTON_BOARD_FAMILLE)
+       OR (${p}_TYPE STREQUAL "bsp" AND NOT nom STREQUAL LEPTON_BOARD))
       continue()
     endif()
 
@@ -212,8 +353,12 @@ function(lepton_greffons_appliquer)
       if(NOT s STREQUAL ".")
         string(APPEND rep /${s})
       endif()
+      if(s MATCHES "\\.(c|S)$" AND EXISTS ${rep} AND NOT IS_DIRECTORY ${rep})
+        list(APPEND fichiers ${rep})   # fichier désigné (PA-7 Q2)
+        continue()
+      endif()
       if(NOT IS_DIRECTORY ${rep})
-        _lepton_manifeste_erreur(${${p}_FICHIER} "répertoire de sources absent : ${rep}")
+        _lepton_manifeste_erreur(${${p}_FICHIER} "répertoire ou fichier de sources absent : ${rep}")
       endif()
       file(GLOB cpp CONFIGURE_DEPENDS ${rep}/*.cpp)
       if(cpp)
@@ -223,6 +368,9 @@ function(lepton_greffons_appliquer)
       list(SORT trouves)
       list(APPEND fichiers ${trouves})
     endforeach()
+    if(objets)
+      list(REMOVE_ITEM fichiers ${objets})
+    endif()
     if(NOT fichiers)
       message(STATUS "greffon ${nom} : aucune source")
       continue()
@@ -237,24 +385,35 @@ function(lepton_greffons_appliquer)
     endif()
     target_sources(${bib} PRIVATE ${fichiers})
 
-    # portée : privée et publique du greffon, publique de ses dépendances (hors noyau, déjà dans
-    # lepton_options)
-    set(definitions ${${p}_PRIVEE_DEFINITIONS} ${${p}_PUBLIQUE_DEFINITIONS})
-    set(drapeaux ${${p}_PRIVEE_DRAPEAUX} ${${p}_PUBLIQUE_DRAPEAUX})
-    foreach(dep IN LISTS ${p}_DEPENDANCES)
+    # portée : privée et publique du greffon, publique de ses dépendances (hors noyau, famille et
+    # BSP, déjà dans lepton_options)
+    set(definitions ${${p}_PRIVEE_DEFINITIONS})
+    set(drapeaux ${${p}_PRIVEE_DRAPEAUX})
+    set(inclusions ${${p}_PRIVEE_INCLUSIONS})
+    set(globales noyau famille bsp)
+    set(deps ${${p}_DEPENDANCES})
+    if(NOT ${p}_TYPE IN_LIST globales)
+      list(PREPEND deps ${nom})
+    endif()
+    foreach(dep IN LISTS deps)
       if(NOT dep IN_LIST LEPTON_GREFFONS)
         _lepton_manifeste_erreur(${${p}_FICHIER} "dépendance « ${dep} » : aucun greffon de ce nom")
       endif()
-      if(NOT LEPTON_GREFFON_${dep}_TYPE STREQUAL "noyau")
+      if(NOT LEPTON_GREFFON_${dep}_TYPE IN_LIST globales)
         list(APPEND definitions ${LEPTON_GREFFON_${dep}_PUBLIQUE_DEFINITIONS})
         list(APPEND drapeaux ${LEPTON_GREFFON_${dep}_PUBLIQUE_DRAPEAUX})
+        list(APPEND inclusions ${LEPTON_GREFFON_${dep}_PUBLIQUE_INCLUSIONS})
       endif()
     endforeach()
+    list(TRANSFORM inclusions PREPEND ${LEPTON_SRC}/)
     if(definitions)
       set_property(SOURCE ${fichiers} APPEND PROPERTY COMPILE_DEFINITIONS ${definitions})
     endif()
     if(drapeaux)
       set_property(SOURCE ${fichiers} APPEND PROPERTY COMPILE_OPTIONS ${drapeaux})
+    endif()
+    if(inclusions)
+      set_property(SOURCE ${fichiers} APPEND PROPERTY INCLUDE_DIRECTORIES ${inclusions})
     endif()
     message(STATUS "greffon ${nom} : ${bib} (${${p}_SOURCES})")
   endforeach()

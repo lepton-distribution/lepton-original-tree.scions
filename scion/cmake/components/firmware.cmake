@@ -4,8 +4,10 @@
 #
 # Exécutif (BLD-1, décisions 2 et 4) : main et matériel du micro-noyau (sources), sources générées
 # par mklepton (OBJECT generated : table des périphériques, liée en premier, hors du cycle
-# kernel ↔ bsp), démarrage générique (OBJECT kernel_demarrage), vecteurs et remplaçants forts de la
-# carte (OBJECT bsp_objets) ; puis le groupe sbin, bin, kernel, lib, bsp.
+# kernel ↔ bsp), démarrage générique (OBJECT kernel_demarrage), démarrage de la carte (OBJECT
+# bsp_demarrage, champ demarrage du BSP), vecteurs et remplaçants forts de la famille (OBJECT
+# bsp_objets) ; puis le groupe sbin, bin, kernel, lib, bsp. kernel_demarrage et bsp_demarrage sont
+# liés à tout exécutable de la carte (lepton, banc KAL) ; bsp_objets à lepton seul.
 
 if(NOT LEPTON_BOARD_MKCONF)
   message(STATUS "firmware : aucun mkconf pour la carte ${LEPTON_BOARD} (firmware non construit)")
@@ -45,6 +47,10 @@ target_link_libraries(generated PRIVATE lepton_options)
 add_dependencies(generated board_mkconf)
 lepton_add_objects(kernel_demarrage SOURCES ${LEPTON_ISA_STARTUP_SOURCES})
 set(firmware_objects generated kernel_demarrage)
+if(LEPTON_BOARD_DEMARRAGE_SOURCES)
+  lepton_add_objects(bsp_demarrage SOURCES ${LEPTON_BOARD_DEMARRAGE_SOURCES})
+  list(APPEND firmware_objects bsp_demarrage)
+endif()
 if(LEPTON_BOARD_OBJECT_SOURCES)
   lepton_add_objects(bsp_objets SOURCES ${LEPTON_BOARD_OBJECT_SOURCES})
   list(APPEND firmware_objects bsp_objets)
@@ -103,7 +109,11 @@ endif()
 function(lepton_link_firmware target)
   set_target_properties(${target} PROPERTIES SUFFIX .elf)
   add_dependencies(${target} board_mkconf)
-  target_link_libraries(${target} PRIVATE lepton_options generated kernel_demarrage
+  set(objets generated kernel_demarrage)
+  if(TARGET bsp_demarrage)
+    list(APPEND objets bsp_demarrage)
+  endif()
+  target_link_libraries(${target} PRIVATE lepton_options ${objets}
     "$<LINK_GROUP:RESCAN,${LEPTON_FIRMWARE_GROUP_CSV}${LEPTON_KERNEL_GROUP_CSV}>"
     ${LEPTON_KAL_LINK_LIBS} ${LEPTON_SYSTEM_LIBS})
   target_link_options(${target} PRIVATE
