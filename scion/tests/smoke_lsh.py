@@ -13,7 +13,7 @@ Exemples :
   smoke_lsh.py --qemu qemu-system-arm --machine mps2-an386 --kernel lepton.elf \
                --expect-machine cortexM4-qemu-mps2-an386 --command ls --command ps --uart1
   smoke_lsh.py --transport serial --port /dev/ttyACM0 --expect-machine cortexM4-stm32f4 \
-               --reset-command "openocd -f debug/openocd-nucleo-f439zi.cfg -c init -c reset -c exit"
+               --reset-command "openocd -f sys/root/src/kernel/dev/bsp/nucleo-f429zi/debug/openocd-nucleo-f439zi.cfg -c init -c reset -c exit"
 """
 import argparse
 import os

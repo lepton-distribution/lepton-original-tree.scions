@@ -45,6 +45,7 @@
         "LEPTON_ISA": "armv7m",
         "LEPTON_CPU": "cortex-m4f",
         "LEPTON_BOARD": "qemu-mps2-an386",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml",
         "LEPTON_KAL_BACKEND": "embos",
         "LEPTON_FLOAT_ABI": "hard"
       }
@@ -76,26 +77,28 @@
         "LEPTON_ISA": "armv7m",
         "LEPTON_CPU": "cortex-m4f",
         "LEPTON_BOARD": "qemu-mps2-an386",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml",
         "LEPTON_KAL_BACKEND": "freertos",
         "LEPTON_FLOAT_ABI": "hard"
       }
     },
     {
-      "name": "nucleo-f439zi-embos",
-      "displayName": "NUCLEO-F439ZI (Cortex-M4F), embOS",
+      "name": "nucleo-f429zi-embos",
+      "displayName": "NUCLEO-F429ZI (Cortex-M4F), embOS",
       "inherits": "cross",
       "cacheVariables": {
         "LEPTON_ISA": "armv7m",
         "LEPTON_CPU": "cortex-m4f",
-        "LEPTON_BOARD": "nucleo-f439zi",
+        "LEPTON_BOARD": "nucleo-f429zi",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_f439zi.xml",
         "LEPTON_KAL_BACKEND": "embos"
       }
     },
     {
-      "name": "nucleo-f439zi-freertos",
-      "displayName": "NUCLEO-F439ZI (Cortex-M4F), FreeRTOS",
-      "description": "Backend KAL FreeRTOS V11.3.0 (étape 7, module 7.2), même carte que nucleo-f439zi-embos.",
-      "inherits": "nucleo-f439zi-embos",
+      "name": "nucleo-f429zi-freertos",
+      "displayName": "NUCLEO-F429ZI (Cortex-M4F), FreeRTOS",
+      "description": "Backend KAL FreeRTOS V11.3.0 (étape 7, module 7.2), même carte que nucleo-f429zi-embos.",
+      "inherits": "nucleo-f429zi-embos",
       "cacheVariables": {
         "LEPTON_KAL_BACKEND": "freertos"
       }
@@ -108,6 +111,7 @@
         "LEPTON_ISA": "armv7m",
         "LEPTON_CPU": "cortex-m7",
         "LEPTON_BOARD": "qemu-mps2-an500",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml",
         "LEPTON_KAL_BACKEND": "embos"
       }
     },
@@ -170,6 +174,7 @@
         "LEPTON_CPU": "cortex-m4f",
         "LEPTON_FLOAT_ABI": "soft",
         "LEPTON_BOARD": "nucleo-wl55jc1",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_wl55jc1.xml",
         "LEPTON_KAL_BACKEND": "embos"
       }
     },
@@ -205,12 +210,12 @@
       "configurePreset": "qemu-mps2-an386-freertos"
     },
     {
-      "name": "nucleo-f439zi-embos",
-      "configurePreset": "nucleo-f439zi-embos"
+      "name": "nucleo-f429zi-embos",
+      "configurePreset": "nucleo-f429zi-embos"
     },
     {
-      "name": "nucleo-f439zi-freertos",
-      "configurePreset": "nucleo-f439zi-freertos"
+      "name": "nucleo-f429zi-freertos",
+      "configurePreset": "nucleo-f429zi-freertos"
     },
     {
       "name": "qemu-mps2-an500-embos",
@@ -282,15 +287,15 @@
       }
     },
     {
-      "name": "nucleo-f439zi-embos",
-      "configurePreset": "nucleo-f439zi-embos",
+      "name": "nucleo-f429zi-embos",
+      "configurePreset": "nucleo-f429zi-embos",
       "output": {
         "outputOnFailure": true
       }
     },
     {
-      "name": "nucleo-f439zi-freertos",
-      "configurePreset": "nucleo-f439zi-freertos",
+      "name": "nucleo-f429zi-freertos",
+      "configurePreset": "nucleo-f429zi-freertos",
       "output": {
         "outputOnFailure": true
       }

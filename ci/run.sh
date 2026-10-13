@@ -83,7 +83,7 @@ ctest --test-dir "$LEPTON_BUILD/host-clang" -L host --no-tests=error
 # matrice micro-noyau × machine (étape 7) : <machine>-<micro-noyau>
 kernels="embos freertos"
 qemu_machines="qemu-mps2-an386 qemu-mps2-an386@soft qemu-mps2-an500"
-board_machines="nucleo-f439zi stm32f746g-disco samd21-xplained-pro nucleo-wl55jc1"
+board_machines="nucleo-f429zi stm32f746g-disco samd21-xplained-pro nucleo-wl55jc1"
 # preset d'une machine : <machine>-<micro-noyau>[-<variante>] (an386@soft → an386-<µn>-soft)
 preset_of() {
   local machine="${1%@*}" variant=""

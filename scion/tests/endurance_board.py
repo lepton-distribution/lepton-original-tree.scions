@@ -21,9 +21,10 @@ résumé sur la sortie standard ; code de retour 0 si aucune faute.
 
 Exemple :
   endurance_board.py --port /dev/ttyACM0 --ping-ip 192.168.2.5 --duration 10800 \\
-      --reset-command "openocd -f debug/openocd-nucleo-f439zi.cfg -c init -c reset -c exit" \\
-      --openocd-cfg debug/openocd-nucleo-f439zi.cfg --gdbinit debug/gdbinit-nucleo-f439zi \\
-      --elf $LEPTON_BUILD/nucleo-f439zi-embos/lepton.elf --log endurance.log
+      --reset-command "openocd -f sys/root/src/kernel/dev/bsp/nucleo-f429zi/debug/openocd-nucleo-f439zi.cfg -c init -c reset -c exit" \\
+      --openocd-cfg sys/root/src/kernel/dev/bsp/nucleo-f429zi/debug/openocd-nucleo-f439zi.cfg \\
+      --gdbinit sys/root/src/kernel/dev/bsp/nucleo-f429zi/debug/gdbinit-nucleo-f439zi \\
+      --elf $LEPTON_BUILD/nucleo-f429zi-embos/lepton.elf --log endurance.log
 """
 import argparse
 import os

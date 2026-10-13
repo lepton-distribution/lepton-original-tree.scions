@@ -9,7 +9,7 @@ Sans débogueur, l'instruction BKPT du semihosting met le cœur en faute : kal_b
 que sous ce lanceur. Code de retour non nul si OpenOCD ne rend pas la main (--timeout).
 
 Exemple :
-  kal_openocd.py --openocd openocd --cfg debug/openocd-nucleo-f439zi.cfg --test=T1
+  kal_openocd.py --openocd openocd --cfg sys/root/src/kernel/dev/bsp/nucleo-f429zi/debug/openocd-nucleo-f439zi.cfg --test=T1
 """
 import argparse
 import subprocess

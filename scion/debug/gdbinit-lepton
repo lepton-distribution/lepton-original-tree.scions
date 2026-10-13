@@ -1,7 +1,9 @@
-# gdb-multiarch — NUCLEO-F439ZI (étape 5). Procédure : doc/migration/debug-gcc.md.
-#   terminal 1 : openocd -f debug/openocd-nucleo-f439zi.cfg
-#   terminal 2 : gdb-multiarch -x debug/gdbinit-nucleo-f439zi $LEPTON_BUILD/nucleo-f439zi-embos/lepton.elf
-# Commandes ajoutées : lepton-load (flash + reset halt), lepton-fault (registres de faute).
+# gdb-multiarch — commandes Lepton communes aux cartes Cortex-M (ENV-6, PA-7 Q8 ; partie générique
+# de l'ancien debug/gdbinit-nucleo-f439zi de l'étape 5). Procédure : doc/migration/debug-gcc.md.
+# Sourcé par le gdbinit de chaque carte (debug/ du greffon BSP, ou debug/ du noyau pour les cartes
+# transitoires), depuis la racine du trunk : source debug/gdbinit-lepton
+# Commandes ajoutées : lepton-load (flash + reset halt), lepton-fault (registres de faute),
+# lepton-stacks (remplissage des piles). Serveur gdb : OpenOCD, port 3333.
 set pagination off
 set confirm off
 set print pretty on
