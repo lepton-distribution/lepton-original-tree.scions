@@ -89,22 +89,8 @@ either the MPL or the [eCos GPL] License."
 #define XML_TAG_ATTR_VERSION     "version"
 
 
-typedef enum {
-   CPU_TYPE_GNU32,
-   CPU_TYPE_ARM7,
-   CPU_TYPE_M16C62
-}cpu_type_enum_t;
-
-const char* cpu_type_list[]={
-   "CPU_GNU32",
-   "CPU_ARM7",
-   "CPU_M16C62",
-   (char*)0
-};
-
 //kernel struct configuration
 struct kernel_conf_t {
-   char* str_cpu_type;
    char* str_cpu_freq;
    char* str_heap_size;
    char* str_thread_max;
@@ -114,7 +100,6 @@ struct kernel_conf_t {
    char* str_network_used;
    char* str_env_path;
    //
-   cpu_type_enum_t cpu_type;
    unsigned long cpu_freq;
    int heap_size;
    int thread_max;
@@ -149,15 +134,6 @@ struct mount_t {
 #define XML_DEV_VALUE_ON   "ON"
 #define XML_DEV_VALUE_OFF  "OFF"
 
-#define MK_DEV_CPU            "DEV_CPU"              // /dev/cpu
-#define MK_DEV_FILECPU        "DEV_FILECPU"          // /dev/hd/hda
-#define MK_DEV_EEPROM_24XXX   "DEV_EEPROM_24XXX"     // /dev/hd/hd(x)
-#define MK_DEV_M16CUART_S0    "DEV_M16CUART_S0"      // /dev/ttys0
-#define MK_DEV_M16CUART_S1    "DEV_M16CUART_S1"      // /dev/ttys1
-#define MK_DEV_LCDSED1540     "DEV_LCDSED1540"       // /dev/lcd0
-#define MK_DEV_RTCM41T81      "DEV_RTCM41T81"        // /dev/rtc0
-#define MK_DEV_RTCX1203       "DEV_RTCX1203"         // /dev/rtc1
-#define MK_DEV_KBCPLD_A0383   "DEV_KBCPLD_A0383"     // /dev/kb0
 
 
 //dev struct config

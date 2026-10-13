@@ -399,15 +399,6 @@ int xml_elmt_end_kernel(void){
    //declaration header
    fwrite(kernelconf_decl_header,sizeof(char),strlen(kernelconf_decl_header),f_kernelconf);
 
-   //
-   if(g_kernel_conf.str_cpu_type) {
-      fprintf(f_kernelconf,"//#define %s \n\n",cpu_type_list[g_kernel_conf.cpu_type]);
-      //fprintf(f_kernelconf,"#define %s \n\n",cpu_type_list[g_kernel_conf.cpu_type]);
-   }else{
-      fprintf(f_kernelconf,"//#define %s \n\n",cpu_type_list[CPU_TYPE_GNU32]);
-      //fprintf(f_kernelconf,"#define %s \n\n",cpu_type_list[CPU_TYPE_GNU32]);
-   }
-
    if(g_kernel_conf.cpu_freq
       && g_kernel_conf.str_cpu_freq) {
       fprintf(f_kernelconf,"%s %ldL\n\n",kernelconf_cpu_freq_define,g_kernel_conf.cpu_freq);
