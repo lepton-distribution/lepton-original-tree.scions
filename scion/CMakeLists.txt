@@ -4,7 +4,7 @@
 #   LEPTON_ISA          host | armv7m | armv6m            → cmake/isa/<isa>.cmake
 #   LEPTON_CPU          cortex-m0plus | cortex-m3 | cortex-m4f | cortex-m7 → cmake/cpu/<cœur>.cmake
 #   LEPTON_BOARD        nom d'un greffon BSP (manifeste lepton-greffon.json, ENV-6), sinon carte
-#                       transitoire cmake/boards/<carte>.cmake (nucleo-wl55jc1, stm32f746g-disco,
+#                       transitoire cmake/boards/<carte>.cmake (stm32f746g-disco,
 #                       samd21-xplained-pro)
 #   LEPTON_KAL_BACKEND  static | embos | freertos         → cmake/kal/<backend>.cmake
 # Ajouter une valeur = ajouter un fichier (doc/migration/ajout-coeur.md) ou un greffon BSP.
