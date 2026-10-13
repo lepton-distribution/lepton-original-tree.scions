@@ -41,13 +41,13 @@ either the MPL or the [eCos GPL] License."
 ==============================================*/
 
 #define XML_TAG_ELMT_MKLEPTON    "mklepton"
-#define XML_TAG_ELMT_TARGET      "target"
-#define XML_TAG_ELMT_ARCH        "arch"
+#define XML_TAG_ELMT_TARGET      "target"   //format 1, refuse
+#define XML_TAG_ELMT_ARCH        "arch"     //format 1, refuse
 #define XML_TAG_ELMT_KERNEL      "kernel"
 #define XML_TAG_ELMT_DEVICES     "devices"
 #define XML_TAG_ELMT_DEV         "dev"
 #define XML_TAG_ELMT_BINARIES    "binaries"
-#define XML_TAG_ELMT_CPU         "cpu"
+#define XML_TAG_ELMT_CPU         "cpu"      //format 1, refuse
 #define XML_TAG_ELMT_HEAP        "heap"
 #define XML_TAG_ELMT_THREAD      "thread"
 #define XML_TAG_ELMT_PROCESS     "process"
@@ -79,35 +79,18 @@ either the MPL or the [eCos GPL] License."
 #define XML_TAG_ATTR_TIMESLICE   "timeslice"
 #define XML_TAG_ATTR_SIZE        "size"
 #define XML_TAG_ATTR_MAX         "max"
-#define XML_TAG_ATTR_FREQ        "freq"
 #define XML_TAG_ATTR_ARG         "arg"
 #define XML_TAG_ATTR_VALUE       "value"
 #define XML_TAG_ATTR_TYPE        "type"
 #define XML_TAG_ATTR_POINT       "point"
 #define XML_TAG_ATTR_PATH        "path"
 #define XML_TAG_ATTR_NODE        "node"
-#define XML_TAG_ATTR_BLOCK       "block"
 #define XML_TAG_ATTR_BLOCKSZ     "blocksz"
-#define XML_TAG_ATTR_OPTION      "option"
-#define XML_TAG_ATTR_INCABSPATH  "include_absolute_path"
+#define XML_TAG_ATTR_VERSION     "version"
 
-
-typedef enum {
-   CPU_TYPE_GNU32,
-   CPU_TYPE_ARM7,
-   CPU_TYPE_M16C62
-}cpu_type_enum_t;
-
-const char* cpu_type_list[]={
-   "CPU_GNU32",
-   "CPU_ARM7",
-   "CPU_M16C62",
-   (char*)0
-};
 
 //kernel struct configuration
 struct kernel_conf_t {
-   char* str_cpu_type;
    char* str_cpu_freq;
    char* str_heap_size;
    char* str_thread_max;
@@ -117,7 +100,6 @@ struct kernel_conf_t {
    char* str_network_used;
    char* str_env_path;
    //
-   cpu_type_enum_t cpu_type;
    unsigned long cpu_freq;
    int heap_size;
    int thread_max;
@@ -127,9 +109,7 @@ struct kernel_conf_t {
    int network_used;
    long cpufs_size;
    int cpufs_node;
-   int cpufs_block;
    int cpufs_blocksz;
-   char* str_cpufs_option;
 };
 
 //boot struct config
@@ -154,15 +134,6 @@ struct mount_t {
 #define XML_DEV_VALUE_ON   "ON"
 #define XML_DEV_VALUE_OFF  "OFF"
 
-#define MK_DEV_CPU            "DEV_CPU"              // /dev/cpu
-#define MK_DEV_FILECPU        "DEV_FILECPU"          // /dev/hd/hda
-#define MK_DEV_EEPROM_24XXX   "DEV_EEPROM_24XXX"     // /dev/hd/hd(x)
-#define MK_DEV_M16CUART_S0    "DEV_M16CUART_S0"      // /dev/ttys0
-#define MK_DEV_M16CUART_S1    "DEV_M16CUART_S1"      // /dev/ttys1
-#define MK_DEV_LCDSED1540     "DEV_LCDSED1540"       // /dev/lcd0
-#define MK_DEV_RTCM41T81      "DEV_RTCM41T81"        // /dev/rtc0
-#define MK_DEV_RTCX1203       "DEV_RTCX1203"         // /dev/rtc1
-#define MK_DEV_KBCPLD_A0383   "DEV_KBCPLD_A0383"     // /dev/kb0
 
 
 //dev struct config
@@ -209,7 +180,6 @@ struct mkdir_t {
 #define OPT_MSK_D 0x0004   //-d
 #define OPT_MSK_F 0x0008   //-f
 #define OPT_MSK_K 0x0010   //-k
-#define OPT_MSK_T 0x0020   //-t
 #define OPT_MSK_R 0x0040   //-r
 
 #define OPT_MSK_ALL OPT_MSK_B|OPT_MSK_D|OPT_MSK_F|OPT_MSK_K|OPT_MSK_R
@@ -235,7 +205,6 @@ struct mkdir_t {
 //xml func
 int xml_elmt_start_kernel(const char **attr);
 int xml_elmt_end_kernel(void);
-int xml_elmt_kernel_cpu(const char **attr);
 int xml_elmt_kernel_heap(const char **attr);
 int xml_elmt_kernel_thread(const char **attr);
 int xml_elmt_kernel_process(const char **attr);
@@ -259,9 +228,6 @@ int xml_elmt_bin(const char **attr);
 int xml_elmt_files(const char **attr);
 int xml_elmt_file(const char **attr);
 int xml_elmt_mklepton(const char **attr);
-int xml_elmt_arch(const char **attr);
-int xml_elmt_start_target(const char **attr);
-int xml_elmt_end_target(void);
 
 //
 int xml_elmt_dirs(const char **attr);

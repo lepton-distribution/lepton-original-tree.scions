@@ -1,13 +1,15 @@
 # mklepton.cmake — génération de la configuration et de l'image par mklepton (guide §1.2).
 #
-# lepton_generate(<nom> XML <mkconf relatif au trunk> [MKCONF_TARGET <cible du mkconf>]
-#                 [MKLEPTON <exécutable>])
+# lepton_generate(<nom> XML <mkconf relatif au trunk> [CPU_FREQ <Hz>]
+#                 [KERNEL_CONFIG_HEADER <en-tête relatif au trunk>] [MKLEPTON <exécutable>])
 #
 # Sorties dans ${LEPTON_GENERATED_DIR}/<nom>/ (décision 2026-09-30 : option -o de mklepton, les
-# dest_path des mkconf sont ignorés ; aucune écriture dans le trunk) : kernel_mkconf.h,
+# mkconf au format 2 n'ont plus de dest_path ; aucune écriture dans le trunk) : kernel_mkconf.h,
 # dev_mkconf.c, bin_mkconf.c, dev_dskimg.c/.h, .boot, .mount, et l'image .fsflash.o.
 # Chemins d'entrée des mkconf relatifs au trunk (-s). SOURCE_DATE_EPOCH fixe : sorties
 # reproductibles. Crée la cible <nom>_mkconf et la variable <nom>_GENERATED_DIR.
+# CPU_FREQ et KERNEL_CONFIG_HEADER : propriétés de la carte (ENV-4, PA-4), passées à mklepton par
+# --cpu-freq et --kernel-config-header (__KERNEL_CPU_FREQ, #include de kernel_mkconf.h).
 #
 # MKLEPTON : exécutable hôte ; par défaut la cible « mklepton » du même build (preset host),
 # sinon ${LEPTON_MKLEPTON} fourni par le superbuild des presets croisés (étape 3).
@@ -15,7 +17,7 @@
 set(LEPTON_SOURCE_DATE_EPOCH 0 CACHE STRING "Horodatage des images UFS générées (SOURCE_DATE_EPOCH)")
 
 function(lepton_generate name)
-  cmake_parse_arguments(ARG "" "XML;MKCONF_TARGET;MKLEPTON" "" ${ARGN})
+  cmake_parse_arguments(ARG "" "XML;CPU_FREQ;KERNEL_CONFIG_HEADER;MKLEPTON" "" ${ARGN})
   if(NOT ARG_XML)
     message(FATAL_ERROR "lepton_generate(${name}) : XML obligatoire")
   endif()
@@ -31,9 +33,12 @@ function(lepton_generate name)
 
   set(out ${LEPTON_GENERATED_DIR}/${name})
   set(xml ${CMAKE_SOURCE_DIR}/${ARG_XML})
-  set(target_opt)
-  if(ARG_MKCONF_TARGET)
-    set(target_opt -t ${ARG_MKCONF_TARGET})
+  set(board_opts)
+  if(ARG_CPU_FREQ)
+    list(APPEND board_opts --cpu-freq ${ARG_CPU_FREQ})
+  endif()
+  if(ARG_KERNEL_CONFIG_HEADER)
+    list(APPEND board_opts --kernel-config-header ${ARG_KERNEL_CONFIG_HEADER})
   endif()
 
   # Contenu du rootfs référencé par le mkconf (src_file, src_path) : dépendances du générateur.
@@ -57,7 +62,7 @@ function(lepton_generate name)
     OUTPUT ${outputs}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${out}
     COMMAND ${CMAKE_COMMAND} -E env SOURCE_DATE_EPOCH=${LEPTON_SOURCE_DATE_EPOCH}
-            ${tool} -s ${CMAKE_SOURCE_DIR} -o ${out} ${target_opt} ${ARG_XML}
+            ${tool} -s ${CMAKE_SOURCE_DIR} -o ${out} ${board_opts} ${ARG_XML}
     DEPENDS ${deps} ${tool}
     WORKING_DIRECTORY ${out}
     COMMENT "mklepton ${ARG_XML} -> ${out}"

@@ -42,8 +42,21 @@ add_test(NAME host.mklepton
                  -DMKLEPTON=$<TARGET_FILE:mklepton> -DUFS_CHECK=$<TARGET_FILE:test_ufs_check>
                  -DSRC=${CMAKE_SOURCE_DIR}
                  -DXML=sys/user/tauon-basic/etc/mkconf_tauon_basic_lwip_stm32f4-olimex-p407.xml
-                 -DTARGET=cortexm_lepton -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton
+                 -DCPU_FREQ=80000000
+                 -DKERNEL_CONFIG_HEADER=sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h
+                 -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton
                  -P ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_check.cmake)
+
+# --- mklepton : format XML 2 (ENV-4) — versions refusées, dimensionnement automatique de cpufs ---
+add_test(NAME host.mklepton_format
+         COMMAND ${CMAKE_COMMAND}
+                 -DMKLEPTON=$<TARGET_FILE:mklepton> -DUFS_CHECK=$<TARGET_FILE:test_ufs_check>
+                 -DSRC=${CMAKE_SOURCE_DIR}
+                 -DXML=sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml
+                 -DCPU_FREQ=25000000
+                 -DKERNEL_CONFIG_HEADER=sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h
+                 -DWORK=${CMAKE_CURRENT_BINARY_DIR}/mklepton_format
+                 -P ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_format_check.cmake)
 
 # --- mklepton : mêmes octets que la référence -m32 (étape 8), quel que soit l'hôte ---------------
 add_test(NAME host.mklepton_empreintes
@@ -52,5 +65,5 @@ add_test(NAME host.mklepton_empreintes
                  --check ${CMAKE_CURRENT_SOURCE_DIR}/mklepton_empreintes.sha256)
 
 set_tests_properties(host.vfs_ufs host.ufs_format_host host.ufs_format_arm host.kernel_stub
-                     host.mklepton host.mklepton_empreintes
+                     host.mklepton host.mklepton_format host.mklepton_empreintes
                      PROPERTIES LABELS host)

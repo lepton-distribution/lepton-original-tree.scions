@@ -13,7 +13,8 @@ set(LEPTON_BSP_SOURCES
   kernel/dev/bsp/qemu_mps2/qemu_mps2_board.c)
 set(LEPTON_NET_STACK lwip)   # étape 3b (décision 2026-09-30) ; USE_LWIP dans user_kernel_mkconf.h
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_qemu_mps2.xml)
-set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
+set(LEPTON_BOARD_CPU_FREQ 25000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)
+set(LEPTON_BOARD_KERNEL_CONFIG_HEADER sys/user/tauon-basic/src/arch/qemu-mps2/kernel_mkconf/include/user_kernel_mkconf.h)
 set(LEPTON_QEMU_MACHINE mps2-an386)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM4-qemu-mps2-an386)   # __KERNEL_CPU_DEVICE_NAME
 # test réseau (label net, tests/net_qemu.py) : adresses du .init de la carte, fichier téléchargé

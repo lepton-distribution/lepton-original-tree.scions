@@ -47,7 +47,8 @@ set(LEPTON_BSP_SOURCES
 # HAL_Delay faibles de stm32wlxx_hal.c suffiraient à l'éditeur de liens)
 list(APPEND LEPTON_FIRMWARE_SOURCES ${stm32wl}/dev_stm32wlxx/dev_stm32wlxx_hal_tick.c)
 set(LEPTON_BOARD_MKCONF sys/user/tauon-basic/etc/mkconf_tauon_basic_nucleo_wl55jc1.xml)
-set(LEPTON_BOARD_MKCONF_TARGET cortexm_lepton)
+set(LEPTON_BOARD_CPU_FREQ 48000000)   # __KERNEL_CPU_FREQ (mklepton --cpu-freq)
+set(LEPTON_BOARD_KERNEL_CONFIG_HEADER sys/user/tauon-basic/src/arch/nucleo-wl55jc1/kernel_mkconf/include/user_kernel_mkconf.h)
 set(LEPTON_BOARD_UNAME_MACHINE cortexM4-stm32wlxx)
 # carte réelle : console série du STLINK-V3 et sonde OpenOCD. Deux cartes identiques sur le banc
 # (radio) : la sonde est choisie par son numéro de série (cfg générée dans le répertoire de build).

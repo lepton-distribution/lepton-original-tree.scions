@@ -2,7 +2,8 @@
 # mklepton_empreintes.sh — empreintes SHA-256 des sorties de mklepton (étape 8).
 #
 # Lance mklepton sur le mkconf de chaque carte (cmake/boards/*.cmake : LEPTON_BOARD_MKCONF,
-# LEPTON_BOARD_MKCONF_TARGET) et sur le mkconf du test host.mklepton, puis écrit ou compare la
+# LEPTON_BOARD_CPU_FREQ, LEPTON_BOARD_KERNEL_CONFIG_HEADER) et sur le mkconf du test
+# host.mklepton, puis écrit ou compare la
 # liste des empreintes de tous les fichiers produits (kernel_mkconf.h, dev_mkconf.c,
 # bin_mkconf.c, dev_dskimg.c/.h, .boot, .mount, image .fsflash.o).
 # Usage : prouver que mklepton produit les mêmes octets quel que soit l'hôte (i386, x86_64,
@@ -37,27 +38,29 @@ case "$mklepton" in /*) ;; *) mklepton="$PWD/$mklepton" ;; esac
 
 if command -v sha256sum >/dev/null 2>&1; then sha="sha256sum"; else sha="shasum -a 256"; fi
 
-# couples « mkconf cible », sans doublon (QEMU an386 et an500 partagent leur mkconf)
-couples="sys/user/tauon-basic/etc/mkconf_tauon_basic_lwip_stm32f4-olimex-p407.xml cortexm_lepton"
+# triplets « mkconf fréquence en-tête », sans doublon (QEMU an386 et an500 partagent leur mkconf) ;
+# Olimex : valeurs du test host.mklepton (tests/host/CMakeLists.txt)
+couples="sys/user/tauon-basic/etc/mkconf_tauon_basic_lwip_stm32f4-olimex-p407.xml 80000000 sys/user/tauon-basic/src/arch/olimex-stm32-p407/kernel_mkconf/include/user_kernel_mkconf.h"
 for board in "$trunk"/cmake/boards/*.cmake; do
   xml="$(sed -n 's/^set(LEPTON_BOARD_MKCONF \(.*\))$/\1/p' "$board")"
-  cible="$(sed -n 's/^set(LEPTON_BOARD_MKCONF_TARGET \(.*\))$/\1/p' "$board")"
-  if [ -z "$xml" ] || [ -z "$cible" ]; then
-    echo "mkconf ou cible illisible dans $board" >&2; exit 2
+  freq="$(sed -n 's/^set(LEPTON_BOARD_CPU_FREQ \([0-9]*\)).*$/\1/p' "$board")"
+  entete="$(sed -n 's/^set(LEPTON_BOARD_KERNEL_CONFIG_HEADER \(.*\))$/\1/p' "$board")"
+  if [ -z "$xml" ] || [ -z "$freq" ] || [ -z "$entete" ]; then
+    echo "mkconf, fréquence ou en-tête illisible dans $board" >&2; exit 2
   fi
   couples="$couples
-$xml $cible"
+$xml $freq $entete"
 done
 couples="$(printf '%s\n' "$couples" | sort -u)"
 
 work="$(mktemp -d "${TMPDIR:-/tmp}/mklepton-empreintes.XXXXXX")"
 trap 'rm -rf "$work"' EXIT
 
-printf '%s\n' "$couples" | while read -r xml cible; do
+printf '%s\n' "$couples" | while read -r xml freq entete; do
   nom="$(basename "$xml" .xml)"
   mkdir -p "$work/out/$nom"
   if ! (cd "$work/out/$nom" && SOURCE_DATE_EPOCH=0 "$mklepton" -s "$trunk" -o "$work/out/$nom" \
-          -t "$cible" "$xml" >"$work/$nom.log" 2>&1); then
+          --cpu-freq "$freq" --kernel-config-header "$entete" "$xml" >"$work/$nom.log" 2>&1); then
     echo "échec de mklepton sur $xml :" >&2; tail -20 "$work/$nom.log" >&2; exit 1
   fi
 done

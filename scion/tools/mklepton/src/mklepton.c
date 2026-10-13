@@ -40,6 +40,7 @@ either the MPL or the [eCos GPL] License."
 #include <dirent.h>
 #include <libgen.h>
 
+#include <errno.h>
 #include <expat.h>
 #include "mklepton.h"
 #include "kernel_stub.h"
@@ -48,9 +49,10 @@ either the MPL or the [eCos GPL] License."
 /*============================================
 | Global Declaration
 ==============================================*/
-char * xml_current_target=(char*)0;
-char * mk_current_target=(char*)0;
 char* xml_mk_file=(char*)0;
+
+//format du XML (CFG-8, ENV-4) : attribut version de <mklepton>, seule valeur admise
+#define MK_FORMAT_VERSION "2"
 
 //migration GCC/Linux (etape 2) : repertoire de sortie (-o) prioritaire sur les dest_path,
 //racine des chemins d'entree relatifs des mkconf (-s)
@@ -85,7 +87,7 @@ struct kernel_conf_t g_kernel_conf={0};
 const char dflt_kernel_conf_filepath[] = "kernel_mkconf.h";
 #define MK_KERNELCONF_FILEPATH   kernel_conf_filepath
 char * kernel_conf_filepath = (char*)dflt_kernel_conf_filepath; //see xml_elmt_mklepton()
-//en-tete de configuration propre au projet (<arch include_absolute_path>, repris de mklepton-w32.c)
+//en-tete de configuration propre a la carte (--kernel-config-header ; format 1 : <arch include_absolute_path>)
 char * kernel_conf_incabspath = (char*)0;
 const char kernelconf_top_header[]=
    "/*===========================================\n\
@@ -343,6 +345,11 @@ int Depth;
 struct mkdir_t * pdir_lst_end=NULL;
 struct mkdir_t * pdir_lst_start=NULL;
 
+//echec de creation ou d'ecriture dans l'image cpufs (image trop petite)
+static int mk_cpufs_error=0;
+//acces hors du disque /dev/hd/hdc (kernel/dev/arch/host/dev_host_fileflash)
+extern int dev_host_fileflash_overflow;
+
 /*============================================
 | Implementation
 ==============================================*/
@@ -369,8 +376,8 @@ int xml_elmt_start_kernel(const char **attr){
    fwrite(kernelconf_top_header,sizeof(char),strlen(kernelconf_top_header),f_kernelconf);
    printf("make kernel:%s ...\n",MK_KERNELCONF_FILEPATH);
 
-   //default value
-   g_kernel_conf.cpufs_size = 16000;
+   //default value (cpufs size et node absents : dimensionnement automatique, _mk_cpufs_dimension)
+   g_kernel_conf.cpufs_size = 0;
    g_kernel_conf.cpufs_blocksz = 32;
 
    return 0;
@@ -396,15 +403,6 @@ int xml_elmt_end_kernel(void){
 
    //declaration header
    fwrite(kernelconf_decl_header,sizeof(char),strlen(kernelconf_decl_header),f_kernelconf);
-
-   //
-   if(g_kernel_conf.str_cpu_type) {
-      fprintf(f_kernelconf,"//#define %s \n\n",cpu_type_list[g_kernel_conf.cpu_type]);
-      //fprintf(f_kernelconf,"#define %s \n\n",cpu_type_list[g_kernel_conf.cpu_type]);
-   }else{
-      fprintf(f_kernelconf,"//#define %s \n\n",cpu_type_list[CPU_TYPE_GNU32]);
-      //fprintf(f_kernelconf,"#define %s \n\n",cpu_type_list[CPU_TYPE_GNU32]);
-   }
 
    if(g_kernel_conf.cpu_freq
       && g_kernel_conf.str_cpu_freq) {
@@ -485,49 +483,6 @@ int xml_elmt_end_kernel(void){
    return 0;
 }
 
-/*-------------------------------------------
-| Name:xml_elmt_kernel_cpu
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_kernel_cpu(const char **attr){
-
-   int i;
-   char* attr_name;
-   char* attr_val;
-
-   for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_FREQ)) {
-         g_kernel_conf.str_cpu_freq =strdup(attr_val);
-         //modif since support sma7se. 29/07/2007
-         g_kernel_conf.cpu_freq = atol(attr_val);
-         if( !(g_kernel_conf.cpu_freq/1000000L) )
-            g_kernel_conf.cpu_freq = atol(attr_val)*1000000L;  //define in MHz in xml else define in Hz.
-
-         if(g_kernel_conf.cpu_freq<=0)
-            return -1;
-      }else if(!strcasecmp(attr_name,XML_TAG_ATTR_TYPE)) {
-         cpu_type_enum_t cpu_type_enum=CPU_TYPE_GNU32;
-
-         g_kernel_conf.str_cpu_type =strdup(attr_val);
-         while(cpu_type_list[cpu_type_enum]) {
-            if(!strcasecmp(g_kernel_conf.str_cpu_type,cpu_type_list[cpu_type_enum]))
-               break;
-            cpu_type_enum++;
-         }
-         g_kernel_conf.cpu_type = cpu_type_enum;
-      }else
-         return -1;
-   }
-
-   return 0;
-}
 /*-------------------------------------------
 | Name:xml_elmt_kernel_heap
 | Description:
@@ -690,12 +645,8 @@ int xml_elmt_kernel_cpufs(const char **attr){
          g_kernel_conf.cpufs_size=atol(attr_val);
       }else if(!strcasecmp(attr_name,XML_TAG_ATTR_NODE)) {
          g_kernel_conf.cpufs_node=atoi(attr_val);
-      }else if(!strcasecmp(attr_name,XML_TAG_ATTR_BLOCK)) {
-         g_kernel_conf.cpufs_block=atoi(attr_val);
       }else if(!strcasecmp(attr_name,XML_TAG_ATTR_BLOCKSZ)) {
          g_kernel_conf.cpufs_blocksz=atoi(attr_val);
-      }else if(!strcasecmp(attr_name,XML_TAG_ATTR_OPTION)) {
-         g_kernel_conf.str_cpufs_option=strdup(attr_val);
       }else
          return -1;
    }
@@ -1254,102 +1205,25 @@ int xml_elmt_file(const char **attr){
 ---------------------------------------------*/
 int xml_elmt_mklepton(const char **attr){
    int i;
-   char* attr_name;
-   char* attr_val;
+   const char* version = (const char*)0;
 
    for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH) && !mk_output_dir) {
-         kernel_conf_filepath        = mk_join(attr_val,kernel_conf_filepath);
-         dev_conf_filepath           = mk_join(attr_val,dev_conf_filepath);
-         bin_conf_filepath           = mk_join(attr_val,bin_conf_filepath);
-         dskimg_conf_filepath        = mk_join(attr_val,dskimg_conf_filepath);
-         dskimg_conf_header_filepath = mk_join(attr_val,dskimg_conf_header_filepath);
-      }
+      if(!attr[i + 1]) continue;
+      if(!strcmp(attr[i],XML_TAG_ATTR_VERSION))
+         version = attr[i + 1];
    }
 
-   return 0;
-}
-
-/*-------------------------------------------
-| Name:xml_elmt_mklepton
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_arch(const char **attr){
-   int i;
-   char* attr_name;
-   char* attr_val;
-
-   for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_DESTPATH) && !mk_output_dir) {
-         kernel_conf_filepath        = mk_join(attr_val,kernel_conf_filepath);
-         dev_conf_filepath           = mk_join(attr_val,dev_conf_filepath);
-         bin_conf_filepath           = mk_join(attr_val,bin_conf_filepath);
-         dskimg_conf_filepath        = mk_join(attr_val,dskimg_conf_filepath);
-         dskimg_conf_header_filepath = mk_join(attr_val,dskimg_conf_header_filepath);
-      }
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_INCABSPATH)) {
-         //user kernel conf header files with specific project definition
-         if(kernel_conf_incabspath) {
-            printf("error! include_absolute_path already defined:%s\n",kernel_conf_incabspath);
-            return -1;
-         }
-         kernel_conf_incabspath = strdup(attr_val);
-      }
+   if(!version) {
+      fprintf(stderr,"error: %s: no format version (<mklepton version=\"%s\"> expected); "
+              "format 1 files must be migrated\n",xml_mk_file,MK_FORMAT_VERSION);
+      exit(EXIT_FAILURE);
+   }
+   if(strcmp(version,MK_FORMAT_VERSION)) {
+      fprintf(stderr,"error: %s: unknown format version \"%s\" (expected \"%s\")\n",
+              xml_mk_file,version,MK_FORMAT_VERSION);
+      exit(EXIT_FAILURE);
    }
 
-   return 0;
-}
-
-/*-------------------------------------------
-| Name:xml_elmt_start_target
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_start_target(const char **attr){
-   int i;
-   char* attr_name;
-   char* attr_val;
-
-   for (i = 0; attr[i]; i += 2) {
-      attr_name = (char*)attr[i];
-      attr_val  = (char*)attr[i + 1];
-      if(!attr_name || !attr_val) continue;
-
-      if(!strcasecmp(attr_name,XML_TAG_ATTR_NAME)) {
-         xml_current_target=strdup(attr_val);
-         printf("xml target=%s\n",xml_current_target);
-      }
-   }
-   return 0;
-}
-
-/*-------------------------------------------
-| Name:xml_elmt_end_target
-| Description:
-| Parameters:
-| Return Type:
-| Comments:
-| See:
----------------------------------------------*/
-int xml_elmt_end_target(void){
-
-   if(xml_current_target)
-      free(xml_current_target);
-   xml_current_target=(char*)0;
-   printf("xml end target: ok!\n");
    return 0;
 }
 
@@ -1425,26 +1299,20 @@ int xml_elmt_dir(const char **attr) {
 static void start(void *data, const char *el, const char **attr){
    int error=0;
 
-   if(!strcasecmp(el,XML_TAG_ELMT_TARGET)) {
-      error=xml_elmt_start_target(attr);
-   }else {
-      //target filter
-      if(   mk_current_target
-            && xml_current_target
-            && strcasecmp(xml_current_target,mk_current_target))
-         return;
-
-      if(!mk_current_target && xml_current_target)
-         return;  //filter not set
+   //elements du format 1 retires du format 2 (CFG-8)
+   if(   !strcasecmp(el,XML_TAG_ELMT_TARGET)
+         || !strcasecmp(el,XML_TAG_ELMT_ARCH)
+         || !strcasecmp(el,XML_TAG_ELMT_CPU)) {
+      fprintf(stderr,"error: %s: element <%s> is not part of format %s\n",
+              xml_mk_file,el,MK_FORMAT_VERSION);
+      exit(EXIT_FAILURE);
+   }
+   {
       //
       if(!strcasecmp(el,XML_TAG_ELMT_MKLEPTON)) {
          error=xml_elmt_mklepton(attr);
-      }else if(!strcasecmp(el,XML_TAG_ELMT_ARCH)) {
-         error=xml_elmt_arch(attr);
       }else if(!strcasecmp(el,XML_TAG_ELMT_KERNEL) && (opt&OPT_MSK_K) ) {
          error=xml_elmt_start_kernel(attr);
-      }else if(!strcasecmp(el,XML_TAG_ELMT_CPU) && (opt&OPT_MSK_K)) {
-         error=xml_elmt_kernel_cpu(attr);
       }else if(!strcasecmp(el,XML_TAG_ELMT_HEAP) && (opt&OPT_MSK_K)) {
          error=xml_elmt_kernel_heap(attr);
       }else if(!strcasecmp(el,XML_TAG_ELMT_THREAD) && (opt&OPT_MSK_K)) {
@@ -1510,17 +1378,7 @@ static void start(void *data, const char *el, const char **attr){
 static void end(void *data, const char *el)
 {
    Depth--;
-   if(!strcasecmp(el,XML_TAG_ELMT_TARGET)) {
-      xml_elmt_end_target();
-   }else {
-      if(   mk_current_target
-            && xml_current_target
-            && strcasecmp(xml_current_target,mk_current_target))
-         return;
-
-      if(!mk_current_target && xml_current_target)
-         return;  //filter not set
-
+   {
       if(!strcasecmp(el,XML_TAG_ELMT_KERNEL) && (opt&OPT_MSK_K)) {
          xml_elmt_end_kernel();
       }else if(!strcasecmp(el,XML_TAG_ELMT_DEVICES) && (opt&OPT_MSK_D)) {
@@ -1685,8 +1543,17 @@ int _mk_binaries(void){
       strcat(ref,pbin->bin_name);
       printf("creat %s\n",ref);
       desc= _vfs_open(ref,_O_CREAT|_O_WRONLY,0);
+      if(desc<0) {
+         printf("error! cannot create %s\n",ref);
+         mk_cpufs_error=-1;
+         pbin = pbin->pprev;
+         continue;
+      }
       cb=sizeof(exec_file);
-      cb=_vfs_write(desc,(char*)&exec_file,cb);
+      if(_vfs_write(desc,(char*)&exec_file,cb)!=cb) {
+         printf("error! cannot write %s\n",ref);
+         mk_cpufs_error=-1;
+      }
       _vfs_close(desc);
 
       //
@@ -1769,6 +1636,8 @@ int _mk_binaries(void){
    printf("umount /usr\n");
    _vfs_umount("/usr");
 
+   if(mk_cpufs_error<0)
+      return -1;
    printf("make binaries:%s ok\n",MK_BINCONF_FILEPATH);
 
    return 0;
@@ -1870,14 +1739,11 @@ int _mk_file(void){
       }
 
       while((cb=read(fd,fbuf,sizeof(fbuf)-1))>0) {
-         cb=_vfs_write(desc,fbuf,cb);
-         if(cb<0) {
+         if(_vfs_write(desc,fbuf,cb)!=cb) {
             printf("error! cannot write file:%s\n",ref);
-            pfile = pfile->pprev;
             err=-1;
-            continue;
+            break;
          }
-
       }
 
       close(fd);
@@ -2006,11 +1872,10 @@ int _mk_dir(void) {
 
             //copy file content
             while((cb=read(host_fd,fbuf,sizeof(fbuf)-1))>0) {
-               cb=_vfs_write(target_fd,fbuf,cb);
-               if(cb<0) {
+               if(_vfs_write(target_fd,fbuf,cb)!=cb) {
                   printf("error! cannot write file:%s\n",target_ppath);
                   err=-1;
-                  continue;
+                  break;
                }
             }
 
@@ -2064,6 +1929,151 @@ int _mk_dir(void) {
    return 0;
 }
 
+
+/*-------------------------------------------
+| Name:_mk_cpufs_probe
+| Description: construit l'image cpufs (binaires, fichiers, repertoires) avec la taille et le
+|              nombre de noeuds donnes, sortie standard muette
+| Parameters:  size : octets ; node : noeuds
+| Return Type: 0 si tout le contenu tient dans l'image, -1 sinon
+| Comments:    ENV-4 (CFG-8, PA-3) ; _mk_dir ajoute les sous-repertoires a la liste : elle est
+|              restauree apres l'essai
+| See:         _mk_cpufs_dimension
+---------------------------------------------*/
+static int _mk_cpufs_probe(long size, int node){
+   struct mkdir_t* dir_end = pdir_lst_end;
+   int saved_stdout;
+   int devnull;
+   int r=0;
+
+   g_kernel_conf.cpufs_size = size;
+   g_kernel_conf.cpufs_node = node;
+   mk_cpufs_error = 0;
+   dev_host_fileflash_overflow = 0;
+
+   fflush(stdout);
+   saved_stdout = dup(STDOUT_FILENO);
+   devnull = open("/dev/null",O_WRONLY);
+   if(saved_stdout>=0 && devnull>=0)
+      dup2(devnull,STDOUT_FILENO);
+
+   if((opt&OPT_MSK_B) && _mk_binaries()<0)
+      r=-1;
+   if((opt&OPT_MSK_F) && _mk_file()<0)
+      r=-1;
+   if((opt&OPT_MSK_R) && _mk_dir()<0)
+      r=-1;
+   _vfs_umount("/usr"); //_mk_binaries sans binaire laisse /usr monte
+   if(dev_host_fileflash_overflow)
+      r=-1;   //geometrie de l'ufs plus grande que le disque
+
+   fflush(stdout);
+   if(saved_stdout>=0) {
+      dup2(saved_stdout,STDOUT_FILENO);
+      close(saved_stdout);
+   }
+   if(devnull>=0)
+      close(devnull);
+
+   if(dir_end) {
+      dir_end->pprev = 0;
+      pdir_lst_end = dir_end;
+   }
+   mk_cpufs_error = 0;
+   return r;
+}
+
+/*-------------------------------------------
+| Name:_mk_cpufs_dimension
+| Description: dimensionnement de l'image cpufs (<cpufs size node>, format 2)
+| Parameters:
+| Return Type: 0, -1 si l'image ne peut pas contenir le rootfs
+| Comments:    ENV-4 (CFG-8, PA-3) : size et node absents -> plus petites valeurs pour
+|              lesquelles tout le contenu tient (bornes par doublement, puis dichotomie : le
+|              succes est monotone en size et en node) ; presents -> imposes, refuses s'ils sont trop petits.
+|              Image en lecture seule (filecpu_memory, const) : aucune place libre n'est
+|              reservee.
+| See:         _mk_cpufs_probe
+---------------------------------------------*/
+#define MK_CPUFS_NODE_MAX  4096       //ufs_inodenb_t : int16_t
+#define MK_CPUFS_BLOCK_MAX 32767L     //ufs_blocknb_t : int16_t
+int _mk_cpufs_dimension(void){
+   long size = g_kernel_conf.cpufs_size;
+   int node  = g_kernel_conf.cpufs_node;
+   long size_max;
+   long s_hi;
+   int n_hi;
+   long lo,hi;
+
+   if(g_kernel_conf.cpufs_blocksz<=0)
+      g_kernel_conf.cpufs_blocksz = 32;
+   size_max = MK_CPUFS_BLOCK_MAX*g_kernel_conf.cpufs_blocksz;
+
+   //valeurs imposees : un essai suffit
+   if(size>0 && node>0 && !_mk_cpufs_probe(size,node)) {
+      g_kernel_conf.cpufs_size = size;
+      g_kernel_conf.cpufs_node = node;
+      return 0;
+   }
+
+   //bornes superieures par doublement (le cout d'un essai croit avec la taille de l'image)
+   s_hi = 64L*g_kernel_conf.cpufs_blocksz;
+   n_hi = 16;
+   while(_mk_cpufs_probe(s_hi,n_hi)<0) {
+      if(s_hi>=size_max && n_hi>=MK_CPUFS_NODE_MAX) {
+         fprintf(stderr,"error: %s: rootfs does not fit in cpufs (size=%ld node=%d)\n",xml_mk_file,
+                 size_max,MK_CPUFS_NODE_MAX);
+         return -1;
+      }
+      s_hi = (2*s_hi<size_max) ? 2*s_hi : size_max;
+      n_hi = (2*n_hi<MK_CPUFS_NODE_MAX) ? 2*n_hi : MK_CPUFS_NODE_MAX;
+   }
+
+   //noeuds : plus petite valeur suffisante
+   lo=1; hi=n_hi;
+   while(lo<hi) {
+      long mid=(lo+hi)/2;
+      if(!_mk_cpufs_probe(s_hi,(int)mid))
+         hi=mid;
+      else
+         lo=mid+1;
+   }
+   if(node<=0)
+      node=(int)lo;
+   else if(node<lo) {
+      fprintf(stderr,"error: %s: <cpufs node=\"%d\"> too small (minimum: %ld)\n",xml_mk_file,node,lo);
+      return -1;
+   }
+
+   //octets : plus petite valeur suffisante avec ces noeuds
+   while(_mk_cpufs_probe(s_hi,node)<0) {
+      if(s_hi>=size_max) {
+         fprintf(stderr,"error: %s: rootfs does not fit in cpufs (size=%ld node=%d)\n",xml_mk_file,
+                 size_max,node);
+         return -1;
+      }
+      s_hi = (2*s_hi<size_max) ? 2*s_hi : size_max;
+   }
+   lo=1; hi=s_hi;
+   while(lo<hi) {
+      long mid=(lo+hi)/2;
+      if(!_mk_cpufs_probe(mid,node))
+         hi=mid;
+      else
+         lo=mid+1;
+   }
+   if(size<=0)
+      size=lo;
+   else if(size<lo) {
+      fprintf(stderr,"error: %s: <cpufs size=\"%ld\"> too small (minimum: %ld)\n",xml_mk_file,size,lo);
+      return -1;
+   }
+
+   g_kernel_conf.cpufs_size = size;
+   g_kernel_conf.cpufs_node = node;
+   printf("cpufs: size=%ld node=%d blocksz=%d\n",size,node,g_kernel_conf.cpufs_blocksz);
+   return 0;
+}
 
 /*-------------------------------------------
 | Name:_mk_boot
@@ -2388,6 +2398,25 @@ int main( int argc, char *argv[])
          mk_source_root=argv[i];
          continue;
       }
+      if(!strcmp(argv[i],"--cpu-freq")) {
+         char* end;
+         if(++i==argc)
+            return -1;
+         errno=0;
+         g_kernel_conf.cpu_freq = strtoul(argv[i],&end,10);
+         if(errno || *end || !*argv[i] || g_kernel_conf.cpu_freq<=0) {
+            fprintf(stderr,"error: --cpu-freq %s: positive frequency in Hz expected\n",argv[i]);
+            return -1;
+         }
+         g_kernel_conf.str_cpu_freq = argv[i];
+         continue;
+      }
+      if(!strcmp(argv[i],"--kernel-config-header")) {
+         if(++i==argc)
+            return -1;
+         kernel_conf_incabspath = argv[i];
+         continue;
+      }
       if(argv[i][0]=='-') {
          unsigned char c;
          unsigned char l=strlen(argv[i]);
@@ -2415,22 +2444,6 @@ int main( int argc, char *argv[])
             case 'r':   //directories
                opt |= OPT_MSK_R;
                break;
-
-            case 't':   //target
-            {
-               opt |= OPT_MSK_T;
-               if((i+1) == argc)   //not enough parameter
-                  return -1;
-               if(argv[i][c+1])
-                  break;
-               if(argv[i+1][0]=='-')
-                  break;
-
-               i++;
-               if(argv[i])
-                  mk_current_target=argv[i];
-            }
-            break;
             }
          }
       }else{
@@ -2439,7 +2452,7 @@ int main( int argc, char *argv[])
       }
    }
 
-   if(!opt || (opt == OPT_MSK_T))
+   if(!opt)
       opt = OPT_MSK_ALL;
 
    if(mk_source_root) {
@@ -2515,6 +2528,12 @@ int main( int argc, char *argv[])
    }
    printf("\n_mk_boot ok!\n\n");
 
+   //size the cpufs image (format 2: <cpufs size node> optional)
+   if( (opt&(OPT_MSK_B|OPT_MSK_F|OPT_MSK_R)) && _mk_cpufs_dimension()<0) {
+      fprintf(stderr,"\nerror: _mk_cpufs_dimension failed!\n");
+      return -1;
+   }
+
    //make binaries
    if( (opt&OPT_MSK_B) && _mk_binaries()<0) {
       perror("\nerror: _mk_binaries failed!\n");
@@ -2543,10 +2562,7 @@ int main( int argc, char *argv[])
    }
    printf("\n_mk_dskimg ok!\n\n");
 
-   if(mk_current_target)
-      printf("\nmklepton for %s success :)!\n",mk_current_target);
-   else
-      printf("\nmklepton success :)! no target specified???\n");
+   printf("\nmklepton success :)!\n");
 
    return 0;
 }
