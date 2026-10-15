@@ -121,12 +121,15 @@ else
 fi
 
 # --- scion : composition de l'arbre des sources (étape 0), même tag que Debian ---
-SCION_REF="0.5.0.1"
+# SCION_REF (version attendue) et SCION_SPEC (source pipx) surchargeables par l'environnement
+# (install-vscodium.sh de lepton-tools).
+SCION_REF="${SCION_REF:-0.5.0.1}"
+SCION_SPEC="${SCION_SPEC:-git+https://github.com/lepton-distribution/seed.scions.git@${SCION_REF}}"
 log "scion ${SCION_REF}"
 if have scion && scion version 2>/dev/null | grep -q "scion version: ${SCION_REF}\$"; then
   echo "  scion ${SCION_REF} : déjà installé ($(command -v scion))"
 else
-  pipx install --force "git+https://github.com/lepton-distribution/seed.scions.git@${SCION_REF}" \
+  pipx install --force "${SCION_SPEC}" \
     || warn "installation de scion échouée — bloquant pour l'arbre des sources."
 fi
 pipx ensurepath >/dev/null 2>&1 || true
