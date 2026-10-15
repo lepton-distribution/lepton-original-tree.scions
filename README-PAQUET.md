@@ -33,7 +33,7 @@ scripts/
    scripts/install-debian.sh --with-debug-tools
    ```
 
-   Vérifier : `scion version` → 0.5.0.1 ; `arm-none-eabi-gcc --version` ; `qemu-system-arm --version`.
+   Vérifier : `scion version` → 0.5.1.0 ; `arm-none-eabi-gcc --version` ; `qemu-system-arm --version`.
 
 2. **Étape 0 — amorçage**, depuis le paquet décompressé (le clone n'existe pas encore) :
 
