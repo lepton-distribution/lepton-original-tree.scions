@@ -45,7 +45,7 @@ $SUDO apt-get install -y --no-install-recommends \
 # pipx : seule voie propre sous PEP 668 ; commande déposée dans ~/.local/bin.
 # SCION_REF (version attendue) et SCION_SPEC (source pipx) surchargeables par l'environnement
 # (install-vscodium.sh de lepton-tools) ; scion déjà à SCION_REF : rien n'est réinstallé.
-SCION_REF="${SCION_REF:-0.5.1.0}"
+SCION_REF="${SCION_REF:-0.5.1.1}"
 SCION_SPEC="${SCION_SPEC:-git+https://github.com/lepton-distribution/seed.scions.git@${SCION_REF}}"
 log "scion ${SCION_REF}"
 if command -v scion >/dev/null 2>&1 && scion version 2>/dev/null | grep -q "scion version: ${SCION_REF}\$"; then
