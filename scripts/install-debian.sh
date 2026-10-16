@@ -40,6 +40,13 @@ $SUDO apt-get install -y --no-install-recommends \
   libexpat1-dev \
   file bc
 
+# --- Environnement de développement (lepton-tools) : xmllint et clangd LLVM ---
+# xmllint : lepton check valide le XML mklepton contre schemas/mklepton.xsd (sans lui : XML non
+# validé, avertissement). clangd : serveur de langage de l'éditeur (lepton generate, clangd.path).
+log "Environnement de développement (xmllint, clangd)"
+$SUDO apt-get install -y --no-install-recommends \
+  libxml2-utils clangd
+
 # --- scion : composition de l'arbre des sources Lepton (étape 0) -------------
 # Épinglé sur le tag 0.5.0.1 (la tête de master lui est postérieure).
 # pipx : seule voie propre sous PEP 668 ; commande déposée dans ~/.local/bin.
@@ -120,9 +127,12 @@ $SUDO rm -rf /var/lib/apt/lists/* 2>/dev/null || true
 log "Versions installées (à consigner dans MIGRATION-STATUS.md)"
 for c in gcc cmake ninja python3 scion cloc spatch \
          arm-none-eabi-gcc riscv64-unknown-elf-gcc \
-         qemu-system-arm qemu-system-riscv32 doxygen openocd; do
+         qemu-system-arm qemu-system-riscv32 doxygen openocd xmllint clangd; do
   if command -v "$c" >/dev/null 2>&1; then
-    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>/dev/null | head -1)"; fi
+    # openocd et xmllint écrivent leur version sur stderr. sed -n 1p lit toute la sortie : avec
+    # head -1, l'outil peut recevoir SIGPIPE et pipefail arrêter le script (code 141).
+    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"
+    else v="$("$c" --version 2>&1 | sed -n 1p)"; fi
     printf '  %-26s %s\n' "$c" "$v"
   else
     printf '  %-26s (absent)\n' "$c"

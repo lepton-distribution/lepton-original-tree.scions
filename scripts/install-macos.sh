@@ -145,6 +145,15 @@ pkg_install cloc:cloc doxygen:doxygen
 (pkg_install coccinelle:coccinelle) \
   || warn "coccinelle non installé (facultatif : transformations de masse de la migration)."
 
+# --- Environnement de développement (lepton-tools) : xmllint et clangd LLVM ---------
+log "Environnement de développement (xmllint, clangd LLVM)"
+# xmllint : lepton check valide le XML mklepton contre schemas/mklepton.xsd (sans lui : XML non
+# validé, avertissement). clangd LLVM : celui d'Apple (outils Xcode) ignore --query-driver ;
+# lepton generate retient le clangd LLVM le plus récent du PATH (MacPorts : clangd-mp-21).
+# Homebrew : llvm et libxml2 sont « keg-only » (hors PATH) ; clangd sous $(brew --prefix llvm)/bin,
+# à passer à lepton generate --clangd (Apple Silicon : revue seulement).
+pkg_install libxml2:libxml2 llvm:clang-21
+
 # --- QEMU (socle mps2-an386 et mps2-an500, banc KAL) ----------------------------
 log "QEMU (system-arm)"
 # MacPorts : target_arm est une variante par défaut de qemu (2.12.6) ; demandée explicitement
@@ -211,10 +220,12 @@ log "Versions installées (à consigner dans MIGRATION-STATUS.md)"
 printf '  %-26s %s\n' "macOS" "$(sw_vers -productVersion) ($ARCH)"
 printf '  %-26s %s\n' "paquets" "$PKG ($PKG_PREFIX)"
 for c in cc cmake ninja python3 scion cloc spatch \
-         arm-none-eabi-gcc arm-none-eabi-gdb gdb-multiarch qemu-system-arm doxygen openocd; do
+         arm-none-eabi-gcc arm-none-eabi-gdb gdb-multiarch qemu-system-arm doxygen openocd \
+         xmllint clangd-mp-21; do
   if command -v "$c" >/dev/null 2>&1; then
-    # openocd écrit sa version sur stderr
-    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>&1 | head -1)"; fi
+    # openocd et xmllint écrivent leur version sur stderr. sed -n 1p lit toute la sortie : avec
+    # head -1, l'outil peut recevoir SIGPIPE et pipefail arrêter le script (code 141).
+    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>&1 | sed -n 1p)"; fi
     printf '  %-26s %s\n' "$c" "$v"
   else
     printf '  %-26s (absent)\n' "$c"

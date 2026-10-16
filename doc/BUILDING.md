@@ -30,6 +30,8 @@ git clone https://github.com/lepton-distribution/lepton-original-tree.scions.git
 
 `--with-debug-tools` installe OpenOCD, `gdb-multiarch` et les règles udev de la sonde ST-LINK
 (l'utilisateur doit appartenir au groupe `plugdev` ; rebrancher la carte après installation).
+Les deux scripts installent aussi `xmllint` (validation du XML mklepton par `lepton check`) et un
+clangd LLVM (Debian : `clangd` ; MacPorts : `clang-21`, commande `clangd-mp-21`) pour l'éditeur.
 
 embOS (Segger, licence SFL : évaluation, non redistribuable) n'est pas dans git : déposer le paquet
 « embOS-Classic V5.20.0.0 Cortex-M GCC » dans `<ROOTSTOCK>/third_party/embos/cortexm-gcc/5.20.0.0/`
@@ -104,7 +106,7 @@ git clone https://github.com/lepton-distribution/lepton-original-tree.scions.git
 ```
 
 Le script installe par MacPorts CMake, Ninja, QEMU (`+target_arm`, compilé sur place : long),
-OpenOCD (`+ftdi +cmsis`) et gdb (`arm-none-eabi-gdb +python313`, lien `gdb-multiarch` ; voir les écarts) ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
+OpenOCD (`+ftdi +cmsis`), gdb (`arm-none-eabi-gdb +python313`, lien `gdb-multiarch` ; voir les écarts), `libxml2` et `clang-21` ; il télécharge l'Arm GNU Toolchain 14.2.Rel1 `darwin-x86_64` sous `~/opt` (SHA-256
 vérifié) et **affiche la ligne `PATH` à ajouter** à `~/.zprofile` (il ne modifie pas le shell).
 expat vient du SDK de macOS. Python et pipx : ceux déjà présents sont conservés. embOS : comme
 au §1. Arbre des sources et `lepton-env.sh` : §2, à l'identique (zsh ou bash 3.2).
