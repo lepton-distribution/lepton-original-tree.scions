@@ -43,8 +43,12 @@ if(LEPTON_BOARD)
     if(LEPTON_BOARD_CMAKE)
       include(${LEPTON_BOARD_CMAKE})   # paramètres hors manifeste du BSP (PA-7 Q3)
     endif()
-  else()
+  elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/boards/${LEPTON_BOARD}.cmake)
     include(boards/${LEPTON_BOARD})
+  else()   # O1 : BSP de la graine non greffé
+    message(FATAL_ERROR "LEPTON_BOARD=${LEPTON_BOARD} : aucun greffon BSP de ce nom greffé "
+      "(manifeste lepton-greffon.json de nom « ${LEPTON_BOARD} »), ni carte transitoire "
+      "cmake/boards/${LEPTON_BOARD}.cmake. Greffer le BSP de la graine (lepton check).")
   endif()
 endif()
 if(LEPTON_MKCONF)
