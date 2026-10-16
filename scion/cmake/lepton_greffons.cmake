@@ -28,10 +28,16 @@
 #   publique → sources du greffon et des greffons qui en dépendent (propriétés de source, visibles
 #   dans compile_commands.json) ; famille et BSP : publique déjà sur lepton_options.
 # Répertoires d'inclusion (`inclusions`, PA-7 Q1) : relatifs à sys/root/src, mêmes portées.
-# Options configurables (`options`) : définition <nom>=<défaut> (booléen : 1 ou 0 ; chaîne entre
-# guillemets) dans la portée déclarée ; valeurs de la graine : ENV-8.
+# Options configurables (`options`) : définition <nom>=<valeur> (booléen : 1 ou 0 ; chaîne entre
+# guillemets, « " » et « \ » échappés : la chaîne C est celle du JSON ; « ; », « # » et saut de
+# ligne refusés, non transmissibles par une définition de compilation) dans la portée déclarée. Valeur : variable de cache LEPTON_OPTION_<greffon>_<NOM> si
+# elle est définie (valeur fixée par la graine, reportée dans les presets par lepton generate,
+# CFG-4), sinon défaut du manifeste ; l'une et l'autre contrôlées contre le type, les bornes et
+# les valeurs déclarés (FATAL_ERROR). Variable LEPTON_OPTION_* sans option correspondante :
+# avertissement (reste possible dans un cache après retrait de la graine).
 
 set(LEPTON_MANIFESTE_GREFFON lepton-greffon.json)
+set(LEPTON_OPTION_PREFIXE LEPTON_OPTION_)
 set(LEPTON_GREFFON_TYPES noyau famille bsp application bibliotheque)
 
 function(_lepton_manifeste_erreur fichier texte)
@@ -76,6 +82,34 @@ function(_lepton_json sortie type json fichier)
     set(${sortie} "${v}" PARENT_SCOPE)
   endif()
   set(${sortie}_ABSENT FALSE PARENT_SCOPE)
+endfunction()
+
+# _lepton_option_controle(<fichier> <origine> <type> <valeur> <min> <max> <valeurs>) : refuse
+# (FATAL_ERROR) une valeur d'option étrangère au type, hors des bornes ou des valeurs (CFG-4).
+function(_lepton_option_controle fichier origine type valeur min max valeurs)
+  if(type STREQUAL "booleen")
+    string(TOUPPER "${valeur}" v)
+    if(NOT v MATCHES "^(1|0|ON|OFF|YES|NO|TRUE|FALSE|Y|N)$")
+      _lepton_manifeste_erreur(${fichier} "${origine} : « ${valeur} » n'est pas un booléen")
+    endif()
+  elseif(type STREQUAL "entier")
+    if(NOT valeur MATCHES "^-?[0-9]+$")
+      _lepton_manifeste_erreur(${fichier} "${origine} : « ${valeur} » n'est pas un entier")
+    endif()
+    if((NOT min STREQUAL "" AND valeur LESS min) OR (NOT max STREQUAL "" AND valeur GREATER max))
+      _lepton_manifeste_erreur(${fichier} "${origine} : ${valeur} hors des bornes [${min}, ${max}]")
+    endif()
+  elseif(type STREQUAL "enumeration")
+    if(NOT valeur IN_LIST valeurs)
+      list(JOIN valeurs ", " admises)
+      _lepton_manifeste_erreur(${fichier} "${origine} : « ${valeur} » absent des valeurs (${admises})")
+    endif()
+  elseif(type STREQUAL "chaine")
+    if(valeur MATCHES "[;#\n\r]")
+      _lepton_manifeste_erreur(${fichier} "${origine} : « ${valeur} » : « ; », « # » et saut de ligne "
+        "non transmissibles par une définition de compilation")
+    endif()
+  endif()
 endfunction()
 
 # _lepton_greffon_lire(<fichier>) : lit un manifeste, pose LEPTON_GREFFON_<nom>_* et ajoute le
@@ -149,21 +183,19 @@ function(_lepton_greffon_lire fichier)
             _lepton_manifeste_erreur(${fichier} "options[${i}] : champ obligatoire « ${champ} » absent")
           endif()
         endforeach()
+        set(option_min)
+        set(option_max)
+        set(option_valeurs)
         if(option_type STREQUAL "booleen")
           _lepton_json(defaut BOOLEAN "${json}" ${fichier} options ${i} defaut)
-          if(NOT defaut_ABSENT)
-            if(defaut)
-              set(defaut 1)
-            else()
-              set(defaut 0)
-            endif()
-          endif()
         elseif(option_type STREQUAL "entier")
           _lepton_json(defaut NUMBER "${json}" ${fichier} options ${i} defaut)
+          _lepton_json(option_min NUMBER "${json}" ${fichier} options ${i} min)
+          _lepton_json(option_max NUMBER "${json}" ${fichier} options ${i} max)
         elseif(option_type MATCHES "^(enumeration|chaine)$")
           _lepton_json(defaut STRING "${json}" ${fichier} options ${i} defaut)
-          if(option_type STREQUAL "chaine")
-            set(defaut "\"${defaut}\"")
+          if(option_type STREQUAL "enumeration")
+            _lepton_json(option_valeurs ARRAY "${json}" ${fichier} options ${i} valeurs)
           endif()
         else()
           _lepton_manifeste_erreur(${fichier} "options[${i}] : type « ${option_type} » inconnu")
@@ -174,7 +206,28 @@ function(_lepton_greffon_lire fichier)
         if(NOT option_portee MATCHES "^(privee|publique)$")
           _lepton_manifeste_erreur(${fichier} "options[${i}] : portée « ${option_portee} » inconnue")
         endif()
-        list(APPEND ${option_portee}_definitions "${option_nom}=${defaut}")
+        _lepton_option_controle(${fichier} "options[${i}] (${option_nom}) : défaut" ${option_type}
+          "${defaut}" "${option_min}" "${option_max}" "${option_valeurs}")
+        set(valeur "${defaut}")
+        set(variable ${LEPTON_OPTION_PREFIXE}${nom}_${option_nom})
+        if(DEFINED ${variable})
+          set(valeur "${${variable}}")
+          _lepton_option_controle(${fichier} "${variable} (valeur fixée : graine ou -D)" ${option_type}
+            "${valeur}" "${option_min}" "${option_max}" "${option_valeurs}")
+        endif()
+        set_property(GLOBAL APPEND PROPERTY LEPTON_OPTION_VARIABLES ${variable})
+        if(option_type STREQUAL "booleen")
+          if(valeur)
+            set(valeur 1)
+          else()
+            set(valeur 0)
+          endif()
+        elseif(option_type STREQUAL "chaine")
+          string(REPLACE "\\" "\\\\" valeur "${valeur}")
+          string(REPLACE "\"" "\\\"" valeur "${valeur}")
+          set(valeur "\"${valeur}\"")
+        endif()
+        list(APPEND ${option_portee}_definitions "${option_nom}=${valeur}")
       endforeach()
     endif()
   endif()
@@ -437,5 +490,13 @@ file(GLOB_RECURSE lepton_manifestes CONFIGURE_DEPENDS ${LEPTON_SRC}/${LEPTON_MAN
 list(SORT lepton_manifestes)
 foreach(f IN LISTS lepton_manifestes)
   _lepton_greffon_lire(${f})
+endforeach()
+get_property(lepton_options_lues GLOBAL PROPERTY LEPTON_OPTION_VARIABLES)
+get_cmake_property(lepton_variables CACHE_VARIABLES)
+foreach(v IN LISTS lepton_variables)
+  if(v MATCHES "^${LEPTON_OPTION_PREFIXE}" AND NOT v IN_LIST lepton_options_lues)
+    message(WARNING "${v} : aucune option correspondante dans les manifestes des greffons "
+                    "(LEPTON_OPTION_<greffon>_<NOM>) ; valeur ignorée")
+  endif()
 endforeach()
 message(STATUS "greffons : ${LEPTON_GREFFONS}")
