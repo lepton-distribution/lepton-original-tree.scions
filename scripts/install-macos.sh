@@ -223,8 +223,9 @@ for c in cc cmake ninja python3 scion cloc spatch \
          arm-none-eabi-gcc arm-none-eabi-gdb gdb-multiarch qemu-system-arm doxygen openocd \
          xmllint clangd-mp-21; do
   if command -v "$c" >/dev/null 2>&1; then
-    # openocd écrit sa version sur stderr
-    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>&1 | head -1)"; fi
+    # openocd et xmllint écrivent leur version sur stderr. sed -n 1p lit toute la sortie : avec
+    # head -1, l'outil peut recevoir SIGPIPE et pipefail arrêter le script (code 141).
+    if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"; else v="$("$c" --version 2>&1 | sed -n 1p)"; fi
     printf '  %-26s %s\n' "$c" "$v"
   else
     printf '  %-26s (absent)\n' "$c"

@@ -129,10 +129,10 @@ for c in gcc cmake ninja python3 scion cloc spatch \
          arm-none-eabi-gcc riscv64-unknown-elf-gcc \
          qemu-system-arm qemu-system-riscv32 doxygen openocd xmllint clangd; do
   if command -v "$c" >/dev/null 2>&1; then
-    # xmllint écrit sa version sur stderr
+    # openocd et xmllint écrivent leur version sur stderr. sed -n 1p lit toute la sortie : avec
+    # head -1, l'outil peut recevoir SIGPIPE et pipefail arrêter le script (code 141).
     if [ "$c" = scion ]; then v="$(scion version 2>/dev/null | tail -1)"
-    elif [ "$c" = xmllint ]; then v="$(xmllint --version 2>&1 | head -1)"
-    else v="$("$c" --version 2>/dev/null | head -1)"; fi
+    else v="$("$c" --version 2>&1 | sed -n 1p)"; fi
     printf '  %-26s %s\n' "$c" "$v"
   else
     printf '  %-26s (absent)\n' "$c"
