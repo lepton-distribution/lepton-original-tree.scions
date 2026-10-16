@@ -29,7 +29,8 @@
 #   dans compile_commands.json) ; famille et BSP : publique déjà sur lepton_options.
 # Répertoires d'inclusion (`inclusions`, PA-7 Q1) : relatifs à sys/root/src, mêmes portées.
 # Options configurables (`options`) : définition <nom>=<valeur> (booléen : 1 ou 0 ; chaîne entre
-# guillemets) dans la portée déclarée. Valeur : variable de cache LEPTON_OPTION_<greffon>_<NOM> si
+# guillemets, « " » et « \ » échappés : la chaîne C est celle du JSON ; « ; », « # » et saut de
+# ligne refusés, non transmissibles par une définition de compilation) dans la portée déclarée. Valeur : variable de cache LEPTON_OPTION_<greffon>_<NOM> si
 # elle est définie (valeur fixée par la graine, reportée dans les presets par lepton generate,
 # CFG-4), sinon défaut du manifeste ; l'une et l'autre contrôlées contre le type, les bornes et
 # les valeurs déclarés (FATAL_ERROR). Variable LEPTON_OPTION_* sans option correspondante :
@@ -102,6 +103,11 @@ function(_lepton_option_controle fichier origine type valeur min max valeurs)
     if(NOT valeur IN_LIST valeurs)
       list(JOIN valeurs ", " admises)
       _lepton_manifeste_erreur(${fichier} "${origine} : « ${valeur} » absent des valeurs (${admises})")
+    endif()
+  elseif(type STREQUAL "chaine")
+    if(valeur MATCHES "[;#\n\r]")
+      _lepton_manifeste_erreur(${fichier} "${origine} : « ${valeur} » : « ; », « # » et saut de ligne "
+        "non transmissibles par une définition de compilation")
     endif()
   endif()
 endfunction()
@@ -206,7 +212,7 @@ function(_lepton_greffon_lire fichier)
         set(variable ${LEPTON_OPTION_PREFIXE}${nom}_${option_nom})
         if(DEFINED ${variable})
           set(valeur "${${variable}}")
-          _lepton_option_controle(${fichier} "${variable} (valeur de la graine)" ${option_type}
+          _lepton_option_controle(${fichier} "${variable} (valeur fixée : graine ou -D)" ${option_type}
             "${valeur}" "${option_min}" "${option_max}" "${option_valeurs}")
         endif()
         set_property(GLOBAL APPEND PROPERTY LEPTON_OPTION_VARIABLES ${variable})
@@ -217,6 +223,8 @@ function(_lepton_greffon_lire fichier)
             set(valeur 0)
           endif()
         elseif(option_type STREQUAL "chaine")
+          string(REPLACE "\\" "\\\\" valeur "${valeur}")
+          string(REPLACE "\"" "\\\"" valeur "${valeur}")
           set(valeur "\"${valeur}\"")
         endif()
         list(APPEND ${option_portee}_definitions "${option_nom}=${valeur}")
