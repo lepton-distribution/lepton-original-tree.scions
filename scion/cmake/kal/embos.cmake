@@ -11,6 +11,13 @@ if(NOT LEPTON_EMBOS_LIB_FAMILY)
 endif()
 
 set(LEPTON_EMBOS_ROOT "$ENV{LEPTON_EMBOS_ROOT}" CACHE PATH "Paquet embOS Segger (Start/Inc, Start/Lib)")
+# Valeur vide (variable d'environnement absente : CMakePresets.json passe $env{LEPTON_EMBOS_ROOT}) :
+# défaut de scripts/lepton-env.sh, <rootstock>/third_party/embos/cortexm-gcc/5.20.0.0, le trunk
+# étant <rootstock>/trunk (O6 : éditeur et rootstock neuf sans export).
+if(NOT LEPTON_EMBOS_ROOT)
+  get_filename_component(LEPTON_EMBOS_ROOT
+      "${CMAKE_SOURCE_DIR}/../third_party/embos/cortexm-gcc/5.20.0.0" ABSOLUTE)
+endif()
 if(NOT EXISTS ${LEPTON_EMBOS_ROOT}/Start/Inc/RTOS.h)
   message(FATAL_ERROR "embOS introuvable : LEPTON_EMBOS_ROOT=${LEPTON_EMBOS_ROOT} (source scripts/lepton-env.sh)")
 endif()
