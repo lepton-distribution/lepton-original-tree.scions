@@ -38,7 +38,7 @@ embOS (Segger, licence SFL : évaluation, non redistribuable) n'est pas dans git
 ## 2. Arbre des sources (scion, étape 0)
 
 ```bash
-pipx install "git+https://github.com/lepton-distribution/seed.scions.git@0.5.1.0"
+pipx install "git+https://github.com/lepton-distribution/seed.scions.git@0.5.1.1"
 mkdir -p ~/lepton && cd ~/lepton                 # rootstock
 scion rootstock-install
 scion seed-add --version original-tree https://github.com/lepton-distribution/lepton-seed.scions.git
