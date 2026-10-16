@@ -41,6 +41,14 @@ end
 # FreeRTOS (étape 7) : piles peintes en 0xA5 (tskSTACK_FILL_BYTE, contrôle de pile 2) ; tâches =
 # pthreads Lepton (attr.stackaddr, attr.stacksize, heap_top) et tâches propres à FreeRTOS (idle,
 # temporisateurs : uxIdleTaskStack, uxTimerTaskStack) ; cause d'arrêt FreeRTOS affichée.
+# gdb sans Python (gdb de l'Arm GNU Toolchain) : lepton-stacks remplacée par un message (O9).
+# $_streq est une fonction de commodité écrite en Python : vide (void) sans Python.
+if $_isvoid($_streq)
+  define lepton-stacks
+    echo lepton-stacks indisponible : ce gdb est construit sans Python (gdb-multiarch, doc/BUILDING.md).\n
+  end
+  echo gdbinit-lepton : gdb sans Python, lepton-stacks indisponible (lepton-load, lepton-fault : présentes).\n
+else
 python
 import gdb
 
@@ -144,4 +152,5 @@ class LeptonStacks(gdb.Command):
                  100.0 * (hi - lo - free) / (hi - lo)))
 
 LeptonStacks()
+end
 end
