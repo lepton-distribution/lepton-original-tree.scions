@@ -13,6 +13,7 @@ scripts d'installation (`scripts/install-*.sh` : `SCION_REF`, toolchain Arm) et 
 |---|---|---|---|
 | Cortex-M4F (`armv7m`) | QEMU `mps2-an386` | `qemu-mps2-an386-{embos,freertos}` (hard-float), `qemu-mps2-an386-{embos,freertos}-soft` | QEMU : fumée, réseau, banc KAL verts (CI) |
 | Cortex-M4F (`armv7m`) | NUCLEO-F429ZI (BSP `nucleo-f429zi`) | `nucleo-f429zi-{embos,freertos}` | validé sur carte (réseau, endurance) ; build en CI |
+| Cortex-M4F (`armv7m`) | NUCLEO-F439ZI (BSP `nucleo-f439zi`) | `nucleo-f439zi-{embos,freertos}` | build en CI ; non validé sur NUCLEO-F439ZI (binaire essayé sur NUCLEO-F429ZI, ENV-20) |
 | Cortex-M7 (`armv7m`) | QEMU `mps2-an500` | `qemu-mps2-an500-{embos,freertos}` | QEMU : fumée, réseau, banc KAL verts (CI) |
 | Cortex-M7 (`armv7m`) | STM32F746G-DISCO | `stm32f746g-disco-{embos,freertos}` | validé sur carte (réseau, endurance 4 h) ; build en CI |
 | Cortex-M4 sans FPU (`armv7m`, soft) | NUCLEO-WL55JC1 (CPU1 seul) | `nucleo-wl55jc1-{embos,freertos}` | validé sur carte (radio FSK 868 MHz, endurance 1 h, sans réseau IP) ; build en CI |
@@ -190,6 +191,11 @@ cmake --build --preset nucleo-f429zi-embos --target flash        # le banc laiss
 ```
 
 Console : `screen /dev/cu.usbmodem… 115200` (quitter par `Ctrl-a k`) ; la refermer avant `ctest`.
+
+**NUCLEO-F439ZI** (BSP `nucleo-f439zi`, ENV-20) : mêmes commandes avec les presets
+`nucleo-f439zi-{embos,freertos}` (même XML, même `.init`) ; fichiers OpenOCD et gdb dans
+`sys/root/src/kernel/dev/bsp/nucleo-f439zi/debug/`. Le BSP est compilé en `STM32F429xx` (pas
+d'en-tête `stm32f439xx.h` dans la famille ; CRYP et HASH ne sont pas utilisés).
 
 ## 5. Carte STM32F746G-DISCO (étape 6)
 
