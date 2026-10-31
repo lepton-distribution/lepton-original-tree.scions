@@ -156,14 +156,16 @@ if(LEPTON_LIBC_SOURCES)
   lepton_add_library(lib SOURCES ${LEPTON_LIBC_SOURCES})
   list(APPEND LEPTON_KERNEL_GROUP lib)
 else()
-  message(STATUS "lib : aucune source pour LEPTON_ISA=${LEPTON_ISA} (étape 3)")
+  message(STATUS "lib : aucune source pour LEPTON_ISA=${LEPTON_ISA}")
 endif()
 
 # --- carte (kernel/dev/bsp, cmake/boards) ---------------------------------------------------------
 if(LEPTON_BSP_SOURCES)
   lepton_add_library(bsp SOURCES ${LEPTON_BSP_SOURCES})
   list(APPEND LEPTON_KERNEL_GROUP bsp)
-else()
+elseif(LEPTON_BOARD AND NOT LEPTON_BOARD_FAMILLE)
+  # BSP par manifeste (LEPTON_BOARD_FAMILLE, lepton_greffons_carte) : sources dans la bibliothèque
+  # du greffon BSP (lepton_greffons_appliquer) ; hôte : aucune carte.
   message(STATUS "bsp : aucune source pour la carte ${LEPTON_BOARD}")
 endif()
 
