@@ -215,8 +215,8 @@ if [ "$DEBUG_TOOLS" = "1" ]; then
   echo "  gdb-multiarch -> $GDB (~/.local/bin)"
 fi
 
-# --- Récapitulatif : versions à consigner dans MIGRATION-STATUS.md --------------
-log "Versions installées (à consigner dans MIGRATION-STATUS.md)"
+# --- Récapitulatif : versions installées ------------------------------------------
+log "Versions installées"
 printf '  %-26s %s\n' "macOS" "$(sw_vers -productVersion) ($ARCH)"
 printf '  %-26s %s\n' "paquets" "$PKG ($PKG_PREFIX)"
 for c in cc cmake ninja python3 scion cloc spatch \

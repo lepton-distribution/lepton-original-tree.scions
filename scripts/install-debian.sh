@@ -48,7 +48,7 @@ $SUDO apt-get install -y --no-install-recommends \
   libxml2-utils clangd
 
 # --- scion : composition de l'arbre des sources Lepton (étape 0) -------------
-# Épinglé sur le tag 0.5.0.1 (la tête de master lui est postérieure).
+# Épinglé par défaut sur le tag 0.5.2.0 (SCION_REF).
 # pipx : seule voie propre sous PEP 668 ; commande déposée dans ~/.local/bin.
 # SCION_REF (version attendue) et SCION_SPEC (source pipx) surchargeables par l'environnement
 # (install-vscodium.sh de lepton-tools) ; scion déjà à SCION_REF : rien n'est réinstallé.
@@ -102,7 +102,7 @@ fi
 # Parsing tree-sitter local (le code ne quitte pas la machine). Python >= 3.10 requis.
 # Le nom du paquet PyPI et la procédure exacte sont à vérifier sur le dépôt officiel
 # au moment de l'installation (projet récent, distribution en évolution) ;
-# épingler la version retenue dans MIGRATION-STATUS.md.
+# épingler la version retenue (versions épinglées : doc/BUILDING.md, en tête).
 log "Graphify (optionnel)"
 pip3 install --break-system-packages graphify 2>/dev/null \
   || echo "AVERTISSEMENT: installation pip de Graphify non aboutie — suivre la procédure du dépôt officiel (github.com/macouen/graphify) ; étape non bloquante."
@@ -123,8 +123,8 @@ fi
 $SUDO apt-get clean
 $SUDO rm -rf /var/lib/apt/lists/* 2>/dev/null || true
 
-# --- Récapitulatif : versions à épingler dans MIGRATION-STATUS.md -----------
-log "Versions installées (à consigner dans MIGRATION-STATUS.md)"
+# --- Récapitulatif : versions installées ---------------------------------------
+log "Versions installées"
 for c in gcc cmake ninja python3 scion cloc spatch \
          arm-none-eabi-gcc riscv64-unknown-elf-gcc \
          qemu-system-arm qemu-system-riscv32 doxygen openocd xmllint clangd; do

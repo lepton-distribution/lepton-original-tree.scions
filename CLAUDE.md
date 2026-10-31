@@ -3,6 +3,10 @@
 <!-- Provenance : généré depuis le plan de migration (doc/migration/) via le skill
      lepton-portage-instructions, complété aux étapes 1 à 7. État final au 2026-10-06. -->
 
+> Document de la migration, arrêté au 2026-10-06 (scion 0.5.0.1, presets `nucleo-f439zi-*`,
+> arbre sans greffons famille/BSP). État actuel : `doc/BUILDING.md` (construction, presets,
+> cartes) et le dépôt `lepton-distribution/lepton-tools` (`doc/devenv/DEVENV-STATUS.md`).
+
 ## 1. Objectif  [HUMAIN]
 
 Lepton est un RTOS embarqué en C (KAL + noyau POSIX 1003.1 + VFS + réseau, ~1 MLOC).

@@ -300,7 +300,7 @@ endfunction()
 # lepton_greffons_carte(<nom>) : carte décrite par le manifeste BSP <nom> et sa famille. Pose
 # LEPTON_BOARD_FAMILLE, LEPTON_BOARD_MEMORY_LD, LEPTON_BOARD_CPU_FREQ,
 # LEPTON_BOARD_KERNEL_CONFIG_HEADER (relatif au trunk, pour mklepton), LEPTON_QEMU_MACHINE,
-# LEPTON_BOARD_OPENOCD_CFG (champ openocd : un seul fichier jusqu'à ENV-9, cible flash et tests),
+# LEPTON_BOARD_OPENOCD_CFG (champ openocd : un seul fichier, cible flash et tests),
 # LEPTON_BOARD_DEMARRAGE_SOURCES (OBJECT bsp_demarrage), LEPTON_BOARD_OBJECT_SOURCES (vecteurs et
 # remplaçants forts de la famille, OBJECT bsp_objets) et LEPTON_BOARD_CMAKE (CMakeLists.txt
 # facultatif du BSP : paramètres hors manifeste, PA-7 Q3, à inclure par l'appelant).
