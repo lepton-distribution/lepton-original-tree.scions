@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 # mklepton_empreintes.sh — empreintes SHA-256 des sorties de mklepton (étape 8).
 #
-# Lance mklepton sur le mkconf de chaque carte transitoire (cmake/boards/*.cmake :
-# LEPTON_BOARD_MKCONF, LEPTON_BOARD_CPU_FREQ, LEPTON_BOARD_KERNEL_CONFIG_HEADER), de chaque carte
-# décrite par un greffon BSP (preset : LEPTON_BOARD, LEPTON_MKCONF ; manifeste
+# Lance mklepton sur le mkconf de chaque carte décrite par un greffon BSP (preset : LEPTON_BOARD, LEPTON_MKCONF ; manifeste
 # sys/root/src/<destination>/lepton-greffon.json : frequence_cpu, entete_config_noyau ; sorties
 # dans <mkconf>-<carte>) et sur le mkconf du test host.mklepton, puis écrit ou compare la
 # liste des empreintes de tous les fichiers produits (kernel_mkconf.h, dev_mkconf.c,
@@ -76,16 +74,6 @@ EOF
 )" || { echo "lecture des presets et des manifestes BSP impossible" >&2; exit 2; }
 [ -z "$bsp" ] || couples="$couples
 $bsp"
-for board in "$trunk"/cmake/boards/*.cmake; do
-  xml="$(sed -n 's/^set(LEPTON_BOARD_MKCONF \(.*\))$/\1/p' "$board")"
-  freq="$(sed -n 's/^set(LEPTON_BOARD_CPU_FREQ \([0-9]*\)).*$/\1/p' "$board")"
-  entete="$(sed -n 's/^set(LEPTON_BOARD_KERNEL_CONFIG_HEADER \(.*\))$/\1/p' "$board")"
-  if [ -z "$xml" ] || [ -z "$freq" ] || [ -z "$entete" ]; then
-    echo "mkconf, fréquence ou en-tête illisible dans $board" >&2; exit 2
-  fi
-  couples="$couples
-$(basename "$xml" .xml) $xml $freq $entete"
-done
 couples="$(printf '%s\n' "$couples" | sort -u)"
 
 work="$(mktemp -d "${TMPDIR:-/tmp}/mklepton-empreintes.XXXXXX")"

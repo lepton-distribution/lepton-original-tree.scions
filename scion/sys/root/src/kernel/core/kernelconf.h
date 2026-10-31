@@ -90,7 +90,7 @@ Includes
    #endif
 #endif
 
-//carte decrite par CMake (etape 6) : nom vu par uname pose par cmake/boards/<carte>.cmake,
+//carte decrite par CMake (etape 6) : nom vu par uname pose par le CMakeLists.txt du BSP,
 //coeur (__tauon_cpu_core__) par cmake/cpu/<coeur>.cmake ; la table ci-dessous ne sert qu'aux
 //cartes anterieures (une carte nouvelle n'y ajoute rien, doc/migration/ajout-coeur.md)
 #if defined(__KERNEL_CPU_DEVICE_NAME)

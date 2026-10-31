@@ -22,7 +22,7 @@ if(NOT EXISTS ${LEPTON_EMBOS_ROOT}/Start/Inc/RTOS.h)
   message(FATAL_ERROR "embOS introuvable : LEPTON_EMBOS_ROOT=${LEPTON_EMBOS_ROOT} (source scripts/lepton-env.sh)")
 endif()
 
-# Variante de la bibliothèque propre à la puce (LEPTON_EMBOS_LIB_VARIANT, cmake/boards : ex.
+# Variante de la bibliothèque propre à la puce (LEPTON_EMBOS_LIB_VARIANT, CMakeLists.txt du BSP : ex.
 # _837070 pour un Cortex-M7 r0p1, avec USE_ERRATUM_837070=1).
 set(LEPTON_EMBOS_LIB
     ${LEPTON_EMBOS_ROOT}/Start/Lib/libos${LEPTON_EMBOS_LIB_FAMILY}$<IF:$<CONFIG:Debug>,SP,R>${LEPTON_EMBOS_LIB_VARIANT}.a)

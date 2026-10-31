@@ -36,7 +36,7 @@ set(LEPTON_LWIP_SYS_ARCH_DIR kernel/net/lwip/ports/freertos)
 target_compile_definitions(lepton_options INTERFACE
   __KERNEL_UCORE_FREERTOS
   __KERNEL_CLK_TCK=1000)
-# surcharges de FreeRTOSConfig.h propres à la carte (LEPTON_FREERTOS_CONFIG, cmake/boards : ex.
+# surcharges de FreeRTOSConfig.h propres à la carte (LEPTON_FREERTOS_CONFIG, CMakeLists.txt du BSP : ex.
 # piles idle et temporisateurs réduites sur une carte à 32 Ko de RAM)
 if(LEPTON_FREERTOS_CONFIG)
   target_compile_definitions(lepton_options INTERFACE ${LEPTON_FREERTOS_CONFIG})
