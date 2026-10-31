@@ -3,13 +3,12 @@
 # Quatre axes de variation, choisis par variables de cache (jamais par macros du compilateur) :
 #   LEPTON_ISA          host | armv7m | armv6m            → cmake/isa/<isa>.cmake
 #   LEPTON_CPU          cortex-m0plus | cortex-m3 | cortex-m4f | cortex-m7 → cmake/cpu/<cœur>.cmake
-#   LEPTON_BOARD        nom d'un greffon BSP (manifeste lepton-greffon.json, ENV-6), sinon carte
-#                       transitoire cmake/boards/<carte>.cmake (stm32f746g-disco,
-#                       samd21-xplained-pro)
+#   LEPTON_BOARD        nom d'un greffon BSP (manifeste lepton-greffon.json, ENV-6 ; toutes les
+#                       cartes depuis ENV-19)
 #   LEPTON_KAL_BACKEND  static | embos | freertos         → cmake/kal/<backend>.cmake
 # Ajouter une valeur = ajouter un fichier (doc/migration/ajout-coeur.md) ou un greffon BSP.
 # LEPTON_MKCONF : XML mklepton (configuration logicielle, relatif au trunk), posé par le preset
-# (PA-7 Q4) ; les cartes transitoires le donnent dans leur module (LEPTON_BOARD_MKCONF).
+# (PA-7 Q4).
 # Les presets placent le build dans $LEPTON_BUILD/<preset>, hors du trunk et du clone.
 cmake_minimum_required(VERSION 3.24)
 
@@ -17,7 +16,7 @@ project(lepton VERSION 4.9.0.2 LANGUAGES C)
 
 set(LEPTON_ISA "" CACHE STRING "Famille d'ISA (host, armv7m, armv6m)")
 set(LEPTON_CPU "" CACHE STRING "Cœur (cortex-m0plus, cortex-m3, cortex-m4f, cortex-m7)")
-set(LEPTON_BOARD "" CACHE STRING "Carte : greffon BSP ou module cmake/boards")
+set(LEPTON_BOARD "" CACHE STRING "Carte : nom du greffon BSP")
 set(LEPTON_MKCONF "" CACHE STRING "XML mklepton de la configuration logicielle, relatif au trunk")
 set(LEPTON_KAL_BACKEND "" CACHE STRING "Micro-noyau (static, embos, freertos)")
 
@@ -43,12 +42,10 @@ if(LEPTON_BOARD)
     if(LEPTON_BOARD_CMAKE)
       include(${LEPTON_BOARD_CMAKE})   # paramètres hors manifeste du BSP (PA-7 Q3)
     endif()
-  elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/boards/${LEPTON_BOARD}.cmake)
-    include(boards/${LEPTON_BOARD})
   else()   # O1 : BSP de la graine non greffé
     message(FATAL_ERROR "LEPTON_BOARD=${LEPTON_BOARD} : aucun greffon BSP de ce nom greffé "
-      "(manifeste lepton-greffon.json de nom « ${LEPTON_BOARD} »), ni carte transitoire "
-      "cmake/boards/${LEPTON_BOARD}.cmake. Greffer le BSP de la graine (lepton check).")
+      "(manifeste lepton-greffon.json de nom « ${LEPTON_BOARD} »). Greffer le BSP de la graine "
+      "(lepton check).")
   endif()
 endif()
 if(LEPTON_MKCONF)

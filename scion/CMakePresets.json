@@ -133,6 +133,7 @@
         "LEPTON_CPU": "cortex-m7",
         "LEPTON_M7_FPU": "sp",
         "LEPTON_BOARD": "stm32f746g-disco",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_stm32f746g_disco.xml",
         "LEPTON_KAL_BACKEND": "embos"
       }
     },
@@ -153,6 +154,7 @@
         "LEPTON_ISA": "armv6m",
         "LEPTON_CPU": "cortex-m0plus",
         "LEPTON_BOARD": "samd21-xplained-pro",
+        "LEPTON_MKCONF": "sys/user/tauon-basic/etc/mkconf_tauon_basic_samd21_xplained_pro.xml",
         "LEPTON_KAL_BACKEND": "embos"
       }
     },

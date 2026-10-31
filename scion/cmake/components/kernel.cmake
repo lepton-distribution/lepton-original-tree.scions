@@ -140,9 +140,9 @@ elseif(LEPTON_NET_STACK)
   message(FATAL_ERROR "LEPTON_NET_STACK=${LEPTON_NET_STACK} : seule lwip est intégrée")
 endif()
 
-# --- code de famille de la carte (kernel/dev/arch : couche Lepton et pilotes tiers de la famille,
-# cmake/boards ; hôte : disque sur fichier et horloge, cmake/isa/host.cmake) ; extrait vers les
-# greffons famille en ENV-6 -----------------------------------------------------------------------
+# --- code de famille de la carte (kernel/dev/arch : couche Lepton et pilotes tiers de la famille ;
+# hôte : disque sur fichier et horloge, cmake/isa/host.cmake) ; cartes : greffons famille (ENV-6,
+# ENV-19) ----------------------------------------------------------------------------------------
 list(APPEND LEPTON_KERNEL_SOURCES ${LEPTON_DEV_ARCH_SOURCES})
 lepton_add_library(kernel SOURCES ${LEPTON_KERNEL_SOURCES})
 set(LEPTON_KERNEL_GROUP kernel)
@@ -159,7 +159,7 @@ else()
   message(STATUS "lib : aucune source pour LEPTON_ISA=${LEPTON_ISA}")
 endif()
 
-# --- carte (kernel/dev/bsp, cmake/boards) ---------------------------------------------------------
+# --- carte (kernel/dev/bsp) ----------------------------------------------------------------------
 if(LEPTON_BSP_SOURCES)
   lepton_add_library(bsp SOURCES ${LEPTON_BSP_SOURCES})
   list(APPEND LEPTON_KERNEL_GROUP bsp)

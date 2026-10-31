@@ -1,7 +1,7 @@
 # gdb-multiarch — commandes Lepton communes aux cartes Cortex-M (ENV-6, PA-7 Q8 ; partie générique
 # de l'ancien debug/gdbinit-nucleo-f439zi de l'étape 5). Procédure : doc/migration/debug-gcc.md.
-# Sourcé par le gdbinit de chaque carte (debug/ du greffon BSP, ou debug/ du noyau pour les cartes
-# transitoires), depuis la racine du trunk : source debug/gdbinit-lepton
+# Sourcé par le gdbinit de chaque carte (debug/ du greffon BSP), depuis la racine du trunk :
+# source debug/gdbinit-lepton
 # Commandes ajoutées : lepton-load (flash + reset halt), lepton-fault (registres de faute),
 # lepton-stacks (remplissage des piles). Serveur gdb : OpenOCD, port 3333.
 set pagination off

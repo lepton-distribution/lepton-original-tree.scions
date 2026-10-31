@@ -205,7 +205,8 @@ cmake --build --preset stm32f746g-disco-embos --target flash
 ctest --preset stm32f746g-disco-embos -L board      # fumée + banc KAL ; reflasher ensuite
 ```
 
-Débogage : `debug/openocd-stm32f746g-disco.cfg`, `debug/gdbinit-stm32f746g-disco`. Réseau :
+Débogage (BSP `stm32f746g-disco`) : `sys/root/src/kernel/dev/bsp/stm32f746g-disco/debug/openocd-stm32f746g-disco.cfg`,
+`sys/root/src/kernel/dev/bsp/stm32f746g-disco/debug/gdbinit-stm32f746g-disco`. Réseau :
 comme la NUCLEO (adresse 192.168.2.5 du `.init`, `ftpd`) ; test sur carte avec
 `-DLEPTON_NET_TEST_HOST_IP=<adresse de l'hôte sur le câble>` puis `ctest … -R board.net`.
 
@@ -226,8 +227,8 @@ cmake --build --preset samd21-xplained-pro-embos --target flash
 ctest --preset samd21-xplained-pro-embos -L board   # fumée + banc KAL ; reflasher ensuite
 ```
 
-Débogage : `debug/openocd-samd21-xplained-pro.cfg`, `debug/gdbinit-samd21-xplained-pro`
-(registres de faute ARMv6-M : `lepton-fault-v6m`).
+Débogage (BSP `samd21-xplained-pro`) : `sys/root/src/kernel/dev/bsp/samd21-xplained-pro/debug/openocd-samd21-xplained-pro.cfg`,
+`sys/root/src/kernel/dev/bsp/samd21-xplained-pro/debug/gdbinit-samd21-xplained-pro` (registres de faute ARMv6-M : `lepton-fault-v6m`).
 
 **Depuis macOS** (étape 10) : console `/dev/cu.usbmodem…` (CDC de l'EDBG ; relevée avant chaque
 configuration, `ls /dev/cu.usbmodem*`) ; OpenOCD de MacPorts avec la variante `+cmsis` (sonde
@@ -235,8 +236,9 @@ EDBG en HID, §3 ter). Endurance de 1 h (`gdb-multiarch` : lien vers le gdb de M
 
 ```bash
 caffeinate -i python3 tests/endurance_board.py --port /dev/cu.usbmodem… --duration 3600 \
-    --reset-command "openocd -f debug/openocd-samd21-xplained-pro.cfg -c init -c reset -c exit" \
-    --openocd-cfg debug/openocd-samd21-xplained-pro.cfg --gdbinit debug/gdbinit-samd21-xplained-pro \
+    --reset-command "openocd -f sys/root/src/kernel/dev/bsp/samd21-xplained-pro/debug/openocd-samd21-xplained-pro.cfg -c init -c reset -c exit" \
+    --openocd-cfg sys/root/src/kernel/dev/bsp/samd21-xplained-pro/debug/openocd-samd21-xplained-pro.cfg \
+    --gdbinit sys/root/src/kernel/dev/bsp/samd21-xplained-pro/debug/gdbinit-samd21-xplained-pro \
     --elf "$LEPTON_BUILD"/samd21-xplained-pro-embos/lepton.elf \
     --log "$LEPTON_BUILD"/samd21-xplained-pro-embos/endurance_board.log --fault-check v6m
 ```
