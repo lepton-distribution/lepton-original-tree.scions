@@ -1,7 +1,8 @@
 # mklepton_format_check.cmake — format XML 2 de mklepton (ENV-4, CFG-8).
 #   cmake -DMKLEPTON=<exe> -DUFS_CHECK=<exe> -DSRC=<trunk> -DXML=<mkconf relatif> -DCPU_FREQ=<Hz>
 #         -DKERNEL_CONFIG_HEADER=<en-tête relatif> -DWORK=<répertoire> -P mklepton_format_check.cmake
-# Variantes dérivées du mkconf donné (format 2, <cpufs size node blocksz>) :
+# Variantes dérivées du mkconf donné (format 2, <cpufs [size node] blocksz>, size et node
+# tous deux présents ou tous deux absents, ENV-24) :
 # 1. version inconnue, version absente, élément <target> du format 1 : refus (code non nul, message) ;
 # 2. <cpufs> sans size ni node : image dimensionnée automatiquement, relue par le noyau statique ;
 # 3. size ou node imposés trop petits : refus, minimum indiqué ; minimum exact : accepté.
@@ -15,10 +16,16 @@ endforeach()
 file(REMOVE_RECURSE ${WORK})
 file(MAKE_DIRECTORY ${WORK})
 file(READ ${SRC}/${XML} base)
-if(NOT base MATCHES "<cpufs size=\"[0-9]+\" node=\"[0-9]+\" ")
-  message(FATAL_ERROR "${XML} : <cpufs size=… node=…> attendu")
+# mkconf de base : valeurs imposées retirées pour la variante automatique, ou déjà absentes
+if(base MATCHES "<cpufs size=\"[0-9]+\" node=\"[0-9]+\" ")
+  string(REGEX REPLACE "<cpufs size=\"[0-9]+\" node=\"[0-9]+\" " "<cpufs " auto "${base}")
+elseif(base MATCHES "<cpufs [^>]*(size|node)=")
+  message(FATAL_ERROR "${XML} : <cpufs> avec size et node, dans cet ordre, ou sans aucun des deux attendu")
+elseif(base MATCHES "<cpufs ")
+  set(auto "${base}")
+else()
+  message(FATAL_ERROR "${XML} : élément <cpufs> attendu")
 endif()
-string(REGEX REPLACE "<cpufs size=\"[0-9]+\" node=\"[0-9]+\" " "<cpufs " auto "${base}")
 
 # mklepton(<nom> <texte XML> <variable code> <variable sortie>)
 function(run_mklepton name text rc_var out_var)
