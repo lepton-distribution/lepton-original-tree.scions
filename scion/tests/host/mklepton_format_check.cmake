@@ -1,8 +1,8 @@
 # mklepton_format_check.cmake — format XML 2 de mklepton (ENV-4, CFG-8).
 #   cmake -DMKLEPTON=<exe> -DUFS_CHECK=<exe> -DSRC=<trunk> -DXML=<mkconf relatif> -DCPU_FREQ=<Hz>
 #         -DKERNEL_CONFIG_HEADER=<en-tête relatif> -DWORK=<répertoire> -P mklepton_format_check.cmake
-# Variantes dérivées du mkconf donné (format 2, <cpufs [size node] blocksz>, size et node
-# tous deux présents ou tous deux absents, ENV-24) :
+# Variantes dérivées du mkconf donné (format 2 ; mkconf de base : <cpufs size node blocksz> ou
+# <cpufs blocksz>, ENV-24) :
 # 1. version inconnue, version absente, élément <target> du format 1 : refus (code non nul, message) ;
 # 2. <cpufs> sans size ni node : image dimensionnée automatiquement, relue par le noyau statique ;
 # 3. size ou node imposés trop petits : refus, minimum indiqué ; minimum exact : accepté.
