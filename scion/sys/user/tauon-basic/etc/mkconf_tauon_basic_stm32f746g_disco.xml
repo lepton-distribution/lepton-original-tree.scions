@@ -12,7 +12,7 @@
       <descriptors max="16" />
 
       <!-- rootfs en flash (filecpu_memory, const) -->
-      <cpufs size="128000" node="256" blocksz="256" />
+      <cpufs blocksz="256" />
 
       <env path="/usr;/usr/sbin;/usr/bin" />
 
