@@ -58,6 +58,7 @@ include(components/kernel)
 include(mklepton)
 if(NOT LEPTON_ISA STREQUAL "host")
   include(components/firmware)
+  lepton_greffons_tests()   # tests des greffons actifs (TST-2) : après les cibles lepton et kal_bench
 endif()
 
 if(LEPTON_ISA STREQUAL "host")
