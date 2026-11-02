@@ -66,6 +66,11 @@ Schéma XML (balises lues par `mklepton.c`, attributs utilisés dans l'arbre) :
     <directories> <directory src_path dest_path/>… </directories>  (gnu seulement) copie récursive
 ```
 
+Format 2 (ENV-4, `schemas/mklepton.xsd` de lepton-tools) : `<cpufs [size] [node] blocksz/>`,
+`size` et `node` facultatifs. Absent, chacun est calculé au plus juste (cpufs en lecture seule,
+aucune place libre réservée) ; présent, il est refusé s'il est trop petit, minimum indiqué.
+Depuis ENV-24, les mkconf des presets n'imposent plus ces valeurs.
+
 Inventaire des mkconf du trunk (26 fichiers ; détail : `$LEPTON_BUILD/etape-1/mklepton/scan_mkconf.out`) :
 
 | Emplacement | Nb | Cibles | `dest_path` de sortie |
