@@ -35,6 +35,13 @@
 # CFG-4), sinon défaut du manifeste ; l'une et l'autre contrôlées contre le type, les bornes et
 # les valeurs déclarés (FATAL_ERROR). Variable LEPTON_OPTION_* sans option correspondante :
 # avertissement (reste possible dans un cache après retrait de la graine).
+#
+# Tests (lepton_greffons_tests, presets croisés, après components/firmware ; TST-2, PA-41 d'ENV-27) :
+# champ `tests` = répertoire relatif à la destination contenant un CMakeLists.txt, ajouté par
+# add_subdirectory pour chaque greffon actif (mêmes règles que lepton_greffons_appliquer), noyau
+# exclu (ses tests restent déclarés par ses composants). Ce CMakeLists.txt déclare ses tests par
+# lepton_greffon_test ; types QEMU (LEPTON_QEMU_MACHINE, fixture kal_t0) et carte
+# (LEPTON_BOARD_SERIAL_PORT, fixture board_t0).
 
 set(LEPTON_MANIFESTE_GREFFON lepton-greffon.json)
 set(LEPTON_OPTION_PREFIXE LEPTON_OPTION_)
@@ -167,6 +174,7 @@ function(_lepton_greffon_lire fichier)
   endforeach()
   _lepton_json(frequence_cpu NUMBER "${json}" ${fichier} frequence_cpu)
   _lepton_json(qemu_machine STRING "${json}" ${fichier} qemu machine)
+  _lepton_json(tests STRING "${json}" ${fichier} tests)
 
   string(JSON t ERROR_VARIABLE err TYPE "${json}" options)
   if(NOT err)
@@ -247,7 +255,7 @@ function(_lepton_greffon_lire fichier)
     set(${p}_${P}_INCLUSIONS "${${portee}_inclusions}" PARENT_SCOPE)
   endforeach()
   foreach(champ coeurs vecteurs remplacants_forts demarrage openocd famille coeur abi_flottante
-          entete_config_noyau script_liens frequence_cpu qemu_machine)
+          entete_config_noyau script_liens frequence_cpu qemu_machine tests)
     string(TOUPPER ${champ} C)
     set(${p}_${C} "${${champ}}" PARENT_SCOPE)
   endforeach()
@@ -405,9 +413,8 @@ function(lepton_greffons_appliquer)
 
   foreach(nom IN LISTS LEPTON_GREFFONS)
     set(p LEPTON_GREFFON_${nom})
-    if(${p}_TYPE STREQUAL "noyau"
-       OR (${p}_TYPE STREQUAL "famille" AND NOT nom STREQUAL LEPTON_BOARD_FAMILLE)
-       OR (${p}_TYPE STREQUAL "bsp" AND NOT nom STREQUAL LEPTON_BOARD))
+    _lepton_greffon_actif(actif ${nom})
+    if(NOT actif)
       continue()
     endif()
 
@@ -482,6 +489,60 @@ function(lepton_greffons_appliquer)
     message(STATUS "greffon ${nom} : ${bib} (${${p}_SOURCES})")
   endforeach()
   set(LEPTON_GREFFONS_BIBLIOTHEQUES ${creees} PARENT_SCOPE)
+endfunction()
+
+# _lepton_greffon_actif(<sortie> <nom>) : greffon compilé dans cette configuration (hors noyau) :
+# famille et BSP de la carte seuls, tout greffon d'un autre type.
+function(_lepton_greffon_actif sortie nom)
+  set(p LEPTON_GREFFON_${nom})
+  if(${p}_TYPE STREQUAL "noyau"
+     OR (${p}_TYPE STREQUAL "famille" AND NOT nom STREQUAL LEPTON_BOARD_FAMILLE)
+     OR (${p}_TYPE STREQUAL "bsp" AND NOT nom STREQUAL LEPTON_BOARD))
+    set(${sortie} FALSE PARENT_SCOPE)
+  else()
+    set(${sortie} TRUE PARENT_SCOPE)
+  endif()
+endfunction()
+
+# lepton_greffons_tests() : répertoire `tests` de chaque greffon actif, par add_subdirectory
+# (construction : ${CMAKE_BINARY_DIR}/greffons/<nom>/tests). Variables offertes à ce répertoire :
+# LEPTON_GREFFON_TEST_NOM (nom du greffon), LEPTON_TESTS_NOYAU (tests/ du greffon noyau dans le
+# trunk : smoke_lsh.py, kal_openocd.py), et celles de la carte (LEPTON_QEMU_MACHINE, LEPTON_QEMU_ARM,
+# LEPTON_BOARD_SERIAL_PORT, LEPTON_OPENOCD, LEPTON_BOARD_OPENOCD_CFG, LEPTON_BOARD_UNAME_MACHINE).
+function(lepton_greffons_tests)
+  set(LEPTON_TESTS_NOYAU ${CMAKE_SOURCE_DIR}/tests)
+  foreach(nom IN LISTS LEPTON_GREFFONS)
+    set(p LEPTON_GREFFON_${nom})
+    _lepton_greffon_actif(actif ${nom})
+    if(NOT actif OR "${${p}_TESTS}" STREQUAL "")
+      continue()
+    endif()
+    set(rep ${LEPTON_SRC}/${${p}_DESTINATION}/${${p}_TESTS})
+    if(NOT EXISTS ${rep}/CMakeLists.txt)
+      _lepton_manifeste_erreur(${${p}_FICHIER} "champ « tests » : ${rep}/CMakeLists.txt absent")
+    endif()
+    set(LEPTON_GREFFON_TEST_NOM ${nom})
+    add_subdirectory(${rep} ${CMAKE_BINARY_DIR}/greffons/${nom}/tests)
+    message(STATUS "greffon ${nom} : tests ${${p}_TESTS}")
+  endforeach()
+endfunction()
+
+# lepton_greffon_test(NAME <nom> COMMAND <commande>... [LABELS <étiquette>...]
+#                     [PROPERTIES <propriété> <valeur>...]) : dans le répertoire `tests` d'un
+# greffon, test « <greffon>.<nom> », étiquettes greffon:<greffon>, arch:<cœur>, backend:<b> ajoutées,
+# exécuté dans son répertoire de construction.
+function(lepton_greffon_test)
+  cmake_parse_arguments(PARSE_ARGV 0 t "" "NAME" "COMMAND;LABELS;PROPERTIES")
+  if(NOT LEPTON_GREFFON_TEST_NOM OR NOT t_NAME OR NOT t_COMMAND OR t_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "lepton_greffon_test(NAME … COMMAND … [LABELS …] [PROPERTIES …]) : "
+      "dans le répertoire « tests » d'un greffon ; reçu : NAME « ${t_NAME} », "
+      "en trop « ${t_UNPARSED_ARGUMENTS} »")
+  endif()
+  set(test ${LEPTON_GREFFON_TEST_NOM}.${t_NAME})
+  add_test(NAME ${test} COMMAND ${t_COMMAND} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  set(etiquettes greffon:${LEPTON_GREFFON_TEST_NOM} ${t_LABELS} arch:${LEPTON_CPU}
+      backend:${LEPTON_KAL_BACKEND})
+  set_tests_properties(${test} PROPERTIES LABELS "${etiquettes}" ${t_PROPERTIES})
 endfunction()
 
 # --- lecture -------------------------------------------------------------------------------------
