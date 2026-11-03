@@ -1,6 +1,6 @@
 # lepton-original-tree.scions
 
-> Construction actuelle (GCC et CMake, hôtes Linux et macOS, scion 0.5.3.0), presets et cartes
+> Construction actuelle (GCC et CMake, hôtes Linux et macOS, scion 0.5.4.0), presets et cartes
 > prises en charge : `doc/BUILDING.md`. Le texte ci-dessous est la description d'origine.
 
 prerequisite scions for lepton operating system construction (python 3, windows 10 or more recent).
