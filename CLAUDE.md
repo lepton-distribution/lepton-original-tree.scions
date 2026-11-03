@@ -183,7 +183,8 @@ que compilé.
 **Bancs :** QEMU `mps2-an386` et `mps2-an500` (UART CMSDK, Ethernet LAN9118) : fumée
 (`smoke_lsh.py` : démarrage → `lsh` → `uname -a`), réseau (ping, `ftpd`) et banc KAL
 (`doc/migration/BANC-TEST-KAL-QEMU.md`) ; cartes via sonde USB : `ctest -L board` (fumée et
-banc KAL par semihosting), `board.net`, `board.radio`, endurance (`tests/endurance_board.py`).
+banc KAL par semihosting), `board.net`, `nucleo-wl55jc1.radio` (test du BSP, TST-2), endurance
+(`tests/endurance_board.py`).
 
 **Oracle :** aucun binaire IAR. Oracles : exécution (paliers des étapes 3 et 5), sorties de
 référence de mklepton (`mklepton-ref.md`), comparaison embOS / FreeRTOS test par test.
