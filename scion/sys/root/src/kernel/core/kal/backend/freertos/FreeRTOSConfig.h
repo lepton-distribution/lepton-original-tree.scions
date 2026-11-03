@@ -11,6 +11,10 @@
  *
  * Exigences de l'étape 7 : configASSERT et configCHECK_FOR_STACK_OVERFLOW=2 actifs pendant
  * toute la validation ; allocation statique uniquement (TCB, piles, objets fournis par Lepton).
+ * Débogage (ENV-31 du chantier devenv) : configRECORD_STACK_HIGH_ADDRESS=1 pour que le TCB porte
+ * la fin de pile (pxEndOfStack) ; la vue des tâches (rtos-views) en déduit la taille, l'usage et
+ * le pic de pile. configUSE_TRACE_FACILITY reste à 0 : ses champs déplaceraient les objets
+ * FreeRTOS intégrés aux structures du noyau.
  */
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
@@ -76,6 +80,9 @@ void lepton_freertos_assert(const char* file, int line);
 #define configCHECK_FOR_STACK_OVERFLOW             2
 #define configUSE_TRACE_FACILITY                   0
 #define configGENERATE_RUN_TIME_STATS              0
+#ifndef configRECORD_STACK_HIGH_ADDRESS
+   #define configRECORD_STACK_HIGH_ADDRESS         1   /* pxEndOfStack dans le TCB : piles lues par le débogueur */
+#endif
 #define configASSERT(x)                            do { if(!(x)) lepton_freertos_assert(__FILE__, __LINE__); } while(0)
 
 /* --- protection mémoire : sans MPU (ports ARMv6-M ARM_CM0 : définition exigée) -------------- */
