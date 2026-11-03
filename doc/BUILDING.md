@@ -265,8 +265,10 @@ cmake --build --preset nucleo-wl55jc1-embos --target flash
 ctest --preset nucleo-wl55jc1-embos -L board        # fumée + banc KAL ; reflasher ensuite
 ```
 
-Radio Sub-GHz (FSK 868 MHz, `/dev/radio`, pseudo-binaire `radiotst`) : le test `board.radio`
-exige une seconde carte, désignée par `-DLEPTON_RADIO_PEER_STLINK_SERIAL=<n°>` et
+Radio Sub-GHz (FSK 868 MHz, `/dev/radio`, pseudo-binaire `radiotst`) : le test
+`nucleo-wl55jc1.radio` (étiquettes `board` et `radio`), fourni par le BSP (répertoire `tests/` du
+BSP, champ `tests` de son manifeste, script `tests/radio.py` ; `board.radio` du noyau jusqu'à
+ENV-32), exige une seconde carte, désignée par `-DLEPTON_RADIO_PEER_STLINK_SERIAL=<n°>` et
 `-DLEPTON_RADIO_PEER_SERIAL_PORT=<console>` ; la seconde carte se construit dans un autre
 répertoire (`cmake --preset nucleo-wl55jc1-embos -B "$LEPTON_BUILD/nucleo-wl55jc1-embos-b" …`),
 sans modifier le preset. Débogage : `sys/root/src/kernel/dev/bsp/nucleo-wl55jc1/debug/openocd-nucleo-wl55jc1.cfg`,
@@ -276,14 +278,14 @@ sans modifier le preset. Débogage : `sys/root/src/kernel/dev/bsp/nucleo-wl55jc1
 STLINK-V3 et leur « Location ID » (`system_profiler SPUSBDataType`), puis les consoles
 (`ls /dev/cu.usbmodem*`) : la console d'une sonde de Location ID `0x14543000` est
 `/dev/cu.usbmodem1454303` (préfixe commun). Une seule configuration suffit pour la paire :
-`board.radio` flashe la même image sur la carte B par le fichier généré
+`nucleo-wl55jc1.radio` flashe la même image sur la carte B par le fichier généré
 `openocd-nucleo-wl55jc1-paire.cfg` et le test fait alors partie de `-L board`.
 
 ```bash
 cmake --preset nucleo-wl55jc1-embos -DLEPTON_BOARD_SERIAL_PORT=/dev/cu.usbmodem1454303 \
     -DLEPTON_BOARD_STLINK_SERIAL=<n° A> -DLEPTON_RADIO_PEER_SERIAL_PORT=/dev/cu.usbmodem1454403 \
     -DLEPTON_RADIO_PEER_STLINK_SERIAL=<n° B>
-caffeinate -i ctest --preset nucleo-wl55jc1-embos -L board   # 16 tests, board.radio compris
+caffeinate -i ctest --preset nucleo-wl55jc1-embos -L board   # 16 tests, nucleo-wl55jc1.radio compris (en dernier)
 ```
 
 Endurance de 1 h : comme la SAMD21 (§6), avec `sys/root/src/kernel/dev/bsp/nucleo-wl55jc1/debug/gdbinit-nucleo-wl55jc1`, la configuration
