@@ -30,6 +30,6 @@ target_compile_definitions(lepton_options INTERFACE __KERNEL_CPU_NAME="cortexm7"
 target_compile_definitions(lepton_options INTERFACE __KERNEL_STACK_SIZE=4096)
 # Cœur pour le code qui en dépend (__tauon_cpu_core__ de kernelconf.h, backend FreeRTOS).
 target_compile_definitions(lepton_options INTERFACE __tauon_cpu_core__=__tauon_cpu_core_arm_cortexM7__)
-# CMSIS-Core 5 (core_cm7.h, Apache-2.0 ; le CMSIS 3.20 de cmake/isa/armv7m.cmake s'arrête au M4) :
+# CMSIS-Core 5 (core_cm7.h, Apache-2.0 ; le CMSIS V3.30 de l'arbre s'arrête au M4) :
 # copie non modifiée du paquet embOS (CoreSupport STM32F769I-Discovery, V5.6), décision 2026-10-05.
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/ucore/cmsis-5/CMSIS/Core/Include)
