@@ -25,3 +25,6 @@ target_compile_definitions(lepton_options INTERFACE __KERNEL_CPU_NAME="cortexm4"
 target_compile_definitions(lepton_options INTERFACE __KERNEL_STACK_SIZE=4096)
 # Cœur pour le code qui en dépend (__tauon_cpu_core__ de kernelconf.h, backend FreeRTOS).
 target_compile_definitions(lepton_options INTERFACE __tauon_cpu_core__=__tauon_cpu_core_arm_cortexM4__)
+# CMSIS-Core 5 (core_cm4.h V5.1.2 de CMSIS_5 5.9.0, ENV-34 ; ucore/cmsis-5/CMSIS/Core/LEPTON-PROVENANCE.md),
+# seul CMSIS-Core vu par le M4 depuis ENV-42 (PA-71 : V3.30 n'est plus posé par cmake/isa/armv7m.cmake).
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/ucore/cmsis-5/CMSIS/Core/Include)

@@ -14,8 +14,8 @@ target_link_options(lepton_options INTERFACE
 lepton_freestanding()
 # CPU_CORTEXM : macro historique de famille, posée uniquement ici (axe ISA).
 target_compile_definitions(lepton_options INTERFACE CPU_CORTEXM)
-# CMSIS-Core présent dans l'arbre (V3.30) ; en-tête de périphérique fourni par la carte.
-target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/ucore/cmsis/CMSIS/Include)
+# CMSIS-Core : choisi par le cœur (cmake/cpu/<cœur>.cmake : V3.30 pour le M3, CMSIS_5 pour le M4
+# et le M7, ENV-42) ; en-tête de périphérique fourni par la carte.
 set(LEPTON_ISA_ARCH_DIR kernel/core/arch/cortexm)
 # sections critiques à nom neutre (#include "lepton_irq.h") : kernel/core/arch/cortexm
 target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/${LEPTON_ISA_ARCH_DIR})

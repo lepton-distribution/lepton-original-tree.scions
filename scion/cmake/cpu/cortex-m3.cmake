@@ -12,3 +12,6 @@ target_compile_definitions(lepton_options INTERFACE __KERNEL_CPU_NAME="cortexm3"
 target_compile_definitions(lepton_options INTERFACE __KERNEL_STACK_SIZE=2048)
 # Cœur pour le code qui en dépend (__tauon_cpu_core__ de kernelconf.h, backend FreeRTOS).
 target_compile_definitions(lepton_options INTERFACE __tauon_cpu_core__=__tauon_cpu_core_arm_cortexM3__)
+# CMSIS-Core V3.30 de l'arbre (core_cm3.h, absent de ucore/cmsis-5) ; posé par cmake/isa/armv7m.cmake
+# jusqu'à ENV-42.
+target_include_directories(lepton_options INTERFACE ${LEPTON_SRC}/kernel/core/ucore/cmsis/CMSIS/Include)

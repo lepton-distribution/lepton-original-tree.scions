@@ -30,8 +30,8 @@ Macros historiques conservées et posées **uniquement** par les fichiers d'axe 
    `LEPTON_FLOAT_ABI` (`hard` ou `soft` : variantes FPU du banc KAL), et les
    définitions propres au cœur : `__KERNEL_CPU_NAME` (nom vu par `uname`),
    `__KERNEL_STACK_SIZE` (pile du thread noyau, `core-segger/kernel.c`) et
-   `__tauon_cpu_core__` ; le CMSIS-Core du cœur s'il manque au CMSIS 3.20 de l'ISA (M7 :
-   `ucore/cmsis-5/CMSIS/Core/Include`). Propriétés de la puce qui varient pour un même cœur :
+   `__tauon_cpu_core__` ; le CMSIS-Core du cœur (M4 et M7 : `ucore/cmsis-5/CMSIS/Core/Include` ;
+   M3 : V3.30 `ucore/cmsis/CMSIS/Include` ; l'ISA armv7m n'en pose plus depuis ENV-42). Propriétés de la puce qui varient pour un même cœur :
    variable de cache réglée par le preset de la carte (ex. `LEPTON_M7_FPU` = `dp` ou `sp`), que
    le fichier de carte contrôle.
 2. Preset dans `CMakePresets.json` (ligne d'enregistrement).

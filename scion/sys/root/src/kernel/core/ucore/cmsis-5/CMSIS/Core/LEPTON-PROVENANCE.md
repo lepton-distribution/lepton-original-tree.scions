@@ -11,7 +11,10 @@ Code tiers non modifié (D1a). Contrôle : `scripts/tiers/verifier-import.sh --l
 <clone CMSIS_5> 5.9.0 kernel/core/ucore/cmsis-5 <liste>` (dépôt lepton-tools), liste des
 8 fichiers `CMSIS/Core/Include/…` : `OK` pour `core_cm4.h`, `CR` pour les 7 autres.
 
-Inclusion : `cmake/cpu/cortex-m7.cmake` (M7 seulement). Aucun preset M4 ne voit ce répertoire en
-ENV-34 : `cmake/isa/armv7m.cmake` place CMSIS-Core V3.30 (`kernel/core/ucore/cmsis/CMSIS/Include`)
-en tête pour tous les presets armv7m ; le choix du `core_cm4.h` du F4 relève d'ENV-35 (PA-57).
+Inclusion : `cmake/cpu/cortex-m7.cmake` (M7), `cmake/cpu/cortex-m4f.cmake` (M4, depuis ENV-42,
+PA-71) et le BSP `samd21-xplained-pro` (M0+, `BEFORE`). Le CMSIS-Core V3.30 de l'arbre
+(`kernel/core/ucore/cmsis/CMSIS/Include`) n'est plus posé que par `cmake/cpu/cortex-m3.cmake` et
+`cmake/isa/armv6m.cmake` : un preset M4 ou M7 ne voit qu'un `core_cm4.h` ou `core_cm7.h`, celui-ci.
+Historique : de ENV-34 à ENV-41, `cmake/isa/armv7m.cmake` plaçait V3.30 en tête pour tous les
+presets armv7m et ce `core_cm4.h` n'était vu par aucun preset (PA-57 d'ENV-35 : V3.30 conservé).
 Ajouter un autre en-tête de cœur depuis le même tag si un preset l'exige.
