@@ -305,10 +305,44 @@ function(_lepton_greffon_fichier sortie nom fichier)
   set(${sortie} ${chemin} PARENT_SCOPE)
 endfunction()
 
+# _lepton_sonde_cfg(<sortie> <nom> <cfg du BSP>) : sonde choisie par son numéro de série (ENV-45,
+# PA-77), pour tout BSP à champ openocd. LEPTON_BOARD_PROBE_SERIAL vide : <sortie> = cfg du BSP
+# (première sonde trouvée). Posée : <sortie> = ${CMAKE_BINARY_DIR}/openocd-<nom>.cfg, générée, qui
+# annonce le numéro, source la cfg du BSP et y ajoute « adapter serial » (ST-LINK et CMSIS-DAP,
+# OpenOCD 0.12.0). LEPTON_BOARD_STLINK_SERIAL (ancien nom, BSP nucleo-wl55jc1) : alias transitoire.
+function(_lepton_sonde_cfg sortie nom cfg_bsp)
+  set(LEPTON_BOARD_PROBE_SERIAL "" CACHE STRING
+      "Numéro de série de la sonde de la carte (adapter serial d'OpenOCD ; vide : première sonde trouvée)")
+  set(serie "${LEPTON_BOARD_PROBE_SERIAL}")
+  if(serie STREQUAL "" AND NOT "${LEPTON_BOARD_STLINK_SERIAL}" STREQUAL "")
+    message(DEPRECATION "LEPTON_BOARD_STLINK_SERIAL est remplacée par LEPTON_BOARD_PROBE_SERIAL "
+                        "(ENV-45) : valeur ${LEPTON_BOARD_STLINK_SERIAL} reprise")
+    set(serie "${LEPTON_BOARD_STLINK_SERIAL}")
+  endif()
+  if(serie STREQUAL "")
+    set(${sortie} ${cfg_bsp} PARENT_SCOPE)
+    return()
+  endif()
+  if(NOT serie MATCHES "^[A-Za-z0-9._:-]+$")
+    message(FATAL_ERROR "LEPTON_BOARD_PROBE_SERIAL « ${serie} » : numéro de série attendu "
+                        "(lettres, chiffres, . _ : -), tel qu'OpenOCD l'affiche")
+  endif()
+  set(cfg ${CMAKE_BINARY_DIR}/openocd-${nom}.cfg)
+  file(CONFIGURE OUTPUT ${cfg} @ONLY CONTENT
+"# généré par cmake/lepton_greffons.cmake du noyau (LEPTON_BOARD_PROBE_SERIAL) : ne pas éditer
+echo \"Lepton : sonde demandée ${serie} (LEPTON_BOARD_PROBE_SERIAL)\"
+source {${cfg_bsp}}
+adapter serial ${serie}
+")
+  set(${sortie} ${cfg} PARENT_SCOPE)
+endfunction()
+
 # lepton_greffons_carte(<nom>) : carte décrite par le manifeste BSP <nom> et sa famille. Pose
 # LEPTON_BOARD_FAMILLE, LEPTON_BOARD_MEMORY_LD, LEPTON_BOARD_CPU_FREQ,
 # LEPTON_BOARD_KERNEL_CONFIG_HEADER (relatif au trunk, pour mklepton), LEPTON_QEMU_MACHINE,
-# LEPTON_BOARD_OPENOCD_CFG (champ openocd : un seul fichier, cible flash et tests),
+# LEPTON_BOARD_OPENOCD_CFG (cfg OpenOCD de la cible flash et des tests : champ openocd, un seul
+# fichier, ou cfg générée si LEPTON_BOARD_PROBE_SERIAL est posée), LEPTON_BOARD_OPENOCD_CFG_BSP
+# (champ openocd seul, sans numéro de sonde : base d'une cfg propre au BSP, ex. carte paire),
 # LEPTON_BOARD_DEMARRAGE_SOURCES (OBJECT bsp_demarrage), LEPTON_BOARD_OBJECT_SOURCES (vecteurs et
 # remplaçants forts de la famille, OBJECT bsp_objets) et LEPTON_BOARD_CMAKE (CMakeLists.txt
 # facultatif du BSP : paramètres hors manifeste, PA-7 Q3, à inclure par l'appelant).
@@ -348,9 +382,12 @@ function(lepton_greffons_carte nom)
     _lepton_manifeste_erreur(${${b}_FICHIER} "champ « openocd » : un seul fichier pris en charge (${n})")
   endif()
   set(LEPTON_BOARD_OPENOCD_CFG PARENT_SCOPE)
+  set(LEPTON_BOARD_OPENOCD_CFG_BSP PARENT_SCOPE)
   if(n EQUAL 1)
     _lepton_greffon_fichier(cfg ${nom} ${${b}_OPENOCD})
-    set(LEPTON_BOARD_OPENOCD_CFG ${LEPTON_SRC}/${cfg} PARENT_SCOPE)
+    set(LEPTON_BOARD_OPENOCD_CFG_BSP ${LEPTON_SRC}/${cfg} PARENT_SCOPE)
+    _lepton_sonde_cfg(cfg ${nom} ${LEPTON_SRC}/${cfg})
+    set(LEPTON_BOARD_OPENOCD_CFG ${cfg} PARENT_SCOPE)
   endif()
   set(demarrage)
   foreach(fichier IN LISTS ${b}_DEMARRAGE)
@@ -508,7 +545,8 @@ endfunction()
 # (construction : ${CMAKE_BINARY_DIR}/greffons/<nom>/tests). Variables offertes à ce répertoire :
 # LEPTON_GREFFON_TEST_NOM (nom du greffon), LEPTON_TESTS_NOYAU (tests/ du greffon noyau dans le
 # trunk : smoke_lsh.py, kal_openocd.py), et celles de la carte (LEPTON_QEMU_MACHINE, LEPTON_QEMU_ARM,
-# LEPTON_BOARD_SERIAL_PORT, LEPTON_OPENOCD, LEPTON_BOARD_OPENOCD_CFG, LEPTON_BOARD_UNAME_MACHINE).
+# LEPTON_BOARD_SERIAL_PORT, LEPTON_OPENOCD, LEPTON_BOARD_OPENOCD_CFG, LEPTON_BOARD_OPENOCD_CFG_BSP,
+# LEPTON_BOARD_UNAME_MACHINE).
 function(lepton_greffons_tests)
   set(LEPTON_TESTS_NOYAU ${CMAKE_SOURCE_DIR}/tests)
   foreach(nom IN LISTS LEPTON_GREFFONS)
